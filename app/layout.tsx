@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import "./global.scss";
 import { TTNormsProFont } from "@/font/font";
 
 export const metadata: Metadata = {

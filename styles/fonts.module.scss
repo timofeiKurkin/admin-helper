@@ -1,0 +1,105 @@
+@import "@/styles/variables.module.scss";
+
+$letter_spacing: .01875rem;
+
+.mainTitle {
+    line-height: normal;
+    font-style: normal;
+    letter-spacing: $letter_spacing;
+    font-weight: 700;
+
+    @media screen and ($desktop1920) {
+        font-size: 2.75rem;
+    }
+
+    @media screen and ($desktop1440_1919), screen and ($desktop1280_1439) {
+        font-size: 2.375rem;
+    }
+
+    @media screen and ($pad992_1279) {
+        font-size: 2rem;
+    }
+
+    @media screen and ($pad640_991), screen and ($phone375_639) {
+        font-size: 1.5rem;
+    }
+}
+
+.title {
+    line-height: normal;
+    font-style: normal;
+    letter-spacing: $letter_spacing;
+    font-weight: 500;
+
+    @media screen and ($desktop1920) {
+        font-size: 2rem;
+    }
+
+    @media screen and ($desktop1440_1919), screen and ($desktop1280_1439) {
+        font-size: 1.7rem;
+    }
+
+    @media screen and ($pad992_1279) {
+        font-size: 1.5rem;
+    }
+
+    @media screen and ($pad640_991), screen and ($phone375_639) {
+        font-size: 1.25rem;
+    }
+}
+
+.text {
+    font-style: normal;
+    line-height: normal;
+    font-weight: 400;
+
+    @media screen and ($desktop1920) {
+        font-size: 1.125rem;
+    }
+
+    @media screen and ($desktop1440_1919), screen and ($desktop1280_1439) {
+        font-size: 1.75rem;
+    }
+
+    @media screen and ($pad992_1279) {
+        font-size: 1rem;
+    }
+
+    @media screen and ($pad640_991), screen and ($phone375_639) {
+        font-size: .875rem;
+    }
+}
+
+.buttonText {
+    font-style: normal;
+    letter-spacing: $letter_spacing;
+    font-weight: 500;
+
+    @media screen and ($desktop1920) {
+        font-size: 1rem;
+        line-height: 1.4375rem;
+    }
+
+    @media screen and ($desktop1440_1919), screen and ($desktop1280_1439) {
+        font-size: .9375rem;
+        line-height: 1.3125rem;
+    }
+
+    @media screen and ($pad992_1279) {
+        font-size: .875rem;
+        line-height: 1.3125rem;
+    }
+
+    @media screen and ($pad640_991), screen and ($phone375_639) {
+        font-size: .875rem;
+        line-height: 1.25rem;
+    }
+}
+
+.smallText {
+    font-size: .75rem;
+    font-style: normal;
+    line-height: normal;
+    letter-spacing: $letter_spacing;
+    font-weight: 500;
+}

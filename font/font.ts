@@ -6,7 +6,7 @@ export const TTNormsProFont = localFont({
     src: [
         {
             path: "./TT-Norms-Pro/TTNormsPro-Bold.woff2",
-            weight: "600",
+            weight: "700",
             style: "normal"
         },
         {
