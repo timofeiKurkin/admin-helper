@@ -1,12 +1,13 @@
 import React from 'react'
 import styles from './RootSection.module.scss'
-import MainTitle from '../../UI/TextTemplates/MainTitle'
+import mainTitleData from "@/data/interface/root-page/main-title/data.json";
+import MainTitleBlock from "@/app/(auxiliary)/components/Blocks/MainTitleBlock/MainTitleBlock";
 
 export default function RootSection() {
 
     return (
         <div className={styles.body}>
-            <MainTitle>Создать новую заявку для технической помощи</MainTitle>
+            <MainTitleBlock>{mainTitleData.mainTitle}</MainTitleBlock>
         </div>
     )
 }

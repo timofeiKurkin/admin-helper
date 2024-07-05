@@ -1,0 +1,11 @@
+
+.chevronInitial,
+.chevronRotate {
+    transition: transform .2s ease;
+    display: inline-block;
+}
+
+.chevronRotate {
+    transform: scaleY(-1);
+}
+

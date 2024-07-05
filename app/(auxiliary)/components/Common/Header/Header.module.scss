@@ -1,0 +1,11 @@
+@import "@/styles/variables.module.scss";
+
+
+.logoWrapper {
+    position: relative;
+    
+    @media screen and ($desktop1920) {
+        width: 4.6875rem;
+        height: 7.5rem;
+    }
+}

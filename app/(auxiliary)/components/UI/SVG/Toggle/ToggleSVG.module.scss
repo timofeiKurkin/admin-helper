@@ -1,0 +1,29 @@
+@import "@/styles/variables.module.scss";
+
+
+.ellipseON, .ellipseOFF {
+    transition: transform 0.4s ease;
+}
+
+.ellipseON {
+    fill: $white_1;
+}
+
+.ellipseOFF {
+    fill: $blue_dark;
+    transform: translate(-8px, 0);
+}
+
+.toggleON,
+.toggleOFF {
+    transition: fill .2s ease;
+    stroke: $blue_dark;
+}
+
+.toggleON {
+    fill: $blue_dark
+}
+
+.toggleOFF {
+    fill: $white_1;
+}

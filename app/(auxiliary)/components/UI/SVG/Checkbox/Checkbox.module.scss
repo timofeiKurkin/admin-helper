@@ -1,0 +1,12 @@
+
+.checkboxON, .checkboxOFF {
+    transition: opacity .1s ease;
+}
+
+.checkboxON {
+    opacity: 1;
+}
+
+.checkboxOFF {
+    opacity: 0;
+}
