@@ -4,16 +4,29 @@ import React from 'react';
 import Image from "next/image";
 import styles from "./Header.module.scss";
 import Text from "@/app/(auxiliary)/components/UI/TextTemplates/Text";
+import data from "@/data/interface/header/data.json"
+import {HeaderTypes} from "@/app/(auxiliary)/types/Data/Interface/Header/HeaderTypes";
+import TextHighlighting from "@/app/(auxiliary)/components/UI/TextHighlighting/TextHighlighting";
 
 const Header = () => {
+    const headerData: HeaderTypes = data
     return (
-        <div>
-            <div className={styles.logoWrapper}>
-                <Image src={"/logo.png"} alt={"logo"} fill={true} quality={100}/>
+        <header className={styles.header}>
+            <div className={styles.logoContainer}>
+                <div className={styles.logoWrapper}>
+                    <Image src={headerData.logo.imageSrc} alt={"logo"} fill={true} quality={100}/>
+                </div>
+
+                <Text>{headerData.logo.title}</Text>
             </div>
 
-            <Text>Быстрая помощь в решении сложных проблем!</Text>
-        </div>
+            <div className={styles.repairServiceContainer}>
+                <TextHighlighting wordIndexes={[0, 2]}
+                                  link={headerData.repairService.linkToRepairService}>
+                    <Text>{headerData.repairService.textToRepairService}</Text>
+                </TextHighlighting>
+            </div>
+        </header>
     );
 };
 
