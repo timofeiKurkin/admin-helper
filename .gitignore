@@ -3,6 +3,8 @@
 /.vscode
 /.idea
 
+/materials
+
 # SVG icons
 /public/SVG
 

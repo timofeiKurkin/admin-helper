@@ -1,0 +1,26 @@
+@import "@/styles/variables.module.scss";
+
+.bodyBlockGrid {
+    display: grid;
+    
+    @media screen and ($desktop1920) {
+        grid-template-columns: 44.1875rem min-content 36.375rem;
+    }
+
+    .separatingLine {
+        width: 0;
+        height: 100%;
+        position: relative;
+        margin: 0 3.75rem 0 6.44rem;
+        
+        &:before {
+            position: absolute;
+            content: "";
+            width: 2px;
+            height: 100%;
+            background-color: $blue_dark;
+            top: 0;
+            left: 0;
+        }
+    }
+}

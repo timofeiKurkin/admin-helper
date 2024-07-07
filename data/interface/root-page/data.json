@@ -1,0 +1,100 @@
+{
+    "title": "Создать новую заявку для технической помощи",
+    "formContent": {
+        "formPartOne": {
+            "title": "Опишите Вашу проблему",
+            "inputs": [
+                {
+                    "id": 0,
+                    "type": "device",
+                    "inputTitle": "С каким устройством проблема?",
+                    "inputPlaceholder": "Устройство",
+                    "devicesList": [
+                        {
+                            "id": 0,
+                            "title": "Компьютер"
+                        },
+                        {
+                            "id": 1,
+                            "title": "Принтер"
+                        },
+                        {
+                            "id": 2,
+                            "title": "Ксерокс"
+                        },
+                        {
+                            "id": 3,
+                            "title": "Роутер"
+                        }
+                    ]
+                },
+                {
+                    "id": 1,
+                    "type": "message",
+                    "inputTitle": "Расскажите о вашей проблеме",
+                    "toggleText": "Я не могу говорить",
+                    "voiceMessage": {
+                        "inputPlaceholder": "Опишите проблему"
+                    },
+                    "textMessage": {
+                        "inputPlaceholder": "Опишите вашу проблему"
+                    }
+                },
+                {
+                    "id": 2,
+                    "type": "photo",
+                    "inputTitle": "Добавить фотографию с проблемой",
+                    "toggleText": "У меня есть фотография проблемы",
+                    "inputPlaceholder": "Вы не добавили ни одной фотографии",
+                    "button": "Добавить"
+                },
+                {
+                    "id": 3,
+                    "type": "video",
+                    "inputTitle": "Добавить видео с проблемой",
+                    "toggleText": "У меня есть видео проблемы",
+                    "inputPlaceholder": "Вы не добавили ни одного видео",
+                    "button": "Добавить"
+                }
+            ]
+        },
+        "formPartTwo": {
+            "title": "Немного информации о Вас",
+            "inputs": [
+                {
+                    "id": 0,
+                    "type": "name",
+                    "inputTitle": "Имя",
+                    "inputPlaceholder": "Имя"
+                },
+                {
+                    "id": 1,
+                    "type": "company",
+                    "inputTitle": "В какой организации Вы находитесь?",
+                    "inputPlaceholder": "Выберите организацию",
+                    "listOfCompanies": [
+                        "",
+                        "",
+                        ""
+                    ]
+                },
+                {
+                    "id": 2,
+                    "type": "phone-number",
+                    "inputTitle": "Номер телефона"
+                },
+                {
+                    "id": 3,
+                    "type": "number-pc",
+                    "inputTitle": "Номер компьютера в AnyDesk"
+                }
+            ]
+        }
+    },
+    "permissionsContent": {
+        "ICanAnswer": "Я смогу ответить на телефонный звонок в ближайшие 15 минут",
+        "personalDataPreparation": "Даю согласие на обработку персональных данных",
+        "preparationLinkToPolicy": "https://it-nk.ru/policy/"
+    },
+    "button": "Отправить"
+}

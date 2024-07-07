@@ -1,11 +1,15 @@
-import React, { FC } from 'react'
+import React, {CSSProperties, FC} from 'react'
 import fontStyles from "@/styles/fonts.module.scss";
-import { ChildrenType } from '@/app/(auxiliary)/types/AppTypes/AppTypes';
+import {ChildrenType} from '@/app/(auxiliary)/types/AppTypes/AppTypes';
 
-const Text: FC<ChildrenType> = ({children}) => {
-  return (
-    <p className={fontStyles.text}>{children}</p>
-  )
+interface PropsType extends ChildrenType {
+    style?: CSSProperties;
 }
 
-export default Text
+const Text: FC<PropsType> = ({children, style}) => {
+    return (
+        <p className={fontStyles.text} style={style}>{children}</p>
+    )
+}
+
+export default Text;

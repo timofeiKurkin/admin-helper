@@ -2,6 +2,15 @@
 
 $letter_spacing: .01875rem;
 
+
+.mainTitle,
+.title,
+.text,
+.buttonText,
+.smallText {
+    color: $black;
+}
+
 .mainTitle {
     line-height: normal;
     font-style: normal;

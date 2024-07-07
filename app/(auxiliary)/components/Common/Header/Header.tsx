@@ -14,10 +14,14 @@ const Header = () => {
         <header className={styles.header}>
             <div className={styles.logoContainer}>
                 <div className={styles.logoWrapper}>
-                    <Image src={headerData.logo.imageSrc} alt={"logo"} fill={true} quality={100}/>
+                    <Image src={headerData.logo.imageSrc}
+                           alt={"logo"}
+                           fill={true}
+                           quality={100}
+                           sizes={"100dvw"}/>
                 </div>
 
-                <Text>{headerData.logo.title}</Text>
+                <Text style={{fontWeight: 500, letterSpacing: "0.01875rem"}}>{headerData.logo.title}</Text>
             </div>
 
             <div className={styles.repairServiceContainer}>

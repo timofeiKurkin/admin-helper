@@ -13,7 +13,7 @@ interface PropsType extends ChildrenType {
 const TextHighlighting: FC<PropsType> = ({
                                              children,
                                              highlightColor = blue_dark,
-                                             fontWeight = 500,
+                                             fontWeight = 400,
                                              wordIndexes,
                                              link = ""
                                          }) => {
@@ -24,8 +24,8 @@ const TextHighlighting: FC<PropsType> = ({
                 (currentChild: React.ReactNode | string) => {
                     if (typeof currentChild === "string") {
                         const wordsArray: string[] = currentChild.split(" ")
-                        const currentPhrase = wordsArray.slice(...wordIndexes).join(" ")
-                        const filteredWords = wordsArray
+                        const currentPhrase: string = wordsArray.slice(...wordIndexes).join(" ")
+                        const filteredWords: string[] = wordsArray
                             .filter((_, i) => !(i < wordIndexes[0] && i > wordIndexes[1]))
 
                         return [

@@ -1,0 +1,9 @@
+@import "@/styles/variables.module.scss";
+
+.titleAndBodyWrapper {
+    display: grid;
+    
+    @media screen and ($desktop1920) {
+        row-gap: 3.12rem;
+    }
+}
