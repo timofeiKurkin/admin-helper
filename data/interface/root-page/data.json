@@ -3,6 +3,7 @@
     "formContent": {
         "formPartOne": {
             "title": "Опишите Вашу проблему",
+            "formPartNumber": 0,
             "inputs": [
                 {
                     "id": 0,
@@ -60,6 +61,7 @@
         },
         "formPartTwo": {
             "title": "Немного информации о Вас",
+            "formPartNumber": 1,
             "inputs": [
                 {
                     "id": 0,

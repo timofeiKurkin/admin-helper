@@ -1,10 +1,14 @@
-import React, {FC} from 'react';
+import React, {CSSProperties, FC} from 'react';
 import {ChildrenType} from "@/app/(auxiliary)/types/AppTypes/AppTypes";
 import Title from "@/app/(auxiliary)/components/UI/TextTemplates/Title";
 
-const TitleBlock: FC<ChildrenType> = ({children}) => {
+interface PropsType extends ChildrenType{
+    styles?: CSSProperties;
+}
+
+const TitleBlock: FC<PropsType> = ({children, styles}) => {
     return (
-        <Title>{children}</Title>
+        <Title styles={styles}>{children}</Title>
     );
 };
 

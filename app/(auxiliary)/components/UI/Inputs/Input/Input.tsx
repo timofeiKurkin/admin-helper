@@ -1,9 +1,45 @@
-import React from 'react';
+import React, {FC} from 'react';
+import {InputPropsType} from "@/app/(auxiliary)/types/InputTypes/InputPropsType";
+import {InputChangeEventHandler} from "@/app/(auxiliary)/types/AppTypes/AppTypes";
+import borderStyles from "./InputBorder.module.scss";
+import inputStyles from "./Input.module.scss";
+import fontStyles from "@/styles/fonts.module.scss";
 
-const Input = () => {
+const Input: FC<InputPropsType> = ({
+    value,
+    placeholder,
+                                       type = "text",
+                                       disabled = false,
+                                       maxLength,
+                                       tabIndex,
+                                       onBlur,
+                                       onChange,
+                                       inputIsDirty
+                                   }) => {
+
+    const changeInputHandler = (e: InputChangeEventHandler) => {
+        onChange(e)
+    }
+
     return (
-        <div>
-            
+        <div className={inputStyles.inputWrapper}>
+            <div className={inputStyles.inputBox}>
+                <input
+                    className={`${fontStyles.buttonText} ${inputStyles.inputStyle}`}
+
+                    type={type}
+                    value={value}
+                    onChange={(e: InputChangeEventHandler) => changeInputHandler(e)}
+                    onBlur={() => onBlur()}
+                    onFocus={() => onBlur()}
+                    placeholder={placeholder}
+                    maxLength={maxLength}
+                    disabled={disabled}
+                    tabIndex={tabIndex}
+                />
+            </div>
+            <span
+                className={inputIsDirty ? borderStyles.inputActive : borderStyles.inputBorder}></span>
         </div>
     );
 };

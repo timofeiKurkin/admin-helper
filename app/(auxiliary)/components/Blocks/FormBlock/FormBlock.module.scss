@@ -1,0 +1,18 @@
+@import "@/styles/variables.module.scss";
+
+
+.formBlockWrapper {
+    display: flex;
+}
+
+.formBlockPartOneWrapper {
+    @media screen and ($desktop1920) {
+        column-gap: 6.56rem;
+    }
+}
+
+.formBlockPartTwoWrapper {
+    @media screen and ($desktop1920) {
+        column-gap: 3.75rem;
+    }
+}

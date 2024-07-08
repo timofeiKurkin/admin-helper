@@ -1,5 +1,5 @@
 import {useEffect, useState} from "react";
-import {ValidationReturnDataType, ValidationsType} from "@/app/(auxiliary)/types/AppTypes/HooksTypes";
+import {ValidationReturnDataType, ValidationsType} from "@/app/(auxiliary)/types/AppTypes/InputHooksTypes";
 
 
 const UseValidation = (value: string, validations: ValidationsType): ValidationReturnDataType => {

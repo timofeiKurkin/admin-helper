@@ -1,24 +1,28 @@
 import {useEffect, useState} from "react";
-import {ValidationsKeyType} from "@/app/(auxiliary)/types/AppTypes/HooksTypes";
+import {savedInputsData, SavedInputsDataType} from "@/app/(auxiliary)/types/AppTypes/InputHooksTypes";
 
-const UseLocalStorage = (key: ValidationsKeyType['key'], initialValue: string | boolean | {}) => {
-	const getStorageValue = (key: ValidationsKeyType['key'], initialValue: string | number | {} | boolean) => {
-		if(typeof window !== 'undefined') {
-			const value: any = localStorage.getItem(key)
-			const parse = JSON.parse(value)
-			return parse || initialValue
-		}
-	}
+const UseLocalStorage = (key: SavedInputsDataType, initialValue: string | boolean | {}) => {
+    const getStorageValue = (key: SavedInputsDataType, initialValue: string | number | {} | boolean) => {
+        if (typeof window !== 'undefined' && savedInputsData.includes(key)) {
+            const value: any = localStorage.getItem(key)
+            const parse = JSON.parse(value)
+            return parse || initialValue
+        }
 
-	const [value, setValue] = useState(() => {
-		return getStorageValue(key, initialValue)
-	})
+        return initialValue
+    }
 
-	useEffect(() => {
-		localStorage.setItem(key, JSON.stringify(value))
-	}, [key, value])
+    const [value, setValue] = useState(() => {
+        return getStorageValue(key, initialValue)
+    })
 
-	return [value, setValue]
+    useEffect(() => {
+        if (savedInputsData.includes(key)) {
+            localStorage.setItem(key, JSON.stringify(value))
+        }
+    }, [key, value])
+
+    return [value, setValue]
 };
 
 export default UseLocalStorage;

@@ -1,17 +1,23 @@
+"use client"
+
 import React, {FC} from 'react';
-import {InputType} from "@/app/(auxiliary)/types/Data/Interface/RootPage/RootPageType";
+import {AllTypesOfInputsArray} from "@/app/(auxiliary)/types/Data/Interface/RootPage/RootPageType";
 import CoupleOfInputs from "@/app/(auxiliary)/components/Blocks/FormBlock/CoupleOfInputs/CoupleOfInputs";
+import styles from "./FormBlock.module.scss";
 
 interface PropsType {
-    inputContent: InputType[];
+    inputContent: AllTypesOfInputsArray;
+    formPartNumber: number;
 }
 
-const FormBlock: FC<PropsType> = ({inputContent}) => {
-
+const FormBlock: FC<PropsType> = ({inputContent, formPartNumber}) => {
+    const partOne = inputContent.slice(0, 2)
+    const partTwo = inputContent.slice(2, 5)
 
     return (
-        <div>
-            <CoupleOfInputs contentOfInputs={[inputContent.slice(0, 2)]}/>
+        <div className={`${styles.formBlockWrapper} ${formPartNumber ? styles.formBlockPartTwoWrapper : styles.formBlockPartOneWrapper}`}>
+            <CoupleOfInputs contentOfInputs={partOne}/>
+            <CoupleOfInputs contentOfInputs={partTwo}/>
         </div>
     );
 };

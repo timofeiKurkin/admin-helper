@@ -1,7 +1,7 @@
 import {useState} from "react";
 import useValidation from "./useValidation";
 import useLocalStorage from "./useLocalStorage";
-import {UseInputType, ValidationReturnDataType, ValidationsKeyType, ValidationsType} from "@/app/(auxiliary)/types/AppTypes/HooksTypes";
+import {UseInputType, ValidationReturnDataType, ValidationsKeyType, ValidationsType} from "@/app/(auxiliary)/types/AppTypes/InputHooksTypes";
 import {InputChangeEventHandler} from "@/app/(auxiliary)/types/AppTypes/AppTypes";
 
 const UseInput = (initialValue: string, key: ValidationsKeyType['key'], validations: ValidationsType): UseInputType => {

@@ -7,13 +7,14 @@ export interface RootPageType {
 }
 
 export interface FormContentType {
-    formPartOne: FormPartOneType;
-    formPartTwo: FormPartTwoTypeType;
+    formPartOne: FormPartType;
+    formPartTwo: FormPartType;
 }
 
-export interface FormPartOneType {
+export interface FormPartType {
     title: string;
-    inputs: InputType[];
+    formPartNumber: number;
+    inputs: AllTypesOfInputsArray;
 }
 
 
@@ -52,11 +53,12 @@ export interface PhoneNumberInputType extends InputType {
 export interface NumberPcInputType extends InputType {
 }
 
-export type AllTypesOfInputs = [DeviceInputType & MessageInputType | PhotoAndVideoInputType | NameInputType & PhoneNumberInputType | CompanyInputType & NumberPcInputType][]
+export type AllTypesOfInputsArray = AllTypesOfInputs[]
+export type AllTypesOfInputs = (DeviceInputType & MessageInputType | PhotoAndVideoInputType | NameInputType & PhoneNumberInputType | CompanyInputType & NumberPcInputType)
 
 
 // Data for inputs
-export type TypeOfInputs = "device" | "message" | "photo" | "video" | "name" | "company" | "phone-number" | "number-pc"
+export type TypeOfInputs = "device" | "message" | "photo" | "video" | "name" | "company" | "phone-number" | "number-pc" | string;
 
 export interface DevicesListType {
     id: number;
@@ -65,11 +67,6 @@ export interface DevicesListType {
 
 export interface MessageType {
     inputPlaceholder: string;
-}
-
-export interface FormPartTwoTypeType {
-    title: string;
-    inputs: InputType[];
 }
 
 

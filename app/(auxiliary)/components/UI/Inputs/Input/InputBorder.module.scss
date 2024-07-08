@@ -1,0 +1,78 @@
+@import "@/styles/variables.module";
+
+.inputBorder, .inputActive, .inputError, .inputConfirm, .inputBorderEmail {
+    z-index: 1;
+    position: absolute;
+    
+    box-sizing: border-box;
+    
+    @media screen and ($phone375_639), screen and ($pad640_991) {
+        border-radius: 10px;
+    }
+    
+    @media screen and ($pad992_1279),
+    screen and ($desktop1280_1439),
+    screen and ($desktop1440_1919),
+    screen and ($desktop1920) {
+        border-radius: 13px;
+    }
+    
+    background-color: $white;
+    
+    top: 0;
+    left: 0;
+    transition: opacity .3s, background-color .5s ease;
+    overflow: hidden;
+    
+    width: 100%;
+    height: inherit;
+}
+
+.inputBorder, .inputActive, .inputBorderEmail {
+    
+    @media screen and ($phone375_639), screen and ($pad640_991), screen and ($pad992_1279) {
+        border: 1px solid $blue_dark;
+    }
+    
+    @media screen and ($desktop1280_1439), screen and ($desktop1440_1919), screen and ($desktop1920) {
+        border: $blue_dark;
+    }
+}
+
+.inputBorderEmail {
+    background-color: #e7e7e7;
+}
+
+
+.inputError {
+    @media screen and ($phone375_639), screen and ($pad640_991), screen and ($pad992_1279) {
+        border: 1px solid $blue_dark;
+    }
+    
+    @media screen and ($desktop1280_1439), screen and ($desktop1440_1919), screen and ($desktop1920) {
+        //border: $solid-line-error;
+    }
+    
+    background-color: #e59898;
+}
+
+.inputConfirm {
+    background-color: #b5eedf;
+    //border: $solid-line-confirm;
+}
+
+.inputBorder, .inputBorderEmail {
+    opacity: .5;
+    
+    &:hover {
+        opacity: 1;
+    }
+}
+
+.inputActive {
+    opacity: 1;
+    
+    &:hover {
+        opacity: 1;
+    }
+}
