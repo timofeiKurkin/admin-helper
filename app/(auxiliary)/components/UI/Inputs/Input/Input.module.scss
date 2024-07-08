@@ -47,8 +47,8 @@
             
             &[type="text"], &[type="password"] {
                 font-family: inherit;
-                font-weight: 600;
-                letter-spacing: .6px;
+                font-weight: 500;
+                letter-spacing: $letter_spacing;
                 color: $blue_dark;
             }
             

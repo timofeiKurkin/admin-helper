@@ -21,7 +21,7 @@ const Header = () => {
                            sizes={"100dvw"}/>
                 </div>
 
-                <Text style={{fontWeight: 500, letterSpacing: "0.01875rem"}}>{headerData.logo.title}</Text>
+                <Text style={{fontWeight: 500, letterSpacing: "0.01875rem", lineHeight: "1.4375rem"}}>{headerData.logo.title}</Text>
             </div>
 
             <div className={styles.repairServiceContainer}>
