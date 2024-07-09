@@ -1,4 +1,6 @@
 // Form body
+import {TypeOfInputs} from "@/app/(auxiliary)/types/AppTypes/InputHooksTypes";
+
 export interface RootPageType {
     title: string;
     formContent: FormContentType;
@@ -58,7 +60,6 @@ export type AllTypesOfInputs = (DeviceInputType & MessageInputType | PhotoAndVid
 
 
 // Data for inputs
-export type TypeOfInputs = "device" | "message" | "photo" | "video" | "name" | "company" | "phone-number" | "number-pc" | string;
 
 export interface DevicesListType {
     id: number;

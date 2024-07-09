@@ -1,25 +1,23 @@
 import React, {FC} from 'react';
-import Text from "@/app/(auxiliary)/components/UI/TextTemplates/Text";
 import {AllTypesOfInputs} from "@/app/(auxiliary)/types/Data/Interface/RootPage/RootPageType";
-import styles from "./CurrentInput.module.scss";
-import useInput from "@/app/(auxiliary)/hooks/useInput";
+import {photoAndVideoInputsData} from "@/app/(auxiliary)/types/AppTypes/InputHooksTypes";
+import TextInput from "@/app/(auxiliary)/components/Blocks/FormBlock/CoupleOfInputs/CurrentInput/TextInput/TextInput";
+import FileInput from "@/app/(auxiliary)/components/Blocks/FormBlock/CoupleOfInputs/CurrentInput/FileInput/FileInput";
+import styles from "@/app/(auxiliary)/components/Blocks/FormBlock/CoupleOfInputs/CurrentInput/CurrentInput.module.scss";
 import FormFieldWrapper
     from "@/app/(auxiliary)/components/UI/Wrappers/FormBlockWrapper/FormFieldWrapper/FormFieldWrapper";
-import {
-    inputValidations
-} from "@/app/(auxiliary)/components/Blocks/FormBlock/CoupleOfInputs/CurrentInput/inputValidations";
-import Input from "@/app/(auxiliary)/components/UI/Inputs/Input/Input";
+import Text from "@/app/(auxiliary)/components/UI/TextTemplates/Text";
 
 
 const typeOfInputsClasses: { [key: string]: string } = {
     "device": styles.deviceInputWrapper,
-    "message": styles.messageInputWrapper,
-    "photo": styles.photoInputWrapper,
-    "video": styles.videoInputWrapper,
     "name": styles.nameInputWrapper,
+    "message": styles.messageInputWrapper,
     "company": styles.companyInputWrapper,
     "phone-number": styles.phoneNumberInputWrapper,
     "number-pc": styles.numberPCInputWrapper,
+    "photo": styles.photoInputWrapper,
+    "video": styles.videoInputWrapper,
 }
 
 interface PropsType {
@@ -27,26 +25,18 @@ interface PropsType {
 }
 
 const CurrentInput: FC<PropsType> = ({currentInput}) => {
-    const value = useInput("", currentInput.type, inputValidations[currentInput.type])
     const currentInputTypesClassName = typeOfInputsClasses[currentInput.type]
 
     return (
-        <div key={`key=${currentInput.type}`} className={`${styles.currentInputWrapper} ${currentInputTypesClassName}`}>
+        <div className={`${styles.currentInputWrapper} ${currentInputTypesClassName}`}>
             <FormFieldWrapper>
                 <Text>{currentInput.inputTitle}</Text>
 
-                {
-                    !["photo", "video"].includes(currentInput.type) && (
-                        <div className={styles.inputWrapper}>
-                            <Input value={value.value}
-                                   placeholder={currentInput.inputPlaceholder}
-                                   maxLength={inputValidations[currentInput.type].maxLength}
-                                   tabIndex={currentInput.id}
-                                   onBlur={value.onBlur}
-                                   onChange={value.onChange}/>
-                        </div>
-                    )
-                }
+                {!photoAndVideoInputsData.includes(currentInput.type) ? (
+                    <TextInput currentInput={currentInput}/>
+                ) : (
+                    <FileInput currentInput={currentInput}/>
+                )}
             </FormFieldWrapper>
         </div>
     )

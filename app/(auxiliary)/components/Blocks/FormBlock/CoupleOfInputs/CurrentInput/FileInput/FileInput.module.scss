@@ -1,0 +1,16 @@
+
+
+.fileInputWrapper {
+    display: flex;
+    flex-direction: column;
+    row-gap: 0.94rem;
+    
+    .fileInputToggle {
+        display: flex;
+        column-gap: 0.62rem;
+        align-items: center;
+        cursor: pointer;
+        user-select: none;
+    }
+}
+

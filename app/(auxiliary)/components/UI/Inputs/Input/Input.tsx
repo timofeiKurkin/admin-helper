@@ -6,8 +6,8 @@ import inputStyles from "./Input.module.scss";
 import fontStyles from "@/styles/fonts.module.scss";
 
 const Input: FC<InputPropsType> = ({
-    value,
-    placeholder,
+                                       value,
+                                       placeholder,
                                        type = "text",
                                        disabled = false,
                                        maxLength,
@@ -18,11 +18,12 @@ const Input: FC<InputPropsType> = ({
                                    }) => {
 
     const changeInputHandler = (e: InputChangeEventHandler) => {
+        console.log("onChange", e.target.value);
         onChange(e)
     }
 
     return (
-        <div className={inputStyles.inputWrapper}>
+        <div className={`${inputStyles.inputWrapper} ${inputIsDirty ? inputStyles.inputActive : inputStyles.inputInactive}`}>
             <div className={inputStyles.inputBox}>
                 <input
                     className={`${fontStyles.buttonText} ${inputStyles.inputStyle}`}
@@ -39,7 +40,7 @@ const Input: FC<InputPropsType> = ({
                 />
             </div>
             <span
-                className={inputIsDirty ? borderStyles.inputActive : borderStyles.inputBorder}></span>
+                className={borderStyles.inputBorder}></span>
         </div>
     );
 };

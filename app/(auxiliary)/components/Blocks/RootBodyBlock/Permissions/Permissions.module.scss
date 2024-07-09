@@ -1,0 +1,15 @@
+@import "@/styles/variables.module.scss";
+
+.permissionsWrapper {
+    display: flex;
+    flex-direction: column;
+    justify-items: center;
+    row-gap: 0.94rem;
+    margin-left: 0.62rem;
+    
+    .permissionBlock {
+        display: flex;
+        column-gap: 0.62rem;
+        cursor: pointer;
+    }
+}

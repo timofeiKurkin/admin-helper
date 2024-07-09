@@ -1,0 +1,10 @@
+@import "@/styles/variables.module.scss";
+
+.dragDropWrapper {
+    display: grid;
+    
+    @media screen and ($desktop1920) {
+        grid-template-rows: 5.9375rem min-content;
+        row-gap: 1.25rem;
+    }
+}

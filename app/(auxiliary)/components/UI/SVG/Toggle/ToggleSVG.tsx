@@ -7,7 +7,7 @@ interface PropsType {
     toggleStatus: boolean;
 }
 
-const ToggleSvg: FC<PropsType> = ({toggleStatus}) => {
+const ToggleSVG: FC<PropsType> = ({toggleStatus}) => {
 
     return (
         <svg width="23" height="23"
@@ -25,4 +25,4 @@ const ToggleSvg: FC<PropsType> = ({toggleStatus}) => {
     );
 };
 
-export default ToggleSvg;
+export default ToggleSVG;

@@ -15,7 +15,7 @@ const UseInput = (initialValue: string, key: ValidationsKeyType['key'], validati
 	}
 
 	const onBlur = () => {
-		setDirty(true)
+		setDirty((prev) => (!prev))
 	}
 
 	return {

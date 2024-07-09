@@ -7,12 +7,18 @@ export interface ValidationsType {
 }
 
 export interface ValidationsKeyType  {
-    key: "device" | "message" | "photo" | "video" | SavedInputsDataType;
+    key: TypeOfInputs;
 }
+
+export type TypeOfInputs = "device" | "message" | PhotoAndVideoInputType | SavedInputsDataType;
+
+export type PhotoAndVideoInputType = "photo" | "video" | string;
 
 export type SavedInputsDataType = "name" | "company" | "number-pc" | "phone-number" | string;
 
 export const savedInputsData: SavedInputsDataType[] = ["name", "company", "number-pc", "phone-number"]
+
+export const photoAndVideoInputsData: PhotoAndVideoInputType[] = ["photo", "video"]
 
 export interface ValidationReturnDataType {
     isEmpty: boolean;

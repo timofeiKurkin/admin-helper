@@ -23,22 +23,22 @@ export const inputValidations: { [key: string]: ValidationsType } = {
     // },
     "name": {
         isEmpty: true,
-        maxLength: 0,
-        minLength: 0
+        maxLength: 16,
+        minLength: 5
     },
     "company": {
         isEmpty: true,
-        maxLength: 0,
-        minLength: 0
+        maxLength: 24,
+        minLength: 3
     },
     "phone-number": {
         isEmpty: true,
-        maxLength: 0,
-        minLength: 0
+        maxLength: 10,
+        minLength: 10
     },
     "number-pc": {
         isEmpty: true,
-        maxLength: 0,
-        minLength: 0
+        maxLength: 9,
+        minLength: 9
     },
 }

@@ -1,22 +1,23 @@
-import React, {FC} from 'react';
+import React, {CSSProperties, FC} from 'react';
 import {ChildrenType} from "@/app/(auxiliary)/types/AppTypes/AppTypes";
 import {blue_dark} from "@/styles/colors";
 
 
 interface PropsType extends ChildrenType {
     wordIndexes: [number, number];
-    fontWeight?: number;
-    highlightColor?: string;
+    style?: CSSProperties;
     link?: string;
 }
 
 const TextHighlighting: FC<PropsType> = ({
                                              children,
-                                             highlightColor = blue_dark,
-                                             fontWeight = 400,
                                              wordIndexes,
+                                             style,
                                              link = ""
                                          }) => {
+    const highlightColor = blue_dark
+    const fontWeight = 400
+
     const highlightContent = (child: React.ReactNode) => {
         if (React.isValidElement(child) && child.props.children) {
             const updatedChildren = React.Children.map(
@@ -34,6 +35,7 @@ const TextHighlighting: FC<PropsType> = ({
                             <span key={`key-${currentPhrase}`} style={{
                                 color: highlightColor,
                                 fontWeight: fontWeight,
+                                ...style
                             }}>
                                 <a href={link} target={"_blank"}>{currentPhrase}</a>
                             </span>,

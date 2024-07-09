@@ -8,7 +8,6 @@
         display: grid;
         grid-template-rows: 1fr;
         justify-content: center;
-        overflow: hidden;
         
         @media screen and ($desktop1920) {
             padding: 2.81rem 0;

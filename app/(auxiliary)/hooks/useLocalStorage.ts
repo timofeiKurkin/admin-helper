@@ -3,7 +3,7 @@ import {savedInputsData, SavedInputsDataType} from "@/app/(auxiliary)/types/AppT
 
 const UseLocalStorage = (key: SavedInputsDataType, initialValue: string | boolean | {}) => {
     const getStorageValue = (key: SavedInputsDataType, initialValue: string | number | {} | boolean) => {
-        if (typeof window !== 'undefined' && savedInputsData.includes(key)) {
+        if (typeof window !== 'undefined') {
             const value: any = localStorage.getItem(key)
             const parse = JSON.parse(value)
             return parse || initialValue
@@ -13,7 +13,10 @@ const UseLocalStorage = (key: SavedInputsDataType, initialValue: string | boolea
     }
 
     const [value, setValue] = useState(() => {
-        return getStorageValue(key, initialValue)
+        if (savedInputsData.includes(key)) {
+            return getStorageValue(key, initialValue)
+        }
+        return initialValue
     })
 
     useEffect(() => {

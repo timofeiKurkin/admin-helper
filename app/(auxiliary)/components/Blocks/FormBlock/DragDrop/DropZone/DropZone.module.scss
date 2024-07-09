@@ -1,0 +1,26 @@
+@import "@/styles/variables.module.scss";
+
+.dropZone {
+    height: 100%;
+    
+    background-color: $white_1;
+    border: $black_input_border;
+    border-radius: 15px;
+    
+    .dropZoneWrapper {
+        height: inherit;
+        width: inherit;
+        
+        .dropInput {
+            height: inherit;
+            width: inherit;
+        }
+        
+        .dropTextContent {
+            display: flex;
+            height: 100%;
+            justify-content: center;
+            align-items: center;
+        }
+    }
+}

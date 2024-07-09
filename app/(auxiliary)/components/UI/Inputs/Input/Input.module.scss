@@ -18,44 +18,30 @@
             height: inherit;
             width: inherit;
             
-            @media ($phone375_639) {
-                border-width: 4px 16px;
-            }
-            
-            @media ($pad640_991) {
-                border-width: 4px 16px;
-            }
-            
-            @media ($pad992_1279) {
-                border-width: 4px 18px;
-            }
-            
-            @media ($desktop1280_1439) {
-                border-width: 4px 18px;
-            }
-            
-            @media ($desktop1440_1919) {
-                border-width: 4px 18px;
-            }
-            
-            @media ($desktop1920) {
-                border-width: 2px 24px;
-            }
+            border-width: 2px 25px;
             
             border-color: transparent;
             background-color: transparent;
+            outline: none;
             
             &[type="text"], &[type="password"] {
                 font-family: inherit;
                 font-weight: 500;
                 letter-spacing: $letter_spacing;
-                color: $blue_dark;
+                color: $black;
             }
             
             &::placeholder {
-                color: $blue_dark;
-                opacity: .8;
+                color: $black;
             }
         }
     }
+}
+
+.inputInactive {
+    opacity: 0.6;
+}
+
+.inputActive {
+    opacity: 1;
 }
