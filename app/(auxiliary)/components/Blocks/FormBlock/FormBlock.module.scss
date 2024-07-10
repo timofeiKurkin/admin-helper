@@ -7,12 +7,14 @@
 
 .formBlockPartOneWrapper {
     @media screen and ($desktop1920) {
+        //grid-template-columns: 18.75rem 18.875rem;
         column-gap: 6.56rem;
     }
 }
 
 .formBlockPartTwoWrapper {
     @media screen and ($desktop1920) {
+        //grid-template-columns: 13.125rem 19.5rem;
         column-gap: 3.75rem;
     }
 }

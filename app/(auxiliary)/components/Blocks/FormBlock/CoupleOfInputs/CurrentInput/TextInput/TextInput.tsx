@@ -4,9 +4,16 @@ import useInput from "@/app/(auxiliary)/hooks/useInput";
 import {
     inputValidations
 } from "@/app/(auxiliary)/components/Blocks/FormBlock/CoupleOfInputs/CurrentInput/inputValidations";
-import generalStyles from "@/app/(auxiliary)/components/Blocks/FormBlock/CoupleOfInputs/CurrentInput/CurrentInput.module.scss";
 import Input from "@/app/(auxiliary)/components/UI/Inputs/Input/Input";
+import styles from "./TextInput.module.scss";
 
+
+const typeOfInputsClasses: { [key: string]: string } = {
+    "device": styles.deviceInputWrapper,
+    "name": styles.nameInputWrapper,
+    "phone-number": styles.phoneNumberInputWrapper,
+    "number-pc": styles.numberPCInputWrapper,
+}
 
 interface PropsType {
     currentInput: AllTypesOfInputs;
@@ -15,10 +22,11 @@ interface PropsType {
 const TextInput: FC<PropsType> = ({
                                       currentInput
                                   }) => {
+    const currentInputTypesClassName = typeOfInputsClasses[currentInput.type]
     const value = useInput("", currentInput.type, inputValidations[currentInput.type])
 
     return (
-        <div className={generalStyles.inputWrapper}>
+        <div className={`${styles.inputWrapper} ${currentInputTypesClassName}`}>
             <Input value={value.value}
                    placeholder={currentInput.inputPlaceholder || ""}
                    maxLength={inputValidations[currentInput.type].maxLength}

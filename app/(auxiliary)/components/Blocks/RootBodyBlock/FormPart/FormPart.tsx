@@ -13,12 +13,14 @@ const FormPart: FC<PropsType> = ({
                                      content
 }) => {
     return (
-        <FormBlockWrapper>
-            <TitleBlock>{content.title}</TitleBlock>
+        <>
+            <FormBlockWrapper>
+                <TitleBlock>{content.title}</TitleBlock>
 
-            <FormBlock inputContent={content.inputs}
-                       formPartNumber={content.formPartNumber}/>
-        </FormBlockWrapper>
+                <FormBlock inputContent={content.inputs}
+                           formPartNumber={content.formPartNumber}/>
+            </FormBlockWrapper>
+        </>
     );
 };
 

@@ -10,14 +10,18 @@ interface PropsType {
     formPartNumber: number;
 }
 
-const FormBlock: FC<PropsType> = ({inputContent, formPartNumber}) => {
-    const partOne = inputContent.slice(0, 2)
-    const partTwo = inputContent.slice(2, 5)
+const FormBlock: FC<PropsType> = ({
+                                      inputContent,
+                                      formPartNumber
+                                  }) => {
+    const partOfInputsOne = inputContent.slice(0, 2)
+    const partOfInputsTwo = inputContent.slice(2, 5)
 
     return (
-        <div className={`${styles.formBlockWrapper} ${formPartNumber ? styles.formBlockPartTwoWrapper : styles.formBlockPartOneWrapper}`}>
-            <CoupleOfInputs contentOfInputs={partOne}/>
-            <CoupleOfInputs contentOfInputs={partTwo}/>
+        <div
+            className={`${styles.formBlockWrapper} ${formPartNumber ? styles.formBlockPartTwoWrapper : styles.formBlockPartOneWrapper}`}>
+            <CoupleOfInputs contentOfInputs={partOfInputsOne}/>
+            <CoupleOfInputs contentOfInputs={partOfInputsTwo}/>
         </div>
     );
 };

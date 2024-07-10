@@ -62,7 +62,7 @@ const DropZone: FC<PropsType> = ({
     })
 
     return (
-        <div>
+        <>
 
             <div className={styles.dropZone}>
                 <div {...getRootProps({
@@ -82,7 +82,7 @@ const DropZone: FC<PropsType> = ({
                     </div>
                 </div>
             </div>
-        </div>
+        </>
     );
 };
 

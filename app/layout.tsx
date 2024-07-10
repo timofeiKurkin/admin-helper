@@ -5,6 +5,8 @@ import styles from "@/styles/layout.module.scss";
 import {ChildrenType} from "@/app/(auxiliary)/types/AppTypes/AppTypes";
 import Header from "@/app/(auxiliary)/components/Common/Header/Header";
 import Background from "@/app/(auxiliary)/components/UI/Background/Background";
+import Provider from "@/app/(auxiliary)/components/Common/Provider/Provider";
+import AppWrapper from "@/app/(auxiliary)/components/Common/AppWrapper/AppWrapper";
 
 export const metadata: Metadata = {
     title: "IT-NK Service",
@@ -18,14 +20,18 @@ export default function RootLayout({children}: Readonly<ChildrenType>) {
         <body style={TTNormsProFont.style}
               className={styles.layoutBackground}>
         <Background>
-            <div className={styles.layoutWrapper}>
-                <div className={styles.layoutContainer}>
-                    <Header/>
-                    <main>
-                        {children}
-                    </main>
-                </div>
-            </div>
+            <Provider>
+                <AppWrapper>
+                    <div className={styles.layoutWrapper}>
+                        <div className={styles.layoutContainer}>
+                            <Header/>
+                            <main>
+                                {children}
+                            </main>
+                        </div>
+                    </div>
+                </AppWrapper>
+            </Provider>
         </Background>
         </body>
         </html>
