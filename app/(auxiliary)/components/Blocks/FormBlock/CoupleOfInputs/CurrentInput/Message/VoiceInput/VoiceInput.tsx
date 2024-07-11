@@ -3,7 +3,7 @@
 import React, {FC, useRef, useState} from "react";
 import Button from "@/app/(auxiliary)/components/UI/Button/Button";
 import Microphone from "@/app/(auxiliary)/components/UI/SVG/Microphone/Microphone";
-import {blue_dark} from "@/styles/colors";
+import {blue_dark, blue_light} from "@/styles/colors";
 import ReadyVoice
     from "@/app/(auxiliary)/components/Blocks/FormBlock/CoupleOfInputs/CurrentInput/Message/VoiceInput/ReadyVoice";
 
@@ -14,7 +14,9 @@ interface PropsType {
 const VoiceInput: FC<PropsType> = ({voicePlaceHolder}) => {
 
     const [isRecording, setIsRecording] = useState(false);
-    const [audioURL, setAudioURL] = useState("");
+    // const [audioURL, setAudioURL] = useState("");
+    const [audioFile, setAudioFile] = useState<Blob>();
+
     const mediaRecorderRef = useRef<MediaRecorder | null>(null);
     const audioChunksRef = useRef<Blob[]>([]);
 
@@ -31,7 +33,7 @@ const VoiceInput: FC<PropsType> = ({voicePlaceHolder}) => {
         mediaRecorderRef.current.onstop = () => {
             const audioBlob = new Blob(audioChunksRef.current, {type: "audio/wav"});
             const audioURL = URL.createObjectURL(audioBlob);
-            setAudioURL(audioURL);
+            setAudioFile(audioBlob)
         };
 
         mediaRecorderRef.current.start();
@@ -47,10 +49,10 @@ const VoiceInput: FC<PropsType> = ({voicePlaceHolder}) => {
     return (
         <>
             {
-                !isRecording && !audioURL ? (
-                    <Button onClick={isRecording ? stopRecording : startRecording}
+                !audioFile ? (
+                    <Button onClick={isRecording ? () => stopRecording() : () => startRecording()}
                             style={{
-                                backgroundColor: blue_dark
+                                backgroundColor: isRecording ? blue_light : blue_dark
                             }}
                             image={{
                                 position: "left",
@@ -60,12 +62,9 @@ const VoiceInput: FC<PropsType> = ({voicePlaceHolder}) => {
                         {voicePlaceHolder}
                     </Button>
                 ) : (
-                    <ReadyVoice/>
+                    <ReadyVoice audioBlob={audioFile}/>
                 )
             }
-
-
-            {/*{audioURL && <audio src={audioURL} controls/>}*/}
         </>
     );
 };

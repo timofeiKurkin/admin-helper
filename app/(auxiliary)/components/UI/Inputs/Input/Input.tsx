@@ -1,5 +1,5 @@
 import React, {FC} from 'react';
-import {InputPropsType} from "@/app/(auxiliary)/types/InputTypes/InputPropsType";
+import {InputPropsType} from "@/app/(auxiliary)/types/FormTypes/InputTypes/InputPropsType";
 import {InputChangeEventHandler} from "@/app/(auxiliary)/types/AppTypes/AppTypes";
 import borderStyles from "./InputBorder.module.scss";
 import inputStyles from "./Input.module.scss";

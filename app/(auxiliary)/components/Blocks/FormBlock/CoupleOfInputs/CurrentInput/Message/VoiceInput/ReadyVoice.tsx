@@ -1,9 +1,14 @@
-import React from 'react';
-import Play from "@/app/(auxiliary)/components/UI/SVG/Play/Play";
+import React, {FC} from 'react';
 import Button from "@/app/(auxiliary)/components/UI/Button/Button";
 import Replay from "@/app/(auxiliary)/components/UI/SVG/Replay/Replay";
+import AudioPlayer
+    from "@/app/(auxiliary)/components/Blocks/FormBlock/CoupleOfInputs/CurrentInput/Message/VoiceInput/AudioPlayer";
 
-const ReadyVoice = () => {
+interface PropsType {
+    audioBlob: Blob;
+}
+
+const ReadyVoice: FC<PropsType> = ({ audioBlob}) => {
     return (
         <div style={{
             display: "grid",
@@ -11,12 +16,7 @@ const ReadyVoice = () => {
             gridTemplateRows: "3.3125rem",
             columnGap: "0.94rem",
         }}>
-            <Button image={{
-               children: <Play/>,
-               visibleOnlyImage: true,
-            }}/>
-
-            <div>record</div>
+            <AudioPlayer audioBlob={audioBlob}/>
 
             <Button image={{
                 children: <Replay/>,
