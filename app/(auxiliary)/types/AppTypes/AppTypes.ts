@@ -1,4 +1,4 @@
-import React from "react";
+import React, {ChangeEvent} from "react";
 
-export type InputChangeEventHandler = React.ChangeEvent<HTMLInputElement>
+export type InputChangeEventHandler = ChangeEvent<(HTMLInputElement | HTMLTextAreaElement)>
 export type ChildrenType = {children: React.ReactNode};

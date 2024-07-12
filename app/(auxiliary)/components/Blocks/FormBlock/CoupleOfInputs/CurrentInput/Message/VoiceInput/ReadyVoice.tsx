@@ -1,14 +1,19 @@
 import React, {FC} from 'react';
 import Button from "@/app/(auxiliary)/components/UI/Button/Button";
-import Replay from "@/app/(auxiliary)/components/UI/SVG/Replay/Replay";
 import AudioPlayer
     from "@/app/(auxiliary)/components/Blocks/FormBlock/CoupleOfInputs/CurrentInput/Message/VoiceInput/AudioPlayer";
+import Trash from "@/app/(auxiliary)/components/UI/SVG/Trash/Trash";
+import {red_dark} from "@/styles/colors";
 
 interface PropsType {
     audioBlob: Blob;
+    removeCurrentRecord: () => void;
 }
 
-const ReadyVoice: FC<PropsType> = ({ audioBlob}) => {
+const ReadyVoice: FC<PropsType> = ({
+                                       audioBlob,
+                                       removeCurrentRecord
+                                   }) => {
     return (
         <div style={{
             display: "grid",
@@ -19,9 +24,14 @@ const ReadyVoice: FC<PropsType> = ({ audioBlob}) => {
             <AudioPlayer audioBlob={audioBlob}/>
 
             <Button image={{
-                children: <Replay/>,
+                children: <Trash/>,
                 visibleOnlyImage: true,
-            }}/>
+            }}
+                    onClick={removeCurrentRecord}
+                    style={{
+                        backgroundColor: red_dark
+                    }}
+            />
         </div>
     );
 };

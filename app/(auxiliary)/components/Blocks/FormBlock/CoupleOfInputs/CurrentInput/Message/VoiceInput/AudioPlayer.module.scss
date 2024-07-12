@@ -1,0 +1,36 @@
+@import "@/styles/variables.module.scss";
+
+.audioTrackWrapper {
+    width: 100%;
+    height: 100%;
+    position: relative;
+    
+    cursor: pointer;
+    background-color: $white_1;
+    border: 2px solid rgba($black, 0.7);
+    border-radius: $border_radius;
+    
+    overflow: hidden;
+    
+    .audioFill {
+        z-index: 1;
+        height: 100%;
+        position: absolute;
+        background-color: $cold_white;
+        top: 0;
+        left: 0;
+    }
+    
+    .audioTrack {
+        z-index: 2;
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        top: 0;
+        left: 0;
+        
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+}

@@ -4,6 +4,9 @@ import {MessageInputType} from "@/app/(auxiliary)/types/Data/Interface/RootPage/
 import VoiceInput
     from "@/app/(auxiliary)/components/Blocks/FormBlock/CoupleOfInputs/CurrentInput/Message/VoiceInput/VoiceInput";
 import styles from "./Message.module.scss"
+import Textarea from "@/app/(auxiliary)/components/UI/Inputs/Textarea/Textarea";
+import MessageInput
+    from "@/app/(auxiliary)/components/Blocks/FormBlock/CoupleOfInputs/CurrentInput/Message/MessageInput/MessageInput";
 
 interface PropsType {
     currentInput: MessageInputType;
@@ -19,10 +22,8 @@ const Message: FC<PropsType> = ({currentInput}) => {
                 !userCannotTalk ? (
                     <VoiceInput voicePlaceHolder={currentInput.voiceMessage?.inputPlaceholder}/>
                 ) : (
-                    <div style={{
-                        width: "21.5625rem",
-                        border: "1px solid gray",
-                    }}>textarea</div>
+                    <MessageInput type={currentInput.type}
+                                  placeholder={currentInput.textMessage?.inputPlaceholder || ""}/>
                 )
             }
 

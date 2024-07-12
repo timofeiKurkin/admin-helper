@@ -1,0 +1,31 @@
+@import "@/styles/variables.module.scss";
+
+.textareaStyle {
+    box-sizing: border-box;
+    height: inherit;
+    width: inherit;
+    text-size-adjust: none;
+    
+    border-width: 0.94rem 1.56rem;
+    
+    border-color: transparent;
+    background-color: transparent;
+    outline: none;
+    
+    resize: none;
+    
+    &[type="text"], &[type="password"] {
+        font-family: inherit;
+        font-weight: 500;
+        letter-spacing: $letter_spacing;
+        color: $black;
+    }
+    
+    &::placeholder {
+        color: $black;
+    }
+    
+    &:not([rows]) {
+        min-height: 0;
+    }
+}

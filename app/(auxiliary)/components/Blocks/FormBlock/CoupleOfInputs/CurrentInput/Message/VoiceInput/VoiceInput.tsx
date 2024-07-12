@@ -6,16 +6,18 @@ import Microphone from "@/app/(auxiliary)/components/UI/SVG/Microphone/Microphon
 import {blue_dark, blue_light} from "@/styles/colors";
 import ReadyVoice
     from "@/app/(auxiliary)/components/Blocks/FormBlock/CoupleOfInputs/CurrentInput/Message/VoiceInput/ReadyVoice";
+import {object} from "prop-types";
 
 interface PropsType {
     voicePlaceHolder?: string;
 }
 
 const VoiceInput: FC<PropsType> = ({voicePlaceHolder}) => {
-
     const [isRecording, setIsRecording] = useState(false);
+    const [recordingIsDone, setRecordingIsDone] = useState<boolean>(false);
+
     // const [audioURL, setAudioURL] = useState("");
-    const [audioFile, setAudioFile] = useState<Blob>();
+    const [audioFile, setAudioFile] = useState<Blob | null>(null);
 
     const mediaRecorderRef = useRef<MediaRecorder | null>(null);
     const audioChunksRef = useRef<Blob[]>([]);
@@ -41,32 +43,41 @@ const VoiceInput: FC<PropsType> = ({voicePlaceHolder}) => {
 
     const stopRecording = () => {
         setIsRecording((prevState) => !prevState);
+        setRecordingIsDone((prevState) => !prevState);
+
         if (mediaRecorderRef.current) {
             mediaRecorderRef.current.stop()
         }
     }
 
-    return (
-        <>
-            {
-                !audioFile ? (
-                    <Button onClick={isRecording ? () => stopRecording() : () => startRecording()}
-                            style={{
-                                backgroundColor: isRecording ? blue_light : blue_dark
-                            }}
-                            image={{
-                                position: "left",
-                                children: <Microphone/>,
-                                visibleOnlyImage: false
-                            }}>
-                        {voicePlaceHolder}
-                    </Button>
-                ) : (
-                    <ReadyVoice audioBlob={audioFile}/>
-                )
-            }
-        </>
-    );
+    const deleteCurrentRecord = () => {
+        setRecordingIsDone((prevState) => !prevState);
+
+        if (audioFile) {
+            setAudioFile(null)
+        }
+    }
+
+    if(!audioFile && !recordingIsDone) {
+        return (
+            <Button onClick={isRecording ? () => stopRecording() : () => startRecording()}
+                    style={{
+                        backgroundColor: isRecording ? blue_light : blue_dark
+                    }}
+                    image={{
+                        position: "left",
+                        children: <Microphone/>,
+                        visibleOnlyImage: false
+                    }}>
+                {isRecording ? "Говорите" : voicePlaceHolder}
+            </Button>
+        )
+    } else if (audioFile && recordingIsDone) {
+        return (
+            <ReadyVoice audioBlob={audioFile}
+                        removeCurrentRecord={() => deleteCurrentRecord()}/>
+        )
+    }
 };
 
 export default VoiceInput;

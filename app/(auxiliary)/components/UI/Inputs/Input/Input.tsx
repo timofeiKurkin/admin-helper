@@ -18,7 +18,6 @@ const Input: FC<InputPropsType> = ({
                                    }) => {
 
     const changeInputHandler = (e: InputChangeEventHandler) => {
-        console.log("onChange", e.target.value);
         onChange(e)
     }
 
