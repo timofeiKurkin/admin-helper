@@ -7,6 +7,8 @@ import FormFieldWrapper
     from "@/app/(auxiliary)/components/UI/Wrappers/FormBlockWrapper/FormFieldWrapper/FormFieldWrapper";
 import Text from "@/app/(auxiliary)/components/UI/TextTemplates/Text";
 import Message from "@/app/(auxiliary)/components/Blocks/FormBlock/CoupleOfInputs/CurrentInput/Message/Message";
+import PhoneInput from "@/app/(auxiliary)/components/Blocks/FormBlock/CoupleOfInputs/CurrentInput/PhoneInput/PhoneInput";
+import TextHighlighting from "@/app/(auxiliary)/components/UI/TextHighlighting/TextHighlighting";
 
 
 // const typeOfInputsClasses: { [key: string]: string } = {
@@ -28,13 +30,24 @@ const CurrentInput: FC<PropsType> = ({currentInput}) => {
     return (
         <>
             <FormFieldWrapper>
-                <Text>{currentInput.inputTitle}</Text>
+                {currentInput.type === "number-pc" ? (
+                        <TextHighlighting wordIndexes={[3, 4]} style={{fontWeight: 500}}>
+                            <Text>{currentInput.inputTitle}</Text>
+                        </TextHighlighting>
+                    ) : (
+                    <Text>{currentInput.inputTitle}</Text>
+                    )
+                }
 
                 {currentInput.type === "message" && (
                     <Message currentInput={currentInput}/>
                 )}
 
-                {![...photoAndVideoInputsData, "message"].includes(currentInput.type) && (
+                {currentInput.type === "phone-number" && (
+                    <PhoneInput currentInput={currentInput}/>
+                )}
+
+                {![...photoAndVideoInputsData, "message", "phone-number"].includes(currentInput.type) && (
                     <TextInput currentInput={currentInput}/>
                 )}
 

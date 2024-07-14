@@ -5,13 +5,14 @@ import borderStyles from "./InputBorder.module.scss";
 import inputStyles from "./Input.module.scss";
 import fontStyles from "@/styles/fonts.module.scss";
 
-const Input: FC<InputPropsType> = ({
+const Input: FC<InputPropsType<InputChangeEventHandler>> = ({
                                        value,
                                        placeholder,
                                        type = "text",
                                        disabled = false,
                                        maxLength,
                                        tabIndex,
+                                       onKeyDown = () => {},
                                        onBlur,
                                        onChange,
                                        inputIsDirty
@@ -22,7 +23,8 @@ const Input: FC<InputPropsType> = ({
     }
 
     return (
-        <div className={`${inputStyles.inputWrapper} ${inputIsDirty ? inputStyles.inputActive : inputStyles.inputInactive}`}>
+        <div
+            className={`${inputStyles.inputWrapper} ${inputIsDirty ? inputStyles.inputActive : inputStyles.inputInactive}`}>
             <div className={inputStyles.inputBox}>
                 <input
                     className={`${fontStyles.buttonText} ${inputStyles.inputStyle}`}
@@ -32,6 +34,7 @@ const Input: FC<InputPropsType> = ({
                     onChange={(e: InputChangeEventHandler) => changeInputHandler(e)}
                     onBlur={() => onBlur()}
                     onFocus={() => onBlur()}
+                    onKeyDown={(e) => onKeyDown(e)}
                     placeholder={placeholder}
                     maxLength={maxLength}
                     disabled={disabled}

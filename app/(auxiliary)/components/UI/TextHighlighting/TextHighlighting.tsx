@@ -24,10 +24,16 @@ const TextHighlighting: FC<PropsType> = ({
                 child.props.children,
                 (currentChild: React.ReactNode | string) => {
                     if (typeof currentChild === "string") {
-                        const wordsArray: string[] = currentChild.split(" ")
-                        const currentPhrase: string = wordsArray.slice(...wordIndexes).join(" ")
-                        const filteredWords: string[] = wordsArray
-                            .filter((_, i) => !(i < wordIndexes[0] && i > wordIndexes[1]))
+                        const wordsArray: string[] =
+                            currentChild.split(" ")
+
+                        const currentPhrase: string =
+                            wordsArray.slice(...wordIndexes).join(" ")
+
+                        const filteredWords: string[] =
+                            wordsArray.filter((_, i) =>
+                                !(i < wordIndexes[0] && i > wordIndexes[1])
+                            )
 
                         return [
                             filteredWords.slice(0, wordIndexes[0]).join(" "),
@@ -37,7 +43,11 @@ const TextHighlighting: FC<PropsType> = ({
                                 fontWeight: fontWeight,
                                 ...style
                             }}>
-                                <a href={link} target={"_blank"}>{currentPhrase}</a>
+                                {link ? (
+                                    <a href={link} target={"_blank"}>{currentPhrase}</a>
+                                ) : (
+                                    currentPhrase
+                                )}
                             </span>,
                             " ",
                             filteredWords.slice(wordIndexes[1]).join(" ")

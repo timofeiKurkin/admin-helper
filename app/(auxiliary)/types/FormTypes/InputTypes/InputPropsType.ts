@@ -1,16 +1,21 @@
-import React from "react";
-import {InputChangeEventHandler} from "@/app/(auxiliary)/types/AppTypes/AppTypes";
+import React, {HTMLInputTypeAttribute} from "react";
+import {
+    InputChangeEventHandler,
+    KeyBoardEventHandler,
+    TextareaChangeEventHandler
+} from "@/app/(auxiliary)/types/AppTypes/AppTypes";
 
-export interface InputPropsType {
+export interface InputPropsType<OnChangeType> {
     value: string;
     placeholder: string;
-    type?: "text" | "password";
+    type?: HTMLInputTypeAttribute;
     disabled?: boolean;
     maxLength: number;
     tabIndex: number;
 
     onBlur: () => void;
-    onChange: (e: InputChangeEventHandler) => void;
+    onChange: (e: OnChangeType) => void;
+    onKeyDown?: (e: KeyBoardEventHandler<HTMLInputElement>) => void
 
     inputIsDirty?: boolean;
 }

@@ -1,25 +1,5 @@
 @import "@/styles/variables.module.scss";
 
 .inputWrapper {
-    display: grid;
-    
-    @media screen and ($desktop1920) {
-        height: 3.3125rem;
-    }
-}
 
-.deviceInputWrapper {
-    @media screen and ($desktop1920) {
-        width: 18.75rem;
-    }
-}
-
-.nameInputWrapper {
-    //width: 18rem;
-}
-
-.phoneNumberInputWrapper {
-}
-
-.numberPCInputWrapper {
 }

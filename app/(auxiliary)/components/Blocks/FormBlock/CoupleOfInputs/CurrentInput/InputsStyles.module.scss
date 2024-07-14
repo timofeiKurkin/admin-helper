@@ -1,0 +1,19 @@
+@import "@/styles/variables.module.scss";
+
+.deviceInputWrapper {
+    @media screen and ($desktop1920) {
+        width: 18.75rem;
+    }
+}
+
+.nameInputWrapper {
+    width: 13.125rem;
+}
+
+.phoneNumberInputWrapper {
+
+}
+
+.numberPCInputWrapper {
+
+}

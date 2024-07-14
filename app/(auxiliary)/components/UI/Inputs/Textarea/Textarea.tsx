@@ -1,13 +1,13 @@
 import React, {FC} from 'react';
 import {InputPropsType} from "@/app/(auxiliary)/types/FormTypes/InputTypes/InputPropsType";
-import {InputChangeEventHandler} from "@/app/(auxiliary)/types/AppTypes/AppTypes";
+import {InputChangeEventHandler, TextareaChangeEventHandler} from "@/app/(auxiliary)/types/AppTypes/AppTypes";
 import borderStyles from "@/app/(auxiliary)/components/UI/Inputs/Input/InputBorder.module.scss";
 import styles from "./Textarea.module.scss"
 import generalStyles from "@/app/(auxiliary)/components/UI/Inputs/Input/Input.module.scss"
 import fontStyles from "@/styles/fonts.module.scss";
 
 
-const Textarea: FC<InputPropsType> = ({
+const Textarea: FC<InputPropsType<TextareaChangeEventHandler>> = ({
                                           value,
                                           placeholder,
                                           disabled = false,
@@ -18,7 +18,7 @@ const Textarea: FC<InputPropsType> = ({
                                           inputIsDirty
                                       }) => {
 
-    const changeTextareaHandler = (e: InputChangeEventHandler) => {
+    const changeTextareaHandler = (e: TextareaChangeEventHandler) => {
         onChange(e)
     }
 
