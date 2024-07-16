@@ -1,0 +1,33 @@
+@import "@/styles/variables.module.scss";
+
+.formPartWrapper {
+    display: flex;
+    flex-direction: column;
+    row-gap: 2.19rem;
+    
+    .permissionsAndSend {
+        display: grid;
+        flex-direction: column;
+        
+        @media screen and ($desktop1920) {
+            grid-template-columns: 13.125rem 1fr;
+            
+            row-gap: 1.88rem;
+            grid-column: 3 / 4;
+        }
+        
+        @media screen and ($desktop1920),
+        screen and ($desktop1440_1919),
+        screen and ($desktop1280_1439),
+        screen and ($pad992_1279),
+        screen and ($pad640_991) {
+            .permissions {
+                grid-column: 1 / 3;
+            }
+            
+            .send {
+                grid-column: 1 / 2;
+            }
+        }
+    }
+}

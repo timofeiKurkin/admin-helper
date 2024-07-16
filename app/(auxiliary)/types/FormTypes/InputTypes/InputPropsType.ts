@@ -12,6 +12,12 @@ export interface InputPropsType<OnChangeType> {
     disabled?: boolean;
     maxLength: number;
     tabIndex: number;
+    dynamicWidth?: boolean;
+
+    datalist?: {
+        listType: string;
+        list: string[];
+    };
 
     onBlur: () => void;
     onChange: (e: OnChangeType) => void;

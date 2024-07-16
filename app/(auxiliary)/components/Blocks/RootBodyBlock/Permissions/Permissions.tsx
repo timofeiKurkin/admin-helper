@@ -2,14 +2,14 @@
 
 import React, {FC, useState} from 'react';
 import SmallText from "@/app/(auxiliary)/components/UI/TextTemplates/SmallText";
-import {PermissionsContent} from "@/app/(auxiliary)/types/Data/Interface/RootPage/RootPageType";
+import {PermissionsContentType} from "@/app/(auxiliary)/types/Data/Interface/RootPage/RootPageType";
 import Checkbox from "@/app/(auxiliary)/components/UI/SVG/Checkbox/Checkbox";
 import TextHighlighting from "@/app/(auxiliary)/components/UI/TextHighlighting/TextHighlighting";
 import styles from "./Permissions.module.scss"
 
 
 interface PropsType {
-    permissionsContent: PermissionsContent;
+    permissionsContent: PermissionsContentType;
 }
 
 const Permissions: FC<PropsType> = ({permissionsContent}) => {

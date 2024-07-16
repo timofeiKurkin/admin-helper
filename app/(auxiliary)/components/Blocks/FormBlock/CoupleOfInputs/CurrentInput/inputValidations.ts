@@ -34,7 +34,7 @@ export const inputValidations: { [key: string]: ValidationsType } = {
     "phone-number": {
         isEmpty: true,
         maxLength: 20,
-        minLength: 3
+        minLength: 20
     },
     "number-pc": {
         isEmpty: true,

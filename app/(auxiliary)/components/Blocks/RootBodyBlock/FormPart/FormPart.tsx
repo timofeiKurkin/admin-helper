@@ -1,26 +1,48 @@
 import React, {FC} from 'react';
-import {FormPartType, PermissionsContent} from "@/app/(auxiliary)/types/Data/Interface/RootPage/RootPageType";
+import {FormPartType, PermissionsContentType} from "@/app/(auxiliary)/types/Data/Interface/RootPage/RootPageType";
 import TitleBlock from "@/app/(auxiliary)/components/Blocks/TitleBlocks/TitleBlock/TitleBlock";
 import FormBlockWrapper from "@/app/(auxiliary)/components/UI/Wrappers/FormBlockWrapper/FormBlockWrapper";
 import FormBlock from "@/app/(auxiliary)/components/Blocks/FormBlock/FormBlock";
+import styles from "./FormPart.module.scss";
+import Permissions from "@/app/(auxiliary)/components/Blocks/RootBodyBlock/Permissions/Permissions";
+import Button from "@/app/(auxiliary)/components/UI/Button/Button";
 
 
 interface PropsType {
-    content: FormPartType;
+    inputsContent: FormPartType;
+    permissionsContent?: {
+        permissions: PermissionsContentType;
+        button: string;
+    }
 }
 
 const FormPart: FC<PropsType> = ({
-                                     content
-}) => {
+                                     inputsContent,
+                                     permissionsContent
+                                 }) => {
     return (
-        <>
+        <div className={styles.formPartWrapper}>
             <FormBlockWrapper>
-                <TitleBlock>{content.title}</TitleBlock>
+                <TitleBlock>{inputsContent.title}</TitleBlock>
 
-                <FormBlock inputContent={content.inputs}
-                           formPartNumber={content.formPartNumber}/>
+                <FormBlock inputContent={inputsContent.inputs}
+                           formPartNumber={inputsContent.formPartNumber}/>
             </FormBlockWrapper>
-        </>
+
+            {(inputsContent.formPartNumber && permissionsContent) ? (
+                <div className={styles.permissionsAndSend}>
+                    <div className={styles.permissions}>
+                        <Permissions permissionsContent={permissionsContent.permissions}/>
+                    </div>
+
+                    <div className={styles.send}>
+                        <Button disabled={true}>
+                            {permissionsContent.button}
+                        </Button>
+                    </div>
+                </div>
+            ) : null}
+        </div>
     );
 };
 

@@ -3,12 +3,10 @@
 .formFieldWrapper {
     display: grid;
     grid-template-columns: 1fr;
+    grid-template-rows: min-content min-content;
+    overflow: hidden;
     
     @media screen and ($desktop1920) {
-        row-gap: 0.94rem;
-    }
-    
-    @media screen and ($desktop1920) {
-        grid-template-rows: min-content minmax(3.3125rem, 1fr);
+        row-gap: 0.938rem;
     }
 }

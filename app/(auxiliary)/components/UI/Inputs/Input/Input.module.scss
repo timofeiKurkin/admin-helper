@@ -14,10 +14,12 @@
         
         .inputStyle {
             box-sizing: border-box;
+            position: relative;
             
             height: inherit;
             width: inherit;
             
+            padding: 0;
             border-width: 2px 25px;
             
             border-color: transparent;
@@ -33,6 +35,31 @@
             
             &::placeholder {
                 color: $black;
+            }
+            
+            
+            input::-webkit-calendar-picker-indicator {
+                display: none;
+            }
+            
+            input[type="text"] {
+                -moz-appearance: textfield;
+            }
+            
+            input[type="text"]::-ms-clear {
+                display: none;
+                width: 0;
+                height: 0;
+            }
+            
+            &::after {
+                content: '\25BC'; /* Unicode символ стрелки вниз */
+                position: absolute;
+                right: 10px;
+                top: 50%;
+                transform: translateY(-50%);
+                pointer-events: none; /* Иконка не будет перехватывать события мыши */
+                color: #000; /* Цвет стрелки */
             }
         }
     }

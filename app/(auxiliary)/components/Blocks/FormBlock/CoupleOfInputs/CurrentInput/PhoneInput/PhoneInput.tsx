@@ -5,21 +5,19 @@ import useInput from "@/app/(auxiliary)/hooks/useInput";
 import {
     inputValidations
 } from "@/app/(auxiliary)/components/Blocks/FormBlock/CoupleOfInputs/CurrentInput/inputValidations";
-import styles
-    from "@/app/(auxiliary)/components/Blocks/FormBlock/CoupleOfInputs/CurrentInput/TextInput/TextInput.module.scss";
+import inputsStyles
+    from "@/app/(auxiliary)/components/Blocks/FormBlock/CoupleOfInputs/CurrentInput/InputsStyles.module.scss";
 import {PhoneNumberInputType} from "@/app/(auxiliary)/types/Data/Interface/RootPage/RootPageType";
+import {
+    inputHandleKeyDown
+} from "@/app/(auxiliary)/components/Blocks/FormBlock/CoupleOfInputs/CurrentInput/inputHandleKeyDown";
 
-
-const typeOfInputsClasses: { [key: string]: string } = {
-    "phone-number": styles.phoneNumberInputWrapper,
-}
 
 interface PropsType {
     currentInput: PhoneNumberInputType;
 }
 
 const PhoneInput: FC<PropsType> = ({currentInput}) => {
-    const currentInputTypesClassName = typeOfInputsClasses["phone-number"]
     const value = useInput("+7 ", currentInput.type, inputValidations[currentInput.type])
 
     const phoneRegularExpression = (e: InputChangeEventHandler) => {
@@ -44,42 +42,15 @@ const PhoneInput: FC<PropsType> = ({currentInput}) => {
         value.onChange(e)
     }
 
-    const handleKeyDown = (e: KeyBoardEventHandler<HTMLInputElement>) => {
-        const isDigit = /\d/.test(e.key);
-        const isControl = [
-            'Backspace',
-            'ArrowLeft',
-            'ArrowRight',
-            'Delete',
-            'Tab',
-            "Control",
-            "v"
-        ].includes(e.key);
-
-        if (!isDigit && !isControl) {
-            e.preventDefault();
-        }
-
-        if (e.key === 'Backspace' && !isDigit) {
-            if (value.value.length >= 4 && value.value.endsWith(" - ")) {
-                e.preventDefault()
-                value.onChange({target: {value: value.value.slice(0, -3)}} as React.ChangeEvent<HTMLInputElement>)
-            } else if (value.value.length >= 4 && (value.value.endsWith(" "))) {
-                e.preventDefault()
-                value.onChange({target: {value: value.value.slice(0, -1)}} as React.ChangeEvent<HTMLInputElement>)
-            }
-        }
-    };
-
     return (
-        <div className={currentInputTypesClassName}>
+        <div className={inputsStyles.phoneNumberInputWrapper}>
             <Input
                 value={(value.isDirty || value.value.length >= 4) ? value.value : ""}
                 onBlur={value.onBlur}
                 type={"tel"}
                 placeholder={currentInput.inputPlaceholder || ""}
                 tabIndex={1}
-                onKeyDown={handleKeyDown}
+                onKeyDown={(e) => inputHandleKeyDown(e, value)}
                 maxLength={inputValidations[currentInput.type].maxLength}
                 inputIsDirty={value.isDirty}
                 onChange={phoneRegularExpression}/>

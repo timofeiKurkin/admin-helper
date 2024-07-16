@@ -9,6 +9,8 @@ import Text from "@/app/(auxiliary)/components/UI/TextTemplates/Text";
 import Message from "@/app/(auxiliary)/components/Blocks/FormBlock/CoupleOfInputs/CurrentInput/Message/Message";
 import PhoneInput from "@/app/(auxiliary)/components/Blocks/FormBlock/CoupleOfInputs/CurrentInput/PhoneInput/PhoneInput";
 import TextHighlighting from "@/app/(auxiliary)/components/UI/TextHighlighting/TextHighlighting";
+import ComputerNumberInput
+    from "@/app/(auxiliary)/components/Blocks/FormBlock/CoupleOfInputs/CurrentInput/ComputerNumberInput/ComputerNumberInput";
 
 
 // const typeOfInputsClasses: { [key: string]: string } = {
@@ -47,7 +49,11 @@ const CurrentInput: FC<PropsType> = ({currentInput}) => {
                     <PhoneInput currentInput={currentInput}/>
                 )}
 
-                {![...photoAndVideoInputsData, "message", "phone-number"].includes(currentInput.type) && (
+                {currentInput.type === "number-pc" && (
+                    <ComputerNumberInput currentInput={currentInput}/>
+                )}
+
+                {![...photoAndVideoInputsData, "message", "phone-number", "number-pc"].includes(currentInput.type) && (
                     <TextInput currentInput={currentInput}/>
                 )}
 

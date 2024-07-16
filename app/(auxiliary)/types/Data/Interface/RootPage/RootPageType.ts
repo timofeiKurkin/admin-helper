@@ -4,7 +4,7 @@ import {TypeOfInputs} from "@/app/(auxiliary)/types/AppTypes/InputHooksTypes";
 export interface RootPageType {
     title: string;
     formContent: FormContentType;
-    permissionsContent: PermissionsContent;
+    permissionsContent: PermissionsContentType;
     button: string;
 }
 
@@ -31,7 +31,7 @@ export interface InputType {
 }
 
 export interface DeviceInputType extends InputType {
-    devicesList?: DevicesListType[];
+    helpfulList: string[];
 }
 
 export interface MessageInputType extends InputType {
@@ -46,7 +46,7 @@ export interface NameInputType extends InputType {
 }
 
 export interface CompanyInputType extends InputType {
-    listOfCompanies?: string[];
+    helpfulList: string[];
 }
 
 export interface PhoneNumberInputType extends InputType {
@@ -61,18 +61,13 @@ export type AllTypesOfInputs = (DeviceInputType & MessageInputType | PhotoAndVid
 
 // Data for inputs
 
-export interface DevicesListType {
-    id: number;
-    title: string;
-}
-
 export interface MessageType {
     inputPlaceholder: string;
 }
 
 
 // Permissions
-export interface PermissionsContent {
+export interface PermissionsContentType {
     ICanAnswer: string;
     personalDataPreparation: string;
     preparationLinkToPolicy: string;
