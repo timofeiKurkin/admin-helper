@@ -53,6 +53,7 @@ const PhoneInput: FC<PropsType> = ({currentInput}) => {
                 onKeyDown={(e) => inputHandleKeyDown(e, value)}
                 maxLength={inputValidations[currentInput.type].maxLength}
                 inputIsDirty={value.isDirty}
+                dynamicWidth={true}
                 onChange={phoneRegularExpression}/>
         </div>
     );

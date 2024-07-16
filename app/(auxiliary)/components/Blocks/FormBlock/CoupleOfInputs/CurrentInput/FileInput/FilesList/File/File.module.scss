@@ -1,0 +1,9 @@
+@import "@/styles/variables.module.scss";
+
+.fileWrapper {
+    box-sizing: border-box;
+    
+    border-radius: 0.625rem;
+    border: 2px solid $blue_dark;
+    background-color: $white_1;
+}

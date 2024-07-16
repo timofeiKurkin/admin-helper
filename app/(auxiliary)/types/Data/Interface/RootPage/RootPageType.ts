@@ -1,11 +1,11 @@
 // Form body
 import {TypeOfInputs} from "@/app/(auxiliary)/types/AppTypes/InputHooksTypes";
 
-export interface RootPageType {
+export interface RootPageType extends Button {
     title: string;
     formContent: FormContentType;
+    uploadFile: UploadFileType;
     permissionsContent: PermissionsContentType;
-    button: string;
 }
 
 export interface FormContentType {
@@ -19,7 +19,6 @@ export interface FormPartType {
     inputs: AllTypesOfInputsArray;
 }
 
-
 // Inputs
 export interface InputType {
     id: number;
@@ -27,7 +26,7 @@ export interface InputType {
     inputTitle: string;
     inputPlaceholder?: string;
     toggleText?: string;
-    button?: string;
+    // button?: string;
 }
 
 export interface DeviceInputType extends InputType {
@@ -39,7 +38,7 @@ export interface MessageInputType extends InputType {
     textMessage?: MessageType;
 }
 
-export interface PhotoAndVideoInputType extends InputType {
+export interface PhotoAndVideoInputType extends InputType, Button {
 }
 
 export interface NameInputType extends InputType {
@@ -60,11 +59,24 @@ export type AllTypesOfInputs = (DeviceInputType & MessageInputType | PhotoAndVid
 
 
 // Data for inputs
-
 export interface MessageType {
     inputPlaceholder: string;
 }
 
+export interface Button {
+    button: string;
+}
+
+
+// Upload File Type
+export interface UploadFileType extends Button {
+    uploadPhoto: string;
+    uploadVideo: string;
+    image: {
+        static: string;
+        isDrag: string;
+    }
+}
 
 // Permissions
 export interface PermissionsContentType {

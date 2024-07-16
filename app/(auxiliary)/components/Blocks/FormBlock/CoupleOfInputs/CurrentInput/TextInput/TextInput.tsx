@@ -32,12 +32,10 @@ const TextInput: FC<PropsType> = ({
 
     useEffect(() => {
         if(currentInput.type === "device" || currentInput.type === "company") {
-            const devicesList = currentInput.helpfulList
+            const devicesList = (currentInput as any).helpfulList
             setCurrentHelpfulList((prevState) => devicesList || prevState)
         }
     }, [currentInput]);
-
-    console.log("currentHelpfulList", currentHelpfulList);
 
     return (
         <div className={currentInputTypesClassName}>

@@ -1,0 +1,28 @@
+@import "@/styles/variables.module.scss";
+
+
+.filesListWrapper {
+    width: inherit;
+    height: inherit;
+    
+    border-radius: $border_radius;
+    border: $black_input_border;
+    background-color: $white_1;
+    
+    .filesList {
+        width: 100%;
+        height: 100%;
+        padding: 0.81rem 0.94rem 0.75rem 0.94rem;
+        
+        display: flex;
+        align-items: center;
+        column-gap: 1.13rem;
+        
+        .emptyList {
+            width: inherit;
+            display: flex;
+            justify-content: center;
+            user-select: none;
+        }
+    }
+}

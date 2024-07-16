@@ -1,4 +1,5 @@
 import React from "react";
+import {UploadFileType} from "@/app/(auxiliary)/types/Data/Interface/RootPage/RootPageType";
 
 export interface AppContextType {
     appState: StateType;
@@ -6,9 +7,14 @@ export interface AppContextType {
 }
 
 export interface StateType {
-    userDevice: {
+    userDevice?: {
         phoneAdaptive: boolean;
         padAdaptive: boolean;
         desktopAdaptive: boolean;
     }
+    rootPageContent?: {
+        uploadFileContent: UploadFileType;
+    }
+    photoList?: File[];
+    videoList?: File[];
 }

@@ -50,7 +50,7 @@ const Input: FC<
                 spanRef.current.style.borderWidth = getComputedStyle(inputRef.current).borderWidth
 
 
-                if (value.length >= 7) {
+                if (value.length >= placeholder.length / 1.5) {
                     spanRef.current.textContent = value
                     const fullWidth = spanRef.current.offsetWidth + 54
                     inputRef.current.style.width = fullWidth + "px"
@@ -93,7 +93,7 @@ const Input: FC<
                     maxLength={maxLength}
                     disabled={disabled}
                     tabIndex={tabIndex}
-                    list={value.length > 2 ? datalist?.listType : ""}
+                    list={value.length > 2 && datalist?.listType || ""}
 
                     onChange={(e: InputChangeEventHandler) => changeInputHandler(e)}
                     onBlur={() => onBlur()}

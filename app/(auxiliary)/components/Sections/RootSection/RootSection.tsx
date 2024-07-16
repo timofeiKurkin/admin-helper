@@ -8,6 +8,7 @@ import {RootPageType} from "@/app/(auxiliary)/types/Data/Interface/RootPage/Root
 export default function RootSection() {
     const rootPageData: RootPageType = RootPageData
 
+
     return (
         <TitleAndBodyWrapper>
             <MainTitleBlock>{rootPageData.title}</MainTitleBlock>
