@@ -3,10 +3,9 @@ import {FileListType} from "@/app/(auxiliary)/types/DropZoneTypes/DropZoneTypes"
 import {FileError, useDropzone} from "react-dropzone";
 import {PhotoAndVideoInputType} from "@/app/(auxiliary)/types/AppTypes/InputHooksTypes";
 import styles from "./DropZone.module.scss"
-import ButtonText from "@/app/(auxiliary)/components/UI/TextTemplates/ButtonText";
 import Button from "@/app/(auxiliary)/components/UI/Button/Button";
 import {UploadFileType} from "@/app/(auxiliary)/types/Data/Interface/RootPage/RootPageType";
-import {blue_dark, white_1} from "@/styles/colors";
+import {white_1} from "@/styles/colors";
 import Title from "@/app/(auxiliary)/components/UI/TextTemplates/Title";
 import {AppContext} from "@/app/(auxiliary)/components/Common/Provider/Provider";
 
@@ -22,42 +21,54 @@ const DropZone: FC<PropsType> = ({
                                      filesType,
                                      openDragDropZone
                                  }) => {
-    // const [filesList, setFilesList] = useState<FileListType>([])
-
     const {appState, setAppState} = useContext(AppContext)
     const [uploadingFilesStatus, setUploadingFilesStatus] =
         useState<boolean>(false)
 
     const onDrop = useCallback((userFiles: FileListType) => {
         console.log("userFiles", userFiles)
-        console.log("appState.photoList", appState.photoList)
 
-        if(appState.photoList) {
-            const filteredFiles = userFiles.filter((file) => !appState.photoList?.includes(file))
-            console.log("filteredFiles", filteredFiles)
+        if (appState.photoList) {
+            const filteredFiles =
+                userFiles.filter((file) => !appState.photoList?.files?.includes(file))
 
             if (filteredFiles) {
-                setAppState({
-                    ...appState,
-                    photoList: [
-                        ...appState.photoList,
-                        ...filteredFiles.map((file) =>
-                            Object.assign(file, {preview: URL.createObjectURL(file)}))
-                    ]
-                })
-
-                // setFilesList(() => [
-                //     ...filesList,
-                //     ...filteredFiles.map((file) =>
-                //         Object.assign(file, {preview: URL.createObjectURL(file)}))
-                // ])
+                if (filesType === "video") {
+                    setAppState({
+                        ...appState,
+                        videoList: {
+                            ...appState.videoList,
+                            files: [
+                                ...appState.videoList?.files || [],
+                                ...filteredFiles
+                            ]
+                        }
+                    })
+                } else if (filesType === "photo") {
+                    setAppState({
+                        ...appState,
+                        photoList: {
+                            ...appState.photoList,
+                            files: [
+                                ...appState.photoList.files,
+                                ...filteredFiles
+                            ]
+                        }
+                    })
+                }
             }
         }
 
 
-    }, [appState, setAppState])
+    }, [
+        filesType,
+        appState,
+        setAppState
+    ])
 
-    const nonRepeatingFiles = <T extends File>(file: T): FileError | FileError[] | null | any => {
+    const nonRepeatingFiles = (
+        file: File
+    ): FileError | FileError[] | null | any => {
 
     }
 
@@ -98,8 +109,7 @@ const DropZone: FC<PropsType> = ({
                 }
             })}>
                 <input {...getInputProps({})}
-                       className={styles.dropInput}
-                       onClick={(e) => e.stopPropagation()}/>
+                       className={styles.dropInput}/>
 
                 <div className={styles.dropZoneContentWrapper}>
                     <div className={styles.dropZoneContent}>
@@ -107,7 +117,8 @@ const DropZone: FC<PropsType> = ({
                             <Title>{filesType === "photo" ? content.uploadPhoto : content.uploadVideo}</Title>
                         </div>
 
-                        <div className={styles.closeDropZone}>
+                        <div className={styles.closeDropZone}
+                             onClick={(e) => e.stopPropagation()}>
                             <Button onClick={openDragDropZone}
                                     style={{
                                         backgroundColor: white_1

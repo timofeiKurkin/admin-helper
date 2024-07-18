@@ -2,7 +2,7 @@
 
 import React, {createContext, FC, useState} from 'react';
 import {ChildrenType} from "@/app/(auxiliary)/types/AppTypes/AppTypes";
-import {AppContextType, StateType} from "@/app/(auxiliary)/types/AppTypes/Context";
+import {AppContextType, FileListStateType, StateType} from "@/app/(auxiliary)/types/AppTypes/Context";
 import {UploadFileType} from "@/app/(auxiliary)/types/Data/Interface/RootPage/RootPageType";
 
 
@@ -18,8 +18,8 @@ const Provider: FC<ChildrenType> = ({children}) => {
         rootPageContent: {
             uploadFileContent: {} as UploadFileType,
         },
-        photoList: [],
-        videoList: []
+        photoList: {type: "photo", files: []} as FileListStateType,
+        videoList: {type: "video", files: []} as FileListStateType
     })
 
     return (

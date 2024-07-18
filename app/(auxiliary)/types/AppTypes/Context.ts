@@ -1,9 +1,15 @@
 import React from "react";
 import {UploadFileType} from "@/app/(auxiliary)/types/Data/Interface/RootPage/RootPageType";
+import {PhotoAndVideoInputType} from "@/app/(auxiliary)/types/AppTypes/InputHooksTypes";
 
 export interface AppContextType {
     appState: StateType;
     setAppState: React.Dispatch<React.SetStateAction<StateType>>;
+}
+
+export interface FileListStateType {
+    type?: PhotoAndVideoInputType;
+    files: File[];
 }
 
 export interface StateType {
@@ -15,6 +21,6 @@ export interface StateType {
     rootPageContent?: {
         uploadFileContent: UploadFileType;
     }
-    photoList?: File[];
-    videoList?: File[];
+    photoList?: FileListStateType;
+    videoList?: FileListStateType;
 }

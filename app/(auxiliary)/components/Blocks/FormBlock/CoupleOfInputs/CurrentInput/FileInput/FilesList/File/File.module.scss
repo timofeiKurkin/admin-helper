@@ -2,8 +2,16 @@
 
 .fileWrapper {
     box-sizing: border-box;
+    overflow: hidden;
+    position: relative;
     
     border-radius: 0.625rem;
     border: 2px solid $blue_dark;
     background-color: $white_1;
+    
+    .fileRemove {
+        position: absolute;
+        top: 8px;
+        right: 8px;
+    }
 }

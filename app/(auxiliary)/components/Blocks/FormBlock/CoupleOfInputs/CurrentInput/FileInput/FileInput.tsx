@@ -35,7 +35,8 @@ const FileInput: FC<PropsType> = ({currentInput}) => {
             {haveMediaFile && (
                 <div className={styles.filesBlock}>
                     <div className={styles.fileList}>
-                        <FilesList placeholder={currentInput.inputPlaceholder || ""}/>
+                        <FilesList placeholder={currentInput.inputPlaceholder || ""}
+                                   type={currentInput.type}/>
                     </div>
 
                     <div className={styles.addFiles}>
