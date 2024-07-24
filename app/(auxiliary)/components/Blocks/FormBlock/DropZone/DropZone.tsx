@@ -1,4 +1,4 @@
-import React, {FC, useCallback, useContext, useState} from "react";
+import React, {FC, useCallback, useContext, useEffect, useRef, useState} from "react";
 import {FileListType} from "@/app/(auxiliary)/types/DropZoneTypes/DropZoneTypes";
 import {FileError, useDropzone} from "react-dropzone";
 import {PhotoAndVideoInputType} from "@/app/(auxiliary)/types/AppTypes/InputHooksTypes";
@@ -8,6 +8,8 @@ import {UploadFileType} from "@/app/(auxiliary)/types/Data/Interface/RootPage/Ro
 import {white_1} from "@/styles/colors";
 import Title from "@/app/(auxiliary)/components/UI/TextTemplates/Title";
 import {AppContext} from "@/app/(auxiliary)/components/Common/Provider/Provider";
+import {KeyBoardEventHandler} from "@/app/(auxiliary)/types/AppTypes/AppTypes";
+import Image from "next/image";
 
 
 interface PropsType {
@@ -24,6 +26,7 @@ const DropZone: FC<PropsType> = ({
     const {appState, setAppState} = useContext(AppContext)
     const [uploadingFilesStatus, setUploadingFilesStatus] =
         useState<boolean>(false)
+    const [imageData, setImageData] = useState<string>("")
 
     const onDrop = useCallback((userFiles: FileListType) => {
         console.log("userFiles", userFiles)
@@ -98,17 +101,60 @@ const DropZone: FC<PropsType> = ({
         disabled: uploadingFilesStatus
     })
 
+    useEffect(() => {
+        const handleKeyDown = async () => {
+            const data = await navigator.clipboard.read()
+            const blobOutput = await data[0].getType("image/png")
+            const dataURL = URL.createObjectURL(blobOutput)
+            setImageData(dataURL)
+        }
+
+        window.addEventListener("paste", handleKeyDown)
+
+        return () => {
+            window.removeEventListener("paste", handleKeyDown)
+        }
+    }, [])
+
+    // useEffect(() => {
+    //     const test = bufferRef.current
+    //     test?.focus()
+    //
+    //     const pasteHandler = (e: any) => {
+    //         console.log("navigator content", navigator)
+    //         console.log("press paste", e)
+    //     }
+    //
+    //     test?.addEventListener("paste", pasteHandler)
+    //
+    //
+    //     return () => {
+    //         test?.removeEventListener("paste", pasteHandler)
+    //     }
+    // }, []);
+
+    // const pasteHandler = async (e: any) => {
+    //     const data = await navigator.clipboard.read()
+    //     console.log("navigator content", data)
+    //     console.log("press paste", e)
+    // }
+
     return (
-        <div className={styles.dropZoneWrapper}>
+        <div className={styles.dropZoneWrapper}
+             // ref={bufferRef}
+             // onPaste={pasteHandler}
+        >
             <div {...getRootProps({
                 style: {
                     width: "inherit",
                     height: "inherit",
                     userSelect: "none",
                     cursor: uploadingFilesStatus ? "default" : "pointer"
-                }
+                },
+                // onPaste: (e) => pasteHandler(e)
             })}>
                 <input {...getInputProps({})}
+                    // onPaste={(e) => pasteHandler(e)}
                        className={styles.dropInput}/>
 
                 <div className={styles.dropZoneContentWrapper}>
@@ -123,6 +169,13 @@ const DropZone: FC<PropsType> = ({
                                     style={{
                                         backgroundColor: white_1
                                     }}>{content.button}</Button>
+
+                            {imageData ? (
+                                <Image src={imageData}
+                                       alt={"photo from clipboard"}
+                                       width={100}
+                                       height={100}/>
+                            ): null}
                         </div>
                     </div>
                 </div>
