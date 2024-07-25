@@ -1,4 +1,4 @@
-import React, {FC, useCallback, useContext, useEffect, useRef, useState} from "react";
+import React, {FC, useCallback, useContext, useEffect, useState} from "react";
 import {FileListType} from "@/app/(auxiliary)/types/DropZoneTypes/DropZoneTypes";
 import {FileError, useDropzone} from "react-dropzone";
 import {PhotoAndVideoInputType} from "@/app/(auxiliary)/types/AppTypes/InputHooksTypes";
@@ -8,62 +8,63 @@ import {UploadFileType} from "@/app/(auxiliary)/types/Data/Interface/RootPage/Ro
 import {white_1} from "@/styles/colors";
 import Title from "@/app/(auxiliary)/components/UI/TextTemplates/Title";
 import {AppContext} from "@/app/(auxiliary)/components/Common/Provider/Provider";
-import {KeyBoardEventHandler} from "@/app/(auxiliary)/types/AppTypes/AppTypes";
-import Image from "next/image";
 
 
 interface PropsType {
     content: UploadFileType;
     filesType: PhotoAndVideoInputType;
-    openDragDropZone: () => void;
+    visibleDragDropZone: () => void;
 }
 
 const DropZone: FC<PropsType> = ({
                                      content,
                                      filesType,
-                                     openDragDropZone
+                                     visibleDragDropZone
                                  }) => {
     const {appState, setAppState} = useContext(AppContext)
     const [uploadingFilesStatus, setUploadingFilesStatus] =
         useState<boolean>(false)
-    const [imageData, setImageData] = useState<string>("")
 
     const onDrop = useCallback((userFiles: FileListType) => {
-        console.log("userFiles", userFiles)
+        if (filesType === "video" && appState.videoList) {
+            const filteredFiles =
+                userFiles.filter((file) => !appState.videoList?.files?.includes(file))
 
-        if (appState.photoList) {
+            if (filteredFiles) {
+                setAppState({
+                    ...appState,
+                    videoList: {
+                        ...appState.videoList,
+                        files: [
+                            ...appState.videoList?.files || [],
+                            ...filteredFiles
+                        ]
+                    }
+                })
+            }
+        }
+
+        if (filesType === "photo" && appState.photoList) {
             const filteredFiles =
                 userFiles.filter((file) => !appState.photoList?.files?.includes(file))
 
             if (filteredFiles) {
-                if (filesType === "video") {
-                    setAppState({
-                        ...appState,
-                        videoList: {
-                            ...appState.videoList,
-                            files: [
-                                ...appState.videoList?.files || [],
-                                ...filteredFiles
-                            ]
-                        }
-                    })
-                } else if (filesType === "photo") {
-                    setAppState({
-                        ...appState,
-                        photoList: {
-                            ...appState.photoList,
-                            files: [
-                                ...appState.photoList.files,
-                                ...filteredFiles
-                            ]
-                        }
-                    })
-                }
+                setAppState({
+                    ...appState,
+                    photoList: {
+                        ...appState.photoList,
+                        files: [
+                            ...appState.photoList.files,
+                            ...filteredFiles
+                        ]
+                    }
+                })
             }
         }
 
-
+        visibleDragDropZone()
     }, [
+        visibleDragDropZone,
         filesType,
         appState,
         setAppState
@@ -103,10 +104,37 @@ const DropZone: FC<PropsType> = ({
 
     useEffect(() => {
         const handleKeyDown = async () => {
-            const data = await navigator.clipboard.read()
-            const blobOutput = await data[0].getType("image/png")
-            const dataURL = URL.createObjectURL(blobOutput)
-            setImageData(dataURL)
+            try {
+                const data = await navigator.clipboard.read()
+                console.log("data", data)
+
+                if (data[0].types.includes("image/png")) {
+                    const blobOutput = await data[0].getType("image/png")
+                    // const dataURL = URL.createObjectURL(blobOutput)
+
+                    const pastedImageName =
+                        `pasted-image-${new Date().toLocaleDateString("ru-RU", {
+                            hour: '2-digit',
+                            hour12: false,
+                            minute: '2-digit',
+                            second: '2-digit'
+                        }).split(", ").join("-")}`
+                    const newFile = new File([blobOutput], pastedImageName)
+                    setAppState({
+                        ...appState,
+                        photoList: {
+                            ...appState.photoList,
+                            files: [
+                                ...appState.photoList?.files || [],
+                                newFile
+                            ]
+                        }
+                    })
+                    visibleDragDropZone()
+                }
+            } catch (e) {
+                console.error("Error with paste a clipboard: ", e)
+            }
         }
 
         window.addEventListener("paste", handleKeyDown)
@@ -141,8 +169,8 @@ const DropZone: FC<PropsType> = ({
 
     return (
         <div className={styles.dropZoneWrapper}
-             // ref={bufferRef}
-             // onPaste={pasteHandler}
+            // ref={bufferRef}
+            // onPaste={pasteHandler}
         >
             <div {...getRootProps({
                 style: {
@@ -165,17 +193,10 @@ const DropZone: FC<PropsType> = ({
 
                         <div className={styles.closeDropZone}
                              onClick={(e) => e.stopPropagation()}>
-                            <Button onClick={openDragDropZone}
+                            <Button onClick={visibleDragDropZone}
                                     style={{
                                         backgroundColor: white_1
                                     }}>{content.button}</Button>
-
-                            {imageData ? (
-                                <Image src={imageData}
-                                       alt={"photo from clipboard"}
-                                       width={100}
-                                       height={100}/>
-                            ): null}
                         </div>
                     </div>
                 </div>

@@ -5,13 +5,32 @@
     overflow: hidden;
     position: relative;
     
+    width: 100%;
+    height: 100%;
+    
     border-radius: 0.625rem;
     border: 2px solid $blue_dark;
     background-color: $white_1;
     
-    .fileRemove {
+    user-select: none;
+    
+    .fileCover {
+        width: 100%;
+        height: 100%;
         position: absolute;
-        top: 8px;
-        right: 8px;
+        background-color: rgba($white, .6);
+        
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        
+        .fileRemove {
+            position: absolute;
+            z-index: 1;
+            padding: 3px;
+            top: 0;
+            right: 4px;
+            cursor: pointer;
+        }
     }
 }

@@ -48,7 +48,7 @@ const FileInput: FC<PropsType> = ({currentInput}) => {
             {(dragDropZoneIsOpen && appState.rootPageContent) ? (
                 <DropZone content={appState.rootPageContent.uploadFileContent}
                           filesType={currentInput.type}
-                          openDragDropZone={openDragDropZone}
+                          visibleDragDropZone={openDragDropZone}
                 />
             ) : null}
             {/*{haveMediaFile && (<DragDrop currentContent={currentInput}/>)}*/}

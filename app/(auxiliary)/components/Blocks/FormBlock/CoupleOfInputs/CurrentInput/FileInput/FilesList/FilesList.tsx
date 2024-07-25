@@ -49,7 +49,10 @@ const FilesList: FC<PropsType> = ({
 
     return (
         <div className={styles.filesListWrapper}>
-            <div className={styles.filesList}>
+            <div className={styles.filesList} style={{
+                gridTemplateColumns: currentFilesList.files.length ? `repeat(${currentFilesList.files.length}, 5rem)` : "1fr",
+                overflowX: currentFilesList.files.length ? "auto" : "hidden"
+            }}>
                 {currentFilesList.files.length ? (
                         currentFilesList.files.map((file, i) => (
                             <File key={`key=${i}`}
