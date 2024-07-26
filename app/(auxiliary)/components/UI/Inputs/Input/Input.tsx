@@ -50,19 +50,21 @@ const Input: FC<
                 spanRef.current.style.borderWidth = getComputedStyle(inputRef.current).borderWidth
 
 
-                if (value.length >= placeholder.length / 1.5) {
+                if (value && value.length >= placeholder.length / 1.4) {
                     spanRef.current.textContent = value
                     const fullWidth = spanRef.current.offsetWidth + 54
                     inputRef.current.style.width = fullWidth + "px"
                     setInputWidth(fullWidth)
-                } else {
+                }
+
+                if (!value && value.length <= placeholder.length / 1.4) {
                     spanRef.current.textContent = placeholder
                     const fullWidth = spanRef.current.offsetWidth + 54
                     inputRef.current.style.width = fullWidth + "px"
-                    setInputWidth((prevState) => prevState > fullWidth ? prevState : fullWidth)
+                    setInputWidth(fullWidth)
+
+                    // setInputWidth((prevState) => prevState > fullWidth ? prevState : fullWidth)
                 }
-
-
             }
         }
     }, [dynamicWidth, value, placeholder]);

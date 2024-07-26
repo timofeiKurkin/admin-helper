@@ -32,11 +32,11 @@ const File: FC<PropsType> = ({
     return (
         <div className={styles.fileWrapper}
              onMouseEnter={() => handleHover(true)}
-             onMouseLeave={() => handleHover(false)}
-        >
+             onMouseLeave={() => handleHover(false)}>
 
             {visibleHover ? (
-                <div className={styles.fileCover} onClick={handleChangeFile}>
+                <div className={styles.fileCover}
+                     onClick={handleChangeFile}>
                     <div className={styles.fileRemove}
                          onClick={(e) => handleRemove(e)}>
                         <DeleteFile/>

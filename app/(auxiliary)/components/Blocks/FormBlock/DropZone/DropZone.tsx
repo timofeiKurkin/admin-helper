@@ -8,6 +8,7 @@ import {UploadFileType} from "@/app/(auxiliary)/types/Data/Interface/RootPage/Ro
 import {white_1} from "@/styles/colors";
 import Title from "@/app/(auxiliary)/components/UI/TextTemplates/Title";
 import {AppContext} from "@/app/(auxiliary)/components/Common/Provider/Provider";
+import UploadFile from "@/app/(auxiliary)/components/UI/SVG/UploadFile/UploadFile";
 
 
 interface PropsType {
@@ -187,17 +188,29 @@ const DropZone: FC<PropsType> = ({
 
                 <div className={styles.dropZoneContentWrapper}>
                     <div className={styles.dropZoneContent}>
-                        <div className={styles.dropZoneText}>
-                            <Title>{filesType === "photo" ? content.uploadPhoto : content.uploadVideo}</Title>
-                        </div>
+                        <UploadFile animationStatus={isDragActive}/>
 
-                        <div className={styles.closeDropZone}
-                             onClick={(e) => e.stopPropagation()}>
-                            <Button onClick={visibleDragDropZone}
-                                    style={{
-                                        backgroundColor: white_1
-                                    }}>{content.button}</Button>
-                        </div>
+                        {
+                            isDragActive ? (
+                                <div className={styles.dropZoneText}>
+                                    <Title>{content.isDragContent}</Title>
+                                </div>
+                            ) : (
+                                <>
+                                    <div className={styles.dropZoneText}>
+                                        <Title>{filesType === "photo" ? content.uploadPhoto : content.uploadVideo}</Title>
+                                    </div>
+
+                                    <div className={styles.closeDropZone}
+                                         onClick={(e) => e.stopPropagation()}>
+                                        <Button onClick={visibleDragDropZone}
+                                                style={{
+                                                    backgroundColor: white_1
+                                                }}>{content.button}</Button>
+                                    </div>
+                                </>
+                            )
+                        }
                     </div>
                 </div>
             </div>

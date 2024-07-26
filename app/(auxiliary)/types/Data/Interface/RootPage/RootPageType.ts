@@ -72,6 +72,7 @@ export interface Button {
 export interface UploadFileType extends Button {
     uploadPhoto: string;
     uploadVideo: string;
+    isDragContent: string;
     image: {
         static: string;
         isDrag: string;
