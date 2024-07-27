@@ -2,21 +2,27 @@
 
 .bodyBlockGrid {
     display: grid;
+
+    @media screen and ($desktop1920),
+    screen and ($desktop1440_1919),
+    screen and ($desktop1280_1439) {
+        grid-template-columns: max-content min-content max-content;
+    }
     
     @media screen and ($desktop1920) {
-        grid-template-columns: max-content min-content max-content;
-        grid-template-rows: 19.75rem;
-        //row-gap: 2.19rem;
+        grid-template-columns: minmax(44.1875rem, 50.625rem) min-content 36.375rem;
+    }
+    
+    @media screen and ($pad992_1279),
+    screen and ($pad640_991),
+    screen and ($phone375_639) {
+        grid-template-columns: max-content;
     }
     
     .separatingLine, .separatingLineLess {
         width: 0;
         height: 100%;
         position: relative;
-        
-        @media screen and ($desktop1920) {
-            margin: 0 3.75rem 0 6.44rem;
-        }
         
         &:before {
             position: absolute;
@@ -27,17 +33,28 @@
                 height: 25.625rem;
             }
             
+            @media screen and ($desktop1440_1919) {
+                height: 24.375rem;
+            }
+            
             background-color: $blue_dark;
             top: 0;
             left: -1px;
         }
     }
     
+    // ???
+    justify-content: space-between;
+    
     .separatingLineLess {
         @media screen and ($desktop1920) {
-            margin-right: 3.75rem;
-            margin-left: 6.46rem;
-            //margin: 0 3.75rem 0 4.69rem;
+            //margin-right: 3.75rem;
+            //margin-left: 6.44rem; // 4.69rem
+        }
+        
+        @media screen and ($desktop1440_1919) {
+            margin-right: 3.69rem;
+            margin-left: 2.63rem;
         }
     }
 }

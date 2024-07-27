@@ -11,9 +11,14 @@
         grid-template-columns: 1fr 16.875rem;
     }
     
+    @media screen and ($desktop1440_1919) {
+        grid-template-columns: 1fr 17.25rem;
+    }
+    
     .logoContainer {
         display: grid;
         grid-template-rows: 1fr;
+        align-items: center;
         
         .logoWrapper {
             position: relative;
@@ -21,12 +26,21 @@
         
         @media screen and ($desktop1920) {
             grid-template-columns: 4.6875rem 15.3125rem;;
-            align-items: center;
             column-gap: 1.56rem;
             
             .logoWrapper {
                 width: 1fr;
                 height: 7.5rem;
+            }
+        }
+        
+        @media screen and ($desktop1440_1919) {
+            grid-template-columns: 4.125rem 15rem;
+            column-gap: 1.13rem;
+            
+            .logoWrapper {
+                width: 4.125rem;
+                height: 6.5625rem;
             }
         }
     }

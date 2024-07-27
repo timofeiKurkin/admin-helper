@@ -1,0 +1,13 @@
+@import "@/styles/variables.module.scss";
+
+.messageWrapper {
+    @media screen and ($desktop1920) {
+        width: 21.5625rem;
+        height: 7.5rem;
+    }
+    
+    @media screen and ($desktop1440_1919) {
+        width: 17.375rem;
+        height: 11.25rem;
+    }
+}

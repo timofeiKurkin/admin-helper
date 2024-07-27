@@ -9,11 +9,9 @@
         display: grid;
         flex-direction: column;
         
-        @media screen and ($desktop1920) {
+        @media screen and ($desktop1920), screen and ($desktop1440_1919) {
             grid-template-columns: 13.125rem 1fr;
-            
             row-gap: 1.88rem;
-            grid-column: 3 / 4;
         }
         
         @media screen and ($desktop1920),

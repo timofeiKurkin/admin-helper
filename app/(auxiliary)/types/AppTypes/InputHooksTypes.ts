@@ -31,9 +31,9 @@ export interface ValidationReturnDataType {
     isEmptyError: string;
 }
 
-export interface UseInputType extends ValidationReturnDataType{
+export interface UseInputType<E> extends ValidationReturnDataType {
     value: string;
-    onChange(e: React.ChangeEvent<HTMLInputElement>): void;
+    onChange(e: React.ChangeEvent<E>): void;
     onBlur: () => void;
     isDirty: boolean;
     key: string;

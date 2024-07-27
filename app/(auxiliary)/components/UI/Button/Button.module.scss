@@ -17,6 +17,10 @@
         padding: 0.94rem 0;
     }
     
+    @media screen and ($desktop1440_1919) {
+        padding: 0.91rem 0;
+    }
+    
     &:hover {
         opacity: .9;
         cursor: pointer;

@@ -5,7 +5,8 @@
     grid-template-columns: max-content;
     grid-template-rows: min-content min-content;
     
-    @media screen and ($desktop1920) {
+    @media screen and ($desktop1920),
+    screen and ($desktop1440_1919) {
         row-gap: 1.88rem;
     }
 }

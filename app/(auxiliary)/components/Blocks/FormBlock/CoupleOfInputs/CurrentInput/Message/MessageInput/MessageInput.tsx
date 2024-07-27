@@ -4,6 +4,8 @@ import useInput from "@/app/(auxiliary)/hooks/useInput";
 import {
     inputValidations
 } from "@/app/(auxiliary)/components/Blocks/FormBlock/CoupleOfInputs/CurrentInput/inputValidations";
+import styles from "./MessageInput.module.scss";
+
 
 interface PropsType {
     placeholder: string;
@@ -17,10 +19,7 @@ const MessageInput: FC<PropsType> = ({
     const message = useInput("", type, inputValidations[type]);
 
     return (
-        <div style={{
-            width: "21.5625rem",
-            height: "7.5rem"
-        }}>
+        <div className={styles.messageWrapper}>
             <Textarea value={message.value}
                       placeholder={placeholder}
                       maxLength={inputValidations[type].maxLength}

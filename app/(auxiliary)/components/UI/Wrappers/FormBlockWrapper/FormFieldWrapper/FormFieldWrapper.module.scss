@@ -9,4 +9,8 @@
     @media screen and ($desktop1920) {
         row-gap: 0.938rem;
     }
+    
+    @media screen and ($desktop1440_1919) {
+        row-gap: 0.94rem;
+    }
 }

@@ -14,8 +14,22 @@
             grid-template-columns: 97.5rem;
         }
         
+        @media screen and ($desktop1440_1919) {
+            padding: 2.5rem 0;
+            grid-template-columns: 78.75rem;
+        }
+        
+        @media screen and ($desktop1280_1439) {
+        }
+        
         @media screen and ($pad992_1279) {
             grid-template-columns: 55.75rem;
+        }
+        
+        @media screen and ($pad640_991) {
+        }
+        
+        @media screen and ($phone375_639) {
         }
         
         .layoutContainer {
@@ -25,6 +39,22 @@
             
             @media screen and ($desktop1920) {
                 row-gap: 3.75rem;
+            }
+            
+            @media screen and ($desktop1440_1919) {
+                row-gap: 3.13rem;
+            }
+            
+            @media screen and ($desktop1280_1439) {
+            }
+            
+            @media screen and ($pad992_1279) {
+            }
+            
+            @media screen and ($pad640_991) {
+            }
+            
+            @media screen and ($phone375_639) {
             }
         }
     }

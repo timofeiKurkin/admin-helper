@@ -37,8 +37,7 @@ const CurrentInput: FC<PropsType> = ({currentInput}) => {
                 </TextHighlighting>
             ) : (
                 <Text>{currentInput.inputTitle}</Text>
-            )
-            }
+            )}
 
             {currentInput.type === "message" && (
                 <Message currentInput={currentInput}/>

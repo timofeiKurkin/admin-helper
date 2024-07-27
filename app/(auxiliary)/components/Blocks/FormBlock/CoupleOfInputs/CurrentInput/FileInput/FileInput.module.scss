@@ -7,10 +7,19 @@
     
     .filesBlock {
         display: grid;
+        
+        @media screen and ($desktop1920), screen and ($desktop1440_1919) {
+            row-gap: 1.25rem;
+        }
+        
         @media screen and ($desktop1920) {
             grid-template-columns: 8.4375rem 16.88rem;
             grid-template-rows: 5.9375rem min-content;
-            row-gap: 1.25rem;
+        }
+        
+        @media screen and ($desktop1440_1919) {
+            grid-template-columns: 8.4375rem 8.88rem;
+            grid-template-rows: 5.625rem min-content;
         }
         
         .fileList {

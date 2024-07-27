@@ -3,18 +3,25 @@
 
 .formBlockWrapper {
     display: flex;
+    justify-content: space-between;
 }
 
 .formBlockPartOneWrapper {
     @media screen and ($desktop1920) {
-        //grid-template-columns: 18.75rem 18.875rem;
-        column-gap: 6.56rem;
+        //column-gap: 6.56rem; // 3.75
+    }
+    
+    @media screen and ($desktop1440_1919) {
+        column-gap: 4.38rem; // 3.13
     }
 }
 
 .formBlockPartTwoWrapper {
     @media screen and ($desktop1920) {
-        //grid-template-columns: 13.125rem 19.5rem;
-        column-gap: 3.75rem;
+        //column-gap: 3.75rem; // 3.75
+    }
+    
+    @media screen and ($desktop1440_1919) {
+        column-gap: 3.75rem; // 3.13
     }
 }

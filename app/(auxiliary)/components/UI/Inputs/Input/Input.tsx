@@ -4,6 +4,7 @@ import {InputChangeEventHandler} from "@/app/(auxiliary)/types/AppTypes/AppTypes
 import borderStyles from "./InputBorder.module.scss";
 import inputStyles from "./Input.module.scss";
 import fontStyles from "@/styles/fonts.module.scss";
+import {setIn} from "immutable";
 
 const Input: FC<
     InputPropsType<InputChangeEventHandler>
@@ -29,18 +30,7 @@ const Input: FC<
 
     const changeInputHandler = (e: InputChangeEventHandler) => {
         onChange(e)
-        // if (dynamicWidth) {
-        //     dynamicWithHandler(e.target.value)
-        // }
     }
-
-    useEffect(() => {
-        if (!value) {
-            if (spanRef.current && inputRef.current) {
-
-            }
-        }
-    }, [value]);
 
     useEffect(() => {
         if (dynamicWidth) {
@@ -67,7 +57,11 @@ const Input: FC<
                 }
             }
         }
-    }, [dynamicWidth, value, placeholder]);
+    }, [
+        dynamicWidth,
+        value,
+        placeholder
+    ]);
 
 
     // const dynamicWithHandler = (newTextContent: string) => {
@@ -124,7 +118,7 @@ const Input: FC<
             </div>
             <span
                 style={dynamicWidth ? {
-                    width: inputWidth ? `${inputWidth}px` : ""
+                    width: inputWidth ? `${inputWidth}px` : "auto"
                 } : undefined}
                 className={borderStyles.inputBorder}></span>
         </div>
