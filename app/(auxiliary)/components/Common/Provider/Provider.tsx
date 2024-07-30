@@ -19,7 +19,10 @@ const Provider: FC<ChildrenType> = ({children}) => {
             uploadFileContent: {} as UploadFileType,
         },
         photoList: {type: "photo", files: []} as FileListStateType,
-        videoList: {type: "video", files: []} as FileListStateType
+        videoList: {type: "video", files: []} as FileListStateType,
+        openedPhotoBlock: false,
+        openedVideoBlock: false,
+        switchedMessageBlock: false
     })
 
     return (

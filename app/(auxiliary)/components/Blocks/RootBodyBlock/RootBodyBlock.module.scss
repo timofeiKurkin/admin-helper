@@ -10,7 +10,7 @@
     }
     
     @media screen and ($desktop1920) {
-        grid-template-columns: minmax(44.1875rem, 50.625rem) min-content 36.375rem;
+        //grid-template-columns: minmax(44.1875rem, 50.625rem) min-content 36.375rem; // Now, it's the best solution
     }
     
     @media screen and ($pad992_1279),
@@ -23,6 +23,15 @@
         width: 0;
         height: 100%;
         position: relative;
+        
+        @media screen and ($desktop1920) {
+            margin-right: 3.75rem;
+            margin-left: 6.44rem;
+        }
+        
+        @media screen and ($desktop1440_1919) {
+            margin-right: 3.69rem;
+        }
         
         &:before {
             position: absolute;
@@ -43,18 +52,15 @@
         }
     }
     
-    // ???
-    justify-content: space-between;
+    //justify-content: space-between; // Between form's blocks and the separate line
     
     .separatingLineLess {
         @media screen and ($desktop1920) {
-            //margin-right: 3.75rem;
-            //margin-left: 6.44rem; // 4.69rem
+            margin-left: 4.69rem;
         }
         
         @media screen and ($desktop1440_1919) {
-            margin-right: 3.69rem;
-            margin-left: 2.63rem;
+            margin-left: 2.62rem;
         }
     }
 }

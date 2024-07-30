@@ -8,7 +8,7 @@
 
 .formBlockPartOneWrapper {
     @media screen and ($desktop1920) {
-        //column-gap: 6.56rem; // 3.75
+        column-gap: 6.56rem;
     }
     
     @media screen and ($desktop1440_1919) {
@@ -16,12 +16,18 @@
     }
 }
 
-.formBlockPartTwoWrapper {
+.formBlockPartOneActiveWrapper {
     @media screen and ($desktop1920) {
-        //column-gap: 3.75rem; // 3.75
+        column-gap: 3.75rem;
     }
     
     @media screen and ($desktop1440_1919) {
-        column-gap: 3.75rem; // 3.13
+    
+    }
+}
+
+.formBlockPartTwoWrapper {
+    @media screen and ($desktop1920), screen and ($desktop1440_1919) {
+        column-gap: 3.75rem;
     }
 }

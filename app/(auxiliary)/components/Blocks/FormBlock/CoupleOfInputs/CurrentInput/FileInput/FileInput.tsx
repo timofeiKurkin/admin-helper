@@ -19,16 +19,34 @@ const FileInput: FC<PropsType> = ({currentInput}) => {
     const [haveMediaFile, setHaveMediaFile] =
         useState<boolean>(false);
     const [dragDropZoneIsOpen, setDragDropZoneIsOpen] = useState<boolean>(false);
-    const {appState} = useContext(AppContext)
+    const {appState, setAppState} = useContext(AppContext)
 
     const openDragDropZone = () => {
         setDragDropZoneIsOpen((prevState) => !prevState);
     }
 
+    const fileBlockHandler = () => {
+        setHaveMediaFile((prevState) => !prevState)
+
+        if(currentInput.type === 'photo') {
+            setAppState({
+                ...appState,
+                openedPhotoBlock: !haveMediaFile
+            })
+        }
+
+        if(currentInput.type === "video") {
+            setAppState({
+                ...appState,
+                openedVideoBlock: !haveMediaFile
+            })
+        }
+    }
+
     return (
         <div className={styles.fileInputWrapper}>
             <Toggle toggleStatus={haveMediaFile}
-                    onClick={() => setHaveMediaFile((prevState) => !prevState)}>
+                    onClick={fileBlockHandler}>
                 {currentInput.toggleText}
             </Toggle>
 

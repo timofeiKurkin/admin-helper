@@ -23,4 +23,7 @@ export interface StateType {
     }
     photoList?: FileListStateType;
     videoList?: FileListStateType;
+    openedPhotoBlock?: boolean;
+    openedVideoBlock?: boolean;
+    switchedMessageBlock?: boolean;
 }
