@@ -10,4 +10,24 @@
         width: 17.375rem;
         height: 11.25rem;
     }
+    
+    @media screen and ($desktop1280_1439) {
+        width: 15.9375rem;
+        height: 7.5rem;
+    }
+    
+    @media screen and ($pad992_1279) {
+        width: 23.0625rem;
+        height: 6.25rem;
+    }
+    
+    @media screen and ($pad640_991) {
+        width: 17.1875rem;
+        height: 6.25rem;
+    }
+    
+    @media screen and ($phone375_639) {
+        width: 20.3125rem;
+        height: 5.625rem;
+    }
 }

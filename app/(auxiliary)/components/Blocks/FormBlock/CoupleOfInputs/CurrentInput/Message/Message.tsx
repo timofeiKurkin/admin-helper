@@ -30,11 +30,8 @@ const Message: FC<PropsType> = ({currentInput}) => {
     return (
         <div className={styles.messageWrapper}>
             {
-                !userCannotTalk ? (
+                !userCannotTalk && (
                     <VoiceInput voicePlaceHolder={currentInput.voiceMessage?.inputPlaceholder}/>
-                ) : (
-                    <MessageInput type={currentInput.type}
-                                  placeholder={currentInput.textMessage?.inputPlaceholder || ""}/>
                 )
             }
 
@@ -42,6 +39,13 @@ const Message: FC<PropsType> = ({currentInput}) => {
                     onClick={switchTypeMessageHandler}>
                 {currentInput.toggleText}
             </Toggle>
+
+            {
+                userCannotTalk && (
+                    <MessageInput type={currentInput.type}
+                                  placeholder={currentInput.textMessage?.inputPlaceholder || ""}/>
+                )
+            }
         </div>
     );
 };

@@ -7,7 +7,11 @@
         
     }
     
-    @media screen and ($desktop1440_1919) {
+    @media screen and ($desktop1440_1919),
+    screen and ($desktop1280_1439),
+    screen and ($pad992_1279),
+    screen and ($pad640_991),
+    screen and ($phone375_639) {
         width: 1.1875rem;
         height: 1.125rem;
     }

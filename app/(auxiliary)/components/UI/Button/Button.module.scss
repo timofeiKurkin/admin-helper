@@ -17,8 +17,15 @@
         padding: 0.94rem 0;
     }
     
-    @media screen and ($desktop1440_1919) {
+    @media screen and ($desktop1440_1919),
+    screen and ($desktop1280_1439) {
         padding: 0.91rem 0;
+    }
+    
+    @media screen and ($pad992_1279),
+    screen and ($pad640_991),
+    screen and ($phone375_639) {
+        padding: 0.88rem 0;
     }
     
     &:hover {

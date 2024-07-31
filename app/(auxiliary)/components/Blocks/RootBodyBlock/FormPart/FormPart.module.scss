@@ -3,15 +3,34 @@
 .formPartWrapper {
     display: flex;
     flex-direction: column;
-    row-gap: 2.19rem;
+    
+    @media screen and ($desktop1920) {
+        row-gap: 2.19rem;
+    }
+    
+    @media screen and ($desktop1440_1919),
+    screen and ($desktop1280_1439),
+    screen and ($pad992_1279),
+    screen and ($pad640_991),
+    screen and ($phone375_639) {
+        row-gap: 2.5rem;
+    }
     
     .permissionsAndSend {
         display: grid;
         flex-direction: column;
         
-        @media screen and ($desktop1920), screen and ($desktop1440_1919) {
+        @media screen and ($desktop1920),
+        screen and ($desktop1440_1919),
+        screen and ($desktop1280_1439),
+        screen and ($pad992_1279),
+        screen and ($pad640_991) {
             grid-template-columns: 13.125rem 1fr;
             row-gap: 1.88rem;
+        }
+        
+        @media screen and ($phone375_639) {
+            grid-template-columns: 1fr;
         }
         
         @media screen and ($desktop1920),
@@ -25,6 +44,12 @@
             
             .send {
                 grid-column: 1 / 2;
+            }
+        }
+        
+        @media screen and ($phone375_639) {
+            .permissions {
+                padding: 0 .63rem;
             }
         }
     }

@@ -12,7 +12,29 @@
     }
     
     @media screen and ($desktop1440_1919) {
-        column-gap: 4.38rem; // 3.13
+        column-gap: 4.38rem;
+    }
+    
+    @media screen and ($desktop1280_1439) {
+        column-gap: 2.31rem;
+    }
+    
+    @media screen and ($pad992_1279) {
+        column-gap: 10.19rem;
+        flex-direction: column;
+        
+        & > div {
+            display: flex;
+            column-gap: 5.75rem;
+        }
+    }
+    
+    @media screen and ($pad640_991) {
+        column-gap: 4.81rem;
+    }
+    
+    @media screen and ($phone375_639) {
+        row-gap: 1.87rem;
     }
 }
 
@@ -22,12 +44,51 @@
     }
     
     @media screen and ($desktop1440_1919) {
+        column-gap: 3.13rem;
+    }
     
+    @media screen and ($pad992_1279) {
+        column-gap: 5.57rem;
+    }
+    
+    @media screen and ($pad640_991) {
+        column-gap: 2.5rem;
     }
 }
 
 .formBlockPartTwoWrapper {
     @media screen and ($desktop1920), screen and ($desktop1440_1919) {
         column-gap: 3.75rem;
+    }
+    
+    @media screen and ($desktop1280_1439) {
+        flex-direction: column;
+        
+        & > div:first-child {
+            grid-template-columns: 12.3125rem 11.9375rem;
+            column-gap: 3.63rem;
+        }
+    }
+    
+    @media screen and ($pad992_1279) {
+        column-gap: 3.88rem;
+    }
+    
+    @media screen and ($pad640_991) {
+    
+    }
+    
+    @media screen and ($phone375_639) {
+    
+    }
+}
+
+.formBlockPartTwoActiveWrapper {
+    @media screen and ($desktop1440_1919) {
+        column-gap: 3.12rem;
+    }
+    
+    @media screen and ($desktop1280_1439) {
+        
     }
 }

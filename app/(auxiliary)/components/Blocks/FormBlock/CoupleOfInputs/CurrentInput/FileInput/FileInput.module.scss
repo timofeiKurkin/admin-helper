@@ -8,7 +8,10 @@
     .filesBlock {
         display: grid;
         
-        @media screen and ($desktop1920), screen and ($desktop1440_1919) {
+        @media screen and ($desktop1920),
+        screen and ($desktop1440_1919),
+        screen and ($desktop1280_1439),
+        screen and ($pad992_1279) {
             row-gap: 1.25rem;
         }
         
@@ -20,6 +23,16 @@
         @media screen and ($desktop1440_1919) {
             grid-template-columns: 8.4375rem 8.88rem;
             grid-template-rows: 5.625rem min-content;
+        }
+        
+        @media screen and ($desktop1280_1439) {
+            grid-template-columns: 8.4375rem 1fr;
+            grid-template-rows: 5.9375rem min-content;
+        }
+        
+        @media screen and ($pad992_1279) {
+            grid-template-columns: 8.4375rem 1fr;
+            grid-template-rows: 5.9375rem min-content;
         }
         
         .fileList {

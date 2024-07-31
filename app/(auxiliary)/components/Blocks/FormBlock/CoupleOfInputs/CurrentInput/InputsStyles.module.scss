@@ -16,6 +16,10 @@
 
 .nameInputWrapper {
     width: 13.125rem;
+    
+    @media screen and ($desktop1280_1439) {
+        width: 12.3125rem;
+    }
 }
 
 .phoneNumberInputWrapper {

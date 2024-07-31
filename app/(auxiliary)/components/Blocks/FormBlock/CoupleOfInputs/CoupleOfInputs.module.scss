@@ -9,5 +9,10 @@
     screen and ($desktop1440_1919) {
         row-gap: 1.88rem;
     }
+    
+    @media screen and ($desktop1280_1439),
+    screen and ($pad992_1279){
+        row-gap: 2.19rem;
+    }
 }
 
