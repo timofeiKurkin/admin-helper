@@ -20,13 +20,7 @@
     }
     
     @media screen and ($pad992_1279) {
-        column-gap: 10.19rem;
-        flex-direction: column;
-        
-        & > div {
-            display: flex;
-            column-gap: 5.75rem;
-        }
+        column-gap: 5.75rem;
     }
     
     @media screen and ($pad640_991) {
@@ -48,7 +42,7 @@
     }
     
     @media screen and ($pad992_1279) {
-        column-gap: 5.57rem;
+        //column-gap: 5.57rem;
     }
     
     @media screen and ($pad640_991) {
@@ -75,7 +69,7 @@
     }
     
     @media screen and ($pad640_991) {
-    
+        column-gap: 2.5rem;
     }
     
     @media screen and ($phone375_639) {

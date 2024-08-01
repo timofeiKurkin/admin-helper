@@ -23,22 +23,35 @@ const FileInput: FC<PropsType> = ({currentInput}) => {
 
     const openDragDropZone = () => {
         setDragDropZoneIsOpen((prevState) => !prevState);
+
+        if(!dragDropZoneIsOpen) {
+            document.body.style.overflow = "hidden"
+        } else {
+            document.body.style.overflow = "auto"
+        }
     }
 
     const fileBlockHandler = () => {
         setHaveMediaFile((prevState) => !prevState)
 
-        if(currentInput.type === 'photo') {
-            setAppState({
-                ...appState,
-                openedPhotoBlock: !haveMediaFile
-            })
-        }
+        if(appState.userDevice?.desktopAdaptive) {
+            if(currentInput.type === 'photo') {
+                setAppState({
+                    ...appState,
+                    openedPhotoBlock: !haveMediaFile
+                })
+            }
 
-        if(currentInput.type === "video") {
+            if(currentInput.type === "video") {
+                setAppState({
+                    ...appState,
+                    openedVideoBlock: !haveMediaFile
+                })
+            }
+        } else {
             setAppState({
                 ...appState,
-                openedVideoBlock: !haveMediaFile
+                switchedMessageBlock: !haveMediaFile
             })
         }
     }

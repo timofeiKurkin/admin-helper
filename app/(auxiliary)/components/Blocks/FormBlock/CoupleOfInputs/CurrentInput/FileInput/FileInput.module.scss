@@ -7,13 +7,7 @@
     
     .filesBlock {
         display: grid;
-        
-        @media screen and ($desktop1920),
-        screen and ($desktop1440_1919),
-        screen and ($desktop1280_1439),
-        screen and ($pad992_1279) {
-            row-gap: 1.25rem;
-        }
+        row-gap: 1.25rem;
         
         @media screen and ($desktop1920) {
             grid-template-columns: 8.4375rem 16.88rem;
@@ -25,14 +19,26 @@
             grid-template-rows: 5.625rem min-content;
         }
         
-        @media screen and ($desktop1280_1439) {
-            grid-template-columns: 8.4375rem 1fr;
+        @media screen and ($desktop1280_1439),
+        screen and ($pad992_1279),
+        screen and ($pad640_991) {
             grid-template-rows: 5.9375rem min-content;
         }
         
+        @media screen and ($desktop1280_1439) {
+            grid-template-columns: 8.4375rem 10rem;
+        }
+        
         @media screen and ($pad992_1279) {
-            grid-template-columns: 8.4375rem 1fr;
-            grid-template-rows: 5.9375rem min-content;
+            grid-template-columns: 8.4375rem 14.63rem;
+        }
+        
+        @media screen and ($pad640_991) {
+            grid-template-columns: 8.4375rem 8.75rem;
+        }
+        
+        @media screen and ($phone375_639) {
+        
         }
         
         .fileList {

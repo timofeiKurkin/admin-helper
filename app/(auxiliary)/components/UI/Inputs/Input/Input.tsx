@@ -42,14 +42,14 @@ const Input: FC<
 
                 if (value && value.length >= placeholder.length / 1.4) {
                     spanRef.current.textContent = value
-                    const fullWidth = spanRef.current.offsetWidth + 54
+                    const fullWidth = spanRef.current.offsetWidth + 52
                     inputRef.current.style.width = fullWidth + "px"
                     setInputWidth(fullWidth)
                 }
 
                 if (!value && value.length <= placeholder.length / 1.4) {
                     spanRef.current.textContent = placeholder
-                    const fullWidth = spanRef.current.offsetWidth + 54
+                    const fullWidth = spanRef.current.offsetWidth + 52
                     inputRef.current.style.width = fullWidth + "px"
                     setInputWidth(fullWidth)
 

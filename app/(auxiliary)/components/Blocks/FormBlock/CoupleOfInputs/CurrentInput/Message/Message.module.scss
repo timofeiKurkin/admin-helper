@@ -1,5 +1,17 @@
+@import "@/styles/variables.module.scss";
+
 .messageWrapper {
     display: flex;
     flex-direction: column;
     row-gap: 0.62rem;
+    
+    .voiceWrapper {
+        @media screen and ($pad992_1279) {
+            width: 15.4375rem;
+        }
+        
+        @media screen and ($pad640_991) {
+            width: 14.75rem;
+        }
+    }
 }

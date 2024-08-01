@@ -21,17 +21,26 @@ const Message: FC<PropsType> = ({currentInput}) => {
     const switchTypeMessageHandler = () => {
         setUserCannotTalk((prevState) => !prevState)
 
-        setAppState({
-            ...appState,
-            switchedMessageBlock: !userCannotTalk ? !userCannotTalk : !appState.switchedMessageBlock
-        })
+        if (appState.userDevice?.desktopAdaptive) {
+            setAppState({
+                ...appState,
+                switchedMessageBlock: !userCannotTalk ? !userCannotTalk : !appState.switchedMessageBlock
+            })
+        } else {
+            setAppState({
+                ...appState,
+                openedPhotoBlock: !userCannotTalk ? !userCannotTalk : !appState.openedPhotoBlock
+            })
+        }
     }
 
     return (
         <div className={styles.messageWrapper}>
             {
                 !userCannotTalk && (
-                    <VoiceInput voicePlaceHolder={currentInput.voiceMessage?.inputPlaceholder}/>
+                    <div className={styles.voiceWrapper}>
+                        <VoiceInput voicePlaceHolder={currentInput.voiceMessage?.inputPlaceholder}/>
+                    </div>
                 )
             }
 
