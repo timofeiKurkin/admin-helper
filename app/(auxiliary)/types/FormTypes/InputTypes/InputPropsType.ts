@@ -4,6 +4,7 @@ import {
     KeyBoardEventHandler,
     TextareaChangeEventHandler
 } from "@/app/(auxiliary)/types/AppTypes/AppTypes";
+import {InputHelpfulItemType} from "@/app/(auxiliary)/types/Data/Interface/RootPage/RootPageType";
 
 export interface InputPropsType<OnChangeType> {
     value: string;
@@ -14,16 +15,18 @@ export interface InputPropsType<OnChangeType> {
     tabIndex: number;
     dynamicWidth?: boolean;
 
-    datalist?: {
-        listType: string;
-        list: string[];
-    };
-
     onBlur: () => void;
     onChange: (e: OnChangeType) => void;
     onKeyDown?: (e: KeyBoardEventHandler<HTMLInputElement>) => void
 
     inputIsDirty?: boolean;
+}
+
+export interface InputWithDataListType<T> extends InputPropsType<T> {
+    datalist?: {
+        listType: string;
+        list: InputHelpfulItemType[];
+    };
 }
 
 export type KeyboardEventType = React.KeyboardEvent<HTMLInputElement>

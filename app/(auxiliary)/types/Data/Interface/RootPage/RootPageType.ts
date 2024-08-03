@@ -30,7 +30,7 @@ export interface InputType {
 }
 
 export interface DeviceInputType extends InputType {
-    helpfulList: string[];
+    helpfulList: InputHelpfulItemType[];
 }
 
 export interface MessageInputType extends InputType {
@@ -45,7 +45,7 @@ export interface NameInputType extends InputType {
 }
 
 export interface CompanyInputType extends InputType {
-    helpfulList: string[];
+    helpfulList: InputHelpfulItemType[];
 }
 
 export interface PhoneNumberInputType extends InputType {
@@ -65,6 +65,12 @@ export interface MessageType {
 
 export interface Button {
     button: string;
+}
+
+export interface InputHelpfulItemType {
+    id: number;
+    title: string;
+    keys: string[]
 }
 
 

@@ -1,15 +1,19 @@
 @import "@/styles/variables.module";
 
 .inputWrapper {
+    overflow: visible;
+    
     position: relative;
-    width: 100%;
-    height: 100%;
+    
+    
+    width: inherit;
+    height: inherit;
     
     .inputBox {
         position: absolute;
         
-        width: inherit;
-        height: inherit;
+        width: 100%;
+        height: 100%;
         z-index: 2;
         
         .inputStyle {

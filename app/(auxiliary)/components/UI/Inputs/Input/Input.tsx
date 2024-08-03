@@ -4,7 +4,7 @@ import {InputChangeEventHandler} from "@/app/(auxiliary)/types/AppTypes/AppTypes
 import borderStyles from "./InputBorder.module.scss";
 import inputStyles from "./Input.module.scss";
 import fontStyles from "@/styles/fonts.module.scss";
-import {setIn} from "immutable";
+
 
 const Input: FC<
     InputPropsType<InputChangeEventHandler>
@@ -20,8 +20,7 @@ const Input: FC<
          },
          onBlur,
          onChange,
-         inputIsDirty,
-         datalist
+         inputIsDirty
      }) => {
 
     const spanRef = useRef<HTMLSpanElement>(null);
@@ -89,7 +88,7 @@ const Input: FC<
                     maxLength={maxLength}
                     disabled={disabled}
                     tabIndex={tabIndex}
-                    list={value.length > 2 && datalist?.listType || ""}
+                    // list={value.length > 2 && datalist?.listType || ""}
 
                     onChange={(e: InputChangeEventHandler) => changeInputHandler(e)}
                     onBlur={() => onBlur()}
@@ -97,13 +96,13 @@ const Input: FC<
                     onKeyDown={(e) => onKeyDown(e)}
                 />
 
-                {datalist ? (
-                    <datalist id={datalist.listType}>
-                        {datalist.list.map((item, index) => (
-                            <option key={`key=${index}`} value={item}></option>
-                        ))}
-                    </datalist>
-                ) : null}
+                {/*{datalist ? (*/}
+                {/*    <datalist id={datalist.listType}>*/}
+                {/*        {datalist.list.map((item, index) => (*/}
+                {/*            <option key={`key=${index}`} value={item}></option>*/}
+                {/*        ))}*/}
+                {/*    </datalist>*/}
+                {/*) : null}*/}
 
                 {dynamicWidth && (
                     <span ref={spanRef} className={fontStyles.buttonText}
