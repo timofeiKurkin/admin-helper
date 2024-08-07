@@ -46,23 +46,21 @@ const Message: FC<PropsType> = ({currentInput}) => {
     }
 
     useEffect(() => {
-
-    }, []);
-
-    const switchTypeMessageHandler = () => {
-        setUserCannotTalk((prevState) => !prevState)
-
-        if (appState.userDevice?.desktopAdaptive) {
+        if (appState.userDevice?.padAdaptive640_992) {
             setAppState({
                 ...appState,
-                switchedMessageBlock: !userCannotTalk ? !userCannotTalk : !appState.switchedMessageBlock
+                switchedMessageBlock: userCannotTalk
             })
         } else {
             setAppState({
                 ...appState,
-                openedPhotoBlock: !userCannotTalk ? !userCannotTalk : !appState.openedPhotoBlock
+                openedPhotoBlock: userCannotTalk
             })
         }
+    }, [userCannotTalk]);
+
+    const switchTypeMessageHandler = () => {
+        setUserCannotTalk((prevState) => !prevState)
     }
 
     return (

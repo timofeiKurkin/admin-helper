@@ -42,6 +42,7 @@ export interface StateType {
         phoneAdaptive: boolean;
         padAdaptive: boolean;
         desktopAdaptive: boolean;
+        padAdaptive640_992: boolean;
     }
     rootPageContent?: {
         uploadFileContent: UploadFileType;

@@ -5,6 +5,7 @@ import borderStyles from "@/app/(auxiliary)/components/UI/Inputs/Input/InputBord
 import styles from "./Textarea.module.scss"
 import generalStyles from "@/app/(auxiliary)/components/UI/Inputs/Input/Input.module.scss"
 import fontStyles from "@/styles/fonts.module.scss";
+import inputStyles from "@/app/(auxiliary)/components/UI/Inputs/Input/Input.module.scss";
 
 
 const Textarea: FC<
@@ -26,7 +27,7 @@ const Textarea: FC<
 
     return (
         <div
-            className={`${generalStyles.inputWrapper} ${inputIsDirty ? generalStyles.inputActive : generalStyles.inputInactive}`}>
+            className={generalStyles.inputWrapper}>
             <div className={generalStyles.inputBox}>
                 <textarea value={value}
                           placeholder={placeholder}
@@ -36,10 +37,16 @@ const Textarea: FC<
                           onBlur={() => onBlur()}
                           onFocus={() => onBlur()}
                           onChange={(e) => changeTextareaHandler(e)}
-                          className={`${styles.textareaStyle} ${fontStyles.buttonText}`}/>
+                          className={`${styles.textareaStyle} ${fontStyles.buttonText} ${inputIsDirty ? generalStyles.inputActive : generalStyles.inputInactive}`}/>
 
             </div>
-            <span className={borderStyles.inputBorder}></span>
+
+            <div className={inputStyles.borderBox}>
+                {!inputIsDirty && (
+                    <span className={borderStyles.inactiveInputState}></span>
+                )}
+                <span className={borderStyles.inputBorder}></span>
+            </div>
         </div>
     );
 };

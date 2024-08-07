@@ -1,27 +1,40 @@
 @import "@/styles/variables.module.scss";
 
+.openedFileBlock, .bodyBlockGrid {
+    transition: grid-template-columns .5s ease;
+}
+
 .bodyBlockGrid {
     display: grid;
     
-    @media screen and ($desktop1920),
-    screen and ($desktop1440_1919),
-    screen and ($desktop1280_1439) {
-        grid-template-columns: 1fr min-content max-content;
-    }
+    //@media screen and ($desktop1920),
+    //screen and ($desktop1440_1919),
+    //screen and ($desktop1280_1439) {
+    //    grid-template-columns: max-content min-content max-content;
+    //}
     
     @media screen and ($desktop1920) {
-        //grid-template-columns: minmax(44.1875rem, 50.625rem) min-content 36.375rem; // Now, it's the best solution
+        grid-template-columns: calc(44.1875rem + 6.44rem) min-content max-content; // Now, it's the best solution // Заранее установить ширину блока
     }
     
-    @media screen and ($pad992_1279),
-    screen and ($pad640_991),
+    @media screen and ($desktop1440_1919) {
+        grid-template-columns: calc(38.3125rem + 2.63rem) min-content max-content;
+    }
+    
+    @media screen and ($desktop1280_1439) {
+        grid-template-columns: calc(36.25rem + 4.25rem) min-content max-content;
+    }
+    
+    @media screen and ($pad992_1279) {
+        grid-template-columns: 42.375rem;
+    }
+    
+    @media screen and ($pad640_991),
     screen and ($phone375_639) {
         grid-template-columns: 1fr;
     }
     
     .separatingLine, .separatingLineLess {
-        //width: 100%;
-        //height: 100%;
         position: relative;
         
         @media screen and ($desktop1920) {
@@ -105,5 +118,23 @@
         @media screen and ($desktop1280_1439) {
             margin-left: 3.62rem;
         }
+    }
+}
+
+.openedFileBlock {
+    @media screen and ($desktop1920) {
+        grid-template-columns: calc(50.625rem + 4.69rem) min-content max-content; // Now, it's the best solution // Заранее установить ширину блока
+    }
+    
+    //@media screen and ($desktop1440_1919) {
+    //    grid-template-columns: calc(38.3125rem + 2.62rem) min-content max-content;
+    //}
+    
+    @media screen and ($desktop1280_1439) {
+        grid-template-columns: calc(36.875rem + 3.62rem) min-content max-content;
+    }
+    
+    @media screen and ($pad992_1279) {
+        grid-template-columns: 51.875rem;
     }
 }

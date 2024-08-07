@@ -14,17 +14,6 @@
     
     resize: none;
     
-    &[type="text"], &[type="password"] {
-        font-family: inherit;
-        font-weight: 500;
-        letter-spacing: $letter_spacing;
-        color: $black;
-    }
-    
-    &::placeholder {
-        color: $black;
-    }
-    
     &:not([rows]) {
         min-height: 0;
     }

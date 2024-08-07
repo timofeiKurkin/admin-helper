@@ -6,6 +6,31 @@ import CoupleOfInputs from "@/app/(auxiliary)/components/Blocks/FormBlock/Couple
 import styles from "./FormBlock.module.scss";
 import {AppContext} from "@/app/(auxiliary)/components/Common/Provider/Provider";
 
+interface FormComponentsProps {
+    formPartNumber: number;
+    partOfInputsOne: any;
+    partOfInputsTwo: any;
+}
+
+const FormComponents: FC<FormComponentsProps> = ({
+                                                     formPartNumber,
+                                                     partOfInputsOne,
+                                                     partOfInputsTwo
+                                                 }) => {
+    const {appState} = useContext(AppContext)
+
+    const columnGapStatus = (appState.userDevice?.padAdaptive640_992 && !formPartNumber) ? appState.openedPhotoBlock : appState.switchedMessageBlock
+
+    return (
+        <div
+            className={`${styles.formBlockWrapper} ${formPartNumber ? styles.formBlockPartTwoWrapper : styles.formBlockPartOneWrapper} ${columnGapStatus && styles.formBlockPartOneActiveWrapper}`}>
+            <CoupleOfInputs contentOfInputs={partOfInputsOne}/>
+            <CoupleOfInputs contentOfInputs={partOfInputsTwo}/>
+        </div>
+    )
+}
+
+
 interface PropsType {
     inputContent: AllTypesOfInputsArray;
     formPartNumber: number;
@@ -21,11 +46,13 @@ const FormBlock: FC<PropsType> = ({
     const [partOfInputsTwo, setPartOfInputsTwo] =
         useState(() => inputContent.slice(2, 5))
 
-    // const partOfInputsOne = inputContent.slice(0, 2)
-    // const partOfInputsTwo = inputContent.slice(2, 5)
-
     useEffect(() => {
-        if(!formPartNumber && (appState.userDevice?.padAdaptive || appState.userDevice?.phoneAdaptive)) {
+        if (!formPartNumber && (appState.userDevice?.padAdaptive)) {
+            setPartOfInputsOne([inputContent[0], inputContent[2]])
+            setPartOfInputsTwo([inputContent[1], inputContent[3]])
+        }
+
+        if(formPartNumber && (appState.userDevice?.phoneAdaptive)) {
             setPartOfInputsOne([inputContent[0], inputContent[2]])
             setPartOfInputsTwo([inputContent[1], inputContent[3]])
         }
@@ -36,13 +63,9 @@ const FormBlock: FC<PropsType> = ({
         inputContent
     ])
 
-    return (
-        <div
-            className={`${styles.formBlockWrapper} ${formPartNumber ? styles.formBlockPartTwoWrapper : styles.formBlockPartOneWrapper} ${(appState.switchedMessageBlock && !formPartNumber) && styles.formBlockPartOneActiveWrapper} ${formPartNumber && styles.formBlockPartTwoActiveWrapper}`}>
-            <CoupleOfInputs contentOfInputs={partOfInputsOne}/>
-            <CoupleOfInputs contentOfInputs={partOfInputsTwo}/>
-        </div>
-    );
+    return <FormComponents formPartNumber={formPartNumber}
+                           partOfInputsOne={partOfInputsOne}
+                           partOfInputsTwo={partOfInputsTwo}/>;
 };
 
 export default FormBlock;

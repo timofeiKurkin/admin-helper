@@ -44,6 +44,7 @@ const Provider: FC<ChildrenType> = ({children}) => {
                 phoneAdaptive: false,
                 padAdaptive: false,
                 desktopAdaptive: false,
+                padAdaptive640_992: false
             },
             rootPageContent: {
                 uploadFileContent: {} as UploadFileType,

@@ -34,7 +34,7 @@ const FileInput: FC<PropsType> = ({currentInput}) => {
     const fileBlockHandler = () => {
         setHaveMediaFile((prevState) => !prevState)
 
-        if(appState.userDevice?.desktopAdaptive) {
+        if(appState.userDevice?.padAdaptive640_992) {
             if(currentInput.type === 'photo') {
                 setAppState({
                     ...appState,
@@ -67,7 +67,7 @@ const FileInput: FC<PropsType> = ({currentInput}) => {
                 <div className={styles.filesBlock}>
                     <div className={styles.fileList}>
                         <FilesList placeholder={currentInput.inputPlaceholder || ""}
-                                   type={currentInput.type}/>
+                                   type={currentInput.type as any}/>
                     </div>
 
                     <div className={styles.addFiles}>
@@ -78,7 +78,7 @@ const FileInput: FC<PropsType> = ({currentInput}) => {
 
             {(dragDropZoneIsOpen && appState.rootPageContent) ? (
                 <DropZone content={appState.rootPageContent.uploadFileContent}
-                          filesType={currentInput.type}
+                          filesType={currentInput.type as any}
                           visibleDragDropZone={openDragDropZone}
                 />
             ) : null}

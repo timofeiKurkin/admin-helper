@@ -5,8 +5,17 @@
 .phoneNumberInputWrapper,
 .numberPCInputWrapper,
 .companyInputWrapper {
-    height: 3.3125rem;
+    @media screen and ($desktop1920) {
+        height: 3.3125rem;
+    }
+    
+    height: 3.125rem;
+    
     overflow: visible;
+    
+    @media screen and ($phone375_639) {
+        width: 95%;
+    }
 }
 
 .deviceInputWrapper {
@@ -24,7 +33,13 @@
 }
 
 .nameInputWrapper {
-    width: 13.125rem;
+    @media screen and ($desktop1920) {
+        width: 13.125rem;
+    }
+    
+    @media screen and ($desktop1440_1919) {
+        width: 11.9375rem;
+    }
     
     @media screen and ($desktop1280_1439) {
         width: 12.3125rem;
@@ -39,12 +54,16 @@
     }
 }
 
-.phoneNumberInputWrapper {
-
-}
-
 .companyInputWrapper {
-    width: 16.875rem;
+    @media screen and ($desktop1920),
+    screen and ($desktop1440_1919) {
+        width: 16.875rem;
+    }
+    
+    @media screen and ($desktop1280_1439),
+    screen and ($pad992_1279) {
+        width: 15.625rem;
+    }
     
     @media screen and ($pad640_991) {
         width: 15.625rem;

@@ -2,8 +2,8 @@
 
 .formBlockWrapper {
     display: grid;
-    //grid-template-columns: 1fr;
-    grid-template-columns: max-content;
+    grid-template-columns: 1fr;
+    //grid-template-columns: max-content;
     grid-template-rows: min-content min-content;
     
     @media screen and ($desktop1920) {

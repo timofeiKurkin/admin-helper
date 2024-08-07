@@ -44,8 +44,8 @@
         }
         
         @media screen and ($phone375_639) {
-            padding: 1.56rem 0;
-            grid-template-columns: 20.3125rem;
+            padding: 1.56rem;
+            grid-template-columns: 1fr;
         }
         
         .layoutContainer {

@@ -25,7 +25,7 @@ const AppWrapper: FC<ChildrenType> = ({children}) => {
         rootPageData,
         // appState,
         // setAppState
-    ]);
+    ])
 
     useEffect(() => {
         if (width) {
@@ -37,19 +37,35 @@ const AppWrapper: FC<ChildrenType> = ({children}) => {
                             phoneAdaptive: true,
                             padAdaptive: false,
                             desktopAdaptive: false,
+                            padAdaptive640_992: false
                         }
                     })
                 }
             } else if (width >= 640 && width <= 1279) {
-                if (!appState.userDevice?.padAdaptive) {
-                    setAppState({
-                        ...appState,
-                        userDevice: {
-                            phoneAdaptive: false,
-                            padAdaptive: true,
-                            desktopAdaptive: false,
-                        }
-                    })
+                if(width >= 640 && width <= 991) {
+                    if (!appState.userDevice?.padAdaptive) {
+                        setAppState({
+                            ...appState,
+                            userDevice: {
+                                phoneAdaptive: false,
+                                padAdaptive: true,
+                                desktopAdaptive: false,
+                                padAdaptive640_992: true
+                            }
+                        })
+                    }
+                } else {
+                    if (!appState.userDevice?.padAdaptive) {
+                        setAppState({
+                            ...appState,
+                            userDevice: {
+                                phoneAdaptive: false,
+                                padAdaptive: true,
+                                desktopAdaptive: false,
+                                padAdaptive640_992: false
+                            }
+                        })
+                    }
                 }
             } else if (width >= 1280) {
                 if (!appState.userDevice?.desktopAdaptive) {
@@ -59,6 +75,7 @@ const AppWrapper: FC<ChildrenType> = ({children}) => {
                             phoneAdaptive: false,
                             padAdaptive: false,
                             desktopAdaptive: true,
+                            padAdaptive640_992: false
                         }
                     })
                 }
@@ -68,10 +85,10 @@ const AppWrapper: FC<ChildrenType> = ({children}) => {
         width,
         // appState,
         // setAppState,
-        appState.userDevice?.desktopAdaptive,
-        appState.userDevice?.padAdaptive,
-        appState.userDevice?.phoneAdaptive,
-    ]);
+        // appState.userDevice?.desktopAdaptive,
+        // appState.userDevice?.padAdaptive,
+        // appState.userDevice?.phoneAdaptive,
+    ])
 
     return (children);
 };

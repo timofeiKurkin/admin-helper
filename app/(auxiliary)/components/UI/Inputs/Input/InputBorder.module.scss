@@ -27,8 +27,7 @@
     top: 0;
     left: 0;
     
-    background-color: $white_1;
-    opacity: $input_opacity;
+    background-color: rgba($white_1, $input_opacity);
     border-radius: inherit;
 }
 
