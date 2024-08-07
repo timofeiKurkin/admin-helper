@@ -59,7 +59,7 @@ const Provider: FC<ChildrenType> = ({children}) => {
             switchedMessageBlock: false
         })
 
-    console.log("appState", appState.userDataFromForm)
+    // console.log("appState", appState.userDataFromForm)
 
     return (
         <AppContext.Provider value={{appState, setAppState}}>

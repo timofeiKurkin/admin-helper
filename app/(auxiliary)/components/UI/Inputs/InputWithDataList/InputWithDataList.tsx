@@ -43,18 +43,15 @@ const InputWithDataList: FC<PropsType> = ({
                                           }) => {
 
     const [currentHelpfulList, setCurrentHelpfulList] = useState<string[]>([])
-    const [inputChildren, setInputChildren] = useState<ReactNode>(children)
-
-    useEffect(() => {
-        setInputChildren(children)
-    }, [
-        children
-    ]);
 
     useEffect(() => {
         if (value.length >= 3 && dataList) {
             const searchResult = searchHandler(dataList.list, value)
-            setCurrentHelpfulList(searchResult.map((res) => res.item.title))
+            const foundedItems = searchResult.map((res) => res.item.title)
+
+            if(!foundedItems.includes(value)) {
+                setCurrentHelpfulList(foundedItems)
+            }
         }
 
         if (!value.length) {
@@ -67,25 +64,19 @@ const InputWithDataList: FC<PropsType> = ({
     ]);
 
     const chooseHelpfulItem = (item: string) => {
-        setInputChildren(() => (
-            React.Children.map(children, element => {
-                if (!React.isValidElement(element)) return
+        setCurrentHelpfulList([])
 
-                const newProps = {
-                    ...element.props,
-                    children: React.cloneElement(element.props.children, {
-                        value: item,
-                    }),
-                };
+        React.Children.map(children, element => {
+            if (!React.isValidElement(element)) return
 
-                return React.cloneElement(element, newProps);
-            })
-        ))
+            element.props.children.props.onChange({target: {value: item}})
+            return element
+        })
     }
 
     return (
         <div className={styles.inputWrapper}>
-            {inputChildren}
+            {children}
 
             {
                 (currentHelpfulList.length) ? (
