@@ -75,10 +75,10 @@ const Input: FC<
 
     return (
         <div
-            className={`${inputStyles.inputWrapper} ${inputIsDirty ? inputStyles.inputActive : inputStyles.inputInactive}`}>
+            className={inputStyles.inputWrapper}>
             <div className={inputStyles.inputBox}>
                 <input
-                    className={`${fontStyles.buttonText} ${inputStyles.inputStyle}`}
+                    className={`${fontStyles.buttonText} ${inputStyles.inputStyle} ${inputIsDirty ? inputStyles.inputActive : inputStyles.inputInactive}`}
 
                     type={type}
                     placeholder={placeholder}
@@ -88,21 +88,12 @@ const Input: FC<
                     maxLength={maxLength}
                     disabled={disabled}
                     tabIndex={tabIndex}
-                    // list={value.length > 2 && datalist?.listType || ""}
 
                     onChange={(e: InputChangeEventHandler) => changeInputHandler(e)}
                     onBlur={() => onBlur()}
                     onFocus={() => onBlur()}
                     onKeyDown={(e) => onKeyDown(e)}
                 />
-
-                {/*{datalist ? (*/}
-                {/*    <datalist id={datalist.listType}>*/}
-                {/*        {datalist.list.map((item, index) => (*/}
-                {/*            <option key={`key=${index}`} value={item}></option>*/}
-                {/*        ))}*/}
-                {/*    </datalist>*/}
-                {/*) : null}*/}
 
                 {dynamicWidth && (
                     <span ref={spanRef} className={fontStyles.buttonText}
@@ -115,11 +106,17 @@ const Input: FC<
                           }}></span>
                 )}
             </div>
-            <span
-                style={dynamicWidth ? {
-                    width: inputWidth ? `${inputWidth}px` : "auto"
-                } : undefined}
-                className={borderStyles.inputBorder}></span>
+
+            <div className={inputStyles.borderBox}
+                 style={dynamicWidth ? {
+                     width: inputWidth ? `${inputWidth}px` : "auto"
+                 } : undefined}
+            >
+                {!inputIsDirty && (
+                    <span className={borderStyles.inactiveInputState}></span>
+                )}
+                <span className={borderStyles.inputBorder}></span>
+            </div>
         </div>
     );
 };

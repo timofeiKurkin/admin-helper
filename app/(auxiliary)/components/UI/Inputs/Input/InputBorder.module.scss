@@ -1,22 +1,37 @@
 @import "@/styles/variables.module";
 
 .inputBorder, .inputError, .inputConfirm {
-    z-index: 1;
     position: absolute;
+    z-index: 1;
     
     box-sizing: border-box;
     
-    background-color: $white_1;
-    border-radius: 15px;
+    background-color: $white;
+    border-radius: inherit;
     
     top: 0;
     left: 0;
     transition: opacity .3s, background-color .5s ease;
     overflow: hidden;
     
-    width: 100%;
+    width: inherit;
     height: inherit;
 }
+
+.inactiveInputState {
+    position: absolute;
+    z-index: 2;
+    
+    width: inherit;
+    height: inherit;
+    top: 0;
+    left: 0;
+    
+    background-color: $white_1;
+    opacity: $input_opacity;
+    border-radius: inherit;
+}
+
 
 .inputBorder {
     border: $black_input_border;
