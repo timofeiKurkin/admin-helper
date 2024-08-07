@@ -9,6 +9,7 @@ import {white_1} from "@/styles/colors";
 import Title from "@/app/(auxiliary)/components/UI/TextTemplates/Title";
 import {AppContext} from "@/app/(auxiliary)/components/Common/Provider/Provider";
 import UploadFile from "@/app/(auxiliary)/components/UI/SVG/UploadFile/UploadFile";
+import {formattedTime} from "@/app/(auxiliary)/func/formattedTime";
 
 
 interface PropsType {
@@ -27,41 +28,56 @@ const DropZone: FC<PropsType> = ({
         useState<boolean>(false)
 
     const onDrop = useCallback((userFiles: FileListType) => {
-        if (filesType === "video" && appState.videoList) {
+        if (appState.userDataFromForm?.fileData) {
+            const currentFiles = appState.userDataFromForm?.fileData[filesType]?.files
             const filteredFiles =
-                userFiles.filter((file) => !appState.videoList?.files?.includes(file))
+                userFiles.filter((file) => !currentFiles?.includes(file))
 
             if (filteredFiles) {
                 setAppState({
                     ...appState,
-                    videoList: {
-                        ...appState.videoList,
-                        files: [
-                            ...appState.videoList?.files || [],
-                            ...filteredFiles
-                        ]
+                    userDataFromForm: {
+                        ...appState.userDataFromForm,
+                        fileData: {
+                            ...appState.userDataFromForm?.fileData,
+                            [filesType]: {
+                                ...appState.userDataFromForm?.fileData[filesType],
+                                files: [
+                                    ...appState.userDataFromForm?.fileData[filesType]?.files || [],
+                                    ...filteredFiles
+                                ]
+                            }
+                        }
                     }
+
+                    // videoList: {
+                    //     ...appState.videoList,
+                    //     files: [
+                    //         ...appState.videoList?.files || [],
+                    //         ...filteredFiles
+                    //     ]
+                    // }
                 })
             }
         }
 
-        if (filesType === "photo" && appState.photoList) {
-            const filteredFiles =
-                userFiles.filter((file) => !appState.photoList?.files?.includes(file))
-
-            if (filteredFiles) {
-                setAppState({
-                    ...appState,
-                    photoList: {
-                        ...appState.photoList,
-                        files: [
-                            ...appState.photoList.files,
-                            ...filteredFiles
-                        ]
-                    }
-                })
-            }
-        }
+        // if (filesType === "photo" && appState.photoList) {
+        //     const filteredFiles =
+        //         userFiles.filter((file) => !appState.photoList?.files?.includes(file))
+        //
+        //     if (filteredFiles) {
+        //         setAppState({
+        //             ...appState,
+        //             photoList: {
+        //                 ...appState.photoList,
+        //                 files: [
+        //                     ...appState.photoList.files,
+        //                     ...filteredFiles
+        //                 ]
+        //             }
+        //         })
+        //     }
+        // }
 
         visibleDragDropZone()
     }, [
@@ -109,26 +125,25 @@ const DropZone: FC<PropsType> = ({
                 const data = await navigator.clipboard.read()
                 console.log("data", data)
 
-                if (data[0].types.includes("image/png")) {
+                if (data[0].types.includes("image/png") && appState.userDataFromForm?.fileData) {
                     const blobOutput = await data[0].getType("image/png")
-                    // const dataURL = URL.createObjectURL(blobOutput)
-
-                    const pastedImageName =
-                        `pasted-image-${new Date().toLocaleDateString("ru-RU", {
-                            hour: '2-digit',
-                            hour12: false,
-                            minute: '2-digit',
-                            second: '2-digit'
-                        }).split(", ").join("-")}`
+                    const pastedImageName = `pasted-image-${formattedTime()}`
                     const newFile = new File([blobOutput], pastedImageName)
+
                     setAppState({
                         ...appState,
-                        photoList: {
-                            ...appState.photoList,
-                            files: [
-                                ...appState.photoList?.files || [],
-                                newFile
-                            ]
+                        userDataFromForm: {
+                            ...appState.userDataFromForm,
+                            fileData: {
+                                ...appState.userDataFromForm?.fileData,
+                                [filesType]: {
+                                    ...appState.userDataFromForm?.fileData[filesType],
+                                    files: [
+                                        ...appState.userDataFromForm?.fileData[filesType]?.files || [],
+                                        newFile
+                                    ]
+                                }
+                            }
                         }
                     })
                     visibleDragDropZone()

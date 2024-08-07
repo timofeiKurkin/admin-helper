@@ -11,5 +11,6 @@
         display: flex;
         column-gap: 0.62rem;
         cursor: pointer;
+        user-select: none;
     }
 }

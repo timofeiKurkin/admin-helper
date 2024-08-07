@@ -1,4 +1,16 @@
 import React from "react";
+import {ChangeEventHandlerType} from "@/app/(auxiliary)/types/AppTypes/AppTypes";
+
+export const DEVICE_KEY = "device"
+export const MESSAGE_KEY = "message"
+export const PHOTO_KEY = "photo"
+export const VIDEO_KEY = "video"
+
+export const NAME_KEY = "name"
+export const PHONE_KEY = "phone-number"
+export const COMPANY_KEY = "company"
+export const NUMBERPC_KEY = "number-pc"
+
 
 export interface ValidationsType {
     isEmpty: boolean;
@@ -12,11 +24,17 @@ export interface ValidationsKeyType  {
 
 export type TypeOfInputs = "device" | "message" | PhotoAndVideoInputType | SavedInputsDataType;
 
-export type PhotoAndVideoInputType = "photo" | "video" | string;
+export type PhotoAndVideoInputType = "photo" | "video";
 
 export type SavedInputsDataType = "name" | "company" | "number-pc" | "phone-number" | string;
 
-export const savedInputsData: SavedInputsDataType[] = ["name", "company", "number-pc", "phone-number"]
+export const savedInputsData: SavedInputsDataType[] = [
+    "message",
+    "name",
+    "company",
+    "number-pc",
+    "phone-number"
+]
 
 export const photoAndVideoInputsData: PhotoAndVideoInputType[] = ["photo", "video"]
 
@@ -33,7 +51,7 @@ export interface ValidationReturnDataType {
 
 export interface UseInputType<E> extends ValidationReturnDataType {
     value: string;
-    onChange(e: React.ChangeEvent<E>): void;
+    onChange: (e: ChangeEventHandlerType<E>) => void;
     onBlur: () => void;
     isDirty: boolean;
     key: string;

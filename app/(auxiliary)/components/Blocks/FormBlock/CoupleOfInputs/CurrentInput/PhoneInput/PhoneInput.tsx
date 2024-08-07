@@ -1,4 +1,4 @@
-import React, {FC} from 'react';
+import React, {FC, useContext} from 'react';
 import {InputChangeEventHandler, KeyBoardEventHandler} from "@/app/(auxiliary)/types/AppTypes/AppTypes";
 import Input from "@/app/(auxiliary)/components/UI/Inputs/Input/Input";
 import useInput from "@/app/(auxiliary)/hooks/useInput";
@@ -11,6 +11,7 @@ import {PhoneNumberInputType} from "@/app/(auxiliary)/types/Data/Interface/RootP
 import {
     inputHandleKeyDown
 } from "@/app/(auxiliary)/components/Blocks/FormBlock/CoupleOfInputs/CurrentInput/inputHandleKeyDown";
+import {AppContext} from "@/app/(auxiliary)/components/Common/Provider/Provider";
 
 
 interface PropsType {
@@ -18,6 +19,7 @@ interface PropsType {
 }
 
 const PhoneInput: FC<PropsType> = ({currentInput}) => {
+    const {appState, setAppState} = useContext(AppContext)
     const value = useInput("+7 ", currentInput.type, inputValidations[currentInput.type])
 
     const phoneRegularExpression = (e: InputChangeEventHandler) => {
@@ -40,6 +42,16 @@ const PhoneInput: FC<PropsType> = ({currentInput}) => {
         e.target.value = formattedValue
 
         value.onChange(e)
+        setAppState({
+            ...appState,
+            userDataFromForm: {
+                ...appState.userDataFromForm,
+                textData: {
+                    ...appState.userDataFromForm?.textData,
+                    [currentInput.type]: e.target.value
+                }
+            }
+        })
     }
 
     return (

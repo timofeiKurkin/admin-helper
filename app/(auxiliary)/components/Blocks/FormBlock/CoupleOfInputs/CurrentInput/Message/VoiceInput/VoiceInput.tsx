@@ -6,44 +6,55 @@ import Microphone from "@/app/(auxiliary)/components/UI/SVG/Microphone/Microphon
 import {blue_dark, blue_light} from "@/styles/colors";
 import ReadyVoice
     from "@/app/(auxiliary)/components/Blocks/FormBlock/CoupleOfInputs/CurrentInput/Message/VoiceInput/ReadyVoice";
-import {object} from "prop-types";
+import {formattedTime} from "@/app/(auxiliary)/func/formattedTime";
 
 interface PropsType {
     voicePlaceHolder?: string;
+    setNewMessage: (newMessage: File) => void;
 }
 
-const VoiceInput: FC<PropsType> = ({voicePlaceHolder}) => {
-    const [isRecording, setIsRecording] = useState(false);
-    const [recordingIsDone, setRecordingIsDone] = useState<boolean>(false);
+const VoiceInput: FC<PropsType> = ({
+                                       voicePlaceHolder,
+                                       setNewMessage
+                                   }) => {
+    const [isRecording, setIsRecording] = useState(false)
+    const [recordingIsDone, setRecordingIsDone] = useState<boolean>(false)
 
     // const [audioURL, setAudioURL] = useState("");
-    const [audioFile, setAudioFile] = useState<Blob | null>(null);
+    const [audioFile, setAudioFile] = useState<Blob | null>(null)
 
-    const mediaRecorderRef = useRef<MediaRecorder | null>(null);
-    const audioChunksRef = useRef<Blob[]>([]);
+    const mediaRecorderRef = useRef<MediaRecorder | null>(null)
+    const audioChunksRef = useRef<Blob[]>([])
 
     const startRecording = async () => {
-        setIsRecording(true);
-        audioChunksRef.current = [];
-        const stream = await navigator.mediaDevices.getUserMedia({audio: true});
-        mediaRecorderRef.current = new MediaRecorder(stream);
+        setIsRecording(true)
+        audioChunksRef.current = []
+        const stream = await navigator.mediaDevices.getUserMedia({audio: true})
+        mediaRecorderRef.current = new MediaRecorder(stream)
 
         mediaRecorderRef.current.ondataavailable = (event) => {
-            audioChunksRef.current.push(event.data);
-        };
+            audioChunksRef.current.push(event.data)
+        }
 
         mediaRecorderRef.current.onstop = () => {
-            const audioBlob = new Blob(audioChunksRef.current, {type: "audio/wav"});
-            const audioURL = URL.createObjectURL(audioBlob);
-            setAudioFile(audioBlob)
+            const audioBlob = new Blob(audioChunksRef.current, {type: "audio/wav"})
+            const audioFile = new File([audioBlob], `user-record-${formattedTime()}`, {
+                type: "audio/wav",
+                lastModified: new Date().getDate(),
+            })
+
+            if(audioFile) {
+                setNewMessage(audioFile)
+                setAudioFile(audioBlob)
+            }
         };
 
         mediaRecorderRef.current.start();
     }
 
     const stopRecording = () => {
-        setIsRecording((prevState) => !prevState);
-        setRecordingIsDone((prevState) => !prevState);
+        setIsRecording((prevState) => !prevState)
+        setRecordingIsDone((prevState) => !prevState)
 
         if (mediaRecorderRef.current) {
             mediaRecorderRef.current.stop()
@@ -58,7 +69,7 @@ const VoiceInput: FC<PropsType> = ({voicePlaceHolder}) => {
         }
     }
 
-    if(!audioFile && !recordingIsDone) {
+    if (!audioFile && !recordingIsDone) {
         return (
             <Button onClick={isRecording ? () => stopRecording() : () => startRecording()}
                     style={{

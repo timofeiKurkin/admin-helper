@@ -1,4 +1,4 @@
-import React, {FC} from 'react';
+import React, {FC, useEffect} from 'react';
 import Textarea from "@/app/(auxiliary)/components/UI/Inputs/Textarea/Textarea";
 import useInput from "@/app/(auxiliary)/hooks/useInput";
 import {
@@ -10,13 +10,25 @@ import styles from "./MessageInput.module.scss";
 interface PropsType {
     placeholder: string;
     type: string;
+    setNewMessage: (newMessage: string) => void;
 }
 
 const MessageInput: FC<PropsType> = ({
                                          placeholder,
-                                         type
-}) => {
-    const message = useInput("", type, inputValidations[type]);
+                                         type,
+                                         setNewMessage
+                                     }) => {
+    const message = useInput<HTMLTextAreaElement>("", type, inputValidations[type]);
+
+    useEffect(() => {
+        setNewMessage(message.value)
+
+        return () => {
+            setNewMessage("");
+        }
+    }, [
+        message.value
+    ]);
 
     return (
         <div className={styles.messageWrapper}>

@@ -6,7 +6,7 @@
     @media screen and ($desktop1920),
     screen and ($desktop1440_1919),
     screen and ($desktop1280_1439) {
-        grid-template-columns: max-content min-content max-content;
+        grid-template-columns: 1fr min-content max-content;
     }
     
     @media screen and ($desktop1920) {
@@ -26,7 +26,7 @@
         
         @media screen and ($desktop1920) {
             margin-right: 3.75rem;
-            margin-left: 6.44rem;
+            //margin-left: 6.44rem;
         }
         
         @media screen and ($desktop1440_1919) {

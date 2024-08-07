@@ -1,4 +1,4 @@
-import React, {FC, useEffect, useState} from 'react';
+import React, {FC, useContext, useEffect, useState} from 'react';
 import {
     CompanyInputType,
     DeviceInputType, InputHelpfulItemType,
@@ -11,6 +11,7 @@ import {
 import Input from "@/app/(auxiliary)/components/UI/Inputs/Input/Input";
 import inputsStyles from "../InputsStyles.module.scss"
 import InputWithDataList from "@/app/(auxiliary)/components/UI/Inputs/InputWithDataList/InputWithDataList";
+import {AppContext} from "@/app/(auxiliary)/components/Common/Provider/Provider";
 
 
 const typeOfInputsClasses: { [key: string]: string } = {
@@ -27,9 +28,13 @@ interface PropsType {
 const TextInput: FC<PropsType> = ({
                                       currentInput
                                   }) => {
+    const {appState, setAppState} = useContext(AppContext)
+    const value =
+        useInput("", currentInput.type, inputValidations[currentInput.type])
+    const [currentHelpfulList, setCurrentHelpfulList] =
+        useState<InputHelpfulItemType[]>([])
+
     const currentInputTypesClassName = typeOfInputsClasses[currentInput.type]
-    const value = useInput("", currentInput.type, inputValidations[currentInput.type])
-    const [currentHelpfulList, setCurrentHelpfulList] = useState<InputHelpfulItemType[]>([])
 
     useEffect(() => {
         if (currentInput.type === "device" || currentInput.type === "company") {
@@ -37,6 +42,21 @@ const TextInput: FC<PropsType> = ({
             setCurrentHelpfulList((prevState) => devicesList || prevState)
         }
     }, [currentInput]);
+
+    useEffect(() => {
+        setAppState({
+            ...appState,
+            userDataFromForm: {
+                ...appState.userDataFromForm,
+                textData: {
+                    ...appState.userDataFromForm?.textData,
+                    [currentInput.type]: value.value
+                }
+            }
+        })
+    }, [
+        value.value
+    ]);
 
     return (
         <>
@@ -57,8 +77,6 @@ const TextInput: FC<PropsType> = ({
                 </div>
             </InputWithDataList>
         </>
-
-
     )
 };
 

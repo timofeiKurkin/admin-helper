@@ -51,7 +51,7 @@ const CurrentInput: FC<PropsType> = ({currentInput}) => {
                 <ComputerNumberInput currentInput={currentInput}/>
             )}
 
-            {![...photoAndVideoInputsData, "message", "phone-number", "number-pc"].includes(currentInput.type) && (
+            {["name", "device", "company"].includes(currentInput.type) && (
                 <TextInput currentInput={currentInput}/>
             )}
 

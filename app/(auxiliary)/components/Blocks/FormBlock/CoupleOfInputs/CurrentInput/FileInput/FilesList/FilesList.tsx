@@ -18,32 +18,68 @@ const FilesList: FC<PropsType> = ({
                                   }) => {
     const {appState, setAppState} = useContext(AppContext)
     const [currentFilesList, setCurrentFilesList] =
-        useState<FileListStateType>(() => (type === appState.videoList?.type ? appState.videoList : appState.photoList) || {} as FileListStateType)
+        useState<FileListStateType>(() => {
+                if (appState.userDataFromForm?.fileData) {
+                    return appState.userDataFromForm?.fileData[type] || {} as FileListStateType
+                }
+
+                return {} as FileListStateType
+            }
+        )
 
     const removeFile = (
         fileName: string,
     ) => {
         currentFilesList.files = currentFilesList.files.filter((file) => file.name !== fileName)
 
-        if (type === "photo") {
+        if (appState.userDataFromForm?.fileData) {
             setAppState({
                 ...appState,
-                photoList: {
-                    ...appState.photoList,
-                    files: [...currentFilesList.files]
+                userDataFromForm: {
+                    ...appState.userDataFromForm,
+                    fileData: {
+                        ...appState.userDataFromForm?.fileData,
+                        [type]: {
+                            ...appState.userDataFromForm?.fileData[type],
+                            files: [
+                                ...currentFilesList.files
+                            ]
+                        }
+                    }
                 }
             })
-        } else if (type === "video") {
-
         }
+
+        // if (type === "photo") {
+        //     setAppState({
+        //         ...appState,
+        //         photoList: {
+        //             ...appState.photoList,
+        //             files: [...currentFilesList.files]
+        //         }
+        //     })
+        // } else if (type === "video") {
+        //     setAppState({
+        //         ...appState,
+        //         videoList: {
+        //             ...appState.videoList,
+        //             files: [...currentFilesList.files]
+        //         }
+        //     })
+        // }
     }
 
     useEffect(() => {
-        setCurrentFilesList(() => (type === 'video' ? appState.videoList : appState.photoList) || {} as FileListStateType)
+        setCurrentFilesList(() => {
+            if (appState.userDataFromForm?.fileData) {
+                return appState.userDataFromForm?.fileData[type] || {} as FileListStateType
+            }
+
+            return {} as FileListStateType
+        })
     }, [
         type,
-        appState.photoList,
-        appState.videoList
+        appState.userDataFromForm?.fileData,
     ]);
 
 

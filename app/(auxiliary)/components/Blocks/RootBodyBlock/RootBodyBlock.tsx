@@ -14,11 +14,13 @@ interface PropsType {
 const RootBodyBlock: FC<PropsType> = ({content}) => {
     const {appState} = useContext(AppContext)
 
+    // ${(appState.openedPhotoBlock || appState.openedVideoBlock) && styles.separatingLineLess}
+
     return (
         <div className={styles.bodyBlockGrid}>
             <FormPart inputsContent={content.formContent.formPartOne}/>
 
-            <div className={`${styles.separatingLine} ${(appState.openedPhotoBlock || appState.openedVideoBlock) && styles.separatingLineLess}`}></div>
+            <div className={`${styles.separatingLine}`}></div>
 
             <FormPart inputsContent={content.formContent.formPartTwo} permissionsContent={{
                 permissions: content.permissionsContent,
