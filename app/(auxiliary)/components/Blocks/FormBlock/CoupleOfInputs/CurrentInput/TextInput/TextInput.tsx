@@ -1,4 +1,4 @@
-import React, {FC, useContext, useEffect, useState} from 'react';
+import React, {Dispatch, FC, SetStateAction, useContext, useEffect, useState} from 'react';
 import {
     CompanyInputType,
     DeviceInputType, InputHelpfulItemType,
@@ -12,6 +12,8 @@ import Input from "@/app/(auxiliary)/components/UI/Inputs/Input/Input";
 import inputsStyles from "../InputsStyles.module.scss"
 import InputWithDataList from "@/app/(auxiliary)/components/UI/Inputs/InputWithDataList/InputWithDataList";
 import {AppContext} from "@/app/(auxiliary)/components/Common/Provider/Provider";
+import {ProviderStateType} from "@/app/(auxiliary)/types/AppTypes/Context";
+import {updateFormsDataState} from "@/app/(auxiliary)/func/updateFormsDataState";
 
 
 const typeOfInputsClasses: { [key: string]: string } = {
@@ -44,18 +46,21 @@ const TextInput: FC<PropsType> = ({
     }, [currentInput]);
 
     useEffect(() => {
-        setAppState({
-            ...appState,
-            userDataFromForm: {
-                ...appState.userDataFromForm,
-                textData: {
-                    ...appState.userDataFromForm?.textData,
-                    [currentInput.type]: value.value
-                }
-            }
+        updateFormsDataState<string>({
+            setAppState,
+            newValue: {
+                validationStatus: value.inputValid,
+                value: value.value
+            },
+            key: currentInput.type
         })
+
     }, [
-        value.value
+        setAppState,
+        appState,
+        value.value,
+        value.inputValid,
+        currentInput.type
     ]);
 
     return (

@@ -1,4 +1,4 @@
-import React, {FC, useContext} from 'react';
+import React, {FC, useContext, useEffect} from 'react';
 import {InputChangeEventHandler, KeyBoardEventHandler} from "@/app/(auxiliary)/types/AppTypes/AppTypes";
 import inputsStyles
     from "@/app/(auxiliary)/components/Blocks/FormBlock/CoupleOfInputs/CurrentInput/InputsStyles.module.scss"
@@ -12,6 +12,7 @@ import {
     inputHandleKeyDown
 } from "@/app/(auxiliary)/components/Blocks/FormBlock/CoupleOfInputs/CurrentInput/inputHandleKeyDown";
 import {AppContext} from "@/app/(auxiliary)/components/Common/Provider/Provider";
+import {updateFormsDataState} from "@/app/(auxiliary)/func/updateFormsDataState";
 
 interface PropsType {
     currentInput: NumberPcInputType;
@@ -41,17 +42,24 @@ const ComputerNumberInput: FC<PropsType> = ({
         e.target.value = computerNumber
 
         value.onChange(e)
-        setAppState({
-            ...appState,
-            userDataFromForm: {
-                ...appState.userDataFromForm,
-                textData: {
-                    ...appState.userDataFromForm?.textData,
-                    [currentInput.type]: e.target.value
-                }
-            }
-        })
     }
+
+    useEffect(() => {
+        updateFormsDataState({
+            setAppState,
+            newValue: {
+                validationStatus: value.inputValid,
+                value: value.value
+            },
+            key: currentInput.type
+        })
+    }, [
+        appState,
+        setAppState,
+        value.value,
+        value.inputValid,
+        currentInput.type
+    ]);
 
     return (
         <div className={inputsStyles.numberPCInputWrapper}>

@@ -10,7 +10,7 @@ import styles from "./MessageInput.module.scss";
 interface PropsType {
     placeholder: string;
     type: string;
-    setNewMessage: (newMessage: string) => void;
+    setNewMessage: (newMessage: string, validationStatus: boolean) => void;
 }
 
 const MessageInput: FC<PropsType> = ({
@@ -21,13 +21,15 @@ const MessageInput: FC<PropsType> = ({
     const message = useInput<HTMLTextAreaElement>("", type, inputValidations[type]);
 
     useEffect(() => {
-        setNewMessage(message.value)
+        setNewMessage(message.value, message.inputValid)
 
         return () => {
-            setNewMessage("");
+            setNewMessage("", false);
         }
     }, [
-        message.value
+        // setNewMessage,
+        message.value,
+        message.inputValid
     ]);
 
     return (

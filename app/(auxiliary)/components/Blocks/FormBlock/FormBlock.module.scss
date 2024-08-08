@@ -3,6 +3,7 @@
 
 .formBlockWrapper {
     display: flex;
+    transition: width .5s ease;
     
     @media screen and ($phone375_639) {
         flex-direction: column;

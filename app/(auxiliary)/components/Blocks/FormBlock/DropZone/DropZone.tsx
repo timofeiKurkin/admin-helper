@@ -34,50 +34,30 @@ const DropZone: FC<PropsType> = ({
                 userFiles.filter((file) => !currentFiles?.includes(file))
 
             if (filteredFiles) {
-                setAppState({
-                    ...appState,
-                    userDataFromForm: {
-                        ...appState.userDataFromForm,
-                        fileData: {
-                            ...appState.userDataFromForm?.fileData,
-                            [filesType]: {
-                                ...appState.userDataFromForm?.fileData[filesType],
-                                files: [
-                                    ...appState.userDataFromForm?.fileData[filesType]?.files || [],
-                                    ...filteredFiles
-                                ]
+                setAppState((prevState) => {
+                    if (!prevState.userDataFromForm?.fileData) {
+                        return prevState
+                    }
+
+                    return {
+                        ...prevState,
+                        userDataFromForm: {
+                            ...prevState.userDataFromForm,
+                            fileData: {
+                                ...prevState.userDataFromForm?.fileData,
+                                [filesType]: {
+                                    ...prevState.userDataFromForm?.fileData[filesType],
+                                    files: [
+                                        ...prevState.userDataFromForm?.fileData[filesType]?.files || [],
+                                        ...filteredFiles
+                                    ]
+                                }
                             }
                         }
                     }
-
-                    // videoList: {
-                    //     ...appState.videoList,
-                    //     files: [
-                    //         ...appState.videoList?.files || [],
-                    //         ...filteredFiles
-                    //     ]
-                    // }
                 })
             }
         }
-
-        // if (filesType === "photo" && appState.photoList) {
-        //     const filteredFiles =
-        //         userFiles.filter((file) => !appState.photoList?.files?.includes(file))
-        //
-        //     if (filteredFiles) {
-        //         setAppState({
-        //             ...appState,
-        //             photoList: {
-        //                 ...appState.photoList,
-        //                 files: [
-        //                     ...appState.photoList.files,
-        //                     ...filteredFiles
-        //                 ]
-        //             }
-        //         })
-        //     }
-        // }
 
         visibleDragDropZone()
     }, [

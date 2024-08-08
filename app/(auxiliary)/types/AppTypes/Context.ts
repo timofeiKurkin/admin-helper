@@ -9,8 +9,8 @@ import {
 } from "@/app/(auxiliary)/types/AppTypes/InputHooksTypes";
 
 export interface AppContextType {
-    appState: StateType;
-    setAppState: React.Dispatch<React.SetStateAction<StateType>>;
+    appState: ProviderStateType;
+    setAppState: React.Dispatch<React.SetStateAction<ProviderStateType>>;
 }
 
 export interface FileListStateType {
@@ -18,21 +18,29 @@ export interface FileListStateType {
     files: File[];
 }
 
-export interface StateType {
+export interface FormDataItemType<T> {
+    validationStatus: boolean;
+    value: T;
+}
+
+
+export interface UserTextDataType {
+    [DEVICE_KEY]?: FormDataItemType<string>;
+    [NAME_KEY]?: FormDataItemType<string>;
+    [MESSAGE_KEY]?: FormDataItemType<string | File>;
+    [COMPANY_KEY]?: FormDataItemType<string>;
+    [NUMBERPC_KEY]?: FormDataItemType<string>;
+    [PHONE_KEY]?: FormDataItemType<string>;
+}
+
+export interface ProviderStateType {
     userDataFromForm?: {
         fileData?: {
-            [MESSAGE_KEY]?: File;
+            // [MESSAGE_KEY]?: File;
             [PHOTO_KEY]?: FileListStateType;
             [VIDEO_KEY]?: FileListStateType;
         };
-        textData?: {
-            [DEVICE_KEY]?: string;
-            [NAME_KEY]?: string;
-            [MESSAGE_KEY]?: string;
-            [COMPANY_KEY]?: string;
-            [NUMBERPC_KEY]?: string;
-            [PHONE_KEY]?: string;
-        }
+        textData?: UserTextDataType;
     }
     permissionAgree?: {
         userCanTalk?: boolean;

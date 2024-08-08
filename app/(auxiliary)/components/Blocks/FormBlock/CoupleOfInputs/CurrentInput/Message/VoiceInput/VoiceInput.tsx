@@ -1,6 +1,6 @@
 "use client"
 
-import React, {FC, useRef, useState} from "react";
+import React, {FC, useEffect, useRef, useState} from "react";
 import Button from "@/app/(auxiliary)/components/UI/Button/Button";
 import Microphone from "@/app/(auxiliary)/components/UI/SVG/Microphone/Microphone";
 import {blue_dark, blue_light} from "@/styles/colors";
@@ -10,7 +10,7 @@ import {formattedTime} from "@/app/(auxiliary)/func/formattedTime";
 
 interface PropsType {
     voicePlaceHolder?: string;
-    setNewMessage: (newMessage: File) => void;
+    setNewMessage: (newMessage: File, validationStatus: boolean) => void;
 }
 
 const VoiceInput: FC<PropsType> = ({
@@ -43,8 +43,8 @@ const VoiceInput: FC<PropsType> = ({
                 lastModified: new Date().getDate(),
             })
 
-            if(audioFile) {
-                setNewMessage(audioFile)
+            if (audioFile) {
+                setNewMessage(audioFile, true)
                 setAudioFile(audioBlob)
             }
         };
@@ -68,6 +68,19 @@ const VoiceInput: FC<PropsType> = ({
             setAudioFile(null)
         }
     }
+
+    useEffect(() => {
+        if (!audioFile) {
+            setNewMessage({} as File, false)
+        }
+
+        return () => {
+            setNewMessage({} as File, false)
+        }
+    }, [
+        audioFile,
+        setNewMessage
+    ]);
 
     if (!audioFile && !recordingIsDone) {
         return (

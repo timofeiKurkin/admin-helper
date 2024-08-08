@@ -1,4 +1,4 @@
-import React, {FC, useContext} from 'react';
+import React, {FC, useContext, useEffect} from 'react';
 import {InputChangeEventHandler, KeyBoardEventHandler} from "@/app/(auxiliary)/types/AppTypes/AppTypes";
 import Input from "@/app/(auxiliary)/components/UI/Inputs/Input/Input";
 import useInput from "@/app/(auxiliary)/hooks/useInput";
@@ -12,6 +12,7 @@ import {
     inputHandleKeyDown
 } from "@/app/(auxiliary)/components/Blocks/FormBlock/CoupleOfInputs/CurrentInput/inputHandleKeyDown";
 import {AppContext} from "@/app/(auxiliary)/components/Common/Provider/Provider";
+import {updateFormsDataState} from "@/app/(auxiliary)/func/updateFormsDataState";
 
 
 interface PropsType {
@@ -53,6 +54,23 @@ const PhoneInput: FC<PropsType> = ({currentInput}) => {
             }
         })
     }
+
+    useEffect(() => {
+        updateFormsDataState({
+            setAppState,
+            newValue: {
+                validationStatus: value.inputValid,
+                value: value.value
+            },
+            key: currentInput.type
+        })
+    }, [
+        appState,
+        setAppState,
+        value.value,
+        value.inputValid,
+        currentInput.type
+    ]);
 
     return (
         <div className={inputsStyles.phoneNumberInputWrapper}>

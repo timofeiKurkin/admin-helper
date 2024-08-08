@@ -49,8 +49,9 @@
         }
         
         @media screen and ($phone375_639) {
+            row-gap: 1.25rem;
             .permissions {
-                padding: 0 .63rem;
+                padding-left: .62rem;
             }
         }
     }

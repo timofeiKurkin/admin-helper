@@ -6,6 +6,7 @@ import FormBlock from "@/app/(auxiliary)/components/Blocks/FormBlock/FormBlock";
 import styles from "./FormPart.module.scss";
 import Permissions from "@/app/(auxiliary)/components/Blocks/RootBodyBlock/Permissions/Permissions";
 import Button from "@/app/(auxiliary)/components/UI/Button/Button";
+import FormUserDataUpload from "@/app/(auxiliary)/components/Blocks/FormBlock/FormUserDataUpload/FormUserDataUpload";
 
 
 interface PropsType {
@@ -36,9 +37,7 @@ const FormPart: FC<PropsType> = ({
                     </div>
 
                     <div className={styles.send}>
-                        <Button disabled={true}>
-                            {permissionsContent.button}
-                        </Button>
+                        <FormUserDataUpload buttonText={permissionsContent.button}/>
                     </div>
                 </div>
             ) : null}

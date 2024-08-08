@@ -22,11 +22,13 @@ export interface ValidationsKeyType  {
     key: TypeOfInputs;
 }
 
-export type TypeOfInputs = "device" | "message" | PhotoAndVideoInputType | SavedInputsDataType;
+export type TypeOfInputs = DeviceType | PhotoAndVideoInputType | SavedInputsDataType;
 
 export type PhotoAndVideoInputType = "photo" | "video";
 
-export type SavedInputsDataType = "name" | "company" | "number-pc" | "phone-number" | string;
+export type DeviceType = "device";
+
+export type SavedInputsDataType = "name" | "company" | "number-pc" | "phone-number" | "message" // | string;
 
 export const savedInputsData: SavedInputsDataType[] = [
     "message",

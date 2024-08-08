@@ -7,6 +7,7 @@ import styles from "./Message.module.scss"
 import MessageInput
     from "@/app/(auxiliary)/components/Blocks/FormBlock/CoupleOfInputs/CurrentInput/Message/MessageInput/MessageInput";
 import {AppContext} from "@/app/(auxiliary)/components/Common/Provider/Provider";
+import {updateFormsDataState} from "@/app/(auxiliary)/func/updateFormsDataState";
 
 interface PropsType {
     currentInput: MessageInputType;
@@ -17,47 +18,41 @@ const Message: FC<PropsType> = ({currentInput}) => {
         useState<boolean>(false);
     const {appState, setAppState} = useContext(AppContext)
 
-    const setNewMessageHandler = (newMessage: File | string) => {
-        if (typeof newMessage === "string") {
-            setAppState({
-                ...appState,
-                userDataFromForm: {
-                    ...appState.userDataFromForm,
-                    textData: {
-                        ...appState.userDataFromForm?.textData,
-                        [currentInput.type]: newMessage
-                    }
-                }
-            })
-        }
-
-        if (newMessage instanceof File) {
-            setAppState({
-                ...appState,
-                userDataFromForm: {
-                    ...appState.userDataFromForm,
-                    fileData: {
-                        ...appState.userDataFromForm?.fileData,
-                        [currentInput.type]: newMessage
-                    }
-                }
-            })
-        }
+    const setNewMessageHandler = (
+        newMessage: File | string,
+        validationStatus: boolean
+    ) => {
+        updateFormsDataState({
+            setAppState,
+            newValue: {
+                validationStatus,
+                value: newMessage
+            },
+            key: currentInput.type
+        })
     }
 
     useEffect(() => {
         if (appState.userDevice?.padAdaptive640_992) {
-            setAppState({
-                ...appState,
-                switchedMessageBlock: userCannotTalk
+            setAppState((prevState) => {
+                return {
+                    ...prevState,
+                    openedPhotoBlock: userCannotTalk
+                }
             })
         } else {
-            setAppState({
-                ...appState,
-                openedPhotoBlock: userCannotTalk
+            setAppState((prevState) => {
+                return {
+                    ...prevState,
+                    switchedMessageBlock: userCannotTalk
+                }
             })
         }
-    }, [userCannotTalk]);
+    }, [
+        appState.userDevice,
+        setAppState,
+        userCannotTalk
+    ]);
 
     const switchTypeMessageHandler = () => {
         setUserCannotTalk((prevState) => !prevState)

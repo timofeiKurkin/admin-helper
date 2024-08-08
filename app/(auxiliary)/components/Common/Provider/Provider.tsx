@@ -2,7 +2,7 @@
 
 import React, {createContext, FC, useState} from 'react';
 import {ChildrenType} from "@/app/(auxiliary)/types/AppTypes/AppTypes";
-import {AppContextType, FileListStateType, StateType} from "@/app/(auxiliary)/types/AppTypes/Context";
+import {AppContextType, FileListStateType, ProviderStateType} from "@/app/(auxiliary)/types/AppTypes/Context";
 import {UploadFileType} from "@/app/(auxiliary)/types/Data/Interface/RootPage/RootPageType";
 import {
     COMPANY_KEY,
@@ -18,10 +18,10 @@ export const AppContext = createContext<AppContextType>({} as AppContextType)
 
 const Provider: FC<ChildrenType> = ({children}) => {
     const [appState, setAppState] =
-        useState<StateType>({
+        useState<ProviderStateType>({
             userDataFromForm: {
                 fileData: {
-                    [MESSAGE_KEY]: {} as File,
+                    // [MESSAGE_KEY]: {} as File,
                     [PHOTO_KEY]: {
                         type: "photo",
                         files: []
@@ -32,12 +32,30 @@ const Provider: FC<ChildrenType> = ({children}) => {
                     }
                 },
                 textData: {
-                    [DEVICE_KEY]: "",
-                    [NAME_KEY]: "",
-                    [MESSAGE_KEY]: "",
-                    [COMPANY_KEY]: "",
-                    [NUMBERPC_KEY]: "",
-                    [PHONE_KEY]: ""
+                    [DEVICE_KEY]: {
+                        validationStatus: false,
+                        value: ""
+                    },
+                    [NAME_KEY]: {
+                        validationStatus: false,
+                        value: ""
+                    },
+                    [MESSAGE_KEY]: {
+                        validationStatus: false,
+                        value: ""
+                    },
+                    [COMPANY_KEY]: {
+                        validationStatus: false,
+                        value: ""
+                    },
+                    [NUMBERPC_KEY]: {
+                        validationStatus: false,
+                        value: ""
+                    },
+                    [PHONE_KEY]: {
+                        validationStatus: false,
+                        value: ""
+                    }
                 }
             },
             userDevice: {
@@ -60,7 +78,7 @@ const Provider: FC<ChildrenType> = ({children}) => {
             switchedMessageBlock: false
         })
 
-    // console.log("appState", appState.userDataFromForm)
+    console.log("appState userDataFromForm: ", appState.userDataFromForm)
 
     return (
         <AppContext.Provider value={{appState, setAppState}}>

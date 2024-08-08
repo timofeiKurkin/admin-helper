@@ -16,10 +16,12 @@ interface PropsType {
 }
 
 const FileInput: FC<PropsType> = ({currentInput}) => {
+    const {appState, setAppState} = useContext(AppContext)
+
     const [haveMediaFile, setHaveMediaFile] =
         useState<boolean>(false);
-    const [dragDropZoneIsOpen, setDragDropZoneIsOpen] = useState<boolean>(false);
-    const {appState, setAppState} = useContext(AppContext)
+    const [dragDropZoneIsOpen, setDragDropZoneIsOpen] =
+        useState<boolean>(false);
 
     const openDragDropZone = () => {
         setDragDropZoneIsOpen((prevState) => !prevState);
@@ -35,6 +37,11 @@ const FileInput: FC<PropsType> = ({currentInput}) => {
         setHaveMediaFile((prevState) => !prevState)
 
         if(appState.userDevice?.padAdaptive640_992) {
+            setAppState({
+                ...appState,
+                switchedMessageBlock: !haveMediaFile
+            })
+        } else {
             if(currentInput.type === 'photo') {
                 setAppState({
                     ...appState,
@@ -48,11 +55,6 @@ const FileInput: FC<PropsType> = ({currentInput}) => {
                     openedVideoBlock: !haveMediaFile
                 })
             }
-        } else {
-            setAppState({
-                ...appState,
-                switchedMessageBlock: !haveMediaFile
-            })
         }
     }
 
