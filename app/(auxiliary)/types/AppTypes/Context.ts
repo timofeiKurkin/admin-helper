@@ -33,15 +33,18 @@ export interface UserTextDataType {
     [PHONE_KEY]?: FormDataItemType<string>;
 }
 
+interface UserFileDataType {
+    [PHOTO_KEY]?: FileListStateType;
+    [VIDEO_KEY]?: FileListStateType;
+}
+
+export interface UserFormDataType {
+    fileData?: UserFileDataType;
+    textData?: UserTextDataType;
+}
+
 export interface ProviderStateType {
-    userDataFromForm?: {
-        fileData?: {
-            // [MESSAGE_KEY]?: File;
-            [PHOTO_KEY]?: FileListStateType;
-            [VIDEO_KEY]?: FileListStateType;
-        };
-        textData?: UserTextDataType;
-    }
+    userFormData?: UserFormDataType;
     permissionAgree?: {
         userCanTalk?: boolean;
         userAgreed?: boolean;

@@ -28,27 +28,27 @@ const DropZone: FC<PropsType> = ({
         useState<boolean>(false)
 
     const onDrop = useCallback((userFiles: FileListType) => {
-        if (appState.userDataFromForm?.fileData) {
-            const currentFiles = appState.userDataFromForm?.fileData[filesType]?.files
+        if (appState.userFormData?.fileData) {
+            const currentFiles = appState.userFormData?.fileData[filesType]?.files
             const filteredFiles =
                 userFiles.filter((file) => !currentFiles?.includes(file))
 
             if (filteredFiles) {
                 setAppState((prevState) => {
-                    if (!prevState.userDataFromForm?.fileData) {
+                    if (!prevState.userFormData?.fileData) {
                         return prevState
                     }
 
                     return {
                         ...prevState,
-                        userDataFromForm: {
-                            ...prevState.userDataFromForm,
+                        userFormData: {
+                            ...prevState.userFormData,
                             fileData: {
-                                ...prevState.userDataFromForm?.fileData,
+                                ...prevState.userFormData?.fileData,
                                 [filesType]: {
-                                    ...prevState.userDataFromForm?.fileData[filesType],
+                                    ...prevState.userFormData?.fileData[filesType],
                                     files: [
-                                        ...prevState.userDataFromForm?.fileData[filesType]?.files || [],
+                                        ...prevState.userFormData?.fileData[filesType]?.files || [],
                                         ...filteredFiles
                                     ]
                                 }
@@ -105,21 +105,21 @@ const DropZone: FC<PropsType> = ({
                 const data = await navigator.clipboard.read()
                 console.log("data", data)
 
-                if (data[0].types.includes("image/png") && appState.userDataFromForm?.fileData) {
+                if (data[0].types.includes("image/png") && appState.userFormData?.fileData) {
                     const blobOutput = await data[0].getType("image/png")
                     const pastedImageName = `pasted-image-${formattedTime()}`
                     const newFile = new File([blobOutput], pastedImageName)
 
                     setAppState({
                         ...appState,
-                        userDataFromForm: {
-                            ...appState.userDataFromForm,
+                        userFormData: {
+                            ...appState.userFormData,
                             fileData: {
-                                ...appState.userDataFromForm?.fileData,
+                                ...appState.userFormData?.fileData,
                                 [filesType]: {
-                                    ...appState.userDataFromForm?.fileData[filesType],
+                                    ...appState.userFormData?.fileData[filesType],
                                     files: [
-                                        ...appState.userDataFromForm?.fileData[filesType]?.files || [],
+                                        ...appState.userFormData?.fileData[filesType]?.files || [],
                                         newFile
                                     ]
                                 }

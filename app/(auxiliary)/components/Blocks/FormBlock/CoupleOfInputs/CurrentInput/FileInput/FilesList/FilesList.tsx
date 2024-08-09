@@ -19,8 +19,8 @@ const FilesList: FC<PropsType> = ({
     const {appState, setAppState} = useContext(AppContext)
     const [currentFilesList, setCurrentFilesList] =
         useState<FileListStateType>(() => {
-                if (appState.userDataFromForm?.fileData) {
-                    return appState.userDataFromForm?.fileData[type] || {} as FileListStateType
+                if (appState.userFormData?.fileData) {
+                    return appState.userFormData?.fileData[type] || {} as FileListStateType
                 }
 
                 return {} as FileListStateType
@@ -32,15 +32,15 @@ const FilesList: FC<PropsType> = ({
     ) => {
         currentFilesList.files = currentFilesList.files.filter((file) => file.name !== fileName)
 
-        if (appState.userDataFromForm?.fileData) {
+        if (appState.userFormData?.fileData) {
             setAppState({
                 ...appState,
-                userDataFromForm: {
-                    ...appState.userDataFromForm,
+                userFormData: {
+                    ...appState.userFormData,
                     fileData: {
-                        ...appState.userDataFromForm?.fileData,
+                        ...appState.userFormData?.fileData,
                         [type]: {
-                            ...appState.userDataFromForm?.fileData[type],
+                            ...appState.userFormData?.fileData[type],
                             files: [
                                 ...currentFilesList.files
                             ]
@@ -71,15 +71,15 @@ const FilesList: FC<PropsType> = ({
 
     useEffect(() => {
         setCurrentFilesList(() => {
-            if (appState.userDataFromForm?.fileData) {
-                return appState.userDataFromForm?.fileData[type] || {} as FileListStateType
+            if (appState.userFormData?.fileData) {
+                return appState.userFormData?.fileData[type] || {} as FileListStateType
             }
 
             return {} as FileListStateType
         })
     }, [
         type,
-        appState.userDataFromForm?.fileData,
+        appState.userFormData?.fileData,
     ]);
 
 

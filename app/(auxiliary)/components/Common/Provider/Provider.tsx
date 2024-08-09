@@ -19,7 +19,7 @@ export const AppContext = createContext<AppContextType>({} as AppContextType)
 const Provider: FC<ChildrenType> = ({children}) => {
     const [appState, setAppState] =
         useState<ProviderStateType>({
-            userDataFromForm: {
+            userFormData: {
                 fileData: {
                     // [MESSAGE_KEY]: {} as File,
                     [PHOTO_KEY]: {
@@ -78,7 +78,7 @@ const Provider: FC<ChildrenType> = ({children}) => {
             switchedMessageBlock: false
         })
 
-    console.log("appState userDataFromForm: ", appState.userDataFromForm)
+    // console.log("appState userDataFromForm: ", appState.userDataFromForm)
 
     return (
         <AppContext.Provider value={{appState, setAppState}}>

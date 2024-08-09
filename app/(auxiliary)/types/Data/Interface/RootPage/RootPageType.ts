@@ -22,7 +22,7 @@ export interface FormPartType {
 // Inputs
 export interface InputType {
     id: number;
-    type: TypeOfInputs;
+    type: TypeOfInputs | string;
     inputTitle: string;
     inputPlaceholder?: string;
     toggleText?: string;

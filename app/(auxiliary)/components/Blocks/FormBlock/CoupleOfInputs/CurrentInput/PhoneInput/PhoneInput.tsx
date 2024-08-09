@@ -45,10 +45,10 @@ const PhoneInput: FC<PropsType> = ({currentInput}) => {
         value.onChange(e)
         setAppState({
             ...appState,
-            userDataFromForm: {
-                ...appState.userDataFromForm,
+            userFormData: {
+                ...appState.userFormData,
                 textData: {
-                    ...appState.userDataFromForm?.textData,
+                    ...appState.userFormData?.textData,
                     [currentInput.type]: e.target.value
                 }
             }

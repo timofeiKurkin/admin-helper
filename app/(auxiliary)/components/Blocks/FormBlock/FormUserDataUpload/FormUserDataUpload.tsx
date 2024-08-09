@@ -4,18 +4,20 @@ import React, {FC, useContext, useEffect, useState} from 'react';
 import {AppContext} from "@/app/(auxiliary)/components/Common/Provider/Provider";
 import Button from "@/app/(auxiliary)/components/UI/Button/Button";
 import {DeviceType, SavedInputsDataType} from "@/app/(auxiliary)/types/AppTypes/InputHooksTypes";
-import {ProviderStateType} from "@/app/(auxiliary)/types/AppTypes/Context";
+import {ProviderStateType, UserFormDataType} from "@/app/(auxiliary)/types/AppTypes/Context";
+import {axiosRequestsHandler} from "@/app/(auxiliary)/func/axiosRequestsHandler";
+import HelpUserService from "@/app/(auxiliary)/libs/axios/services/HelpUserService/HelpUserService";
 
 
 const validationHandler = (args: {
     appState: ProviderStateType
 }) => {
-    if (args.appState.userDataFromForm?.textData && args.appState.userDataFromForm.fileData) {
-        const textDataKeys = Object.keys(args.appState.userDataFromForm?.textData)
+    if (args.appState.userFormData?.textData && args.appState.userFormData.fileData) {
+        const textDataKeys = Object.keys(args.appState.userFormData?.textData)
 
         return (textDataKeys as (DeviceType | SavedInputsDataType)[]).every((key) => (
-            args.appState.userDataFromForm?.textData ?
-                !!args.appState.userDataFromForm?.textData[key]?.validationStatus :
+            args.appState.userFormData?.textData ?
+                !!args.appState.userFormData?.textData[key]?.validationStatus :
                 false
         ))
     }
@@ -40,13 +42,15 @@ const FormUserDataUpload: FC<PropsType> = ({
         setFinallyValidationStatus(() => validationHandler({appState}))
     }, [appState]);
 
-    const uploadUserData = async () => {
-
+    const uploadUserData = async (data: UserFormDataType | undefined) => {
+        if (data) {
+            const response = await axiosRequestsHandler(HelpUserService.requestClassification(data))
+        }
     }
 
     return (
         <Button disabled={!finallyValidationStatus || !appState.permissionAgree?.userAgreed}
-                onClick={uploadUserData}>
+                onClick={() => uploadUserData(appState.userFormData)}>
             {buttonText}
         </Button>
     );

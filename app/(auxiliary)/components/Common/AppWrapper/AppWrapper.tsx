@@ -6,26 +6,62 @@ import {ChildrenType} from "@/app/(auxiliary)/types/AppTypes/AppTypes";
 import {useWindowSize} from "@/app/(auxiliary)/hooks/useWindowSize";
 import RootPageData from "@/data/interface/root-page/data.json";
 import {RootPageType} from "@/app/(auxiliary)/types/Data/Interface/RootPage/RootPageType";
+import {axiosRequestsHandler} from "@/app/(auxiliary)/func/axiosRequestsHandler";
+import AppService from "@/app/(auxiliary)/libs/axios/services/AppService/AppService";
+import axios, {AxiosResponse} from "axios";
+import {CSRFTokenResponseType} from "@/app/(auxiliary)/types/AxiosTypes/AxiosTypes";
 
-const AppWrapper: FC<ChildrenType> = ({children}) => {
+interface PropsType extends ChildrenType {
+    CSRFToken: string;
+}
+
+const AppWrapper: FC<PropsType> = ({
+                                       CSRFToken,
+                                       children
+                                   }) => {
     const {appState, setAppState} = useContext(AppContext)
     const {width} = useWindowSize()
     const rootPageData: RootPageType = RootPageData
 
+    if (CSRFToken) {
+        axios.defaults.headers.common['X-CSRFToken'] = CSRFToken
+    }
+
     useEffect(() => {
         if (rootPageData.uploadFile) {
-            setAppState({
-                ...appState,
+            setAppState((prevState) => ({
+                ...prevState,
                 rootPageContent: {
                     uploadFileContent: rootPageData.uploadFile
                 }
-            })
+            }))
         }
     }, [
+        setAppState,
         rootPageData,
-        // appState,
-        // setAppState
     ])
+
+    useEffect(() => {
+        let active = true
+
+        const getCSRFToken = async () => {
+            const response = await axiosRequestsHandler(AppService.getCSRFToken())
+
+            if (active) {
+                if((response as AxiosResponse<CSRFTokenResponseType>).status === 200) {
+                    axios.defaults.headers.common['X-CSRFToken'] = (response as AxiosResponse<CSRFTokenResponseType>).data.csrf_token
+                }
+            }
+        }
+
+        if (!CSRFToken) {
+            getCSRFToken().then()
+        }
+
+        return () => {
+            active = false
+        }
+    }, [CSRFToken]);
 
     useEffect(() => {
         if (width) {
@@ -42,7 +78,7 @@ const AppWrapper: FC<ChildrenType> = ({children}) => {
                     })
                 }
             } else if (width >= 640 && width <= 1279) {
-                if(width >= 640 && width <= 991) {
+                if (width >= 640 && width <= 991) {
                     if (!appState.userDevice?.padAdaptive) {
                         setAppState({
                             ...appState,

@@ -8,18 +8,18 @@ export const updateFormsDataState = <T>(args: {
 }) => {
     args.setAppState((prevState) => {
         const updatedTextData: UserTextDataType = {
-            ...prevState.userDataFromForm?.textData,
+            ...prevState.userFormData?.textData,
             [args.key]: args.newValue
         }
 
-        if (JSON.stringify(updatedTextData) === JSON.stringify(prevState.userDataFromForm?.textData)) {
+        if (JSON.stringify(updatedTextData) === JSON.stringify(prevState.userFormData?.textData)) {
             return prevState
         }
 
         return {
             ...prevState,
-            userDataFromForm: {
-                ...prevState.userDataFromForm,
+            userFormData: {
+                ...prevState.userFormData,
                 textData: updatedTextData
             }
         }
