@@ -8,7 +8,7 @@ import {
     COMPANY_KEY,
     DEVICE_KEY,
     MESSAGE_KEY, NAME_KEY,
-    NUMBERPC_KEY, PHONE_KEY,
+    NUMBER_PC_KEY, PHONE_KEY,
     PHOTO_KEY,
     VIDEO_KEY
 } from "@/app/(auxiliary)/types/AppTypes/InputHooksTypes";
@@ -20,7 +20,7 @@ const Provider: FC<ChildrenType> = ({children}) => {
     const [appState, setAppState] =
         useState<ProviderStateType>({
             userFormData: {
-                fileData: {
+                file_data: {
                     // [MESSAGE_KEY]: {} as File,
                     [PHOTO_KEY]: {
                         type: "photo",
@@ -31,7 +31,7 @@ const Provider: FC<ChildrenType> = ({children}) => {
                         files: []
                     }
                 },
-                textData: {
+                text_data: {
                     [DEVICE_KEY]: {
                         validationStatus: false,
                         value: ""
@@ -48,7 +48,7 @@ const Provider: FC<ChildrenType> = ({children}) => {
                         validationStatus: false,
                         value: ""
                     },
-                    [NUMBERPC_KEY]: {
+                    [NUMBER_PC_KEY]: {
                         validationStatus: false,
                         value: ""
                     },

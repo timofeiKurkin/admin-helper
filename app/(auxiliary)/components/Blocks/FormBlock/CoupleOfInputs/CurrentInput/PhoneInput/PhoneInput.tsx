@@ -47,8 +47,8 @@ const PhoneInput: FC<PropsType> = ({currentInput}) => {
             ...appState,
             userFormData: {
                 ...appState.userFormData,
-                textData: {
-                    ...appState.userFormData?.textData,
+                text_data: {
+                    ...appState.userFormData?.text_data,
                     [currentInput.type]: e.target.value
                 }
             }

@@ -4,8 +4,12 @@ import {
     COMPANY_KEY,
     DEVICE_KEY,
     MESSAGE_KEY,
-    NAME_KEY, NUMBERPC_KEY, PHONE_KEY, PHOTO_KEY,
-    PhotoAndVideoInputType, VIDEO_KEY
+    NAME_KEY,
+    NUMBER_PC_KEY,
+    PHONE_KEY,
+    PHOTO_KEY,
+    VIDEO_KEY,
+    PhotoAndVideoInputType,
 } from "@/app/(auxiliary)/types/AppTypes/InputHooksTypes";
 
 export interface AppContextType {
@@ -14,7 +18,7 @@ export interface AppContextType {
 }
 
 export interface FileListStateType {
-    type?: PhotoAndVideoInputType;
+    type: PhotoAndVideoInputType;
     files: File[];
 }
 
@@ -29,7 +33,7 @@ export interface UserTextDataType {
     [NAME_KEY]?: FormDataItemType<string>;
     [MESSAGE_KEY]?: FormDataItemType<string | File>;
     [COMPANY_KEY]?: FormDataItemType<string>;
-    [NUMBERPC_KEY]?: FormDataItemType<string>;
+    [NUMBER_PC_KEY]?: FormDataItemType<string>;
     [PHONE_KEY]?: FormDataItemType<string>;
 }
 
@@ -39,8 +43,47 @@ interface UserFileDataType {
 }
 
 export interface UserFormDataType {
-    fileData?: UserFileDataType;
-    textData?: UserTextDataType;
+    file_data?: UserFileDataType;
+    text_data?: UserTextDataType;
+}
+
+// const MY_CONSTANT = 'MY_CONSTANT'
+// const SOMETHING_ELSE = 'SOMETHING_ELSE'
+// type MyType = typeof MY_CONSTANT | typeof SOMETHING_ELSE
+
+export interface UserDataForSendToServerType {
+    keys: UserDataKeysType;
+    data: UserFormDataType;
+}
+
+interface UserDataKeysType {
+    text_keys: {
+        device_key: typeof DEVICE_KEY;
+        name_key: typeof NAME_KEY;
+        message_key: typeof MESSAGE_KEY;
+        company_key: typeof COMPANY_KEY;
+        number_pc_key: typeof NUMBER_PC_KEY;
+        phone_key: typeof PHONE_KEY;
+    },
+    file_keys: {
+        photo_key: typeof PHOTO_KEY;
+        video_key: typeof VIDEO_KEY;
+    }
+}
+
+export const KEYS_OF_USER_FORM_DATA: UserDataKeysType = {
+    text_keys: {
+        device_key: DEVICE_KEY,
+        name_key: NAME_KEY,
+        message_key: MESSAGE_KEY,
+        company_key: COMPANY_KEY,
+        number_pc_key: NUMBER_PC_KEY,
+        phone_key: PHONE_KEY,
+    },
+    file_keys: {
+        photo_key: PHOTO_KEY,
+        video_key: VIDEO_KEY,
+    }
 }
 
 export interface ProviderStateType {

@@ -19,8 +19,8 @@ const FilesList: FC<PropsType> = ({
     const {appState, setAppState} = useContext(AppContext)
     const [currentFilesList, setCurrentFilesList] =
         useState<FileListStateType>(() => {
-                if (appState.userFormData?.fileData) {
-                    return appState.userFormData?.fileData[type] || {} as FileListStateType
+                if (appState.userFormData?.file_data) {
+                    return appState.userFormData?.file_data[type] || {} as FileListStateType
                 }
 
                 return {} as FileListStateType
@@ -32,15 +32,15 @@ const FilesList: FC<PropsType> = ({
     ) => {
         currentFilesList.files = currentFilesList.files.filter((file) => file.name !== fileName)
 
-        if (appState.userFormData?.fileData) {
+        if (appState.userFormData?.file_data) {
             setAppState({
                 ...appState,
                 userFormData: {
                     ...appState.userFormData,
-                    fileData: {
-                        ...appState.userFormData?.fileData,
+                    file_data: {
+                        ...appState.userFormData?.file_data,
                         [type]: {
-                            ...appState.userFormData?.fileData[type],
+                            ...appState.userFormData?.file_data[type],
                             files: [
                                 ...currentFilesList.files
                             ]
@@ -71,15 +71,15 @@ const FilesList: FC<PropsType> = ({
 
     useEffect(() => {
         setCurrentFilesList(() => {
-            if (appState.userFormData?.fileData) {
-                return appState.userFormData?.fileData[type] || {} as FileListStateType
+            if (appState.userFormData?.file_data) {
+                return appState.userFormData?.file_data[type] || {} as FileListStateType
             }
 
             return {} as FileListStateType
         })
     }, [
         type,
-        appState.userFormData?.fileData,
+        appState.userFormData?.file_data,
     ]);
 
 

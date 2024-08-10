@@ -28,14 +28,14 @@ const DropZone: FC<PropsType> = ({
         useState<boolean>(false)
 
     const onDrop = useCallback((userFiles: FileListType) => {
-        if (appState.userFormData?.fileData) {
-            const currentFiles = appState.userFormData?.fileData[filesType]?.files
+        if (appState.userFormData?.file_data) {
+            const currentFiles = appState.userFormData?.file_data[filesType]?.files
             const filteredFiles =
                 userFiles.filter((file) => !currentFiles?.includes(file))
 
             if (filteredFiles) {
                 setAppState((prevState) => {
-                    if (!prevState.userFormData?.fileData) {
+                    if (!prevState.userFormData?.file_data) {
                         return prevState
                     }
 
@@ -43,12 +43,12 @@ const DropZone: FC<PropsType> = ({
                         ...prevState,
                         userFormData: {
                             ...prevState.userFormData,
-                            fileData: {
-                                ...prevState.userFormData?.fileData,
+                            file_data: {
+                                ...prevState.userFormData?.file_data,
                                 [filesType]: {
-                                    ...prevState.userFormData?.fileData[filesType],
+                                    ...prevState.userFormData?.file_data[filesType],
                                     files: [
-                                        ...prevState.userFormData?.fileData[filesType]?.files || [],
+                                        ...prevState.userFormData?.file_data[filesType]?.files || [],
                                         ...filteredFiles
                                     ]
                                 }
@@ -105,7 +105,7 @@ const DropZone: FC<PropsType> = ({
                 const data = await navigator.clipboard.read()
                 console.log("data", data)
 
-                if (data[0].types.includes("image/png") && appState.userFormData?.fileData) {
+                if (data[0].types.includes("image/png") && appState.userFormData?.file_data) {
                     const blobOutput = await data[0].getType("image/png")
                     const pastedImageName = `pasted-image-${formattedTime()}`
                     const newFile = new File([blobOutput], pastedImageName)
@@ -114,12 +114,12 @@ const DropZone: FC<PropsType> = ({
                         ...appState,
                         userFormData: {
                             ...appState.userFormData,
-                            fileData: {
-                                ...appState.userFormData?.fileData,
+                            file_data: {
+                                ...appState.userFormData?.file_data,
                                 [filesType]: {
-                                    ...appState.userFormData?.fileData[filesType],
+                                    ...appState.userFormData?.file_data[filesType],
                                     files: [
-                                        ...appState.userFormData?.fileData[filesType]?.files || [],
+                                        ...appState.userFormData?.file_data[filesType]?.files || [],
                                         newFile
                                     ]
                                 }

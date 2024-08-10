@@ -3,8 +3,17 @@
 import React, {FC, useContext, useEffect, useState} from 'react';
 import {AppContext} from "@/app/(auxiliary)/components/Common/Provider/Provider";
 import Button from "@/app/(auxiliary)/components/UI/Button/Button";
-import {DeviceType, SavedInputsDataType} from "@/app/(auxiliary)/types/AppTypes/InputHooksTypes";
-import {ProviderStateType, UserFormDataType} from "@/app/(auxiliary)/types/AppTypes/Context";
+import {
+    DeviceType,
+    PhotoAndVideoInputType,
+    SavedInputsDataType
+} from "@/app/(auxiliary)/types/AppTypes/InputHooksTypes";
+import {
+    KEYS_OF_USER_FORM_DATA,
+    ProviderStateType,
+    UserDataForSendToServerType,
+    UserFormDataType
+} from "@/app/(auxiliary)/types/AppTypes/Context";
 import {axiosRequestsHandler} from "@/app/(auxiliary)/func/axiosRequestsHandler";
 import HelpUserService from "@/app/(auxiliary)/libs/axios/services/HelpUserService/HelpUserService";
 
@@ -12,12 +21,12 @@ import HelpUserService from "@/app/(auxiliary)/libs/axios/services/HelpUserServi
 const validationHandler = (args: {
     appState: ProviderStateType
 }) => {
-    if (args.appState.userFormData?.textData && args.appState.userFormData.fileData) {
-        const textDataKeys = Object.keys(args.appState.userFormData?.textData)
+    if (args.appState.userFormData?.text_data && args.appState.userFormData.file_data) {
+        const textDataKeys = Object.keys(args.appState.userFormData?.text_data)
 
         return (textDataKeys as (DeviceType | SavedInputsDataType)[]).every((key) => (
-            args.appState.userFormData?.textData ?
-                !!args.appState.userFormData?.textData[key]?.validationStatus :
+            args.appState.userFormData?.text_data ?
+                !!args.appState.userFormData?.text_data[key]?.validationStatus :
                 false
         ))
     }
@@ -44,7 +53,38 @@ const FormUserDataUpload: FC<PropsType> = ({
 
     const uploadUserData = async (data: UserFormDataType | undefined) => {
         if (data) {
-            const response = await axiosRequestsHandler(HelpUserService.requestClassification(data))
+            // I should create a new object for send to the server. Data from appState.userFormData put into the FormData object.
+
+            let formData = new FormData()
+            formData.append("keys", JSON.stringify(KEYS_OF_USER_FORM_DATA))
+            formData.append("text_data", "")
+
+            const filesData =
+                data.file_data && (Object.keys(data.file_data) as PhotoAndVideoInputType[]).map((key) => (
+                    data.file_data && data.file_data[key]
+                )).filter(Boolean)
+
+            if (filesData && filesData.length) {
+                filesData.forEach((item) => {
+                    if (item) {
+                        item.files.forEach((file) => formData.append(item.type, file))
+                    }
+                })
+            }
+
+            // formData.append("file_data", "")
+
+            console.log("formData", formData)
+
+            const dataForSend: UserDataForSendToServerType = {
+                keys: KEYS_OF_USER_FORM_DATA,
+                data: data
+            }
+            // console.log("dataForSend: ", dataForSend)
+
+            // const response =
+            //     await axiosRequestsHandler(HelpUserService.requestClassification(dataForSend))
+            // console.log("response: ", response)
         }
     }
 
