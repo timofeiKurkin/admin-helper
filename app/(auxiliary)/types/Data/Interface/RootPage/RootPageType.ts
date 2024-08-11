@@ -1,5 +1,11 @@
 // Form body
-import {TypeOfInputs} from "@/app/(auxiliary)/types/AppTypes/InputHooksTypes";
+import {
+    DEVICE_KEY,
+    MESSAGE_KEY,
+    NAME_KEY, NUMBER_PC_KEY, PHONE_KEY,
+    PHOTO_KEY,
+    TypeOfInputs
+} from "@/app/(auxiliary)/types/AppTypes/InputHooksTypes";
 
 export interface RootPageType extends Button {
     title: string;
@@ -30,10 +36,12 @@ export interface InputType {
 }
 
 export interface DeviceInputType extends InputType {
+    type: typeof DEVICE_KEY;
     helpfulList: InputHelpfulItemType[];
 }
 
 export interface MessageInputType extends InputType {
+    type: typeof MESSAGE_KEY;
     voiceMessage?: MessageType;
     textMessage?: MessageType;
 }
@@ -42,6 +50,7 @@ export interface PhotoAndVideoInputType extends InputType, Button {
 }
 
 export interface NameInputType extends InputType {
+    type: typeof NAME_KEY;
 }
 
 export interface CompanyInputType extends InputType {
@@ -49,9 +58,11 @@ export interface CompanyInputType extends InputType {
 }
 
 export interface PhoneNumberInputType extends InputType {
+    type: typeof PHONE_KEY;
 }
 
 export interface NumberPcInputType extends InputType {
+    type: typeof NUMBER_PC_KEY;
 }
 
 export type AllTypesOfInputsArray = AllTypesOfInputs[]
@@ -64,7 +75,7 @@ export interface MessageType {
 }
 
 export interface Button {
-    button: string;
+    button?: string;
 }
 
 export interface InputHelpfulItemType {

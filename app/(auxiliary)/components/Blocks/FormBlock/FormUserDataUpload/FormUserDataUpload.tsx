@@ -4,9 +4,9 @@ import React, {FC, useContext, useEffect, useState} from 'react';
 import {AppContext} from "@/app/(auxiliary)/components/Common/Provider/Provider";
 import Button from "@/app/(auxiliary)/components/UI/Button/Button";
 import {
-    DeviceType,
+    DeviceType, MESSAGE_KEY,
     PhotoAndVideoInputType,
-    SavedInputsDataType
+    SavedInputsDataType, TypeOfInputs
 } from "@/app/(auxiliary)/types/AppTypes/InputHooksTypes";
 import {
     KEYS_OF_USER_FORM_DATA,
@@ -51,40 +51,60 @@ const FormUserDataUpload: FC<PropsType> = ({
         setFinallyValidationStatus(() => validationHandler({appState}))
     }, [appState]);
 
-    const uploadUserData = async (data: UserFormDataType | undefined) => {
-        if (data) {
+    const updateObject = (key: TypeOfInputs, object: any) => {
+        return {
+            [key]: {
+                ...object,
+                type: key
+            }
+        }
+    }
+
+    const uploadUserData = async (userData: UserFormDataType | undefined) => {
+        if (
+            userData &&
+            (userData.text_data && userData.file_data)
+        ) {
             // I should create a new object for send to the server. Data from appState.userFormData put into the FormData object.
 
             let formData = new FormData()
             formData.append("keys", JSON.stringify(KEYS_OF_USER_FORM_DATA))
-            formData.append("text_data", "")
 
-            const filesData =
-                data.file_data && (Object.keys(data.file_data) as PhotoAndVideoInputType[]).map((key) => (
-                    data.file_data && data.file_data[key]
-                )).filter(Boolean)
+            if (
+                userData.text_data[MESSAGE_KEY]?.value instanceof File &&
+                userData.text_data[MESSAGE_KEY]?.validationStatus
+            ) {
+                formData.append(MESSAGE_KEY, userData.text_data[MESSAGE_KEY]?.value)
+                delete userData.text_data[MESSAGE_KEY]
+            }
 
-            if (filesData && filesData.length) {
-                filesData.forEach((item) => {
-                    if (item) {
-                        item.files.forEach((file) => formData.append(item.type, file))
+            if (userData.text_data) {
+                (Object.keys(userData.text_data) as (DeviceType | SavedInputsDataType)[]).forEach((key) => {
+                    if (userData.text_data && userData.text_data[key]) {
+                        if (userData.text_data[key].validationStatus) {
+                            formData.append(key, userData.text_data[key]?.value)
+                        }
                     }
                 })
             }
 
-            // formData.append("file_data", "")
-
-            console.log("formData", formData)
-
-            const dataForSend: UserDataForSendToServerType = {
-                keys: KEYS_OF_USER_FORM_DATA,
-                data: data
+            if (userData.file_data) {
+                (Object.keys(userData.file_data) as PhotoAndVideoInputType[]).forEach((key) => {
+                    if (userData.file_data && userData.file_data[key]) {
+                        userData.file_data[key]?.files.forEach((file) => formData.append(key, file))
+                    }
+                })
             }
-            // console.log("dataForSend: ", dataForSend)
 
-            // const response =
-            //     await axiosRequestsHandler(HelpUserService.requestClassification(dataForSend))
-            // console.log("response: ", response)
+            // formData.forEach((value, key) => {
+            //     console.log("");
+            //     console.log("key: ", key);
+            //     console.log("value: ", value);
+            // });
+
+            const response =
+                await axiosRequestsHandler(HelpUserService.requestClassification(formData))
+            console.log("response: ", response)
         }
     }
 

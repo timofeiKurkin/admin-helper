@@ -5,11 +5,12 @@ import {
     inputValidations
 } from "@/app/(auxiliary)/components/Blocks/FormBlock/CoupleOfInputs/CurrentInput/inputValidations";
 import styles from "./MessageInput.module.scss";
+import {MESSAGE_KEY} from "@/app/(auxiliary)/types/AppTypes/InputHooksTypes";
 
 
 interface PropsType {
     placeholder: string;
-    type: string;
+    type: typeof MESSAGE_KEY;
     setNewMessage: (newMessage: string, validationStatus: boolean) => void;
 }
 
