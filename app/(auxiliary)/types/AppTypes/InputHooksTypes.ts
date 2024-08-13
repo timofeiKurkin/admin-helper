@@ -7,9 +7,9 @@ export const PHOTO_KEY = "photo"
 export const VIDEO_KEY = "video"
 
 export const NAME_KEY = "name"
-export const PHONE_KEY = "phone-number"
+export const PHONE_KEY = "phone_number"
 export const COMPANY_KEY = "company"
-export const NUMBER_PC_KEY = "number-pc"
+export const NUMBER_PC_KEY = "number_pc"
 
 
 export interface ValidationsType {
@@ -22,9 +22,9 @@ export interface ValidationsKeyType {
     key: TypeOfInputs;
 }
 
-export type TypeOfInputs = DeviceType | PhotoAndVideoInputType | SavedInputsDataType;
+export type TypeOfInputs = DeviceType | PhotoAndVideoType | SavedInputsDataType;
 
-export type PhotoAndVideoInputType = typeof PHOTO_KEY | typeof VIDEO_KEY;
+export type PhotoAndVideoType = typeof PHOTO_KEY | typeof VIDEO_KEY;
 
 export type DeviceType = typeof DEVICE_KEY;
 
@@ -42,7 +42,7 @@ export const savedInputsData: SavedInputsDataType[] = [
     NUMBER_PC_KEY,
 ]
 
-export const photoAndVideoInputsData: PhotoAndVideoInputType[] = [PHOTO_KEY, VIDEO_KEY]
+export const photoAndVideoInputsData: PhotoAndVideoType[] = [PHOTO_KEY, VIDEO_KEY]
 
 export interface ValidationReturnDataType {
     isEmpty: boolean;

@@ -8,6 +8,7 @@ import MessageInput
     from "@/app/(auxiliary)/components/Blocks/FormBlock/CoupleOfInputs/CurrentInput/Message/MessageInput/MessageInput";
 import {AppContext} from "@/app/(auxiliary)/components/Common/Provider/Provider";
 import {updateFormsDataState} from "@/app/(auxiliary)/func/updateFormsDataState";
+import {MESSAGE_KEY} from "@/app/(auxiliary)/types/AppTypes/InputHooksTypes";
 
 interface PropsType {
     currentInput: MessageInputType;
@@ -76,7 +77,7 @@ const Message: FC<PropsType> = ({currentInput}) => {
 
             {
                 userCannotTalk && (
-                    <MessageInput type={currentInput.type}
+                    <MessageInput type={currentInput.type as typeof MESSAGE_KEY}
                                   placeholder={currentInput.textMessage?.inputPlaceholder || ""}
                                   setNewMessage={setNewMessageHandler}/>
                 )

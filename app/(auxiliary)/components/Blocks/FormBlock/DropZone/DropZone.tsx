@@ -1,7 +1,7 @@
 import React, {FC, useCallback, useContext, useEffect, useState} from "react";
 import {FileListType} from "@/app/(auxiliary)/types/DropZoneTypes/DropZoneTypes";
 import {FileError, useDropzone} from "react-dropzone";
-import {PhotoAndVideoInputType} from "@/app/(auxiliary)/types/AppTypes/InputHooksTypes";
+import {PhotoAndVideoType} from "@/app/(auxiliary)/types/AppTypes/InputHooksTypes";
 import styles from "./DropZone.module.scss"
 import Button from "@/app/(auxiliary)/components/UI/Button/Button";
 import {UploadFileType} from "@/app/(auxiliary)/types/Data/Interface/RootPage/RootPageType";
@@ -14,7 +14,7 @@ import {formattedTime} from "@/app/(auxiliary)/func/formattedTime";
 
 interface PropsType {
     content: UploadFileType;
-    filesType: PhotoAndVideoInputType;
+    filesType: PhotoAndVideoType;
     visibleDragDropZone: () => void;
 }
 

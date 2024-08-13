@@ -2,13 +2,15 @@
 
 import React, {createContext, FC, useState} from 'react';
 import {ChildrenType} from "@/app/(auxiliary)/types/AppTypes/AppTypes";
-import {AppContextType, FileListStateType, ProviderStateType} from "@/app/(auxiliary)/types/AppTypes/Context";
+import {AppContextType, ProviderStateType} from "@/app/(auxiliary)/types/AppTypes/Context";
 import {UploadFileType} from "@/app/(auxiliary)/types/Data/Interface/RootPage/RootPageType";
 import {
     COMPANY_KEY,
     DEVICE_KEY,
-    MESSAGE_KEY, NAME_KEY,
-    NUMBER_PC_KEY, PHONE_KEY,
+    MESSAGE_KEY,
+    NAME_KEY,
+    NUMBER_PC_KEY,
+    PHONE_KEY,
     PHOTO_KEY,
     VIDEO_KEY
 } from "@/app/(auxiliary)/types/AppTypes/InputHooksTypes";

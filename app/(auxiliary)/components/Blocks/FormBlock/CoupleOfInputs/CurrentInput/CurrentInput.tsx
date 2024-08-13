@@ -1,13 +1,21 @@
 import React, {FC} from 'react';
 import {AllTypesOfInputs, PhotoAndVideoInputType} from "@/app/(auxiliary)/types/Data/Interface/RootPage/RootPageType";
-import {photoAndVideoInputsData} from "@/app/(auxiliary)/types/AppTypes/InputHooksTypes";
+import {
+    COMPANY_KEY,
+    DEVICE_KEY,
+    MESSAGE_KEY, NAME_KEY,
+    NUMBER_PC_KEY,
+    PHONE_KEY,
+    photoAndVideoInputsData, PhotoAndVideoType
+} from "@/app/(auxiliary)/types/AppTypes/InputHooksTypes";
 import TextInput from "@/app/(auxiliary)/components/Blocks/FormBlock/CoupleOfInputs/CurrentInput/TextInput/TextInput";
 import FileInput from "@/app/(auxiliary)/components/Blocks/FormBlock/CoupleOfInputs/CurrentInput/FileInput/FileInput";
 import FormFieldWrapper
     from "@/app/(auxiliary)/components/UI/Wrappers/FormBlockWrapper/FormFieldWrapper/FormFieldWrapper";
 import Text from "@/app/(auxiliary)/components/UI/TextTemplates/Text";
 import Message from "@/app/(auxiliary)/components/Blocks/FormBlock/CoupleOfInputs/CurrentInput/Message/Message";
-import PhoneInput from "@/app/(auxiliary)/components/Blocks/FormBlock/CoupleOfInputs/CurrentInput/PhoneInput/PhoneInput";
+import PhoneInput
+    from "@/app/(auxiliary)/components/Blocks/FormBlock/CoupleOfInputs/CurrentInput/PhoneInput/PhoneInput";
 import TextHighlighting from "@/app/(auxiliary)/components/UI/TextHighlighting/TextHighlighting";
 import ComputerNumberInput
     from "@/app/(auxiliary)/components/Blocks/FormBlock/CoupleOfInputs/CurrentInput/ComputerNumberInput/ComputerNumberInput";
@@ -31,7 +39,7 @@ interface PropsType {
 const CurrentInput: FC<PropsType> = ({currentInput}) => {
     return (
         <FormFieldWrapper>
-            {currentInput.type === "number-pc" ? (
+            {currentInput.type === NUMBER_PC_KEY ? (
                 <TextHighlighting wordIndexes={[3, 4]} style={{fontWeight: 500}}>
                     <Text>{currentInput.inputTitle}</Text>
                 </TextHighlighting>
@@ -39,23 +47,25 @@ const CurrentInput: FC<PropsType> = ({currentInput}) => {
                 <Text>{currentInput.inputTitle}</Text>
             )}
 
-            {currentInput.type === "message" && (
+
+
+            {currentInput.type === MESSAGE_KEY && (
                 <Message currentInput={currentInput}/>
             )}
 
-            {currentInput.type === "phone-number" && (
+            {currentInput.type === PHONE_KEY && (
                 <PhoneInput currentInput={currentInput}/>
             )}
 
-            {currentInput.type === "number-pc" && (
+            {currentInput.type === NUMBER_PC_KEY && (
                 <ComputerNumberInput currentInput={currentInput}/>
             )}
 
-            {["name", "device", "company"].includes(currentInput.type) && (
+            {[NAME_KEY, DEVICE_KEY, COMPANY_KEY].includes(currentInput.type) && (
                 <TextInput currentInput={currentInput}/>
             )}
 
-            {photoAndVideoInputsData.includes(currentInput.type) && (
+            {photoAndVideoInputsData.includes(currentInput.type as PhotoAndVideoType) && (
                 <FileInput currentInput={currentInput as PhotoAndVideoInputType}/>
             )}
         </FormFieldWrapper>

@@ -5,11 +5,11 @@ import File
     from "@/app/(auxiliary)/components/Blocks/FormBlock/CoupleOfInputs/CurrentInput/FileInput/FilesList/File/File";
 import {AppContext} from "@/app/(auxiliary)/components/Common/Provider/Provider";
 import {FileListStateType} from "@/app/(auxiliary)/types/AppTypes/Context";
-import {PhotoAndVideoInputType} from "@/app/(auxiliary)/types/AppTypes/InputHooksTypes";
+import {PhotoAndVideoType} from "@/app/(auxiliary)/types/AppTypes/InputHooksTypes";
 
 interface PropsType {
     placeholder: string;
-    type: PhotoAndVideoInputType;
+    type: PhotoAndVideoType;
 }
 
 const FilesList: FC<PropsType> = ({

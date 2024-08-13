@@ -5,7 +5,7 @@ import {AppContext} from "@/app/(auxiliary)/components/Common/Provider/Provider"
 import Button from "@/app/(auxiliary)/components/UI/Button/Button";
 import {
     DeviceType, MESSAGE_KEY,
-    PhotoAndVideoInputType,
+    PhotoAndVideoType,
     SavedInputsDataType, TypeOfInputs
 } from "@/app/(auxiliary)/types/AppTypes/InputHooksTypes";
 import {
@@ -65,16 +65,16 @@ const FormUserDataUpload: FC<PropsType> = ({
             userData &&
             (userData.text_data && userData.file_data)
         ) {
-            // I should create a new object for send to the server. Data from appState.userFormData put into the FormData object.
-
             let formData = new FormData()
-            formData.append("keys", JSON.stringify(KEYS_OF_USER_FORM_DATA))
 
-            if (
-                userData.text_data[MESSAGE_KEY]?.value instanceof File &&
-                userData.text_data[MESSAGE_KEY]?.validationStatus
-            ) {
-                formData.append(MESSAGE_KEY, userData.text_data[MESSAGE_KEY]?.value)
+            if (userData.text_data[MESSAGE_KEY]?.validationStatus) {
+                const currentMessage = userData.text_data[MESSAGE_KEY]?.value
+
+                if (currentMessage instanceof File) {
+                    formData.append(`${MESSAGE_KEY}_file`, currentMessage)
+                } else if (typeof currentMessage === "string") {
+                    formData.append(`${MESSAGE_KEY}_text`, currentMessage)
+                }
                 delete userData.text_data[MESSAGE_KEY]
             }
 
@@ -89,7 +89,7 @@ const FormUserDataUpload: FC<PropsType> = ({
             }
 
             if (userData.file_data) {
-                (Object.keys(userData.file_data) as PhotoAndVideoInputType[]).forEach((key) => {
+                (Object.keys(userData.file_data) as PhotoAndVideoType[]).forEach((key) => {
                     if (userData.file_data && userData.file_data[key]) {
                         userData.file_data[key]?.files.forEach((file) => formData.append(key, file))
                     }

@@ -9,7 +9,7 @@ import {
     PHONE_KEY,
     PHOTO_KEY,
     VIDEO_KEY,
-    PhotoAndVideoInputType,
+    PhotoAndVideoType,
 } from "@/app/(auxiliary)/types/AppTypes/InputHooksTypes";
 
 export interface AppContextType {
@@ -18,7 +18,7 @@ export interface AppContextType {
 }
 
 export interface FileListStateType {
-    type: PhotoAndVideoInputType;
+    type: PhotoAndVideoType;
     files: File[];
 }
 
@@ -60,13 +60,14 @@ interface UserDataKeysType {
     text_keys: {
         device_key: typeof DEVICE_KEY;
         name_key: typeof NAME_KEY;
-        message_key: typeof MESSAGE_KEY;
+        message_text_key: typeof MESSAGE_KEY;
         company_key: typeof COMPANY_KEY;
         number_pc_key: typeof NUMBER_PC_KEY;
         phone_key: typeof PHONE_KEY;
     },
     file_keys: {
         photo_key: typeof PHOTO_KEY;
+        message_file_key: typeof MESSAGE_KEY,
         video_key: typeof VIDEO_KEY;
     }
 }
@@ -75,13 +76,14 @@ export const KEYS_OF_USER_FORM_DATA: UserDataKeysType = {
     text_keys: {
         device_key: DEVICE_KEY,
         name_key: NAME_KEY,
-        message_key: MESSAGE_KEY,
+        message_text_key: MESSAGE_KEY,
         company_key: COMPANY_KEY,
         number_pc_key: NUMBER_PC_KEY,
         phone_key: PHONE_KEY,
     },
     file_keys: {
         photo_key: PHOTO_KEY,
+        message_file_key: MESSAGE_KEY,
         video_key: VIDEO_KEY,
     }
 }

@@ -1,12 +1,18 @@
-import {ValidationsType} from "@/app/(auxiliary)/types/AppTypes/InputHooksTypes";
+import {
+    COMPANY_KEY,
+    DEVICE_KEY,
+    MESSAGE_KEY,
+    NAME_KEY, NUMBER_PC_KEY, PHONE_KEY,
+    ValidationsType
+} from "@/app/(auxiliary)/types/AppTypes/InputHooksTypes";
 
 export const inputValidations: { [key: string]: ValidationsType } = {
-    "device": {
+    [DEVICE_KEY]: {
         isEmpty: true,
         maxLength: 18,
         minLength: 2
     },
-    "message": {
+    [MESSAGE_KEY]: {
         isEmpty: true,
         maxLength: 100,
         minLength: 10
@@ -21,22 +27,22 @@ export const inputValidations: { [key: string]: ValidationsType } = {
     //     maxLength: 0,
     //     minLength: 0
     // },
-    "name": {
+    [NAME_KEY]: {
         isEmpty: true,
         maxLength: 16,
         minLength: 5
     },
-    "company": {
+    [COMPANY_KEY]: {
         isEmpty: true,
         maxLength: 24,
         minLength: 3
     },
-    "phone-number": {
+    [PHONE_KEY]: {
         isEmpty: true,
         maxLength: 20,
         minLength: 20
     },
-    "number-pc": {
+    [NUMBER_PC_KEY]: {
         isEmpty: true,
         maxLength: 11,
         minLength: 11
