@@ -75,12 +75,12 @@ const FormUserDataUpload: FC<PropsType> = ({
                 } else if (typeof currentMessage === "string") {
                     formData.append(`${MESSAGE_KEY}_text`, currentMessage)
                 }
-                delete userData.text_data[MESSAGE_KEY]
+                // delete userData.text_data[MESSAGE_KEY]
             }
 
             if (userData.text_data) {
                 (Object.keys(userData.text_data) as (DeviceType | SavedInputsDataType)[]).forEach((key) => {
-                    if (userData.text_data && userData.text_data[key]) {
+                    if (key !== "message" && userData.text_data && userData.text_data[key]) {
                         if (userData.text_data[key].validationStatus) {
                             formData.append(key, userData.text_data[key]?.value)
                         }
