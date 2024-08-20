@@ -1,51 +1,51 @@
 @import "@/styles/variables.module";
 
 .dropZoneWrapper {
-    width: 100dvw;
-    height: 100dvh;
-    
-    background: rgba($black, .85);
-    
-    position: fixed;
-    top: 0;
-    left: 0;
-    z-index: 4;
-    
-    .dropZoneContentWrapper {
-        position: absolute;
-        width: inherit;
-        height: inherit;
-        
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        
-        .dropZoneContent {
-            width: 52.375rem;
-            height: 100%;
-            
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            
-            .dropZoneText {
-                margin-top: 4.38rem;
-                margin-bottom: 5rem;
-                
-                & > h2 {
-                    color: $white;
-                    white-space: pre-line;
-                }
-            }
-            
-            .closeDropZone {
-                width: 13.125rem;
-                
-                & > button > p {
-                    color: $blue_dark !important;
-                }
-            }
-        }
-    }
+	width: 100dvw;
+	height: 100dvh;
+
+	background: rgba($black, .85);
+
+	position: fixed;
+	top: 0;
+	left: 0;
+	z-index: 4;
+
+	.dropZoneContentWrapper {
+		position: absolute;
+		width: inherit;
+		height: inherit;
+
+		display: flex;
+		justify-content: center;
+		align-items: center;
+
+		.dropZoneContent {
+			width: 52.375rem;
+			height: 100%;
+
+			display: flex;
+			flex-direction: column;
+			align-items: center;
+			justify-content: center;
+
+			.dropZoneText {
+				margin-top: 4.38rem;
+				margin-bottom: 5rem;
+
+				& > h2 {
+					color: $white;
+					white-space: pre-line;
+				}
+			}
+
+			.closeDropZone {
+				width: 13.125rem;
+
+				& > button > p {
+					color: $blue_dark !important;
+				}
+			}
+		}
+	}
 }

@@ -1,0 +1,25 @@
+@import "@/styles/variables.module";
+
+.photoEditorWrapper {
+	width: 100dvw;
+	height: 100dvh;
+	background: rgba($black, .85);
+	position: fixed;
+	top: 0;
+	left: 0;
+	z-index: 4;
+
+	.photoEditorBody {
+		position: absolute;
+		width: inherit;
+		height: inherit;
+		display: flex;
+		justify-content: center;
+		align-items: center;
+
+		.photoEditor {
+			width: 68.125rem;
+			height: 43.375rem;
+		}
+	}
+}

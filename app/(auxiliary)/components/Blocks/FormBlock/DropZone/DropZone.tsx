@@ -16,12 +16,14 @@ interface PropsType {
     content: UploadFileType;
     filesType: PhotoAndVideoType;
     visibleDragDropZone: () => void;
+    openPhotoEditor: () => void;
 }
 
 const DropZone: FC<PropsType> = ({
                                      content,
                                      filesType,
-                                     visibleDragDropZone
+                                     visibleDragDropZone,
+                                     openPhotoEditor
                                  }) => {
     const {appState, setAppState} = useContext(AppContext)
     const [uploadingFilesStatus, setUploadingFilesStatus] =
@@ -60,7 +62,9 @@ const DropZone: FC<PropsType> = ({
         }
 
         visibleDragDropZone()
+        openPhotoEditor()
     }, [
+        openPhotoEditor,
         visibleDragDropZone,
         filesType,
         appState,

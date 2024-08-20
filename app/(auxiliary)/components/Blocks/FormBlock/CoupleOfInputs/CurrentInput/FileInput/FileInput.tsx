@@ -9,6 +9,7 @@ import FilesList
 import Button from "@/app/(auxiliary)/components/UI/Button/Button";
 import DropZone from "@/app/(auxiliary)/components/Blocks/FormBlock/DropZone/DropZone";
 import {AppContext} from "@/app/(auxiliary)/components/Common/Provider/Provider";
+import PhotoEditor from "@/app/(auxiliary)/components/Blocks/PhotoEditor/PhotoEditor";
 
 
 interface PropsType {
@@ -19,37 +20,44 @@ const FileInput: FC<PropsType> = ({currentInput}) => {
     const {appState, setAppState} = useContext(AppContext)
 
     const [haveMediaFile, setHaveMediaFile] =
-        useState<boolean>(false);
+        useState<boolean>(false)
     const [dragDropZoneIsOpen, setDragDropZoneIsOpen] =
-        useState<boolean>(false);
+        useState<boolean>(false)
+    const [photoEditorIsOpen, setPhotoEditorIsOpen] =
+        useState<boolean>(false)
 
     const openDragDropZone = () => {
         setDragDropZoneIsOpen((prevState) => !prevState);
 
-        if(!dragDropZoneIsOpen) {
+        if (!dragDropZoneIsOpen) {
             document.body.style.overflow = "hidden"
         } else {
             document.body.style.overflow = "auto"
         }
     }
 
+    const openPhotoEditor = () => {
+        setDragDropZoneIsOpen((prevState) => (prevState ? !prevState : prevState))
+        setPhotoEditorIsOpen((prevState) => (!prevState))
+    }
+
     const fileBlockHandler = () => {
         setHaveMediaFile((prevState) => !prevState)
 
-        if(appState.userDevice?.padAdaptive640_992) {
+        if (appState.userDevice?.padAdaptive640_992) {
             setAppState({
                 ...appState,
                 switchedMessageBlock: !haveMediaFile
             })
         } else {
-            if(currentInput.type === 'photo') {
+            if (currentInput.type === 'photo') {
                 setAppState({
                     ...appState,
                     openedPhotoBlock: !haveMediaFile
                 })
             }
 
-            if(currentInput.type === "video") {
+            if (currentInput.type === "video") {
                 setAppState({
                     ...appState,
                     openedVideoBlock: !haveMediaFile
@@ -82,9 +90,12 @@ const FileInput: FC<PropsType> = ({currentInput}) => {
                 <DropZone content={appState.rootPageContent.uploadFileContent}
                           filesType={currentInput.type as any}
                           visibleDragDropZone={openDragDropZone}
+                          openPhotoEditor={openPhotoEditor}
                 />
             ) : null}
             {/*{haveMediaFile && (<DragDrop currentContent={currentInput}/>)}*/}
+
+            {photoEditorIsOpen && <PhotoEditor/>}
         </div>
     );
 };
