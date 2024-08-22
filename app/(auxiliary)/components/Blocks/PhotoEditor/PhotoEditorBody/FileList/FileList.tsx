@@ -1,40 +1,47 @@
 import React, {FC, useContext} from 'react';
-import {PhotoListType} from "@/app/(auxiliary)/types/Data/Interface/PhotoEditor/PhotoEditorType";
+import {PhotoListDataType} from "@/app/(auxiliary)/types/Data/Interface/PhotoEditor/PhotoEditorDataType";
 import {AppContext} from "@/app/(auxiliary)/components/Common/Provider/Provider";
 import styles from "./FileList.module.scss";
 import Text from "@/app/(auxiliary)/components/UI/TextTemplates/Text";
+import FilePreviewBlock from "@/app/(auxiliary)/components/Blocks/FilePreviewBlock/FilePreviewBlock";
 
 interface PropsType {
-    content: PhotoListType;
-    fileList: {}[];
+    data: PhotoListDataType;
+    contentForEditor: {
+        currentPhotoIndex: number;
+        fileList: File[];
+        switchToAnotherFile: (index: number) => void;
+    }
 }
 
 const FileList: FC<PropsType> = ({
-                                     content,
-                                     fileList
+                                     data,
+                                     contentForEditor
                                  }) => {
-    const files = [1, 2, 3]
-    const selected = 1
+    // const files = [1, 2, 3]
+    // const selected = 1
 
-    const chooseAnotherFile = (fileName: string | number) => {
-
+    const chooseAnotherFile = (index: number) => {
+        contentForEditor.switchToAnotherFile(index)
     }
 
     return (
         <div className={styles.photoListWrapper}>
-            <Text>{content.uploadedPhotos}</Text>
+            <Text>{data.uploadedPhotos}</Text>
 
             <div className={styles.photoList} style={{
-                gridTemplateRows: `repeat(${files.length}, 4.375rem)`
+                gridTemplateRows: `repeat(${contentForEditor.fileList.length}, 4.375rem)`
             }}>
-                {files.map((file, index ) => (
-                    <div key={`key=${index}`}
-                         className={`${styles.fileItem} ${index === selected && styles.fileItemSelected}`}
-                         onClick={() => chooseAnotherFile(file)}
-                    >
-                        {file}
-                    </div>
-                ))}
+                {contentForEditor.fileList.map((file, index) => {
+                    return (
+                        <div key={`key=${index}`}
+                             className={`${styles.fileItem} ${index === contentForEditor.currentPhotoIndex && styles.fileItemSelected}`}
+                             onClick={() => chooseAnotherFile(index)}
+                        >
+                            <FilePreviewBlock file={file} alt={`user's file for change - ${file.name}`}/>
+                        </div>
+                    )
+                })}
             </div>
         </div>
     );

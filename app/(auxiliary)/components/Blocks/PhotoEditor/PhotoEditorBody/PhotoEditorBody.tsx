@@ -1,28 +1,56 @@
-import React, {FC} from 'react';
+import React, {FC, useEffect, useState} from 'react';
 import Editor from "@/app/(auxiliary)/components/Blocks/PhotoEditor/PhotoEditorBody/Editor/Editor";
 import styles from "./PhotoEditorBody.module.scss";
 import SeparatingLine from "@/app/(auxiliary)/components/UI/SeparatingLine/SeparatingLine";
 import FileList from "@/app/(auxiliary)/components/Blocks/PhotoEditor/PhotoEditorBody/FileList/FileList";
-import {EditorType, PhotoListType} from "@/app/(auxiliary)/types/Data/Interface/PhotoEditor/PhotoEditorType";
+import {
+    EditorDataType,
+    PhotoListDataType
+} from "@/app/(auxiliary)/types/Data/Interface/PhotoEditor/PhotoEditorDataType";
 
 
 interface PropsType {
-    editorContent: EditorType;
-    photoListContent: PhotoListType;
-
+    data: {
+        editorData: EditorDataType;
+        fileListData: PhotoListDataType;
+    }
+    contentForEditor: {
+        currentPhotoIndex: number;
+        // currentPhoto: File;
+        fileList: File[];
+        switchToAnotherFile: (index: number) => void;
+    }
 }
 
 const PhotoEditorBody: FC<PropsType> = ({
-                                            editorContent,
-                                            photoListContent
+                                            data,
+                                            contentForEditor
                                         }) => {
+    const [currentPhoto, setCurrentPhoto] =
+        useState<File>(() => contentForEditor.fileList[contentForEditor.currentPhotoIndex])
+    console.log("contentForEditor.currentPhotoIndex", contentForEditor.currentPhotoIndex)
+
+    useEffect(() => {
+        setCurrentPhoto(contentForEditor.fileList[contentForEditor.currentPhotoIndex])
+    }, [
+        contentForEditor.currentPhotoIndex,
+        contentForEditor.fileList
+    ])
+
     return (
         <div className={styles.photoEditorBody}>
-            <Editor content={editorContent}/>
+            <Editor content={data.editorData}
+                    currentPhoto={currentPhoto}/>
 
             <SeparatingLine className={styles.separatedLine}/>
 
-            <FileList content={photoListContent} fileList={[{}]}/>
+            <FileList data={data.fileListData}
+                      contentForEditor={{
+                          fileList: contentForEditor.fileList,
+                          currentPhotoIndex: contentForEditor.currentPhotoIndex,
+                          switchToAnotherFile: contentForEditor.switchToAnotherFile
+                      }}
+            />
         </div>
     );
 };

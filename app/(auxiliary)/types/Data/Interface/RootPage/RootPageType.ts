@@ -31,7 +31,7 @@ export interface FormPartType {
 // Inputs
 export interface InputType {
     id: number;
-    type: TypeOfInputs | string;
+    type: TypeOfInputs | string; // TODO: REMOVE STRING TYPE
     inputTitle: string;
     inputPlaceholder?: string;
     toggleText?: string;

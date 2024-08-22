@@ -12,7 +12,6 @@ const Backdrop: FC<PropsType> = ({
                                  }) => {
     return (
         <div className={styles.backdropWrapper} onClick={(e) => {
-            e.stopPropagation()
             if (onBackdropClick) {
                 onBackdropClick()
             }

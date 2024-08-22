@@ -10,6 +10,7 @@ import Button from "@/app/(auxiliary)/components/UI/Button/Button";
 import DropZone from "@/app/(auxiliary)/components/Blocks/FormBlock/DropZone/DropZone";
 import {AppContext} from "@/app/(auxiliary)/components/Common/Provider/Provider";
 import PhotoEditor from "@/app/(auxiliary)/components/Blocks/PhotoEditor/PhotoEditor";
+import {PhotoAndVideoType} from "@/app/(auxiliary)/types/AppTypes/InputHooksTypes";
 
 
 interface PropsType {
@@ -25,6 +26,8 @@ const FileInput: FC<PropsType> = ({currentInput}) => {
         useState<boolean>(false)
     const [photoEditorIsOpen, setPhotoEditorIsOpen] =
         useState<boolean>(false)
+    const [currentPhotoIndex, setCurrentPhotoIndex] =
+        useState<number>(0)
 
     const openDragDropZone = () => {
         setDragDropZoneIsOpen((prevState) => !prevState);
@@ -41,8 +44,14 @@ const FileInput: FC<PropsType> = ({currentInput}) => {
         setPhotoEditorIsOpen((prevState) => (!prevState))
     }
 
-    const openSelectedFile = (fileName: string) => {
+    const openSelectedFile = (fileName: string, index: number) => {
         setPhotoEditorIsOpen((prevState) => (!prevState))
+        setCurrentPhotoIndex(() => index)
+    }
+
+    const switchToAnotherFile = (index: number) => {
+        console.log("switch to another file: ", index)
+        setCurrentPhotoIndex(() => index)
     }
 
     const fileBlockHandler = () => {
@@ -81,7 +90,8 @@ const FileInput: FC<PropsType> = ({currentInput}) => {
                 <div className={styles.filesBlock}>
                     <div className={styles.fileList}>
                         <FilesList placeholder={currentInput.inputPlaceholder || ""}
-                                   type={currentInput.type as any} openSelectedFile={openSelectedFile}/>
+                                   type={currentInput.type as any}
+                                   changeFile={openSelectedFile}/>
                     </div>
 
                     <div className={styles.addFiles}>
@@ -99,7 +109,13 @@ const FileInput: FC<PropsType> = ({currentInput}) => {
             ) : null}
             {/*{haveMediaFile && (<DragDrop currentContent={currentInput}/>)}*/}
 
-            {photoEditorIsOpen && <PhotoEditor visiblePhotoEditor={openPhotoEditor}/>}
+            {photoEditorIsOpen &&
+                <PhotoEditor visiblePhotoEditor={openPhotoEditor}
+                             dataForEditor={{
+                                 type: currentInput.type as PhotoAndVideoType,
+                                 currentPhotoIndex: currentPhotoIndex
+                             }}
+                             switchToAnotherFile={switchToAnotherFile}/>}
         </div>
     );
 };

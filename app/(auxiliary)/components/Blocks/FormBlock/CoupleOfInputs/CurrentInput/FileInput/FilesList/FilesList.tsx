@@ -10,13 +10,13 @@ import {PhotoAndVideoType} from "@/app/(auxiliary)/types/AppTypes/InputHooksType
 interface PropsType {
     placeholder: string;
     type: PhotoAndVideoType;
-    openSelectedFile: (fileName: string) => void;
+    changeFile: (fileName: string, index: number) => void;
 }
 
 const FilesList: FC<PropsType> = ({
                                       placeholder,
                                       type,
-                                      openSelectedFile
+                                      changeFile
                                   }) => {
     const {appState, setAppState} = useContext(AppContext)
     const [currentFilesList, setCurrentFilesList] =
@@ -95,7 +95,9 @@ const FilesList: FC<PropsType> = ({
                         currentFilesList.files.map((file, i) => (
                             <File key={`key=${i}`}
                                   file={file}
-                                  removeHandler={removeFile} openSelectedFile={openSelectedFile}/>
+                                  fileIndex={i}
+                                  removeHandler={removeFile}
+                                  changeFile={changeFile}/>
                         ))
                     )
                     :

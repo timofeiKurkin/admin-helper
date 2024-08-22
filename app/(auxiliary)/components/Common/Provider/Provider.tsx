@@ -77,7 +77,11 @@ const Provider: FC<ChildrenType> = ({children}) => {
             // videoList: {type: "video", files: []},
             openedPhotoBlock: false,
             openedVideoBlock: false,
-            switchedMessageBlock: false
+            switchedMessageBlock: false,
+            editorState: {
+                currentFileIndex: 0,
+                currentFileName: ""
+            }
         })
 
     // console.log("appState userDataFromForm: ", appState.userDataFromForm)

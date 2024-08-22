@@ -1,0 +1,33 @@
+@import "@/styles/variables.module.scss";
+
+.editorBody {
+	display: flex;
+	flex-direction: column;
+	row-gap: 1.87rem;
+
+	.editorBackground {
+		//width: 854px;
+		//height: 480px;
+		width: 640px;
+		height: 360px;
+
+		//position: absolute;
+		background-color: #0f0f0f;
+
+		//display: flex;
+
+		.reactCrop {
+			border-radius: 15px;
+		}
+	}
+
+	.editorControls {
+		display: grid;
+		grid-template-columns: min-content 200px;
+		grid-template-rows: min-content 1fr;
+		align-items: center;
+
+		column-gap: 1.56rem;
+		row-gap: 1.31rem;
+	}
+}

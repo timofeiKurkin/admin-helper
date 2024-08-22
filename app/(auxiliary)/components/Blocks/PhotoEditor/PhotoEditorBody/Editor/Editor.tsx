@@ -1,9 +1,15 @@
-import React, {FC, useContext, useRef, useState} from 'react';
+import React, {FC, useContext, useEffect, useRef, useState} from 'react';
 import {AppContext} from "@/app/(auxiliary)/components/Common/Provider/Provider";
-import {centerCrop, Crop, makeAspectCrop, PixelCrop} from "react-image-crop";
+import {centerCrop, Crop, makeAspectCrop, PixelCrop, ReactCrop} from "react-image-crop";
 import {useDebounceEffect} from "@/app/(auxiliary)/hooks/useDebounceEffect";
 import {canvasPreview} from "@/app/(auxiliary)/components/Blocks/PhotoEditor/canvasPreview";
-import {EditorType} from "@/app/(auxiliary)/types/Data/Interface/PhotoEditor/PhotoEditorType";
+import {EditorDataType} from "@/app/(auxiliary)/types/Data/Interface/PhotoEditor/PhotoEditorDataType";
+import Image from "next/image";
+import styles from "./Editor.module.scss";
+import 'react-image-crop/src/ReactCrop.scss';
+import Text from "@/app/(auxiliary)/components/UI/TextTemplates/Text";
+import Range from "@/app/(auxiliary)/components/UI/Inputs/Range/Range";
+
 
 const centerAspectCrop = (
     mediaWidth: number,
@@ -27,18 +33,16 @@ const centerAspectCrop = (
 
 
 interface PropsType {
-    content: EditorType;
+    content: EditorDataType;
+    currentPhoto: File;
 }
 
-const Editor: FC<PropsType> = ({content}) => {
-    const {appState} = useContext(AppContext)
+const Editor: FC<PropsType> = ({
+                                   content,
+                                   currentPhoto
+                               }) => {
 
-    const [imgSrc, setImgSrc] = useState<string>(() => {
-        if (appState.userFormData?.file_data && appState.userFormData?.file_data["photo"]) {
-            return URL.createObjectURL(appState.userFormData?.file_data["photo"].files[0])
-        }
-        return ""
-    })
+    const [imgSrc, setImgSrc] = useState<string>(() => URL.createObjectURL(currentPhoto))
     const [crop, setCrop] = useState<Crop>()
     const [completedCrop, setCompletedCrop] =
         useState<PixelCrop>({
@@ -56,6 +60,10 @@ const Editor: FC<PropsType> = ({content}) => {
     const imgRef = useRef<HTMLImageElement>(null)
     const hiddenAnchorRef = useRef<HTMLAnchorElement>(null)
     const blobUrlRef = useRef('')
+
+    useEffect(() => {
+        setImgSrc(() => URL.createObjectURL(currentPhoto))
+    }, [currentPhoto])
 
     // const [imageForEditor, setImageForEditor] = useState<File>(() => {
     //     if (appState.userFormData?.file_data && appState.userFormData?.file_data["photo"]) {
@@ -173,33 +181,62 @@ const Editor: FC<PropsType> = ({content}) => {
     // }
 
     return (
-        <div>
-            {/*{imgSrc && (*/}
-            {/*    <ReactCrop crop={crop}*/}
-            {/*               onChange={(_, percentageCrop) => {*/}
-            {/*                   setCrop(percentageCrop)*/}
-            {/*               }}*/}
-            {/*               onComplete={(c) => setCompletedCrop(c)}*/}
-            {/*               aspect={aspect}*/}
-            {/*               minHeight={100}*/}
-            {/*    >*/}
-            {/*        <Image ref={imgRef}*/}
-            {/*               width={1200}*/}
-            {/*               height={600}*/}
-            {/*               style={{transform: `scale(${scale}) rotate(${rotate}deg)`}} src={imgSrc}*/}
-            {/*               onLoad={onImageLoad}*/}
-            {/*               alt={"image for crop"}/>*/}
-            {/*    </ReactCrop>*/}
-            {/*)}*/}
+        <div className={styles.editorBody}>
+            <div className={styles.editorBackground}>
+                {imgSrc && (
+                    <ReactCrop crop={crop}
+                               onChange={(_, percentageCrop) => setCrop(percentageCrop)}
+                               onComplete={(c) => setCompletedCrop(c)}
+                               aspect={aspect}
+                               minWidth={100}
+                               className={styles.reactCrop}
+                               minHeight={100}
+                    >
+                        <Image ref={imgRef}
+                               width={640}
+                               height={360}
+                               src={imgSrc}
+                               style={{transform: `scale(${scale}) rotate(${rotate}deg)`}}
+                               onLoad={onImageLoad}
+                               alt={"image for crop"}
+                        />
+                    </ReactCrop>
+                )}
 
-            {/*{completedCrop && (*/}
-            {/*    <div>*/}
-            {/*        <canvas ref={previewCanvasRef} style={{*/}
-            {/*            width: completedCrop.width,*/}
-            {/*            height: completedCrop.height*/}
-            {/*        }}/>*/}
-            {/*    </div>*/}
-            {/*)}*/}
+                {/*{completedCrop && (*/}
+                {/*    <div>*/}
+                {/*        <canvas ref={previewCanvasRef} style={{*/}
+                {/*            width: completedCrop.width,*/}
+                {/*            height: completedCrop.height*/}
+                {/*        }}/>*/}
+                {/*    </div>*/}
+                {/*)}*/}
+            </div>
+
+            <div className={styles.editorControls}>
+                {/*{content.rotate}*/}
+
+                <Text>{content.scale}</Text>
+                <Range onChange={(e) => setScale(Number(e.target.value))}
+                       value={scale}
+                       maxValue={2.5}
+                       minValue={1}
+                       step={0.01}
+                />
+
+                <Text>{content.rotate}</Text>
+                <Range onChange={(e) => setRotate(Math.min(180, Math.max(-180, Number(e.target.value))))}
+                       value={rotate}
+                       maxValue={180}
+                       minValue={-180}
+                       step={0.01}
+                />
+
+                {/*{content.delete}*/}
+
+                {/*{content.resetSettings}*/}
+
+            </div>
         </div>
     );
 };

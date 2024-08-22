@@ -72,40 +72,44 @@ interface UserDataKeysType {
     }
 }
 
-export const KEYS_OF_USER_FORM_DATA: UserDataKeysType = {
-    text_keys: {
-        device_key: DEVICE_KEY,
-        name_key: NAME_KEY,
-        message_text_key: MESSAGE_KEY,
-        company_key: COMPANY_KEY,
-        number_pc_key: NUMBER_PC_KEY,
-        phone_key: PHONE_KEY,
-    },
-    file_keys: {
-        photo_key: PHOTO_KEY,
-        message_file_key: MESSAGE_KEY,
-        video_key: VIDEO_KEY,
-    }
-}
+// export const KEYS_OF_USER_FORM_DATA: UserDataKeysType = {
+//     text_keys: {
+//         device_key: DEVICE_KEY,
+//         name_key: NAME_KEY,
+//         message_text_key: MESSAGE_KEY,
+//         company_key: COMPANY_KEY,
+//         number_pc_key: NUMBER_PC_KEY,
+//         phone_key: PHONE_KEY,
+//     },
+//     file_keys: {
+//         photo_key: PHOTO_KEY,
+//         message_file_key: MESSAGE_KEY,
+//         video_key: VIDEO_KEY,
+//     }
+// }
 
 export interface ProviderStateType {
     userFormData?: UserFormDataType;
     permissionAgree?: {
         userCanTalk?: boolean;
         userAgreed?: boolean;
-    }
+    };
     userDevice?: {
         phoneAdaptive: boolean;
         padAdaptive: boolean;
         desktopAdaptive: boolean;
         padAdaptive640_992: boolean;
-    }
+    };
     rootPageContent?: {
         uploadFileContent: UploadFileType;
-    }
+    };
     // photoList?: FileListStateType;
     // videoList?: FileListStateType;
     openedPhotoBlock?: boolean;
     openedVideoBlock?: boolean;
     switchedMessageBlock?: boolean;
+    editorState?: {
+        currentFileIndex?: number;
+        currentFileName?: string;
+    }
 }

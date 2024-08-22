@@ -3,17 +3,21 @@ import Image from "next/image";
 import styles from "./File.module.scss";
 import DeleteFile from "@/app/(auxiliary)/components/UI/SVG/DeleteFile/DeleteFile";
 import ChangePhoto from "@/app/(auxiliary)/components/UI/SVG/ChangePhoto/ChangePhoto";
+import FilePreviewBlock from "@/app/(auxiliary)/components/Blocks/FilePreviewBlock/FilePreviewBlock";
 
 interface PropsType {
     file: File;
+    fileIndex: number;
     removeHandler: (fileName: string) => void;
-    openSelectedFile: (fileName: string) => void;
+    changeFile: (fileName: string, index: number) => void;
+
 }
 
 const File: FC<PropsType> = ({
                                  file,
+                                 fileIndex,
                                  removeHandler,
-                                 openSelectedFile
+                                 changeFile
                              }) => {
 
     const [visibleHover, setVisibleHover] = useState<boolean>(false)
@@ -34,7 +38,7 @@ const File: FC<PropsType> = ({
 
             {visibleHover ? (
                 <div className={styles.fileCover}
-                     onClick={() => openSelectedFile(file.name)}>
+                     onClick={() => changeFile(file.name, fileIndex)}>
                     <div className={styles.fileRemove}
                          onClick={(e) => handleRemove(e)}>
                         <DeleteFile/>
@@ -44,13 +48,8 @@ const File: FC<PropsType> = ({
                 </div>
             ) : null}
 
-            <Image src={URL.createObjectURL(file)}
-                   alt={"user-file"}
-                   fill={true}
-                   quality={100}
-                   onLoad={() => URL.revokeObjectURL(URL.createObjectURL(file))}
-                   style={{objectFit: "cover", width: "100%", height: "100%"}}
-            />
+            <FilePreviewBlock file={file}
+                              alt={`user's file - ${file.name}`}/>
         </div>
     );
 };

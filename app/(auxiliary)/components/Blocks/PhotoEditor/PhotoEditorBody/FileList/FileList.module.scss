@@ -19,6 +19,8 @@
 			display: flex;
 			justify-content: center;
 			align-items: center;
+			position: relative;
+			overflow: hidden;
 
 			border-radius: $border_radius;
 			border: $black_input_border_inactive;

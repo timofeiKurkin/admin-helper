@@ -1,0 +1,27 @@
+@import "@/styles/variables.module.scss";
+
+.range {
+	-webkit-appearance: none;
+	appearance: none;
+	cursor: pointer;
+	outline: none;
+	border-radius: $border_radius;
+	background-color: $grey;
+	height: 6px;
+	width: 200px;
+
+	&::-webkit-slider-thumb {
+		-webkit-appearance: none;
+		appearance: none;
+		width: 10px;
+		height: 10px;
+		border-radius: 50%;
+		background-color: $black;
+		cursor: pointer;
+		box-shadow: 0 0 2px 0 $grey;
+	}
+
+	&::-moz-range-thumb {
+		height: 6px;
+	}
+}
