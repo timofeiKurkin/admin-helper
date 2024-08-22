@@ -1,0 +1,31 @@
+@import "@/styles/variables.module.scss";
+
+.photoListWrapper {
+	display: grid;
+	grid-template-columns: 1fr;
+	grid-template-rows: min-content 18.125rem;
+	row-gap: 1.25rem;
+	align-content: center;
+
+	.photoList {
+		border-radius: $border_radius;
+		border: 2px solid $grey;
+		padding: 1.25rem 0.94rem;
+
+		display: grid;
+		row-gap: 1.25rem;
+
+		.fileItem {
+			display: flex;
+			justify-content: center;
+			align-items: center;
+
+			border-radius: $border_radius;
+			border: $black_input_border_inactive;
+		}
+
+		.fileItemSelected {
+			border: $black_input_border;
+		}
+	}
+}

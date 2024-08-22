@@ -41,6 +41,10 @@ const FileInput: FC<PropsType> = ({currentInput}) => {
         setPhotoEditorIsOpen((prevState) => (!prevState))
     }
 
+    const openSelectedFile = (fileName: string) => {
+        setPhotoEditorIsOpen((prevState) => (!prevState))
+    }
+
     const fileBlockHandler = () => {
         setHaveMediaFile((prevState) => !prevState)
 
@@ -77,7 +81,7 @@ const FileInput: FC<PropsType> = ({currentInput}) => {
                 <div className={styles.filesBlock}>
                     <div className={styles.fileList}>
                         <FilesList placeholder={currentInput.inputPlaceholder || ""}
-                                   type={currentInput.type as any}/>
+                                   type={currentInput.type as any} openSelectedFile={openSelectedFile}/>
                     </div>
 
                     <div className={styles.addFiles}>
@@ -95,7 +99,7 @@ const FileInput: FC<PropsType> = ({currentInput}) => {
             ) : null}
             {/*{haveMediaFile && (<DragDrop currentContent={currentInput}/>)}*/}
 
-            {photoEditorIsOpen && <PhotoEditor/>}
+            {photoEditorIsOpen && <PhotoEditor visiblePhotoEditor={openPhotoEditor}/>}
         </div>
     );
 };

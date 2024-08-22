@@ -1,25 +1,28 @@
 @import "@/styles/variables.module";
 
 .photoEditorWrapper {
-	width: 100dvw;
-	height: 100dvh;
-	background: rgba($black, .85);
-	position: fixed;
-	top: 0;
-	left: 0;
-	z-index: 4;
+	width: 67.625rem;
+	height: 43.375rem;
+	border-radius: $border_radius;
+	background-color: $white_1;
+	overflow: hidden;
 
-	.photoEditorBody {
-		position: absolute;
-		width: inherit;
-		height: inherit;
-		display: flex;
-		justify-content: center;
-		align-items: center;
+	padding: 2.5rem 4.38rem;
 
-		.photoEditor {
-			width: 68.125rem;
-			height: 43.375rem;
+	.photoEditor {
+		display: grid;
+		grid-template-columns: 1fr;
+		grid-template-rows: min-content 1fr min-content;
+
+		.photoEditorTitle {
+			text-align: center;
+		}
+
+		.photoEditorButtons {
+			display: grid;
+			grid-template-columns: repeat(2, 13.125rem);
+			column-gap: 3.56rem;
+			justify-content: center;
 		}
 	}
 }

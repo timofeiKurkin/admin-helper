@@ -1,0 +1,11 @@
+
+.photoEditorBody {
+	margin: 3.12rem 0 2.5rem 0;
+	width: inherit;
+	height: inherit;
+
+	display: grid;
+	grid-template-columns: 1fr 2px 7.5rem;
+	grid-template-rows: 27.0625rem;
+	column-gap: 3.19rem;
+}

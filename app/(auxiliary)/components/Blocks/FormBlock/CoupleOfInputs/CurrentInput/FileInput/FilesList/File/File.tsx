@@ -7,21 +7,19 @@ import ChangePhoto from "@/app/(auxiliary)/components/UI/SVG/ChangePhoto/ChangeP
 interface PropsType {
     file: File;
     removeHandler: (fileName: string) => void;
+    openSelectedFile: (fileName: string) => void;
 }
 
 const File: FC<PropsType> = ({
                                  file,
-                                 removeHandler
+                                 removeHandler,
+                                 openSelectedFile
                              }) => {
 
     const [visibleHover, setVisibleHover] = useState<boolean>(false)
 
     const handleHover = (hoverStatus: boolean) => {
         setVisibleHover(hoverStatus)
-    }
-
-    const handleChangeFile = () => {
-        console.log("handleChangeFile")
     }
 
     const handleRemove = (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
@@ -36,7 +34,7 @@ const File: FC<PropsType> = ({
 
             {visibleHover ? (
                 <div className={styles.fileCover}
-                     onClick={handleChangeFile}>
+                     onClick={() => openSelectedFile(file.name)}>
                     <div className={styles.fileRemove}
                          onClick={(e) => handleRemove(e)}>
                         <DeleteFile/>
