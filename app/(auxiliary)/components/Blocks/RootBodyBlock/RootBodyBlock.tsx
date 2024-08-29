@@ -1,29 +1,27 @@
-"use client"
-
-import React, {FC, useContext} from 'react';
-import {RootPageType} from "@/app/(auxiliary)/types/Data/Interface/RootPage/RootPageType";
+import React, {FC} from 'react';
 import FormPart from "@/app/(auxiliary)/components/Blocks/RootBodyBlock/FormPart/FormPart";
 import styles from "./RootBodyBlock.module.scss"
-import {AppContext} from "@/app/(auxiliary)/components/Common/Provider/Provider";
+import {useAppSelector} from "@/app/(auxiliary)/libs/redux-toolkit/store/hooks";
+import {
+    selectBlocksMoving,
+    selectRootPageContent
+} from "@/app/(auxiliary)/libs/redux-toolkit/store/slices/AppSlice/AppSlice";
 
 
-interface PropsType {
-    content: RootPageType;
-}
-
-const RootBodyBlock: FC<PropsType> = ({content}) => {
-    const {appState} = useContext(AppContext)
-    // const type = appState.userDevice
+const RootBodyBlock: FC = () => {
+    const rootPageContent = useAppSelector(selectRootPageContent)
+    const blocksMoving = useAppSelector(selectBlocksMoving)
 
     return (
-        <div className={`${styles.bodyBlockGrid} ${(appState.openedPhotoBlock || appState.openedVideoBlock) && styles.openedFileBlock}`}>
-            <FormPart inputsContent={content.formContent.formPartOne}/>
+        <div
+            className={`${styles.bodyBlockGrid} ${(blocksMoving.openedPhotoBlock || blocksMoving.openedVideoBlock) && styles.openedFileBlock}`}>
+            <FormPart inputsContent={rootPageContent.formContent.formPartOne}/>
 
             <div className={`${styles.separatingLine}`}></div>
 
-            <FormPart inputsContent={content.formContent.formPartTwo} permissionsContent={{
-                permissions: content.permissionsContent,
-                button: content.button,
+            <FormPart inputsContent={rootPageContent.formContent.formPartTwo} permissionsContent={{
+                permissions: rootPageContent.permissionsContent,
+                button: rootPageContent.button || "",
             }}/>
         </div>
     );

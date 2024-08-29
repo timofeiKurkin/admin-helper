@@ -1,5 +1,5 @@
 import React from "react";
-import {UploadFileType} from "@/app/(auxiliary)/types/Data/Interface/RootPage/RootPageType";
+import {ContentOfUploadBlockType} from "@/app/(auxiliary)/types/Data/Interface/RootPage/RootPageContentType";
 import {
     COMPANY_KEY,
     DEVICE_KEY,
@@ -9,7 +9,7 @@ import {
     PHONE_KEY,
     PHOTO_KEY,
     VIDEO_KEY,
-    PhotoAndVideoType,
+    PhotoAndVideoKeysTypes,
 } from "@/app/(auxiliary)/types/AppTypes/InputHooksTypes";
 
 export interface AppContextType {
@@ -18,7 +18,7 @@ export interface AppContextType {
 }
 
 export interface FileListStateType {
-    type: PhotoAndVideoType;
+    type: PhotoAndVideoKeysTypes;
     files: File[];
 }
 
@@ -29,32 +29,27 @@ export interface FormDataItemType<T> {
 
 
 export interface UserTextDataType {
-    [DEVICE_KEY]?: FormDataItemType<string>;
-    [NAME_KEY]?: FormDataItemType<string>;
-    [MESSAGE_KEY]?: FormDataItemType<string | File>;
-    [COMPANY_KEY]?: FormDataItemType<string>;
-    [NUMBER_PC_KEY]?: FormDataItemType<string>;
-    [PHONE_KEY]?: FormDataItemType<string>;
+    [DEVICE_KEY]: FormDataItemType<string>;
+    [NAME_KEY]: FormDataItemType<string>;
+    [MESSAGE_KEY]: FormDataItemType<string | File>;
+    [COMPANY_KEY]: FormDataItemType<string>;
+    [NUMBER_PC_KEY]: FormDataItemType<string>;
+    [PHONE_KEY]: FormDataItemType<string>;
 }
 
 interface UserFileDataType {
-    [PHOTO_KEY]?: FileListStateType;
-    [VIDEO_KEY]?: FileListStateType;
+    [PHOTO_KEY]: FileListStateType;
+    [VIDEO_KEY]: FileListStateType;
 }
 
 export interface UserFormDataType {
-    file_data?: UserFileDataType;
-    text_data?: UserTextDataType;
+    file_data: UserFileDataType;
+    text_data: UserTextDataType;
 }
 
 // const MY_CONSTANT = 'MY_CONSTANT'
 // const SOMETHING_ELSE = 'SOMETHING_ELSE'
 // type MyType = typeof MY_CONSTANT | typeof SOMETHING_ELSE
-
-export interface UserDataForSendToServerType {
-    keys: UserDataKeysType;
-    data: UserFormDataType;
-}
 
 interface UserDataKeysType {
     text_keys: {
@@ -88,28 +83,40 @@ interface UserDataKeysType {
 //     }
 // }
 
+export interface UserDeviceStateType {
+    phoneAdaptive: boolean;
+    padAdaptive: boolean;
+    desktopAdaptive: boolean;
+    padAdaptive640_992: boolean;
+}
+
+export interface PermissionsOfFormStatesType {
+    userCanTalk: boolean;
+    userAgreed: boolean;
+}
+
+export interface BlocksMovingType {
+    openedPhotoBlock: boolean;
+    openedVideoBlock: boolean;
+    switchedMessageBlock: boolean;
+}
+
+export interface EditorStateType {
+    currentFileIndex: number;
+    currentFileName: string;
+}
+
 export interface ProviderStateType {
     userFormData?: UserFormDataType;
-    permissionAgree?: {
-        userCanTalk?: boolean;
-        userAgreed?: boolean;
-    };
-    userDevice?: {
-        phoneAdaptive: boolean;
-        padAdaptive: boolean;
-        desktopAdaptive: boolean;
-        padAdaptive640_992: boolean;
-    };
+    permissionAgree?: PermissionsOfFormStatesType;
+    userDevice?: UserDeviceStateType;
     rootPageContent?: {
-        uploadFileContent: UploadFileType;
+        uploadFileContent: ContentOfUploadBlockType;
     };
     // photoList?: FileListStateType;
     // videoList?: FileListStateType;
     openedPhotoBlock?: boolean;
     openedVideoBlock?: boolean;
     switchedMessageBlock?: boolean;
-    editorState?: {
-        currentFileIndex?: number;
-        currentFileName?: string;
-    }
+    editorState?: EditorStateType;
 }

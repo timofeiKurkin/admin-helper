@@ -8,6 +8,7 @@ import Background from "@/app/(auxiliary)/components/UI/Background/Background";
 import Provider from "@/app/(auxiliary)/components/Common/Provider/Provider";
 import AppWrapper from "@/app/(auxiliary)/components/Common/AppWrapper/AppWrapper";
 import {cookies} from "next/headers";
+import AppProvider from "@/app/(auxiliary)/libs/redux-toolkit/AppProvider";
 
 
 export const metadata: Metadata = {
@@ -26,7 +27,7 @@ export default function RootLayout({children}: Readonly<ChildrenType>) {
         <body style={TTNormsProFont.style}
               className={styles.layoutBackground}>
         <Background>
-            <Provider>
+            <AppProvider>
                 <AppWrapper CSRFToken={CSRFToken}>
                     <div className={styles.layoutWrapper}>
                         <div className={styles.layoutContainer}>
@@ -37,7 +38,7 @@ export default function RootLayout({children}: Readonly<ChildrenType>) {
                         </div>
                     </div>
                 </AppWrapper>
-            </Provider>
+            </AppProvider>
         </Background>
         </body>
         </html>

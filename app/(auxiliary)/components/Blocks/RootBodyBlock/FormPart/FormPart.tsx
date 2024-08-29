@@ -1,5 +1,5 @@
 import React, {FC} from 'react';
-import {FormPartType, PermissionsContentType} from "@/app/(auxiliary)/types/Data/Interface/RootPage/RootPageType";
+import {FormPartType, PermissionsContentType} from "@/app/(auxiliary)/types/Data/Interface/RootPage/RootPageContentType";
 import TitleBlock from "@/app/(auxiliary)/components/Blocks/TitleBlocks/TitleBlock/TitleBlock";
 import FormBlockWrapper from "@/app/(auxiliary)/components/UI/Wrappers/FormBlockWrapper/FormBlockWrapper";
 import FormBlock from "@/app/(auxiliary)/components/Blocks/FormBlock/FormBlock";

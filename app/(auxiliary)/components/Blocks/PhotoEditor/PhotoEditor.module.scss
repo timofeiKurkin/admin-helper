@@ -1,8 +1,12 @@
 @import "@/styles/variables.module";
 
 .photoEditorWrapper {
-	width: 67.625rem;
-	height: 43.375rem;
+	//width: 67.625rem;
+	//height: 43.375rem;
+
+	width: 78.6875rem;
+	height: 51.25rem;
+
 	border-radius: $border_radius;
 	background-color: $white_1;
 	overflow: hidden;
@@ -16,13 +20,6 @@
 
 		.photoEditorTitle {
 			text-align: center;
-		}
-
-		.photoEditorButtons {
-			display: grid;
-			grid-template-columns: repeat(2, 13.125rem);
-			column-gap: 3.56rem;
-			justify-content: center;
 		}
 	}
 }

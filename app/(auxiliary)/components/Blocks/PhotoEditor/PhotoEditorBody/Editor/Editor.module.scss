@@ -3,31 +3,30 @@
 .editorBody {
 	display: flex;
 	flex-direction: column;
-	row-gap: 1.87rem;
+	overflow: hidden;
+	//row-gap: 1.87rem;
 
 	.editorBackground {
 		//width: 854px;
 		//height: 480px;
 		width: 640px;
-		height: 360px;
+		height: 640px;
 
-		//position: absolute;
 		background-color: #0f0f0f;
 
-		//display: flex;
+		.editorWrapper {
+			display: flex;
+			height: inherit;
+			align-items: center;
 
-		.reactCrop {
-			border-radius: 15px;
+			//align-items: center;
+			//justify-content: center;
+
+			.reactCrop {
+				& > div:first-child {
+					overflow: visible;
+				}
+			}
 		}
-	}
-
-	.editorControls {
-		display: grid;
-		grid-template-columns: min-content 200px;
-		grid-template-rows: min-content 1fr;
-		align-items: center;
-
-		column-gap: 1.56rem;
-		row-gap: 1.31rem;
 	}
 }

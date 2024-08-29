@@ -1,14 +1,22 @@
-import React, {FC, useContext, useEffect, useState} from 'react';
+import React, {FC, useEffect, useState} from 'react';
 import Toggle from "@/app/(auxiliary)/components/Common/Switches/Toggle/Toggle";
-import {MessageInputType} from "@/app/(auxiliary)/types/Data/Interface/RootPage/RootPageType";
+import {MessageInputType} from "@/app/(auxiliary)/types/Data/Interface/RootPage/RootPageContentType";
 import VoiceInput
     from "@/app/(auxiliary)/components/Blocks/FormBlock/CoupleOfInputs/CurrentInput/Message/VoiceInput/VoiceInput";
 import styles from "./Message.module.scss"
 import MessageInput
     from "@/app/(auxiliary)/components/Blocks/FormBlock/CoupleOfInputs/CurrentInput/Message/MessageInput/MessageInput";
-import {AppContext} from "@/app/(auxiliary)/components/Common/Provider/Provider";
-import {updateFormsDataState} from "@/app/(auxiliary)/func/updateFormsDataState";
 import {MESSAGE_KEY} from "@/app/(auxiliary)/types/AppTypes/InputHooksTypes";
+import {useAppDispatch, useAppSelector} from "@/app/(auxiliary)/libs/redux-toolkit/store/hooks";
+import {
+    selectUserDevice,
+    setOpenedPhotoBlock,
+    setSwitchedMessageBlock
+} from "@/app/(auxiliary)/libs/redux-toolkit/store/slices/AppSlice/AppSlice";
+import {
+    addFileData,
+    changeTextData
+} from "@/app/(auxiliary)/libs/redux-toolkit/store/slices/UserFormDataSlice/UserFormDataSlice";
 
 interface PropsType {
     currentInput: MessageInputType;
@@ -17,42 +25,53 @@ interface PropsType {
 const Message: FC<PropsType> = ({currentInput}) => {
     const [userCannotTalk, setUserCannotTalk] =
         useState<boolean>(false);
-    const {appState, setAppState} = useContext(AppContext)
+    const userDevice = useAppSelector(selectUserDevice)
+    const dispatch = useAppDispatch()
+
+    // const {appState, setAppState} = useContext(AppContext)
 
     const setNewMessageHandler = (
         newMessage: File | string,
         validationStatus: boolean
     ) => {
-        updateFormsDataState({
-            setAppState,
-            newValue: {
-                validationStatus,
-                value: newMessage
-            },
-            key: currentInput.type
-        })
+        if(typeof newMessage === "string") {
+            dispatch(changeTextData({
+                key: currentInput.type,
+                data: {
+                    validationStatus,
+                    value: newMessage
+                }
+            }))
+        } else if (newMessage instanceof File) {
+            dispatch(addFileData({
+                key: currentInput.type,
+                data: {
+                    validationStatus,
+                    value: [newMessage]
+                }
+            }))
+        }
+
+        // updateFormsDataState({
+        //     setAppState,
+        //     newValue: {
+        //         validationStatus,
+        //         value: newMessage
+        //     },
+        //     key: currentInput.type
+        // })
     }
 
     useEffect(() => {
-        if (appState.userDevice?.padAdaptive640_992) {
-            setAppState((prevState) => {
-                return {
-                    ...prevState,
-                    openedPhotoBlock: userCannotTalk
-                }
-            })
+        if (userDevice.padAdaptive640_992) {
+            dispatch(setOpenedPhotoBlock(userCannotTalk))
         } else {
-            setAppState((prevState) => {
-                return {
-                    ...prevState,
-                    switchedMessageBlock: userCannotTalk
-                }
-            })
+            dispatch(setSwitchedMessageBlock(userCannotTalk))
         }
     }, [
-        appState.userDevice,
-        setAppState,
-        userCannotTalk
+        dispatch,
+        userCannotTalk,
+        userDevice.padAdaptive640_992
     ]);
 
     const switchTypeMessageHandler = () => {

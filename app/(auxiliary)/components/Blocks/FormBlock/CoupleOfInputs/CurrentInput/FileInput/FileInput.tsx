@@ -1,16 +1,24 @@
-// "use client"
-
-import React, {FC, useContext, useState} from 'react';
-import {PhotoAndVideoInputType} from "@/app/(auxiliary)/types/Data/Interface/RootPage/RootPageType";
+import React, {FC, useState} from 'react';
+import {PhotoAndVideoInputType} from "@/app/(auxiliary)/types/Data/Interface/RootPage/RootPageContentType";
 import styles from "./FileInput.module.scss";
 import Toggle from "@/app/(auxiliary)/components/Common/Switches/Toggle/Toggle";
 import FilesList
     from "@/app/(auxiliary)/components/Blocks/FormBlock/CoupleOfInputs/CurrentInput/FileInput/FilesList/FilesList";
 import Button from "@/app/(auxiliary)/components/UI/Button/Button";
 import DropZone from "@/app/(auxiliary)/components/Blocks/FormBlock/DropZone/DropZone";
-import {AppContext} from "@/app/(auxiliary)/components/Common/Provider/Provider";
 import PhotoEditor from "@/app/(auxiliary)/components/Blocks/PhotoEditor/PhotoEditor";
-import {PhotoAndVideoType} from "@/app/(auxiliary)/types/AppTypes/InputHooksTypes";
+import {PHOTO_KEY, PhotoAndVideoKeysTypes, VIDEO_KEY} from "@/app/(auxiliary)/types/AppTypes/InputHooksTypes";
+import {useAppDispatch, useAppSelector} from "@/app/(auxiliary)/libs/redux-toolkit/store/hooks";
+import {
+    selectRootPageContent,
+    selectUserDevice,
+    setOpenedPhotoBlock,
+    setOpenedVideoBlock,
+    setSwitchedMessageBlock
+} from "@/app/(auxiliary)/libs/redux-toolkit/store/slices/AppSlice/AppSlice";
+import {
+    setCurrentOpenedFileName
+} from "@/app/(auxiliary)/libs/redux-toolkit/store/slices/PhotoEditorSlice/PhotoEditorSlice";
 
 
 interface PropsType {
@@ -18,7 +26,9 @@ interface PropsType {
 }
 
 const FileInput: FC<PropsType> = ({currentInput}) => {
-    const {appState, setAppState} = useContext(AppContext)
+    const dispatch = useAppDispatch()
+    const userDevice = useAppSelector(selectUserDevice)
+    const rootPageContent = useAppSelector(selectRootPageContent)
 
     const [haveMediaFile, setHaveMediaFile] =
         useState<boolean>(false)
@@ -26,8 +36,6 @@ const FileInput: FC<PropsType> = ({currentInput}) => {
         useState<boolean>(false)
     const [photoEditorIsOpen, setPhotoEditorIsOpen] =
         useState<boolean>(false)
-    const [currentPhotoIndex, setCurrentPhotoIndex] =
-        useState<number>(0)
 
     const openDragDropZone = () => {
         setDragDropZoneIsOpen((prevState) => !prevState);
@@ -44,37 +52,27 @@ const FileInput: FC<PropsType> = ({currentInput}) => {
         setPhotoEditorIsOpen((prevState) => (!prevState))
     }
 
-    const openSelectedFile = (fileName: string, index: number) => {
+    const openSelectedFile = (fileName: string) => {
         setPhotoEditorIsOpen((prevState) => (!prevState))
-        setCurrentPhotoIndex(() => index)
+        dispatch(setCurrentOpenedFileName({fileName}))
     }
 
-    const switchToAnotherFile = (index: number) => {
-        console.log("switch to another file: ", index)
-        setCurrentPhotoIndex(() => index)
+    const switchToAnotherFile = (fileName: string) => {
+        dispatch(setCurrentOpenedFileName({fileName}))
     }
 
     const fileBlockHandler = () => {
         setHaveMediaFile((prevState) => !prevState)
 
-        if (appState.userDevice?.padAdaptive640_992) {
-            setAppState({
-                ...appState,
-                switchedMessageBlock: !haveMediaFile
-            })
+        if (userDevice.padAdaptive640_992) {
+            dispatch(setSwitchedMessageBlock(!haveMediaFile))
         } else {
-            if (currentInput.type === 'photo') {
-                setAppState({
-                    ...appState,
-                    openedPhotoBlock: !haveMediaFile
-                })
+            if (currentInput.type === PHOTO_KEY) {
+                dispatch(setOpenedPhotoBlock(!haveMediaFile))
             }
 
-            if (currentInput.type === "video") {
-                setAppState({
-                    ...appState,
-                    openedVideoBlock: !haveMediaFile
-                })
+            if (currentInput.type === VIDEO_KEY) {
+                dispatch(setOpenedVideoBlock(!haveMediaFile))
             }
         }
     }
@@ -100,9 +98,9 @@ const FileInput: FC<PropsType> = ({currentInput}) => {
                 </div>
             )}
 
-            {(dragDropZoneIsOpen && appState.rootPageContent) ? (
-                <DropZone content={appState.rootPageContent.uploadFileContent}
-                          filesType={currentInput.type as any}
+            {(dragDropZoneIsOpen && rootPageContent) ? (
+                <DropZone content={rootPageContent.contentOfUploadBlock}
+                          inputType={currentInput.type as any}
                           visibleDragDropZone={openDragDropZone}
                           openPhotoEditor={openPhotoEditor}
                 />
@@ -112,8 +110,7 @@ const FileInput: FC<PropsType> = ({currentInput}) => {
             {photoEditorIsOpen &&
                 <PhotoEditor visiblePhotoEditor={openPhotoEditor}
                              dataForEditor={{
-                                 type: currentInput.type as PhotoAndVideoType,
-                                 currentPhotoIndex: currentPhotoIndex
+                                 inputType: currentInput.type as PhotoAndVideoKeysTypes,
                              }}
                              switchToAnotherFile={switchToAnotherFile}/>}
         </div>

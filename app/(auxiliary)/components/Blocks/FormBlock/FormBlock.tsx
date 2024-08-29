@@ -1,10 +1,14 @@
 "use client"
 
-import React, {FC, useContext, useEffect, useState} from 'react';
-import {AllTypesOfInputsArray} from "@/app/(auxiliary)/types/Data/Interface/RootPage/RootPageType";
+import React, {FC, useEffect, useState} from 'react';
+import {AllTypesOfInputsArray} from "@/app/(auxiliary)/types/Data/Interface/RootPage/RootPageContentType";
 import CoupleOfInputs from "@/app/(auxiliary)/components/Blocks/FormBlock/CoupleOfInputs/CoupleOfInputs";
 import styles from "./FormBlock.module.scss";
-import {AppContext} from "@/app/(auxiliary)/components/Common/Provider/Provider";
+import {useAppSelector} from "@/app/(auxiliary)/libs/redux-toolkit/store/hooks";
+import {
+    selectBlocksMoving,
+    selectUserDevice
+} from "@/app/(auxiliary)/libs/redux-toolkit/store/slices/AppSlice/AppSlice";
 
 interface FormComponentsProps {
     formPartNumber: number;
@@ -17,9 +21,10 @@ const FormComponents: FC<FormComponentsProps> = ({
                                                      partOfInputsOne,
                                                      partOfInputsTwo
                                                  }) => {
-    const {appState} = useContext(AppContext)
+    const userDevice = useAppSelector(selectUserDevice)
+    const blocksMoving = useAppSelector(selectBlocksMoving)
 
-    const columnGapStatus = (appState.userDevice?.padAdaptive640_992 && !formPartNumber) ? appState.openedPhotoBlock : appState.switchedMessageBlock
+    const columnGapStatus = (userDevice.padAdaptive640_992 && !formPartNumber) ? blocksMoving.openedPhotoBlock : blocksMoving.switchedMessageBlock
 
     return (
         <div
@@ -40,25 +45,25 @@ const FormBlock: FC<PropsType> = ({
                                       inputContent,
                                       formPartNumber
                                   }) => {
-    const {appState} = useContext(AppContext)
+    const userDevice = useAppSelector(selectUserDevice)
     const [partOfInputsOne, setPartOfInputsOne] =
         useState(() => inputContent.slice(0, 2))
     const [partOfInputsTwo, setPartOfInputsTwo] =
         useState(() => inputContent.slice(2, 5))
 
     useEffect(() => {
-        if (!formPartNumber && (appState.userDevice?.padAdaptive)) {
+        if (!formPartNumber && (userDevice.padAdaptive)) {
             setPartOfInputsOne([inputContent[0], inputContent[2]])
             setPartOfInputsTwo([inputContent[1], inputContent[3]])
         }
 
-        if(formPartNumber && (appState.userDevice?.phoneAdaptive)) {
+        if(formPartNumber && (userDevice.phoneAdaptive)) {
             setPartOfInputsOne([inputContent[0], inputContent[2]])
             setPartOfInputsTwo([inputContent[1], inputContent[3]])
         }
     }, [
-        appState.userDevice?.padAdaptive,
-        appState.userDevice?.phoneAdaptive,
+        userDevice.padAdaptive,
+        userDevice.phoneAdaptive,
         formPartNumber,
         inputContent
     ])

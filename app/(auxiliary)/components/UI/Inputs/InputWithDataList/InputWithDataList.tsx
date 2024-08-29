@@ -1,6 +1,6 @@
 import React, {FC, ReactNode, useEffect, useState} from 'react';
 import styles from "./InputWithDataList.module.scss"
-import {InputHelpfulItemType} from "@/app/(auxiliary)/types/Data/Interface/RootPage/RootPageType";
+import {InputHelpfulItemType} from "@/app/(auxiliary)/types/Data/Interface/RootPage/RootPageContentType";
 import Fuse from "fuse.js";
 
 

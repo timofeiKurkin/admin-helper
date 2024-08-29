@@ -6,14 +6,14 @@ import {
     NAME_KEY,
     NUMBER_PC_KEY,
     PHONE_KEY,
-    PhotoAndVideoType,
-    TypeOfInputs
+    PhotoAndVideoKeysTypes,
+    AllKeysTypesOfInputs
 } from "@/app/(auxiliary)/types/AppTypes/InputHooksTypes";
 
-export interface RootPageType extends Button {
+export interface RootPageContentType extends Button {
     title: string;
     formContent: FormContentType;
-    uploadFile: UploadFileType;
+    contentOfUploadBlock: ContentOfUploadBlockType;
     permissionsContent: PermissionsContentType;
 }
 
@@ -31,7 +31,7 @@ export interface FormPartType {
 // Inputs
 export interface InputType {
     id: number;
-    type: TypeOfInputs | string; // TODO: REMOVE STRING TYPE
+    type: AllKeysTypesOfInputs | string; // TODO: REMOVE STRING TYPE
     inputTitle: string;
     inputPlaceholder?: string;
     toggleText?: string;
@@ -91,7 +91,7 @@ export interface InputHelpfulItemType {
 
 
 // Upload File Type
-export interface UploadFileType extends Button {
+export interface ContentOfUploadBlockType extends Button {
     uploadPhoto: string;
     uploadVideo: string;
     isDragContent: string;

@@ -1,12 +1,12 @@
 import React, {FC} from 'react';
-import {AllTypesOfInputs, PhotoAndVideoInputType} from "@/app/(auxiliary)/types/Data/Interface/RootPage/RootPageType";
+import {AllTypesOfInputs, PhotoAndVideoInputType} from "@/app/(auxiliary)/types/Data/Interface/RootPage/RootPageContentType";
 import {
     COMPANY_KEY,
     DEVICE_KEY,
     MESSAGE_KEY, NAME_KEY,
     NUMBER_PC_KEY,
     PHONE_KEY,
-    photoAndVideoInputsData, PhotoAndVideoType
+    photoAndVideoInputsData, PhotoAndVideoKeysTypes
 } from "@/app/(auxiliary)/types/AppTypes/InputHooksTypes";
 import TextInput from "@/app/(auxiliary)/components/Blocks/FormBlock/CoupleOfInputs/CurrentInput/TextInput/TextInput";
 import FileInput from "@/app/(auxiliary)/components/Blocks/FormBlock/CoupleOfInputs/CurrentInput/FileInput/FileInput";
@@ -47,8 +47,6 @@ const CurrentInput: FC<PropsType> = ({currentInput}) => {
                 <Text>{currentInput.inputTitle}</Text>
             )}
 
-
-
             {currentInput.type === MESSAGE_KEY && (
                 <Message currentInput={currentInput}/>
             )}
@@ -65,7 +63,7 @@ const CurrentInput: FC<PropsType> = ({currentInput}) => {
                 <TextInput currentInput={currentInput}/>
             )}
 
-            {photoAndVideoInputsData.includes(currentInput.type as PhotoAndVideoType) && (
+            {photoAndVideoInputsData.includes(currentInput.type as PhotoAndVideoKeysTypes) && (
                 <FileInput currentInput={currentInput as PhotoAndVideoInputType}/>
             )}
         </FormFieldWrapper>

@@ -1,6 +1,5 @@
 import {AxiosResponse} from "axios";
 import {$api} from "@/app/(auxiliary)/libs/axios";
-import {UserDataForSendToServerType} from "@/app/(auxiliary)/types/AppTypes/Context";
 
 
 export default class HelpUserService {

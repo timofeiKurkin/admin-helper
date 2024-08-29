@@ -19,22 +19,24 @@ export interface ValidationsType {
 }
 
 export interface ValidationsKeyType {
-    key: TypeOfInputs;
+    key: AllKeysTypesOfInputs;
 }
 
-export type TypeOfInputs = DeviceType | PhotoAndVideoType | SavedInputsDataType;
+export type AllKeysTypesOfInputs = DeviceKeyType | PhotoAndVideoKeysTypes | SavedInputsKeysTypes;
 
-export type PhotoAndVideoType = typeof PHOTO_KEY | typeof VIDEO_KEY;
+export type PhotoAndVideoKeysTypes = typeof PHOTO_KEY | typeof VIDEO_KEY;
 
-export type DeviceType = typeof DEVICE_KEY;
+export type DeviceKeyType = typeof DEVICE_KEY;
 
-export type SavedInputsDataType = typeof NAME_KEY
+export type SavedInputsKeysTypes = typeof NAME_KEY
     | typeof COMPANY_KEY
     | typeof NUMBER_PC_KEY
     | typeof PHONE_KEY
     | typeof MESSAGE_KEY;
 
-export const savedInputsData: SavedInputsDataType[] = [
+export type TextInputsKeysTypes = SavedInputsKeysTypes | DeviceKeyType
+
+export const savedInputsData: SavedInputsKeysTypes[] = [
     MESSAGE_KEY,
     NAME_KEY,
     PHONE_KEY,
@@ -42,7 +44,7 @@ export const savedInputsData: SavedInputsDataType[] = [
     NUMBER_PC_KEY,
 ]
 
-export const photoAndVideoInputsData: PhotoAndVideoType[] = [PHOTO_KEY, VIDEO_KEY]
+export const photoAndVideoInputsData: PhotoAndVideoKeysTypes[] = [PHOTO_KEY, VIDEO_KEY]
 
 export interface ValidationReturnDataType {
     isEmpty: boolean;

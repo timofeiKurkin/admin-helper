@@ -5,7 +5,51 @@
 	height: inherit;
 
 	display: grid;
-	grid-template-columns: 1fr 2px 7.5rem;
-	grid-template-rows: 27.0625rem;
-	column-gap: 3.19rem;
+	grid-template-columns: 40rem 22.4375rem;
+	grid-template-rows: 6.625rem 2px 20.75rem 3.3125rem;
+	grid-template-areas: "editor editor-controls" "editor separated-line" "editor file-list" "editor buttons";
+	column-gap: 3.75rem;
+	row-gap: 1.87rem;
+
+	.editorGrid {
+		grid-area: editor;
+	}
+
+	.editorControlsWrapper {
+		grid-area: editor-controls;
+		display: flex;
+		flex-direction: column;
+		row-gap: 1.25rem;
+
+		.editorControls {
+			display: grid;
+			grid-template-columns: min-content 200px;
+			grid-template-rows: min-content min-content;
+			align-items: center;
+			column-gap: 1.56rem;
+			row-gap: 1.25rem;
+		}
+
+		.resetSettings {
+			cursor: pointer;
+			width: fit-content;
+		}
+	}
+
+	.separatedLine {
+		grid-area: separated-line;
+		margin: 1.56px 0;
+	}
+
+	.fileListGrid {
+		grid-area: file-list;
+	}
+
+	.photoEditorButtons {
+		grid-area: buttons;
+		display: grid;
+		grid-template-columns: repeat(2, 10.3125rem);
+		column-gap: 1.81rem;
+		justify-content: center;
+	}
 }

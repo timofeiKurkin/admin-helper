@@ -1,74 +1,66 @@
-import React, {FC, useCallback, useContext, useEffect, useState} from "react";
+import React, {FC, useCallback, useEffect, useState} from "react";
 import {FileListType} from "@/app/(auxiliary)/types/DropZoneTypes/DropZoneTypes";
 import {FileError, useDropzone} from "react-dropzone";
-import {PhotoAndVideoType} from "@/app/(auxiliary)/types/AppTypes/InputHooksTypes";
+import {PhotoAndVideoKeysTypes} from "@/app/(auxiliary)/types/AppTypes/InputHooksTypes";
 import styles from "./DropZone.module.scss"
 import Button from "@/app/(auxiliary)/components/UI/Button/Button";
-import {UploadFileType} from "@/app/(auxiliary)/types/Data/Interface/RootPage/RootPageType";
+import {ContentOfUploadBlockType} from "@/app/(auxiliary)/types/Data/Interface/RootPage/RootPageContentType";
 import {white_1} from "@/styles/colors";
 import Title from "@/app/(auxiliary)/components/UI/TextTemplates/Title";
-import {AppContext} from "@/app/(auxiliary)/components/Common/Provider/Provider";
 import UploadFile from "@/app/(auxiliary)/components/UI/SVG/UploadFile/UploadFile";
 import {formattedTime} from "@/app/(auxiliary)/func/formattedTime";
+import {useAppDispatch, useAppSelector} from "@/app/(auxiliary)/libs/redux-toolkit/store/hooks";
+import {
+    addFileData,
+    selectFormFileData
+} from "@/app/(auxiliary)/libs/redux-toolkit/store/slices/UserFormDataSlice/UserFormDataSlice";
+import {
+    setCurrentOpenedFileName
+} from "@/app/(auxiliary)/libs/redux-toolkit/store/slices/PhotoEditorSlice/PhotoEditorSlice";
 
 
 interface PropsType {
-    content: UploadFileType;
-    filesType: PhotoAndVideoType;
+    content: ContentOfUploadBlockType;
+    inputType: PhotoAndVideoKeysTypes;
     visibleDragDropZone: () => void;
     openPhotoEditor: () => void;
 }
 
 const DropZone: FC<PropsType> = ({
                                      content,
-                                     filesType,
+                                     inputType,
                                      visibleDragDropZone,
                                      openPhotoEditor
                                  }) => {
-    const {appState, setAppState} = useContext(AppContext)
+    const dispatch = useAppDispatch()
+    const formFileData = useAppSelector(selectFormFileData)
     const [uploadingFilesStatus, setUploadingFilesStatus] =
         useState<boolean>(false)
 
     const onDrop = useCallback((userFiles: FileListType) => {
-        if (appState.userFormData?.file_data) {
-            const currentFiles = appState.userFormData?.file_data[filesType]?.files
-            const filteredFiles =
-                userFiles.filter((file) => !currentFiles?.includes(file))
+        const filteredFiles =
+            userFiles.filter((file) => !formFileData[inputType].files.includes(file))
 
-            if (filteredFiles) {
-                setAppState((prevState) => {
-                    if (!prevState.userFormData?.file_data) {
-                        return prevState
-                    }
-
-                    return {
-                        ...prevState,
-                        userFormData: {
-                            ...prevState.userFormData,
-                            file_data: {
-                                ...prevState.userFormData?.file_data,
-                                [filesType]: {
-                                    ...prevState.userFormData?.file_data[filesType],
-                                    files: [
-                                        ...prevState.userFormData?.file_data[filesType]?.files || [],
-                                        ...filteredFiles
-                                    ]
-                                }
-                            }
-                        }
-                    }
-                })
-            }
+        if (filteredFiles) {
+            dispatch(addFileData({
+                key: inputType, data: {
+                    validationStatus: true,
+                    value: filteredFiles
+                }
+            }))
         }
 
         visibleDragDropZone()
         openPhotoEditor()
+        dispatch(setCurrentOpenedFileName({
+            fileName: filteredFiles[0].name
+        }))
     }, [
+        dispatch,
+        formFileData,
         openPhotoEditor,
         visibleDragDropZone,
-        filesType,
-        appState,
-        setAppState
+        inputType,
     ])
 
     const nonRepeatingFiles = (
@@ -98,7 +90,7 @@ const DropZone: FC<PropsType> = ({
     } = useDropzone({
         validator: nonRepeatingFiles,
         onDrop,
-        accept: acceptSettings[filesType],
+        accept: acceptSettings[inputType],
         maxFiles: 10,
         disabled: uploadingFilesStatus
     })
@@ -109,27 +101,18 @@ const DropZone: FC<PropsType> = ({
                 const data = await navigator.clipboard.read()
                 console.log("data", data)
 
-                if (data[0].types.includes("image/png") && appState.userFormData?.file_data) {
+                if (data[0].types.includes("image/png")) {
                     const blobOutput = await data[0].getType("image/png")
                     const pastedImageName = `pasted-image-${formattedTime()}`
                     const newFile = new File([blobOutput], pastedImageName)
 
-                    setAppState({
-                        ...appState,
-                        userFormData: {
-                            ...appState.userFormData,
-                            file_data: {
-                                ...appState.userFormData?.file_data,
-                                [filesType]: {
-                                    ...appState.userFormData?.file_data[filesType],
-                                    files: [
-                                        ...appState.userFormData?.file_data[filesType]?.files || [],
-                                        newFile
-                                    ]
-                                }
-                            }
+                    dispatch(addFileData({
+                        key: inputType,
+                        data: {
+                            validationStatus: true,
+                            value: [newFile]
                         }
-                    })
+                    }))
                     visibleDragDropZone()
                 }
             } catch (e) {
@@ -142,7 +125,11 @@ const DropZone: FC<PropsType> = ({
         return () => {
             window.removeEventListener("paste", handleKeyDown)
         }
-    }, [])
+    }, [
+        dispatch,
+        inputType,
+        visibleDragDropZone
+    ])
 
     // useEffect(() => {
     //     const test = bufferRef.current
@@ -197,7 +184,7 @@ const DropZone: FC<PropsType> = ({
                             ) : (
                                 <>
                                     <div className={styles.dropZoneText}>
-                                        <Title>{filesType === "photo" ? content.uploadPhoto : content.uploadVideo}</Title>
+                                        <Title>{inputType === "photo" ? content.uploadPhoto : content.uploadVideo}</Title>
                                     </div>
 
                                     <div className={styles.closeDropZone}

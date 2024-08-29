@@ -1,8 +1,8 @@
-import React, {FC, useContext, useEffect} from 'react';
-import {InputChangeEventHandler, KeyBoardEventHandler} from "@/app/(auxiliary)/types/AppTypes/AppTypes";
+import React, {FC, useEffect} from 'react';
+import {InputChangeEventHandler} from "@/app/(auxiliary)/types/AppTypes/AppTypes";
 import inputsStyles
     from "@/app/(auxiliary)/components/Blocks/FormBlock/CoupleOfInputs/CurrentInput/InputsStyles.module.scss"
-import {NumberPcInputType} from "@/app/(auxiliary)/types/Data/Interface/RootPage/RootPageType";
+import {NumberPcInputType} from "@/app/(auxiliary)/types/Data/Interface/RootPage/RootPageContentType";
 import useInput from "@/app/(auxiliary)/hooks/useInput";
 import {
     inputValidations
@@ -11,8 +11,8 @@ import Input from "@/app/(auxiliary)/components/UI/Inputs/Input/Input";
 import {
     inputHandleKeyDown
 } from "@/app/(auxiliary)/components/Blocks/FormBlock/CoupleOfInputs/CurrentInput/inputHandleKeyDown";
-import {AppContext} from "@/app/(auxiliary)/components/Common/Provider/Provider";
-import {updateFormsDataState} from "@/app/(auxiliary)/func/updateFormsDataState";
+import {useAppDispatch} from "@/app/(auxiliary)/libs/redux-toolkit/store/hooks";
+import {changeTextData} from "@/app/(auxiliary)/libs/redux-toolkit/store/slices/UserFormDataSlice/UserFormDataSlice";
 
 interface PropsType {
     currentInput: NumberPcInputType;
@@ -21,8 +21,7 @@ interface PropsType {
 const ComputerNumberInput: FC<PropsType> = ({
                                                 currentInput
                                             }) => {
-
-    const {appState, setAppState} = useContext(AppContext)
+    const dispatch = useAppDispatch()
     const value = useInput("", currentInput.type, inputValidations[currentInput.type])
 
     const numberPcHandler = (e: InputChangeEventHandler) => {
@@ -42,24 +41,24 @@ const ComputerNumberInput: FC<PropsType> = ({
         e.target.value = computerNumber
 
         value.onChange(e)
+        dispatch(changeTextData({
+            key: currentInput.type,
+            data: {
+                validationStatus: value.inputValid,
+                value: value.value
+            }
+        }))
     }
 
     useEffect(() => {
-        updateFormsDataState({
-            setAppState,
-            newValue: {
+        dispatch(changeTextData({
+            key: currentInput.type,
+            data: {
                 validationStatus: value.inputValid,
                 value: value.value
-            },
-            key: currentInput.type
-        })
-    }, [
-        appState,
-        setAppState,
-        value.value,
-        value.inputValid,
-        currentInput.type
-    ]);
+            }
+        }))
+    }, []);
 
     return (
         <div className={inputsStyles.numberPCInputWrapper}>

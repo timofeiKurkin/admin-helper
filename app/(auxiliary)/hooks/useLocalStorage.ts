@@ -1,8 +1,14 @@
 import {useEffect, useState} from "react";
-import {savedInputsData, SavedInputsDataType} from "@/app/(auxiliary)/types/AppTypes/InputHooksTypes";
+import {
+    AllKeysTypesOfInputs,
+    savedInputsData,
+    SavedInputsKeysTypes
+} from "@/app/(auxiliary)/types/AppTypes/InputHooksTypes";
 
-const UseLocalStorage = (key: SavedInputsDataType, initialValue: string | boolean | {}) => {
-    const getStorageValue = (key: SavedInputsDataType, initialValue: string | number | {} | boolean) => {
+const UseLocalStorage = (key: AllKeysTypesOfInputs, initialValue: string | boolean | {}) => {
+    // const filtered
+
+    const getStorageValue = (key: SavedInputsKeysTypes, initialValue: string | number | {} | boolean) => {
         if (typeof window !== 'undefined') {
             const value: any = localStorage.getItem(key)
             const parse = JSON.parse(value)

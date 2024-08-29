@@ -7,15 +7,13 @@ import FilePreviewBlock from "@/app/(auxiliary)/components/Blocks/FilePreviewBlo
 
 interface PropsType {
     file: File;
-    fileIndex: number;
     removeHandler: (fileName: string) => void;
-    changeFile: (fileName: string, index: number) => void;
+    changeFile: (fileName: string) => void;
 
 }
 
 const File: FC<PropsType> = ({
                                  file,
-                                 fileIndex,
                                  removeHandler,
                                  changeFile
                              }) => {
@@ -38,7 +36,7 @@ const File: FC<PropsType> = ({
 
             {visibleHover ? (
                 <div className={styles.fileCover}
-                     onClick={() => changeFile(file.name, fileIndex)}>
+                     onClick={() => changeFile(file.name)}>
                     <div className={styles.fileRemove}
                          onClick={(e) => handleRemove(e)}>
                         <DeleteFile/>

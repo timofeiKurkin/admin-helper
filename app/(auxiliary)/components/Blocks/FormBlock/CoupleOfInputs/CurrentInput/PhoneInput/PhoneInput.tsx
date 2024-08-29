@@ -1,5 +1,5 @@
-import React, {FC, useContext, useEffect} from 'react';
-import {InputChangeEventHandler, KeyBoardEventHandler} from "@/app/(auxiliary)/types/AppTypes/AppTypes";
+import React, {FC, useEffect} from 'react';
+import {InputChangeEventHandler} from "@/app/(auxiliary)/types/AppTypes/AppTypes";
 import Input from "@/app/(auxiliary)/components/UI/Inputs/Input/Input";
 import useInput from "@/app/(auxiliary)/hooks/useInput";
 import {
@@ -7,12 +7,12 @@ import {
 } from "@/app/(auxiliary)/components/Blocks/FormBlock/CoupleOfInputs/CurrentInput/inputValidations";
 import inputsStyles
     from "@/app/(auxiliary)/components/Blocks/FormBlock/CoupleOfInputs/CurrentInput/InputsStyles.module.scss";
-import {PhoneNumberInputType} from "@/app/(auxiliary)/types/Data/Interface/RootPage/RootPageType";
+import {PhoneNumberInputType} from "@/app/(auxiliary)/types/Data/Interface/RootPage/RootPageContentType";
 import {
     inputHandleKeyDown
 } from "@/app/(auxiliary)/components/Blocks/FormBlock/CoupleOfInputs/CurrentInput/inputHandleKeyDown";
-import {AppContext} from "@/app/(auxiliary)/components/Common/Provider/Provider";
-import {updateFormsDataState} from "@/app/(auxiliary)/func/updateFormsDataState";
+import {useAppDispatch} from "@/app/(auxiliary)/libs/redux-toolkit/store/hooks";
+import {changeTextData} from "@/app/(auxiliary)/libs/redux-toolkit/store/slices/UserFormDataSlice/UserFormDataSlice";
 
 
 interface PropsType {
@@ -20,7 +20,8 @@ interface PropsType {
 }
 
 const PhoneInput: FC<PropsType> = ({currentInput}) => {
-    const {appState, setAppState} = useContext(AppContext)
+    // const {appState, setAppState} = useContext(AppContext)
+    const dispatch = useAppDispatch()
     const value = useInput("+7 ", currentInput.type, inputValidations[currentInput.type])
 
     const phoneRegularExpression = (e: InputChangeEventHandler) => {
@@ -43,34 +44,25 @@ const PhoneInput: FC<PropsType> = ({currentInput}) => {
         e.target.value = formattedValue
 
         value.onChange(e)
-        setAppState({
-            ...appState,
-            userFormData: {
-                ...appState.userFormData,
-                text_data: {
-                    ...appState.userFormData?.text_data,
-                    [currentInput.type]: e.target.value
-                }
+        dispatch(changeTextData({
+            key: currentInput.type,
+            data: {
+                validationStatus: value.inputValid,
+                value: value.value
             }
-        })
+        }))
     }
 
     useEffect(() => {
-        updateFormsDataState({
-            setAppState,
-            newValue: {
+        dispatch(changeTextData({
+            key: currentInput.type,
+            data: {
                 validationStatus: value.inputValid,
                 value: value.value
-            },
-            key: currentInput.type
-        })
-    }, [
-        appState,
-        setAppState,
-        value.value,
-        value.inputValid,
-        currentInput.type
-    ]);
+            }
+        }))
+
+    }, []);
 
     return (
         <div className={inputsStyles.phoneNumberInputWrapper}>

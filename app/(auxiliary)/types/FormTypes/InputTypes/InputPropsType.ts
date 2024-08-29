@@ -4,7 +4,7 @@ import {
     KeyBoardEventHandler,
     TextareaChangeEventHandler
 } from "@/app/(auxiliary)/types/AppTypes/AppTypes";
-import {InputHelpfulItemType} from "@/app/(auxiliary)/types/Data/Interface/RootPage/RootPageType";
+import {InputHelpfulItemType} from "@/app/(auxiliary)/types/Data/Interface/RootPage/RootPageContentType";
 
 export interface InputPropsType<OnChangeType> {
     value: string;
