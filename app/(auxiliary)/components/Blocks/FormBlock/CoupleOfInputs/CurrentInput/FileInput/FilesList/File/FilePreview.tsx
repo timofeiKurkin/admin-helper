@@ -4,15 +4,16 @@ import styles from "./File.module.scss";
 import DeleteFile from "@/app/(auxiliary)/components/UI/SVG/DeleteFile/DeleteFile";
 import ChangePhoto from "@/app/(auxiliary)/components/UI/SVG/ChangePhoto/ChangePhoto";
 import FilePreviewBlock from "@/app/(auxiliary)/components/Blocks/FilePreviewBlock/FilePreviewBlock";
+import {CustomFileType} from "@/app/(auxiliary)/types/AppTypes/Context";
 
 interface PropsType {
-    file: File;
+    file: CustomFileType;
     removeHandler: (fileName: string) => void;
     changeFile: (fileName: string) => void;
 
 }
 
-const File: FC<PropsType> = ({
+const FilePreview: FC<PropsType> = ({
                                  file,
                                  removeHandler,
                                  changeFile
@@ -46,10 +47,10 @@ const File: FC<PropsType> = ({
                 </div>
             ) : null}
 
-            <FilePreviewBlock file={file}
+            <FilePreviewBlock url={file.url}
                               alt={`user's file - ${file.name}`}/>
         </div>
     );
 };
 
-export default File;
+export default FilePreview;

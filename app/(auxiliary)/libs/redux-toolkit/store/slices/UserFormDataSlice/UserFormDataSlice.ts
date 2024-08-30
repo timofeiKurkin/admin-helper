@@ -12,6 +12,7 @@ import {
     VIDEO_KEY
 } from "@/app/(auxiliary)/types/AppTypes/InputHooksTypes";
 import {
+    CustomFileType,
     FormDataItemType,
     PermissionsOfFormStatesType,
     UserFormDataType
@@ -74,7 +75,7 @@ interface DataActionType<K, T> {
 }
 
 interface DeleteFileAction {
-    fileName: string;
+    name: string;
 }
 
 export const userFormDataSlice = createAppSlice({
@@ -92,7 +93,7 @@ export const userFormDataSlice = createAppSlice({
         addFileData: create.reducer(
             (
                 state,
-                action: PayloadAction<DataActionType<PhotoAndVideoKeysTypes, FormDataItemType<File[]>>>
+                action: PayloadAction<DataActionType<PhotoAndVideoKeysTypes, FormDataItemType<CustomFileType[]>>>
             ) => {
                 state.file_data[action.payload.key].files = [
                     ...state.file_data[action.payload.key].files,
@@ -107,7 +108,7 @@ export const userFormDataSlice = createAppSlice({
             ) => {
                 state.file_data[action.payload.key].files =
                     state.file_data[action.payload.key].files.filter(
-                        (file) => file.name !== action.payload.data.fileName
+                        (file) => file.name !== action.payload.data.name
                     )
             }
         ),

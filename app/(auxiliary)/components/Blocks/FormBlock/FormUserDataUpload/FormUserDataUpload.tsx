@@ -86,7 +86,7 @@ const FormUserDataUpload: FC<PropsType> = ({buttonText}) => {
             if (userData.file_data) {
                 (Object.keys(userData.file_data) as PhotoAndVideoKeysTypes[]).forEach((key) => {
                     if (userData.file_data && userData.file_data[key]) {
-                        userData.file_data[key]?.files.forEach((file) => formData.append(key, file))
+                        userData.file_data[key]?.files.forEach((file) => formData.append(key, file.url))
                     }
                 })
             }
@@ -102,8 +102,6 @@ const FormUserDataUpload: FC<PropsType> = ({buttonText}) => {
             console.log("response: ", response)
         }
     }
-
-    console.log("formTextData: ", formTextData)
 
     return (
         <Button disabled={!validationFormStatus || !permissionsOfForm.userAgreed}

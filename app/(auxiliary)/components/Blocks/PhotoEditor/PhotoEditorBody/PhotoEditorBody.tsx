@@ -1,4 +1,4 @@
-import React, {FC, useCallback, useEffect, useState} from 'react';
+import React, {FC, useCallback, useEffect, useRef, useState} from 'react';
 import Editor from "@/app/(auxiliary)/components/Blocks/PhotoEditor/PhotoEditorBody/Editor/Editor";
 import styles from "./PhotoEditorBody.module.scss";
 import SeparatingLine from "@/app/(auxiliary)/components/UI/SeparatingLine/SeparatingLine";
@@ -9,11 +9,12 @@ import {blue_dark, blue_light, grey} from "@/styles/colors";
 import Text from "@/app/(auxiliary)/components/UI/TextTemplates/Text";
 import Range from "@/app/(auxiliary)/components/UI/Inputs/Range/Range";
 import {PhotoAndVideoKeysTypes} from "@/app/(auxiliary)/types/AppTypes/InputHooksTypes";
-import {FileListStateType} from "@/app/(auxiliary)/types/AppTypes/Context";
+import {CustomFileType, FileListStateType} from "@/app/(auxiliary)/types/AppTypes/Context";
 import {useAppSelector} from "@/app/(auxiliary)/libs/redux-toolkit/store/hooks";
 import {
-    selectCurrentFileName
+    selectCurrentFileName, selectPhotoListSettings
 } from "@/app/(auxiliary)/libs/redux-toolkit/store/slices/PhotoEditorSlice/PhotoEditorSlice";
+import {onDownloadCropClick} from "@/app/(auxiliary)/func/editorHandlers";
 
 
 interface PropsType {
@@ -31,21 +32,23 @@ const PhotoEditorBody: FC<PropsType> = ({
                                             visiblePhotoEditor
                                         }) => {
     const currentFileName = useAppSelector(selectCurrentFileName)
+    const photoSettings = useAppSelector(selectPhotoListSettings).find((photo) => photo.fileName === currentFileName)
+    console.log("photoSettings: ", photoSettings)
 
-    const findCurrentFile = useCallback((file: File) => {
+    const findCurrentFile = useCallback((file: CustomFileType) => {
         return file.name === currentFileName
     }, [currentFileName])
 
-    const [currentPhoto, setCurrentPhoto] =
-        useState<File>(() => (
-            contentForEditor.fileList.files.find(findCurrentFile) || {} as File
+    const [currentPhotoURL, setCurrentPhotoURL] =
+        useState<CustomFileType>(() => (
+            contentForEditor.fileList.files.find(findCurrentFile) || {} as CustomFileType
         ))
 
     const [scale, setScale] = useState(1)
     const [rotate, setRotate] = useState(0)
 
     useEffect(() => {
-        setCurrentPhoto(contentForEditor.fileList.files.find(findCurrentFile) || {} as File)
+        setCurrentPhotoURL(contentForEditor.fileList.files.find(findCurrentFile) || {} as CustomFileType)
     }, [
         findCurrentFile,
         contentForEditor.fileList,
@@ -69,7 +72,7 @@ const PhotoEditorBody: FC<PropsType> = ({
             <div className={styles.editorGrid}>
                 <Editor scale={scale}
                         rotate={rotate}
-                        currentPhoto={currentPhoto}/>
+                        currentPhoto={currentPhotoURL}/>
             </div>
 
             <div className={styles.editorControlsWrapper}>
@@ -120,7 +123,11 @@ const PhotoEditorBody: FC<PropsType> = ({
             </div>
 
             <div className={styles.photoEditorButtons}>
-                <Button style={{backgroundColor: blue_dark}}>{data.buttons.save}</Button>
+                {photoSettings && (
+                    <Button style={{backgroundColor: blue_dark}}>
+                    {data.buttons.save}
+                </Button>
+                )}
                 <Button onClick={visiblePhotoEditor}
                         style={{backgroundColor: grey}}
                 >{data.buttons.close}</Button>

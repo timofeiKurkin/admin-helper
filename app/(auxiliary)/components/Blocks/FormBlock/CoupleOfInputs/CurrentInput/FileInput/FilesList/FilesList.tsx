@@ -1,8 +1,8 @@
 import React, {FC, useEffect, useState} from 'react';
 import styles from "./FilesList.module.scss";
 import ButtonText from "@/app/(auxiliary)/components/UI/TextTemplates/ButtonText";
-import File
-    from "@/app/(auxiliary)/components/Blocks/FormBlock/CoupleOfInputs/CurrentInput/FileInput/FilesList/File/File";
+import FilePreview
+    from "@/app/(auxiliary)/components/Blocks/FormBlock/CoupleOfInputs/CurrentInput/FileInput/FilesList/File/FilePreview";
 import {FileListStateType} from "@/app/(auxiliary)/types/AppTypes/Context";
 import {PhotoAndVideoKeysTypes} from "@/app/(auxiliary)/types/AppTypes/InputHooksTypes";
 import {useAppDispatch, useAppSelector} from "@/app/(auxiliary)/libs/redux-toolkit/store/hooks";
@@ -34,7 +34,7 @@ const FilesList: FC<PropsType> = ({
         dispatch(deleteFileData({
             key: type,
             data: {
-                fileName
+                name: fileName
             }
         }))
     }
@@ -55,10 +55,10 @@ const FilesList: FC<PropsType> = ({
             }}>
                 {currentFilesList.files.length ? (
                         currentFilesList.files.map((file, i) => (
-                            <File key={`key=${i}`}
-                                  file={file}
-                                  removeHandler={removeFile}
-                                  changeFile={changeFile}/>
+                            <FilePreview key={`key=${i}`}
+                                         file={file}
+                                         removeHandler={removeFile}
+                                         changeFile={changeFile}/>
                         ))
                     )
                     :

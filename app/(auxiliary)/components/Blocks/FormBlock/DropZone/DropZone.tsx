@@ -17,6 +17,7 @@ import {
 import {
     setCurrentOpenedFileName
 } from "@/app/(auxiliary)/libs/redux-toolkit/store/slices/PhotoEditorSlice/PhotoEditorSlice";
+import {CustomFileType} from "@/app/(auxiliary)/types/AppTypes/Context";
 
 
 interface PropsType {
@@ -38,23 +39,30 @@ const DropZone: FC<PropsType> = ({
         useState<boolean>(false)
 
     const onDrop = useCallback((userFiles: FileListType) => {
+        const listOfUrls = userFiles.map((file): CustomFileType =>
+            ({
+                name: file.name,
+                url: URL.createObjectURL(file)
+            })
+        )
         const filteredFiles =
-            userFiles.filter((file) => !formFileData[inputType].files.includes(file))
+            listOfUrls.filter((file) => !formFileData[inputType].files.includes(file))
 
-        if (filteredFiles) {
+        if (filteredFiles.length) {
             dispatch(addFileData({
-                key: inputType, data: {
+                key: inputType,
+                data: {
                     validationStatus: true,
                     value: filteredFiles
                 }
+            }))
+            dispatch(setCurrentOpenedFileName({
+                fileName: userFiles[0].name
             }))
         }
 
         visibleDragDropZone()
         openPhotoEditor()
-        dispatch(setCurrentOpenedFileName({
-            fileName: filteredFiles[0].name
-        }))
     }, [
         dispatch,
         formFileData,
@@ -105,12 +113,16 @@ const DropZone: FC<PropsType> = ({
                     const blobOutput = await data[0].getType("image/png")
                     const pastedImageName = `pasted-image-${formattedTime()}`
                     const newFile = new File([blobOutput], pastedImageName)
+                    const newFileURL = URL.createObjectURL(newFile)
 
                     dispatch(addFileData({
                         key: inputType,
                         data: {
                             validationStatus: true,
-                            value: [newFile]
+                            value: [{
+                                name: pastedImageName,
+                                url: newFileURL
+                            }]
                         }
                     }))
                     visibleDragDropZone()

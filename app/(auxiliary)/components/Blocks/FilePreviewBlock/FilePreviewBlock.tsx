@@ -3,7 +3,7 @@ import {ImageProps} from "next/image";
 import Image from "next/image";
 
 interface PropsType {
-    file: File;
+    url: string;
     alt: string;
     imageProps?: ImageProps;
 }
@@ -11,11 +11,11 @@ interface PropsType {
 const FilePreviewBlock: FC<PropsType> = (props) => {
     return (
         <Image {...props.imageProps}
-               src={URL.createObjectURL(props.file)}
+               src={props.url}
                alt={props.alt}
                fill={true}
                quality={100}
-               onLoad={() => URL.revokeObjectURL(URL.createObjectURL(props.file))}
+               onLoad={() => URL.revokeObjectURL(props.url)}
                style={{
                    objectFit: "cover",
                    width: "100%",

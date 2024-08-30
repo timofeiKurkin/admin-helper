@@ -19,7 +19,6 @@ export const onDownloadCropClick = async ({
     const image = imgRef.current
     const previewCanvas = previewCanvasRef.current
 
-
     if (!image || !previewCanvas || !completedCrop) {
         throw new Error('Crop canvas does not exist')
     }

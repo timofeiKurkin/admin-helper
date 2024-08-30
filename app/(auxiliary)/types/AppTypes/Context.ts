@@ -17,9 +17,14 @@ export interface AppContextType {
     setAppState: React.Dispatch<React.SetStateAction<ProviderStateType>>;
 }
 
+export interface CustomFileType {
+    url: string;
+    name: string;
+}
+
 export interface FileListStateType {
     type: PhotoAndVideoKeysTypes;
-    files: File[];
+    files: CustomFileType[] // File[];
 }
 
 export interface FormDataItemType<T> {

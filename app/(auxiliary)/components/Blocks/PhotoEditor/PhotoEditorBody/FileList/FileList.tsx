@@ -40,7 +40,7 @@ const FileList: FC<PropsType> = ({
         dispatch(deleteFileData({
             key: contentForEditor.fileList.type,
             data: {
-                fileName
+                name: fileName
             }
         }))
     }
@@ -59,7 +59,7 @@ const FileList: FC<PropsType> = ({
                              onClick={() => chooseAnotherFile(file.name)}
                         >
                             <div className={styles.photoPreview}>
-                                <FilePreviewBlock file={file} alt={`user's file for change - ${file.name}`}/>
+                                <FilePreviewBlock url={file.url} alt={`user's file for change - ${file.name}`}/>
                             </div>
 
                             <Text>{trimLongTitle(file.name.split(".")[0], 14)}</Text>
