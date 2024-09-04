@@ -1,5 +1,5 @@
 import React, {FC, useCallback, useEffect, useState} from "react";
-import {FileListType} from "@/app/(auxiliary)/types/DropZoneTypes/DropZoneTypes";
+import {FilesListType} from "@/app/(auxiliary)/types/DropZoneTypes/DropZoneTypes";
 import {FileError, useDropzone} from "react-dropzone";
 import {PhotoAndVideoKeysTypes} from "@/app/(auxiliary)/types/AppTypes/InputHooksTypes";
 import styles from "./DropZone.module.scss"
@@ -38,15 +38,18 @@ const DropZone: FC<PropsType> = ({
     const [uploadingFilesStatus, setUploadingFilesStatus] =
         useState<boolean>(false)
 
-    const onDrop = useCallback((userFiles: FileListType) => {
-        const listOfUrls = userFiles.map((file): CustomFileType =>
-            ({
-                name: file.name,
-                url: URL.createObjectURL(file)
-            })
-        )
+    const onDrop = useCallback((userFiles: FilesListType) => {
+        // const listOfUrls = userFiles.map((file): CustomFileType =>
+        //     ({
+        //         name: file.name,
+        //         url: URL.createObjectURL(file)
+        //     })
+        // )
+        // const filteredFiles =
+        //     listOfUrls.filter((file) => !formFileData[inputType].files.includes(file))
+
         const filteredFiles =
-            listOfUrls.filter((file) => !formFileData[inputType].files.includes(file))
+            userFiles.filter((file) => !formFileData[inputType].files.includes(file))
 
         if (filteredFiles.length) {
             dispatch(addFileData({
@@ -113,16 +116,17 @@ const DropZone: FC<PropsType> = ({
                     const blobOutput = await data[0].getType("image/png")
                     const pastedImageName = `pasted-image-${formattedTime()}`
                     const newFile = new File([blobOutput], pastedImageName)
-                    const newFileURL = URL.createObjectURL(newFile)
+                    // const newFileURL = URL.createObjectURL(newFile)
 
                     dispatch(addFileData({
                         key: inputType,
                         data: {
                             validationStatus: true,
-                            value: [{
-                                name: pastedImageName,
-                                url: newFileURL
-                            }]
+                            value: [newFile] // If state is of files
+                            // value: [{ // If state is of urls
+                            //     name: pastedImageName,
+                            //     url: newFileURL
+                            // }]
                         }
                     }))
                     visibleDragDropZone()

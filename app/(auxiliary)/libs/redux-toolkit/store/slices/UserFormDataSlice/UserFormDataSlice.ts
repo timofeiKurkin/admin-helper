@@ -93,7 +93,7 @@ export const userFormDataSlice = createAppSlice({
         addFileData: create.reducer(
             (
                 state,
-                action: PayloadAction<DataActionType<PhotoAndVideoKeysTypes, FormDataItemType<CustomFileType[]>>>
+                action: PayloadAction<DataActionType<PhotoAndVideoKeysTypes, FormDataItemType<File[]>>> // CustomFileType[]
             ) => {
                 state.file_data[action.payload.key].files = [
                     ...state.file_data[action.payload.key].files,

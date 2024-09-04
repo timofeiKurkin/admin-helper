@@ -1,1 +1,1 @@
-export type FileListType = File[];
+export type FilesListType = File[];

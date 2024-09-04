@@ -59,7 +59,8 @@ const FileList: FC<PropsType> = ({
                              onClick={() => chooseAnotherFile(file.name)}
                         >
                             <div className={styles.photoPreview}>
-                                <FilePreviewBlock url={file.url} alt={`user's file for change - ${file.name}`}/>
+                                <FilePreviewBlock url={URL.createObjectURL(file)}
+                                                  alt={`user's file for change - ${file.name}`}/>
                             </div>
 
                             <Text>{trimLongTitle(file.name.split(".")[0], 14)}</Text>

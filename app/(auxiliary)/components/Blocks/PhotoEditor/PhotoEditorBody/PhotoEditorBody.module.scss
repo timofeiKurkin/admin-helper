@@ -24,10 +24,30 @@
 		.editorControls {
 			display: grid;
 			grid-template-columns: min-content 200px;
-			grid-template-rows: min-content min-content;
+			grid-template-rows: min-content 1fr;
 			align-items: center;
 			column-gap: 1.56rem;
 			row-gap: 1.25rem;
+
+			.rotateSliderTicks {
+				display: flex;
+				justify-content: space-between;
+				padding: 0 5px;
+
+				.sliderTick {
+					display: flex;
+					justify-content: center;
+					width: 1px;
+					height: 5px;
+					background: #d3d3d3;
+					line-height: 30px;
+					cursor: pointer;
+
+					p {
+						line-height: inherit;
+					}
+				}
+			}
 		}
 
 		.resetSettings {

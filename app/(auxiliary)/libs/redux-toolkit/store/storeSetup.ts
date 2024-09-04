@@ -10,9 +10,19 @@ export type RootState = ReturnType<typeof rootReducer>
 export const storeSetup = () => {
     return configureStore({
         reducer: rootReducer,
-        // middleware: (getDefaultMiddleware) => {
-        //     return getDefaultMiddleware({serializableCheck: false})
-        // },
+        middleware: (getDefaultMiddleware) => {
+            return getDefaultMiddleware(
+                {
+                    serializableCheck: false
+                        // {
+                        //     ignoredPaths: [
+                        //         "userFormDataSlice.file_data.photo.files",
+                        //         "payload.data.value"
+                        //     ]
+                        // }
+                }
+            )
+        },
     })
 }
 

@@ -5,13 +5,12 @@ import styles from "./Editor.module.scss";
 import 'react-image-crop/src/ReactCrop.scss';
 import {centerAspectCrop, onDownloadCropClick} from "@/app/(auxiliary)/func/editorHandlers";
 import {useAppDispatch} from "@/app/(auxiliary)/libs/redux-toolkit/store/hooks";
-import {CustomFileType} from "@/app/(auxiliary)/types/AppTypes/Context";
 import {useDebounceEffect} from "@/app/(auxiliary)/hooks/useDebounceEffect";
 import {canvasPreview} from "@/app/(auxiliary)/components/Blocks/PhotoEditor/canvasPreview";
 
 
 interface PropsType {
-    currentPhoto: CustomFileType;
+    currentPhoto: File; // CustomFileType;
     scale: number;
     rotate: number;
 }
@@ -21,20 +20,27 @@ const Editor: FC<PropsType> = ({
                                    scale,
                                    rotate
                                }) => {
-    const dispatch = useAppDispatch()
+    // const dispatch = useAppDispatch()
 
     const [imgSrc, setImgSrc] =
-        useState<string>(() => currentPhoto.url)
-    const [crop, setCrop] = useState<Crop>()
+        useState<string>(() => URL.createObjectURL(currentPhoto))
+    const [crop, setCrop] = useState<Crop>({
+        unit: "%",
+        x: 0,
+        y: 0,
+        width: 100,
+        height: 100
+    })
     const [completedCrop, setCompletedCrop] =
         useState<PixelCrop>({
             unit: "px",
-            width: 0,
-            height: 0,
             x: 0,
             y: 0,
+            width: 0,
+            height: 0,
         })
-    const [aspect, setAspect] = useState<number>(0)
+    // const [aspect, setAspect] = useState<number>(0)
+    const aspect = 0
 
     const imgRef = useRef<HTMLImageElement>(null)
     const blobUrlRef = useRef('')
@@ -42,7 +48,7 @@ const Editor: FC<PropsType> = ({
     const hiddenAnchorRef = useRef<HTMLAnchorElement>(null)
 
     useEffect(() => {
-        setImgSrc(() => currentPhoto.url)
+        setImgSrc(() => URL.createObjectURL(currentPhoto))
     }, [currentPhoto])
 
     const onImageLoad = (e: React.SyntheticEvent<HTMLImageElement>) => {
@@ -109,6 +115,7 @@ const Editor: FC<PropsType> = ({
                                    aspect={aspect}
                                    minWidth={100}
                                    className={styles.reactCrop}
+                                   // style={{transform: `rotate(${rotate}deg)`}}
                             // style={{transform: `scale(${scale}) rotate(${rotate}deg)`}}
                                    minHeight={100}
                         >
@@ -156,7 +163,7 @@ const Editor: FC<PropsType> = ({
                                 }}/>
                         <a ref={hiddenAnchorRef}
                            download
-                           href="#hidden"></a>
+                           href={"#hidden"}></a>
                     </div>
                 </div>
             </div>

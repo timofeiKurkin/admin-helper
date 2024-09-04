@@ -1,4 +1,4 @@
-import React, {FC, useCallback, useEffect, useRef, useState} from 'react';
+import React, {FC, useCallback, useEffect, useState} from 'react';
 import Editor from "@/app/(auxiliary)/components/Blocks/PhotoEditor/PhotoEditorBody/Editor/Editor";
 import styles from "./PhotoEditorBody.module.scss";
 import SeparatingLine from "@/app/(auxiliary)/components/UI/SeparatingLine/SeparatingLine";
@@ -8,13 +8,14 @@ import Button from "@/app/(auxiliary)/components/UI/Button/Button";
 import {blue_dark, blue_light, grey} from "@/styles/colors";
 import Text from "@/app/(auxiliary)/components/UI/TextTemplates/Text";
 import Range from "@/app/(auxiliary)/components/UI/Inputs/Range/Range";
-import {PhotoAndVideoKeysTypes} from "@/app/(auxiliary)/types/AppTypes/InputHooksTypes";
-import {CustomFileType, FileListStateType} from "@/app/(auxiliary)/types/AppTypes/Context";
+import {FileListStateType} from "@/app/(auxiliary)/types/AppTypes/Context";
 import {useAppSelector} from "@/app/(auxiliary)/libs/redux-toolkit/store/hooks";
 import {
-    selectCurrentFileName, selectPhotoListSettings
+    selectCurrentFileName,
+    selectPhotoListSettings
 } from "@/app/(auxiliary)/libs/redux-toolkit/store/slices/PhotoEditorSlice/PhotoEditorSlice";
-import {onDownloadCropClick} from "@/app/(auxiliary)/func/editorHandlers";
+import SmallText from "@/app/(auxiliary)/components/UI/TextTemplates/SmallText";
+import {number} from "prop-types";
 
 
 interface PropsType {
@@ -33,22 +34,22 @@ const PhotoEditorBody: FC<PropsType> = ({
                                         }) => {
     const currentFileName = useAppSelector(selectCurrentFileName)
     const photoSettings = useAppSelector(selectPhotoListSettings).find((photo) => photo.fileName === currentFileName)
-    console.log("photoSettings: ", photoSettings)
 
-    const findCurrentFile = useCallback((file: CustomFileType) => {
+    const findCurrentFile = useCallback((file: File) => {
         return file.name === currentFileName
     }, [currentFileName])
 
     const [currentPhotoURL, setCurrentPhotoURL] =
-        useState<CustomFileType>(() => (
-            contentForEditor.fileList.files.find(findCurrentFile) || {} as CustomFileType
+        useState<File>(() => (
+            contentForEditor.fileList.files.find(findCurrentFile) || {} as File
         ))
 
     const [scale, setScale] = useState(1)
     const [rotate, setRotate] = useState(0)
+    console.log("rotate: ", rotate)
 
     useEffect(() => {
-        setCurrentPhotoURL(contentForEditor.fileList.files.find(findCurrentFile) || {} as CustomFileType)
+        setCurrentPhotoURL(contentForEditor.fileList.files.find(findCurrentFile) || {} as File)
     }, [
         findCurrentFile,
         contentForEditor.fileList,
@@ -83,32 +84,43 @@ const PhotoEditorBody: FC<PropsType> = ({
                     <Range onChange={(e) => scaleImageHandler(Number(e.target.value))}
                            value={scale}
                            maxValue={2.5}
-                           minValue={1}
+                           minValue={0.5}
                            step={0.01}
                     />
 
                     <Text>{data.editor.rotate}</Text>
-                    <Range onChange={(e) =>
-                        rotateImageHandler(
-                            Math.min(
-                                180,
-                                Math.max(-180, Number(e.target.value)))
-                        )
-                    }
-                           value={rotate}
-                           maxValue={180}
-                           minValue={-180}
-                           step={0.01}
-                    />
+                    <div>
+                        <Range onChange={(e) =>
+                            rotateImageHandler(
+                                // Math.round(
+                                    Math.min(
+                                        180,
+                                        Math.max(-180, Number(e.target.value)))
+                                // )
+                            )
+                        }
+                               value={rotate}
+                               maxValue={180}
+                               minValue={-180}
+                               step={1}
+                        />
+
+                        <div className={styles.rotateSliderTicks}>
+                            {[-180, -90, 0, 90, 180].map((degree) => (
+                                <span key={`key=${number}`}
+                                      className={styles.sliderTick}
+                                      onClick={() => rotateImageHandler(degree)}
+                                >
+                                    <SmallText>{degree}</SmallText>
+                                </span>
+                            ))}
+                        </div>
+                    </div>
                 </div>
 
                 <div className={styles.resetSettings} onClick={() => resetSettingsHandler()}>
                     <Text style={{color: blue_light}}>{data.editor.resetSettings}</Text>
                 </div>
-                {/*{content.delete}*/}
-
-                {/*{content.resetSettings}*/}
-
             </div>
 
             <SeparatingLine className={styles.separatedLine}/>
@@ -125,8 +137,8 @@ const PhotoEditorBody: FC<PropsType> = ({
             <div className={styles.photoEditorButtons}>
                 {photoSettings && (
                     <Button style={{backgroundColor: blue_dark}}>
-                    {data.buttons.save}
-                </Button>
+                        {data.buttons.save}
+                    </Button>
                 )}
                 <Button onClick={visiblePhotoEditor}
                         style={{backgroundColor: grey}}

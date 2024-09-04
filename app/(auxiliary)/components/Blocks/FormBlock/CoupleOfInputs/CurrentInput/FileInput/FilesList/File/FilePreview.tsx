@@ -7,7 +7,7 @@ import FilePreviewBlock from "@/app/(auxiliary)/components/Blocks/FilePreviewBlo
 import {CustomFileType} from "@/app/(auxiliary)/types/AppTypes/Context";
 
 interface PropsType {
-    file: CustomFileType;
+    file: File; // CustomFileType;
     removeHandler: (fileName: string) => void;
     changeFile: (fileName: string) => void;
 
@@ -47,7 +47,7 @@ const FilePreview: FC<PropsType> = ({
                 </div>
             ) : null}
 
-            <FilePreviewBlock url={file.url}
+            <FilePreviewBlock url={URL.createObjectURL(file)}
                               alt={`user's file - ${file.name}`}/>
         </div>
     );

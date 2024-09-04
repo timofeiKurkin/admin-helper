@@ -24,7 +24,7 @@ export interface CustomFileType {
 
 export interface FileListStateType {
     type: PhotoAndVideoKeysTypes;
-    files: CustomFileType[] // File[];
+    files: File[] // CustomFileType[];
 }
 
 export interface FormDataItemType<T> {
