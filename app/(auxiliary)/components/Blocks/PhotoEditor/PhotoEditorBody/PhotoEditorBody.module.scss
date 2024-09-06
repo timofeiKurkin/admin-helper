@@ -6,7 +6,7 @@
 
 	display: grid;
 	grid-template-columns: 40rem 22.4375rem;
-	grid-template-rows: 6.625rem 2px 20.75rem 3.3125rem;
+	grid-template-rows: 152px 2px 20.75rem 3.3125rem;
 	grid-template-areas: "editor editor-controls" "editor separated-line" "editor file-list" "editor buttons";
 	column-gap: 3.75rem;
 	row-gap: 1.87rem;
@@ -24,27 +24,64 @@
 		.editorControls {
 			display: grid;
 			grid-template-columns: min-content 200px;
-			grid-template-rows: min-content 1fr;
-			align-items: center;
+			grid-template-rows: repeat(2, 45px);
 			column-gap: 1.56rem;
 			row-gap: 1.25rem;
 
-			.rotateSliderTicks {
-				display: flex;
-				justify-content: space-between;
-				padding: 0 5px;
+			.editorTitle {
+				margin-top: 5px;
+			}
 
-				.sliderTick {
+			.scaleWrapper {
+				.scaleSliderTicks {
 					display: flex;
-					justify-content: center;
-					width: 1px;
-					height: 5px;
-					background: #d3d3d3;
-					line-height: 30px;
-					cursor: pointer;
+					position: relative;
+					margin: 0 5px;
 
-					p {
-						line-height: inherit;
+					span {
+						position: absolute;
+						transform: translateX(-50%);
+						cursor: pointer;
+						top: 8px;
+
+						display: flex;
+						justify-content: center;
+
+						&:before {
+							position: absolute;
+							content: "";
+
+							top: -8px;
+
+							width: 1px;
+							height: 5px;
+							background: #d3d3d3;
+						}
+					}
+
+					//justify-content: space-between;
+					//padding: 0 5px;
+				}
+			}
+
+			.rotateWrapper {
+				.rotateSliderTicks {
+					display: flex;
+					justify-content: space-between;
+					padding: 0 5px;
+
+					.sliderTick {
+						display: flex;
+						justify-content: center;
+						width: 1px;
+						height: 5px;
+						background: #d3d3d3;
+						line-height: 30px;
+						cursor: pointer;
+
+						p {
+							line-height: inherit;
+						}
 					}
 				}
 			}

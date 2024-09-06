@@ -15,7 +15,7 @@ import {
     selectPhotoListSettings
 } from "@/app/(auxiliary)/libs/redux-toolkit/store/slices/PhotoEditorSlice/PhotoEditorSlice";
 import SmallText from "@/app/(auxiliary)/components/UI/TextTemplates/SmallText";
-import {number} from "prop-types";
+import {stickToClosestValue} from "@/app/(auxiliary)/func/editorHandlers";
 
 
 interface PropsType {
@@ -45,8 +45,10 @@ const PhotoEditorBody: FC<PropsType> = ({
         ))
 
     const [scale, setScale] = useState(1)
+    const scalePoints = [0.5, 1, 2, 2.5]
+
     const [rotate, setRotate] = useState(0)
-    console.log("rotate: ", rotate)
+    const rotatePoints = [-180, -90, 0, 90, 180]
 
     useEffect(() => {
         setCurrentPhotoURL(contentForEditor.fileList.files.find(findCurrentFile) || {} as File)
@@ -56,11 +58,14 @@ const PhotoEditorBody: FC<PropsType> = ({
     ])
 
     const scaleImageHandler = (value: number) => {
-        setScale(value)
+        const stickStep = 0.05
+        setScale(stickToClosestValue(value, scalePoints, stickStep))
     }
 
     const rotateImageHandler = (value: number) => {
-        setRotate(value)
+        const newValue = Math.min(180, Math.max(-180, Number(value)))
+        const stickStep = 7
+        setRotate(stickToClosestValue(newValue, rotatePoints, stickStep))
     }
 
     const resetSettingsHandler = () => {
@@ -80,24 +85,38 @@ const PhotoEditorBody: FC<PropsType> = ({
                 {/*{content.rotate}*/}
 
                 <div className={styles.editorControls}>
-                    <Text>{data.editor.scale}</Text>
-                    <Range onChange={(e) => scaleImageHandler(Number(e.target.value))}
-                           value={scale}
-                           maxValue={2.5}
-                           minValue={0.5}
-                           step={0.01}
-                    />
+                    <div className={styles.editorTitle}><Text>{data.editor.scale}</Text></div>
+                    <div className={styles.scaleWrapper}>
+                        <Range onChange={(e) => scaleImageHandler(Number(e.target.value))}
+                               value={scale}
+                               maxValue={2.5}
+                               minValue={0.5}
+                               step={0.01}
+                        />
 
-                    <Text>{data.editor.rotate}</Text>
-                    <div>
+                        <div className={styles.scaleSliderTicks}>
+                            {scalePoints.map((scaleX, index) => {
+                                const min = 0.5
+                                const max = 2.5
+
+                                return (
+                                    <span key={`key=${scaleX}`}
+                                          style={{
+                                              left: `${((scaleX - min) / (max - min)) * 100}%`
+                                          }}
+                                          onClick={() => scaleImageHandler(scaleX)}
+                                    >
+                                    <SmallText>{scaleX}x</SmallText>
+                                </span>
+                                )
+                            })}
+                        </div>
+                    </div>
+
+                    <div className={styles.editorTitle}><Text>{data.editor.rotate}</Text></div>
+                    <div className={styles.rotateWrapper}>
                         <Range onChange={(e) =>
-                            rotateImageHandler(
-                                // Math.round(
-                                    Math.min(
-                                        180,
-                                        Math.max(-180, Number(e.target.value)))
-                                // )
-                            )
+                            rotateImageHandler(Number(e.target.value))
                         }
                                value={rotate}
                                maxValue={180}
@@ -106,8 +125,8 @@ const PhotoEditorBody: FC<PropsType> = ({
                         />
 
                         <div className={styles.rotateSliderTicks}>
-                            {[-180, -90, 0, 90, 180].map((degree) => (
-                                <span key={`key=${number}`}
+                            {rotatePoints.map((degree) => (
+                                <span key={`key=${degree}`}
                                       className={styles.sliderTick}
                                       onClick={() => rotateImageHandler(degree)}
                                 >
@@ -135,11 +154,9 @@ const PhotoEditorBody: FC<PropsType> = ({
             </div>
 
             <div className={styles.photoEditorButtons}>
-                {photoSettings && (
-                    <Button style={{backgroundColor: blue_dark}}>
-                        {data.buttons.save}
-                    </Button>
-                )}
+                <Button style={{backgroundColor: blue_dark}}>
+                    {data.buttons.save}
+                </Button>
                 <Button onClick={visiblePhotoEditor}
                         style={{backgroundColor: grey}}
                 >{data.buttons.close}</Button>

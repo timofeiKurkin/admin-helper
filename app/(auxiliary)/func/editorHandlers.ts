@@ -52,7 +52,8 @@ export const onDownloadCropClick = async ({
     // You might want { type: "image/jpeg", quality: <0 to 1> } to
     // reduce image size
     const blob = await offscreen.convertToBlob({
-        type: 'image/png',
+        type: 'image/jpeg',
+        quality: 1
     })
 
     if (blobUrlRef.current) {
@@ -123,6 +124,7 @@ export const centerAspectCrop = (
             {
                 unit: '%',
                 width: 100,
+                height: 100
             },
             aspect,
             mediaWidth,
@@ -131,4 +133,19 @@ export const centerAspectCrop = (
         mediaWidth,
         mediaHeight
     )
+}
+
+export const stickToClosestValue = (value: number, stickPoints: number[], stickStep: number) => {
+    // const stickPoints = [-180, -90, 0, 90, 180]
+    // const stickStep = 7
+
+    const closestStickPoint = stickPoints.reduce((prev, current) =>
+        Math.abs(current - value) < Math.abs((prev - value)) ? current : prev
+    )
+
+    if(Math.abs(value - closestStickPoint) <= stickStep) {
+        return closestStickPoint
+    }
+
+    return value
 }

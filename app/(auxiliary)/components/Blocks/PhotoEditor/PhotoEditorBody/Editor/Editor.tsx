@@ -7,6 +7,7 @@ import {centerAspectCrop, onDownloadCropClick} from "@/app/(auxiliary)/func/edit
 import {useAppDispatch} from "@/app/(auxiliary)/libs/redux-toolkit/store/hooks";
 import {useDebounceEffect} from "@/app/(auxiliary)/hooks/useDebounceEffect";
 import {canvasPreview} from "@/app/(auxiliary)/components/Blocks/PhotoEditor/canvasPreview";
+import {changePhotoSettings} from "@/app/(auxiliary)/libs/redux-toolkit/store/slices/PhotoEditorSlice/PhotoEditorSlice";
 
 
 interface PropsType {
@@ -20,7 +21,7 @@ const Editor: FC<PropsType> = ({
                                    scale,
                                    rotate
                                }) => {
-    // const dispatch = useAppDispatch()
+    const dispatch = useAppDispatch()
 
     const [imgSrc, setImgSrc] =
         useState<string>(() => URL.createObjectURL(currentPhoto))
@@ -36,11 +37,15 @@ const Editor: FC<PropsType> = ({
             unit: "px",
             x: 0,
             y: 0,
-            width: 0,
-            height: 0,
+            width: 640,
+            height: 640,
         })
     // const [aspect, setAspect] = useState<number>(0)
     const aspect = 0
+
+    console.log("crop: ", crop)
+    console.log("completedCrop: ", completedCrop)
+    console.log("")
 
     const imgRef = useRef<HTMLImageElement>(null)
     const blobUrlRef = useRef('')
@@ -113,15 +118,15 @@ const Editor: FC<PropsType> = ({
                                    onChange={(_, percentageCrop) => setCrop(percentageCrop)}
                                    onComplete={(c) => setCompletedCrop(c)}
                                    aspect={aspect}
-                                   minWidth={100}
                                    className={styles.reactCrop}
-                                   // style={{transform: `rotate(${rotate}deg)`}}
-                            // style={{transform: `scale(${scale}) rotate(${rotate}deg)`}}
+                                   maxWidth={640}
+                                   minWidth={100}
+                                   maxHeight={640}
                                    minHeight={100}
                         >
                             <Image ref={imgRef}
                                    width={640}
-                                   height={360}
+                                   height={640}
                                    src={imgSrc}
                                    style={{
                                        transform: `scale(${scale}) rotate(${rotate}deg)`,
@@ -135,6 +140,7 @@ const Editor: FC<PropsType> = ({
 
                     <div style={{
                         position: "absolute",
+                        top: 100,
                         zIndex: 5,
                     }}>
                         <a onClick={() => onDownloadCropClick({
@@ -150,9 +156,9 @@ const Editor: FC<PropsType> = ({
 
                     <div style={{
                         position: "fixed",
-                        top: 0,
+                        bottom: 0,
                         left: 0,
-                        // visibility: "hidden",
+                        visibility: "visible",
                         zIndex: 99
                     }}>
                         <canvas ref={previewCanvasRef}
