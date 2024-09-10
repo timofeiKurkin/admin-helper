@@ -1,13 +1,17 @@
-import React, {FC, useEffect, useRef, useState} from 'react';
-import {Crop, PixelCrop, ReactCrop} from "react-image-crop";
+import React, {FC, useCallback, useEffect, useRef, useState} from 'react';
+import {Crop, PercentCrop, PixelCrop, ReactCrop} from "react-image-crop";
 import Image from "next/image";
 import styles from "./Editor.module.scss";
 import 'react-image-crop/src/ReactCrop.scss';
-import {centerAspectCrop, onDownloadCropClick} from "@/app/(auxiliary)/func/editorHandlers";
+import {getScaledSizesOfImage, onDownloadCropClick} from "@/app/(auxiliary)/func/editorHandlers";
 import {useAppDispatch} from "@/app/(auxiliary)/libs/redux-toolkit/store/hooks";
 import {useDebounceEffect} from "@/app/(auxiliary)/hooks/useDebounceEffect";
-import {canvasPreview} from "@/app/(auxiliary)/components/Blocks/PhotoEditor/canvasPreview";
-import {changePhotoSettings} from "@/app/(auxiliary)/libs/redux-toolkit/store/slices/PhotoEditorSlice/PhotoEditorSlice";
+import {canvasPreview, getRotateDimensions} from "@/app/(auxiliary)/components/Blocks/PhotoEditor/canvasPreview";
+import {
+    HORIZONTAL,
+    PossibleCroppingBoundaryType,
+    VERTICAL
+} from "@/app/(auxiliary)/types/PhotoEditorTypes/PhotoEditorTypes";
 
 
 interface PropsType {
@@ -25,27 +29,28 @@ const Editor: FC<PropsType> = ({
 
     const [imgSrc, setImgSrc] =
         useState<string>(() => URL.createObjectURL(currentPhoto))
-    const [crop, setCrop] = useState<Crop>({
-        unit: "%",
-        x: 0,
-        y: 0,
-        width: 100,
-        height: 100
+    const [imageOrientation, setImageOrientation] = useState<"vertical" | "horizontal">(HORIZONTAL)
+
+    const [croppingBoundary, setCroppingBoundary] = useState<PossibleCroppingBoundaryType>()
+
+    const [crop, setCrop] = useState<Crop>(() => {
+        return {
+            unit: "%",
+            x: 0,
+            y: 0,
+            width: 100,
+            height: 100
+        }
     })
     const [completedCrop, setCompletedCrop] =
         useState<PixelCrop>({
             unit: "px",
             x: 0,
             y: 0,
-            width: 640,
-            height: 640,
+            width: 0,
+            height: 0,
         })
-    // const [aspect, setAspect] = useState<number>(0)
     const aspect = 0
-
-    console.log("crop: ", crop)
-    console.log("completedCrop: ", completedCrop)
-    console.log("")
 
     const imgRef = useRef<HTMLImageElement>(null)
     const blobUrlRef = useRef('')
@@ -56,12 +61,116 @@ const Editor: FC<PropsType> = ({
         setImgSrc(() => URL.createObjectURL(currentPhoto))
     }, [currentPhoto])
 
+    const updateCropHandler = useCallback((
+        width: number,
+        height: number,
+        widthScaled: number,
+        heightScaled: number
+    ) => {
+        const centerImageY = height !== heightScaled ? (height / 2 - heightScaled / 2) : 0
+        const centerImageX = width !== widthScaled ? (width / 2 - widthScaled / 2) : 0
+
+        setCrop({
+            unit: "px",
+            x: centerImageX,
+            y: centerImageY,
+            width: widthScaled,
+            height: heightScaled
+        })
+        setCompletedCrop({
+            unit: "px",
+            x: centerImageX,
+            y: centerImageY,
+            width: widthScaled,
+            height: heightScaled
+        })
+
+        return {x: centerImageX, y: centerImageY}
+    }, [])
+
     const onImageLoad = (e: React.SyntheticEvent<HTMLImageElement>) => {
-        if (aspect) {
-            const {width, height} = e.currentTarget
-            setCrop(centerAspectCrop(width, height, aspect))
+        const {
+            naturalWidth,
+            width,
+            naturalHeight,
+            height
+        } = e.currentTarget
+
+        const {naturalWidthScaled, naturalHeightScaled} = getScaledSizesOfImage(naturalWidth, naturalHeight, width)
+
+        const currentOrientation = naturalWidth >= naturalHeight ? HORIZONTAL : VERTICAL
+        setImageOrientation(() => currentOrientation)
+        const {x, y} = updateCropHandler(width, height, naturalWidthScaled, naturalHeightScaled)
+        setCroppingBoundary({
+            x, y,
+            width: naturalWidthScaled,
+            height: naturalHeightScaled,
+            orientation: currentOrientation
+        })
+    }
+
+    const changeCropHandler = (pixelCrop: PixelCrop, percentCrop: PercentCrop) => {
+        if (croppingBoundary) {
+            const sizeBoundary = pixelCrop.width <= croppingBoundary.width &&
+                pixelCrop.height <= croppingBoundary.height
+
+            const positionBoundaryY = croppingBoundary.orientation === HORIZONTAL ? (
+                pixelCrop.y >= croppingBoundary.y && pixelCrop.y <= (croppingBoundary.y + croppingBoundary.height) - pixelCrop.height
+            ) : (
+                pixelCrop.x >= croppingBoundary.x && pixelCrop.x <= (croppingBoundary.x + croppingBoundary.width) - pixelCrop.width
+            )
+            const positionBoundaryX = croppingBoundary.orientation === HORIZONTAL ? (
+                pixelCrop.x >= croppingBoundary.x && pixelCrop.x <= (croppingBoundary.x + croppingBoundary.width) - pixelCrop.width
+            ) : (
+                pixelCrop.y >= croppingBoundary.y && pixelCrop.y <= (croppingBoundary.y + croppingBoundary.height) - pixelCrop.height
+            )
+            const positionBoundary = positionBoundaryX && positionBoundaryY
+
+            if (sizeBoundary && positionBoundary) {
+                setCrop(pixelCrop)
+            } else {
+                setCrop({
+                    ...crop,
+                    x: pixelCrop.x
+                })
+            }
         }
     }
+
+    useEffect(() => {
+        if (imgRef.current && croppingBoundary) {
+            const {naturalWidth, width, naturalHeight, height} = imgRef.current
+
+            if (naturalWidth && naturalHeight && width && height) {
+                const {
+                    naturalRotatedWidth,
+                    naturalRotatedHeight
+                } = getRotateDimensions(naturalWidth, naturalHeight, rotate)
+
+                const {
+                    naturalWidthScaled,
+                    naturalHeightScaled
+                } = getScaledSizesOfImage(naturalRotatedWidth, naturalRotatedHeight, width)
+
+                setImageOrientation(() => {
+                    if ((rotate < 90 && rotate > -90) || (rotate === 180 || rotate === -180)) {
+                        return croppingBoundary.orientation === HORIZONTAL ? HORIZONTAL : VERTICAL
+                    }
+                    return croppingBoundary.orientation === VERTICAL ? HORIZONTAL : VERTICAL
+                })
+
+                updateCropHandler(width, height, naturalWidthScaled, naturalHeightScaled)
+            }
+
+        }
+    }, [
+        rotate,
+        imgRef,
+        updateCropHandler,
+        croppingBoundary
+    ]);
+
+    // useEffect(() => {}, []);
 
     // useEffect(() => {
     //     if (crop) {
@@ -101,7 +210,8 @@ const Editor: FC<PropsType> = ({
                     canvas: previewCanvasRef.current,
                     crop: completedCrop,
                     scale,
-                    rotate
+                    rotate,
+                    imageOrientation
                 })
             }
         },
@@ -115,7 +225,7 @@ const Editor: FC<PropsType> = ({
                 <div className={styles.editorWrapper}>
                     {imgSrc && (
                         <ReactCrop crop={crop}
-                                   onChange={(_, percentageCrop) => setCrop(percentageCrop)}
+                                   onChange={changeCropHandler}
                                    onComplete={(c) => setCompletedCrop(c)}
                                    aspect={aspect}
                                    className={styles.reactCrop}
@@ -144,11 +254,12 @@ const Editor: FC<PropsType> = ({
                         zIndex: 5,
                     }}>
                         <a onClick={() => onDownloadCropClick({
-                            imgRef: imgRef,
-                            previewCanvasRef: previewCanvasRef,
-                            completedCrop: completedCrop,
+                            imgRef,
+                            previewCanvasRef,
+                            completedCrop,
                             blobUrlRef,
-                            hiddenAnchorRef: hiddenAnchorRef
+                            hiddenAnchorRef,
+                            rotate
                         })}>
                             download
                         </a>

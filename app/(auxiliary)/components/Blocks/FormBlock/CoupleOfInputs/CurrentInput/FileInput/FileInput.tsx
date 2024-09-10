@@ -53,7 +53,6 @@ const FileInput: FC<PropsType> = ({currentInput}) => {
     }
 
     const openSelectedFile = (fileName: string) => {
-        console.log("fileName: ", fileName)
         setPhotoEditorIsOpen((prevState) => (!prevState))
         dispatch(setCurrentOpenedFileName({fileName}))
     }

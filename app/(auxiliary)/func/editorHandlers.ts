@@ -1,5 +1,6 @@
 import React, {MutableRefObject, RefObject} from "react";
 import {centerCrop, convertToPixelCrop, makeAspectCrop, PixelCrop} from "react-image-crop";
+import {getRotateDimensions} from "@/app/(auxiliary)/components/Blocks/PhotoEditor/canvasPreview";
 
 interface OnDownloadCropClickArgs {
     imgRef: RefObject<HTMLImageElement>;
@@ -7,14 +8,33 @@ interface OnDownloadCropClickArgs {
     completedCrop: PixelCrop;
     blobUrlRef: MutableRefObject<string>;
     hiddenAnchorRef: RefObject<HTMLAnchorElement>;
+    rotate: number;
 }
+
+
+export const getScaledSizesOfImage = (
+    naturalWidth: number,
+    naturalHeight: number,
+    imgSize: number
+) => {
+    const squareSize = Math.max(naturalWidth, naturalHeight) // Взять максимальную ширину или высоту для создания холста в виде квадрата
+    const scaleX = imgSize / squareSize // Коэффициент масштабирования по оси X для приведения изображения к оригинальным размерам.
+    const naturalWidthScaled = Math.floor(naturalWidth * scaleX)
+    const naturalHeightScaled = Math.floor(naturalHeight * scaleX)
+
+    return {
+        naturalWidthScaled, naturalHeightScaled
+    }
+}
+
 
 export const onDownloadCropClick = async ({
                                               imgRef,
                                               previewCanvasRef,
                                               completedCrop,
                                               blobUrlRef,
-                                              hiddenAnchorRef
+                                              hiddenAnchorRef,
+                                              rotate
                                           }: OnDownloadCropClickArgs) => {
     const image = imgRef.current
     const previewCanvas = previewCanvasRef.current
@@ -26,12 +46,16 @@ export const onDownloadCropClick = async ({
     // This will size relative to the uploaded image
     // size. If you want to size according to what they
     // are looking at on screen, remove scaleX + scaleY
+
+    const {naturalRotatedWidth, naturalRotatedHeight} =
+        getRotateDimensions(image.naturalWidth, image.naturalHeight, rotate)
+
     const scaleX = image.naturalWidth / image.width
     const scaleY = image.naturalHeight / image.height
 
     const offscreen = new OffscreenCanvas(
-        completedCrop.width * scaleX,
-        completedCrop.height * scaleY,
+        completedCrop.width,
+        completedCrop.height,
     )
     const ctx = offscreen.getContext('2d')
     if (!ctx) {
@@ -49,6 +73,8 @@ export const onDownloadCropClick = async ({
         offscreen.width,
         offscreen.height,
     )
+
+
     // You might want { type: "image/jpeg", quality: <0 to 1> } to
     // reduce image size
     const blob = await offscreen.convertToBlob({
@@ -143,7 +169,7 @@ export const stickToClosestValue = (value: number, stickPoints: number[], stickS
         Math.abs(current - value) < Math.abs((prev - value)) ? current : prev
     )
 
-    if(Math.abs(value - closestStickPoint) <= stickStep) {
+    if (Math.abs(value - closestStickPoint) <= stickStep) {
         return closestStickPoint
     }
 
