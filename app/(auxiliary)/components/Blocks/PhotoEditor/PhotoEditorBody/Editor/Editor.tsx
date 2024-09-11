@@ -12,6 +12,7 @@ import {
     PossibleCroppingBoundaryType,
     VERTICAL
 } from "@/app/(auxiliary)/types/PhotoEditorTypes/PhotoEditorTypes";
+import {log} from "node:util";
 
 
 interface PropsType {
@@ -97,10 +98,10 @@ const Editor: FC<PropsType> = ({
         } = e.currentTarget
 
         const {naturalWidthScaled, naturalHeightScaled} = getScaledSizesOfImage(naturalWidth, naturalHeight, width)
-
-        const currentOrientation = naturalWidth >= naturalHeight ? HORIZONTAL : VERTICAL
-        setImageOrientation(() => currentOrientation)
         const {x, y} = updateCropHandler(width, height, naturalWidthScaled, naturalHeightScaled)
+        const currentOrientation = naturalWidth >= naturalHeight ? HORIZONTAL : VERTICAL
+
+        setImageOrientation(() => currentOrientation)
         setCroppingBoundary({
             x, y,
             width: naturalWidthScaled,
@@ -109,33 +110,65 @@ const Editor: FC<PropsType> = ({
         })
     }
 
-    const changeCropHandler = (pixelCrop: PixelCrop, percentCrop: PercentCrop) => {
+    const changeCropHandler = (pixelCrop: PixelCrop, _percentCrop: PercentCrop) => {
         if (croppingBoundary) {
-            const sizeBoundary = pixelCrop.width <= croppingBoundary.width &&
-                pixelCrop.height <= croppingBoundary.height
+            const {
+                width,
+                height,
+                x,
+                y,
+                orientation // Оригинальная ориентация изображения. В отличие от imageOrientation не изменяется и является ориентиром
+            } = croppingBoundary // Оригинальные размеры фото и его положение по осям. За эти значения нельзя выходить
+            const {
+                width: cropWidth,
+                height: cropHeight,
+                x: cropX,
+                y: cropY
+            } = pixelCrop // Текущие значения размера и положения рамки обрезки фото
 
-            const positionBoundaryY = croppingBoundary.orientation === HORIZONTAL ? (
-                pixelCrop.y >= croppingBoundary.y && pixelCrop.y <= (croppingBoundary.y + croppingBoundary.height) - pixelCrop.height
+            const currentOrientation = orientation === HORIZONTAL ? (imageOrientation === HORIZONTAL) : (imageOrientation === VERTICAL)
+
+            const sizeBoundary = currentOrientation ? (
+                cropWidth <= width && cropHeight <= height
             ) : (
-                pixelCrop.x >= croppingBoundary.x && pixelCrop.x <= (croppingBoundary.x + croppingBoundary.width) - pixelCrop.width
-            )
-            const positionBoundaryX = croppingBoundary.orientation === HORIZONTAL ? (
-                pixelCrop.x >= croppingBoundary.x && pixelCrop.x <= (croppingBoundary.x + croppingBoundary.width) - pixelCrop.width
+                cropWidth <= height && cropHeight <= width
+            )  // Условие, контролирующее, что размер рамки обрезки не выйдет за пределы оригинала
+
+            const positionBoundaryY = currentOrientation ? (
+                cropY >= y && cropY <= (y + height) - cropHeight
             ) : (
-                pixelCrop.y >= croppingBoundary.y && pixelCrop.y <= (croppingBoundary.y + croppingBoundary.height) - pixelCrop.height
-            )
+                cropY >= x && cropY <= (x + width) - cropHeight
+            ) // Условие, контролирующее, что рамка обрезки не выйдет за пределы оси Y
+
+            const positionBoundaryX = currentOrientation ? (
+                cropX >= x && cropX <= (x + width) - cropWidth
+            ) : (
+                cropX >= y && cropX <= (y + height) - cropWidth
+            ) // Условие, контролирующее, что рамка обрезки не выйдет за пределы оси X
+
             const positionBoundary = positionBoundaryX && positionBoundaryY
+            const couldChangeCrop = sizeBoundary && positionBoundary // Финальное условие, позволяющее изменить crop
 
-            if (sizeBoundary && positionBoundary) {
+            if (couldChangeCrop) {
                 setCrop(pixelCrop)
             } else {
-                setCrop({
-                    ...crop,
-                    x: pixelCrop.x
-                })
+                setCrop((prevState) => imageOrientation === HORIZONTAL ? (
+                    {
+                        ...prevState,
+                        width: pixelCrop.width,
+                        x: pixelCrop.x
+                    }
+                ) : (
+                    {
+                        ...prevState,
+                        height: pixelCrop.height,
+                        y: pixelCrop.y
+                    }
+                )) // Создание эффекта "скольжения" по границе рамки за счет установки новых значений для каждой оси и сохранения предыдущих
             }
         }
     }
+
 
     useEffect(() => {
         if (imgRef.current && croppingBoundary) {
@@ -170,8 +203,6 @@ const Editor: FC<PropsType> = ({
         croppingBoundary
     ]);
 
-    // useEffect(() => {}, []);
-
     // useEffect(() => {
     //     if (crop) {
     //         dispatch(changePhotoSettings({
@@ -202,16 +233,16 @@ const Editor: FC<PropsType> = ({
                 completedCrop.width &&
                 completedCrop.height &&
                 imgRef.current &&
-                previewCanvasRef.current
+                previewCanvasRef.current &&
+                croppingBoundary
             ) {
-                // We use canvasPreview as it's much faster than imgPreview.
                 await canvasPreview({
                     image: imgRef.current,
                     canvas: previewCanvasRef.current,
                     crop: completedCrop,
                     scale,
                     rotate,
-                    imageOrientation
+                    imageOrientation: croppingBoundary.orientation
                 })
             }
         },

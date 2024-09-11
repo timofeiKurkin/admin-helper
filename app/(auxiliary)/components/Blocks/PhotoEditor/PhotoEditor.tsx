@@ -36,7 +36,9 @@ const PhotoEditor: FC<PropsType> = ({
                 <div className={styles.photoEditorWrapper}
                      onClick={(e) => e.stopPropagation()}>
                     <div className={styles.photoEditor}>
-                        <Title styles={{textAlign: "center"}}>{photoEditorData.title}</Title>
+                        <div className={styles.photoEditorTitle}>
+                            <Title>{photoEditorData.title}</Title>
+                        </div>
 
                         <PhotoEditorBody data={photoEditorData}
                                          visiblePhotoEditor={visiblePhotoEditor}

@@ -64,7 +64,7 @@ const PhotoEditorBody: FC<PropsType> = ({
 
     const rotateImageHandler = (value: number) => {
         const newValue = Math.min(180, Math.max(-180, Number(value)))
-        const stickStep = 7
+        const stickStep = 5
         setRotate(stickToClosestValue(newValue, rotatePoints, stickStep))
     }
 

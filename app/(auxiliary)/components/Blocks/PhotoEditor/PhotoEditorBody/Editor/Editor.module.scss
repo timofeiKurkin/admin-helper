@@ -3,7 +3,9 @@
 .editorBody {
 	display: flex;
 	flex-direction: column;
+	border-radius: $border_radius;
 	overflow: hidden;
+	user-select: none;
 	//row-gap: 1.87rem;
 
 	.editorBackground {

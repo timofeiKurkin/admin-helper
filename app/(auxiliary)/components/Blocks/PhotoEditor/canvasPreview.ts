@@ -1,17 +1,8 @@
 import {PixelCrop} from 'react-image-crop'
-import {h} from "../../../../../../it-nk-service-backend/venv/Lib/site-packages/torch/utils/model_dump/preact.mjs";
-import {ImageOrientationType} from "@/app/(auxiliary)/types/PhotoEditorTypes/PhotoEditorTypes";
+import {HORIZONTAL, ImageOrientationType, VERTICAL} from "@/app/(auxiliary)/types/PhotoEditorTypes/PhotoEditorTypes";
 
 const TO_RADIANS = Math.PI / 180
 
-interface CanvasPreviewProps {
-    image: HTMLImageElement,
-    canvas: HTMLCanvasElement,
-    crop: PixelCrop,
-    scale: number,
-    rotate: number,
-    imageOrientation: ImageOrientationType;
-}
 
 export const getRotateDimensions = (
     naturalWidth: number,
@@ -34,6 +25,14 @@ export const getRotateDimensions = (
     };
 }
 
+interface CanvasPreviewProps {
+    image: HTMLImageElement,
+    canvas: HTMLCanvasElement,
+    crop: PixelCrop,
+    scale: number,
+    rotate: number,
+    imageOrientation: ImageOrientationType;
+}
 
 export const canvasPreview = async ({
                                         image,
@@ -49,12 +48,9 @@ export const canvasPreview = async ({
         throw new Error('No 2d context')
     }
 
-    ctx.clearRect(0, 0, canvas.width, canvas.height)
+    ctx.clearRect(0, 0, canvas.width, canvas.height) // Отчистить холст перед отображением изображения
 
     const pixelRatio = window.devicePixelRatio
-    ctx.scale(pixelRatio, pixelRatio)
-    ctx.imageSmoothingQuality = 'high'
-
     const {
         naturalWidth,
         width,
@@ -80,13 +76,12 @@ export const canvasPreview = async ({
 
     const cropX = crop.x * scaleX // Определение координат обрезки изображения по координатам X
     const cropY = crop.y * scaleY // Определение координат обрезки изображения по координатам Y
-    // console.log("crop X and Y: ", crop.x, crop.y)
 
     const centerX = squareSize / 2 // Координаты X для позиционирования изображения на холсте по центру
     const centerY = squareSize / 2 // Координаты Y для позиционирования изображения на холсте по центру
 
-    const positionImageCenterY = (centerX - (naturalHeight / 2)) + (centerY - (naturalWidth / 2))
-    // const positionImageCenterX = (centerX - (naturalHeight / 2)) + (centerY - (naturalWidth / 2))
+    const positionImageCenterY = imageOrientation === HORIZONTAL ? (centerX - (naturalHeight / 2)) + (centerY - (naturalWidth / 2)) : 0
+    const positionImageCenterX = imageOrientation === VERTICAL ? (centerX - (naturalWidth / 2)) + (centerY - (naturalHeight / 2)) : 0
 
     ctx.save()
 
@@ -101,119 +96,9 @@ export const canvasPreview = async ({
         0, 0,
         squareSize, squareSize,
 
-        0, positionImageCenterY,
+        positionImageCenterX, positionImageCenterY,
         squareSize, squareSize
     )
-
-    // ctx.strokeStyle = "red"
-    // ctx.lineWidth = 3
-    // ctx.strokeRect(0, 0, canvas.width, canvas.height) // Визуальная рамка для определение границы
-    // console.log(`current canvas width: ${canvas.width} and height: ${canvas.height}`)
-
-
-    // ctx.drawImage(
-    //     image,
-    //     crop.x, // Координаты X по отношению к оригинальному изображению для обрезки
-    //     crop.y, // Координаты Y по отношению к оригинальному изображению для обрезки
-    //     width, // Ширина обрезки оригинального изображения
-    //     height, // Высота обрезки оригинального изображения
-    //
-    //     0, // Координаты для центрирования на пустом холсте canvas
-    //     0, // Координаты для центрирования на пустом холсте canvas
-    //     width, // Ширина для отображения изображения на canvas
-    //     height // Высота для отображения изображения на canvas
-    // )
-
-    // const croppedCtx = canvas.getContext("2d")
-    //
-    // if (!croppedCtx) {
-    //     throw new Error('No 2d context')
-    // }
-    //
-    // canvas.width = crop.width
-    // canvas.height = crop.height
-    //
-    // croppedCtx.drawImage(
-    //     canvas,
-    //     crop.x, crop.y,
-    //     crop.width, crop.height,
-    //     0, 0,
-    //     crop.width, crop.height
-    // )
-    //
-    // croppedCtx.restore()
-
-
-    // const {width, height} =
-    //     getRotateDimensions(image.naturalWidth, image.naturalHeight, rotate)
-    // const scaleX = width / image.width // Соотношение с оригинальной шириной изображения
-    // const scaleY = height / image.height // Соотношение с оригинальной высотой изображения
-    //
-    // canvas.width = Math.floor(crop.width * scaleX * pixelRatio)
-    // canvas.height = Math.floor(crop.height * scaleY * pixelRatio)
-    //
-    // const cropX = crop.x * scaleX
-    // const cropY = crop.y * scaleY
-    //
-    // const centerX = width / 2
-    // const centerY = height / 2
-    //
-    // ctx.save()
-    //
-    // ctx.translate(-cropX, -cropY)
-    // ctx.translate(centerX, centerY)
-    // ctx.rotate(rotateRads)
-    // ctx.scale(scale, scale)
-    // ctx.translate(-centerX, -centerY)
-    // ctx.drawImage(
-    //     image,
-    //     crop.x, crop.y,
-    //     width, height,
-    //     0, 0,
-    //     width, height,
-    // )
-
-
-    // const scaleX = width / crop.width
-    // const scaleY = height / crop.height
-    //
-    // canvas.width = image.width * scale * pixelRatio;
-    // canvas.height = image.height * scale * pixelRatio;
-    // console.log("canvas width and height: ", canvas.width, canvas.height)
-    //
-    // const centerX = canvas.width / 2
-    // const centerY = canvas.height / 2
-    //
-    // const cropX = crop.x
-    // const cropY = crop.y
-    //
-    // ctx.save();
-    // ctx.translate(-cropX, -cropY)
-    // ctx.translate(centerX, centerY);
-    // ctx.rotate(rotateRads);
-    // ctx.scale(scale, scale)
-    // ctx.drawImage(
-    //     image,
-    //     cropX, // Координаты X по отношению к оригинальному изображению для обрезки
-    //     cropY, // Координаты Y по отношению к оригинальному изображению для обрезки
-    //     crop.width, // Ширина обрезки оригинального изображения
-    //     crop.height, // Высота обрезки оригинального изображения
-    //
-    //     cropX, // Координаты для центрирования на пустом холсте canvas
-    //     cropY, // Координаты для центрирования на пустом холсте canvas
-    //     image.width * scale, // Ширина для отображения изображения на canvas
-    //     image.height * scale// Высота для отображения изображения на canvas
-    // );
-
-
-    // // Return as a blob
-    // return new Promise((resolve, reject) => {
-    //     canvas.toBlob((file) => {
-    //         if (file) {
-    //             resolve(URL.createObjectURL(file))
-    //         }
-    //     }, 'image/jpeg')
-    // })
 
     ctx.restore();
 }

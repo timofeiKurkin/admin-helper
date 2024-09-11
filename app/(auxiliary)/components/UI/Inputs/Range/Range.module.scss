@@ -8,7 +8,7 @@
 	border-radius: $border_radius;
 	background-color: $grey;
 	height: 6px;
-	width: 200px;
+	width: inherit;
 
 	&::-webkit-slider-thumb {
 		-webkit-appearance: none;

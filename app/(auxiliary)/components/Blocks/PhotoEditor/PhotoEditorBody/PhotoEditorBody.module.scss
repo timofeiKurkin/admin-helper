@@ -5,7 +5,7 @@
 	height: inherit;
 
 	display: grid;
-	grid-template-columns: 40rem 22.4375rem;
+	grid-template-columns: 40rem 22.5625rem;
 	grid-template-rows: 152px 2px 20.75rem 3.3125rem;
 	grid-template-areas: "editor editor-controls" "editor separated-line" "editor file-list" "editor buttons";
 	column-gap: 3.75rem;
@@ -23,20 +23,27 @@
 
 		.editorControls {
 			display: grid;
-			grid-template-columns: min-content 200px;
+			grid-template-columns: min-content 240px;
 			grid-template-rows: repeat(2, 45px);
-			column-gap: 1.56rem;
+			column-gap: 1.25rem;
 			row-gap: 1.25rem;
 
 			.editorTitle {
 				margin-top: 5px;
 			}
 
+			.scaleWrapper, .rotateWrapper {
+				width: 100%;
+
+				.scaleSliderTicks, .rotateSliderTicks {
+					display: flex;
+					margin: 0 5px;
+				}
+			}
+
 			.scaleWrapper {
 				.scaleSliderTicks {
-					display: flex;
 					position: relative;
-					margin: 0 5px;
 
 					span {
 						position: absolute;
@@ -66,9 +73,7 @@
 
 			.rotateWrapper {
 				.rotateSliderTicks {
-					display: flex;
 					justify-content: space-between;
-					padding: 0 5px;
 
 					.sliderTick {
 						display: flex;
