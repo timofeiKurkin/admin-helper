@@ -16,14 +16,11 @@ interface PropsType {
     dataForEditor: {
         inputType: PhotoAndVideoKeysTypes;
     }
-    switchToAnotherFile: (fileName: string) => void;
-    // fileList: FileListStateType;
 }
 
 const PhotoEditor: FC<PropsType> = ({
                                         visiblePhotoEditor,
-                                        dataForEditor,
-                                        switchToAnotherFile
+                                        dataForEditor
                                     }) => {
     const formFileData = useAppSelector(selectFormFileData)
     const photoEditorData: PhotoEditorDataType = PhotoEditorData
@@ -44,7 +41,6 @@ const PhotoEditor: FC<PropsType> = ({
                                          visiblePhotoEditor={visiblePhotoEditor}
                                          contentForEditor={{
                                              fileList: fileList,
-                                             switchToAnotherFile: switchToAnotherFile
                                          }}/>
                     </div>
                 </div>

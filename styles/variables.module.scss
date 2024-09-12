@@ -20,8 +20,10 @@ $desktop1440_1919: '(min-width: 1440px) and (max-width: 1919px)';
 $desktop1920: '(min-width: 1920px)';
 
 // Backgrounds
-$background: var(--background, radial-gradient(188.48% 111.8% at 100% 100%, $cold_white 0%, $white 80.36%));
+$background: var(--background, radial-gradient(188.48% 111.8% at 100% 100%, #D0F0FF 0%, $white 80.36%));
 .background {
+    width: 100%;
+    height: 100%;
     background: $background;
 }
 

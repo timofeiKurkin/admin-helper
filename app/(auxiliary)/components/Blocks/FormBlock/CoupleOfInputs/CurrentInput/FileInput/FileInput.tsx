@@ -57,10 +57,6 @@ const FileInput: FC<PropsType> = ({currentInput}) => {
         dispatch(setCurrentOpenedFileName({fileName}))
     }
 
-    const switchToAnotherFile = (fileName: string) => {
-        dispatch(setCurrentOpenedFileName({fileName}))
-    }
-
     const fileBlockHandler = () => {
         setHaveMediaFile((prevState) => !prevState)
 
@@ -111,8 +107,7 @@ const FileInput: FC<PropsType> = ({currentInput}) => {
                 <PhotoEditor visiblePhotoEditor={openPhotoEditor}
                              dataForEditor={{
                                  inputType: currentInput.type as PhotoAndVideoKeysTypes,
-                             }}
-                             switchToAnotherFile={switchToAnotherFile}/>}
+                             }}/>}
         </div>
     );
 };

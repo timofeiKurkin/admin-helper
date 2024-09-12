@@ -1,3 +1,5 @@
+import {Crop} from "react-image-crop";
+
 export type ImageOrientationType = "vertical" | "horizontal";
 
 export interface PossibleCroppingBoundaryType {
@@ -7,6 +9,30 @@ export interface PossibleCroppingBoundaryType {
     height: number;
     orientation: ImageOrientationType;
 }
+
+export interface PhotoEditorSettingsType {
+    // The setting states of picture
+    name: string; // File name for finding settings
+    scale: number;
+    rotate: number;
+    crop: Crop;
+}
+
+export const defaultCropSettings: Crop = {
+    unit: "%",
+    x: 0,
+    y: 0,
+    width: 100,
+    height: 100
+}
+
+export const defaultPhotoSettings: PhotoEditorSettingsType = {
+    name: "",
+    scale: 1,
+    rotate: 0,
+    crop: defaultCropSettings
+}
+
 
 export const HORIZONTAL = "horizontal";
 export const VERTICAL = "vertical"

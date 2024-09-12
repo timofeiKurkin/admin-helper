@@ -1,17 +1,18 @@
 import React, {MutableRefObject, RefObject} from "react";
 import {centerCrop, convertToPixelCrop, makeAspectCrop, PixelCrop} from "react-image-crop";
 import {getRotateDimensions} from "@/app/(auxiliary)/components/Blocks/PhotoEditor/canvasPreview";
-
-interface OnDownloadCropClickArgs {
-    imgRef: RefObject<HTMLImageElement>;
-    previewCanvasRef: RefObject<HTMLCanvasElement>;
-    completedCrop: PixelCrop;
-    blobUrlRef: MutableRefObject<string>;
-    hiddenAnchorRef: RefObject<HTMLAnchorElement>;
-    rotate: number;
-}
+import {defaultPhotoSettings, PhotoEditorSettingsType} from "@/app/(auxiliary)/types/PhotoEditorTypes/PhotoEditorTypes";
 
 
+export const scalePoints = [0.5, 1, 2, 2.5]
+export const rotatePoints = [-180, -90, 0, 90, 180]
+
+/**
+ * Функция для сохранения соотношения пропорций у фотографий в редакторе. Т.к. размер фотографий разный, а размер редактора одинаковый, нужно учесть соотношение сторон. Т.е. пропорционально уменьшить или увеличить изображение, чтобы оно влезло в редактор
+ * @param naturalWidth
+ * @param naturalHeight
+ * @param imgSize
+ */
 export const getScaledSizesOfImage = (
     naturalWidth: number,
     naturalHeight: number,
@@ -28,6 +29,23 @@ export const getScaledSizesOfImage = (
 }
 
 
+interface OnDownloadCropClickArgs {
+    imgRef: RefObject<HTMLImageElement>;
+    previewCanvasRef: RefObject<HTMLCanvasElement>;
+    completedCrop: PixelCrop;
+    blobUrlRef: MutableRefObject<string>;
+    hiddenAnchorRef: RefObject<HTMLAnchorElement>;
+    rotate: number;
+}
+/**
+ * Проверочная функция для загрузки фотографии после редактирования
+ * @param imgRef
+ * @param previewCanvasRef
+ * @param completedCrop
+ * @param blobUrlRef
+ * @param hiddenAnchorRef
+ * @param rotate
+ */
 export const onDownloadCropClick = async ({
                                               imgRef,
                                               previewCanvasRef,
@@ -112,6 +130,16 @@ const onSelectFile = ({
     }
 }
 
+
+/**
+ * Не используется. Функция для включения и отключения аспекта.
+ * Аспект - значение, обозначающее соотношение сторон фотографии. Он сохраняет соотношение сторон и, соответственно, не дает в редакторе изменить размеры crop
+ * @param aspect
+ * @param setAspect
+ * @param imgRef
+ * @param setCrop
+ * @param setCompletedCrop
+ */
 function handleToggleAspectClick({
                                      aspect,
                                      setAspect,
@@ -140,6 +168,13 @@ function handleToggleAspectClick({
     }
 }
 
+
+/**
+ * Не используется. Функция для позиционирования аспекта по центру
+ * @param mediaWidth
+ * @param mediaHeight
+ * @param aspect
+ */
 export const centerAspectCrop = (
     mediaWidth: number,
     mediaHeight: number,
@@ -161,10 +196,13 @@ export const centerAspectCrop = (
     )
 }
 
+/**
+ * Функция для input с типом "range". Создает эффект "прилипания" к обозначенным значениям.
+ * @param value - актуальное значение
+ * @param stickPoints - список значений, к которым ползунок "прилипает"
+ * @param stickStep - шаг, обозначающий сколько должно быть до значения из stickPoints, чтобы ползунок "прилип".
+ */
 export const stickToClosestValue = (value: number, stickPoints: number[], stickStep: number) => {
-    // const stickPoints = [-180, -90, 0, 90, 180]
-    // const stickStep = 7
-
     const closestStickPoint = stickPoints.reduce((prev, current) =>
         Math.abs(current - value) < Math.abs((prev - value)) ? current : prev
     )
@@ -174,4 +212,13 @@ export const stickToClosestValue = (value: number, stickPoints: number[], stickS
     }
 
     return value
+}
+
+
+export const getDefaultPhotoSettings = (fileName: string): PhotoEditorSettingsType => {
+    return {...defaultPhotoSettings, name: fileName}
+}
+
+export const findFile = <T extends {name: string}>(file: T, fileName: string) => {
+    return file.name === fileName
 }

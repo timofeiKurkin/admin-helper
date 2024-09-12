@@ -15,9 +15,11 @@ import {
     selectFormFileData
 } from "@/app/(auxiliary)/libs/redux-toolkit/store/slices/UserFormDataSlice/UserFormDataSlice";
 import {
+    changePhotoSettings,
     setCurrentOpenedFileName
 } from "@/app/(auxiliary)/libs/redux-toolkit/store/slices/PhotoEditorSlice/PhotoEditorSlice";
 import {CustomFileType} from "@/app/(auxiliary)/types/AppTypes/Context";
+import {defaultPhotoSettings} from "@/app/(auxiliary)/types/PhotoEditorTypes/PhotoEditorTypes";
 
 
 interface PropsType {
@@ -59,6 +61,13 @@ const DropZone: FC<PropsType> = ({
                     value: filteredFiles
                 }
             }))
+
+            filteredFiles.forEach((file) => {
+                dispatch(changePhotoSettings({
+                    ...defaultPhotoSettings,
+                    fileName: file.name
+                }))
+            })
             dispatch(setCurrentOpenedFileName({
                 fileName: userFiles[0].name
             }))

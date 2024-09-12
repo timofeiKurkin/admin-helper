@@ -1,30 +1,13 @@
-import React, {MutableRefObject, RefObject} from "react";
 import {createAppSlice} from "@/app/(auxiliary)/libs/redux-toolkit/store/createAppSlice";
-import {Crop, PixelCrop} from "react-image-crop";
 import {PayloadAction} from "@reduxjs/toolkit";
-import {produce, WritableDraft} from "immer";
+import {WritableDraft} from "immer";
+import {PhotoEditorSettingsType} from "@/app/(auxiliary)/types/PhotoEditorTypes/PhotoEditorTypes";
 
-interface PhotoEditorSetting {
-    // The setting states of picture
-    fileName: string;
-    // canvas: {};
-    scale: number;
-    rotate: number;
-    crop: Crop;
-    aspect: number;
-
-    // States for save picture
-    previewCanvasRef: React.RefObject<HTMLCanvasElement>; // there's in state
-    imgRef: React.RefObject<HTMLImageElement>; // there's in state
-    completedCrop: PixelCrop; // there's in state
-    // blobUrlRef: MutableRefObject<string>; // there's in state
-    hiddenAnchorRef: RefObject<HTMLAnchorElement>; // there's in state
-}
 
 interface InitialState {
     currentFileIndex: number;
     currentFileName: string;
-    photoListSettings: PhotoEditorSetting[];
+    photoListSettings: PhotoEditorSettingsType[];
 }
 
 const initialState: InitialState = {
@@ -43,29 +26,21 @@ export const photoEditorSlice = createAppSlice({
             }
         ),
         changePhotoSettings: create.reducer(
-            (state, action: PayloadAction<PhotoEditorSetting>) => {
-                if (state.photoListSettings.length) {
-                    const objectIs = state.photoListSettings.find((item) => item.fileName === action.payload.fileName)
-                    if (objectIs) {
-                        // state.photoListSettings = produce(state.photoListSettings, (draft) => {
-                        //     return draft.map((photoSetting) => {
-                        //         if (photoSetting.fileName === action.payload.fileName) {
-                        //             return action.payload as WritableDraft<PhotoEditorSetting>; // Здесь можно безопасно заменить объект
-                        //         }
-                        //         return photoSetting;
-                        //     });
-                        // });
+            (state, action: PayloadAction<PhotoEditorSettingsType>) => {
+                const objectIs = state.photoListSettings.find(
+                    (item) => item.name === action.payload.name
+                )
 
-                        state.photoListSettings.forEach((photoSetting, index) => {
-                            if (photoSetting.fileName === action.payload.fileName) {
-                                state.photoListSettings[index] = {...state.photoListSettings[index], ...action.payload as WritableDraft<PhotoEditorSetting>};
+                if (objectIs) {
+                    state.photoListSettings.forEach(
+                        (photoSetting, index) => {
+                            if (photoSetting.name === action.payload.name) {
+                                state.photoListSettings[index] = {...state.photoListSettings[index], ...action.payload as WritableDraft<PhotoEditorSettingsType>};
                             }
-                        });
-                    } else {
-                        state.photoListSettings = [action.payload as WritableDraft<PhotoEditorSetting>]
-                    }
+                        }
+                    );
                 } else {
-                    state.photoListSettings = [action.payload as WritableDraft<PhotoEditorSetting>]
+                    state.photoListSettings.push(action.payload as WritableDraft<PhotoEditorSettingsType>)
                 }
             }
         )

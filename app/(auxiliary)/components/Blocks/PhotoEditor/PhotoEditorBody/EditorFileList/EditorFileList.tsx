@@ -1,6 +1,6 @@
 import React, {FC} from 'react';
 import {PhotoListDataType} from "@/app/(auxiliary)/types/Data/Interface/PhotoEditor/PhotoEditorDataType";
-import styles from "./FileList.module.scss";
+import styles from "./EditorFileList.module.scss";
 import Text from "@/app/(auxiliary)/components/UI/TextTemplates/Text";
 import FilePreviewBlock from "@/app/(auxiliary)/components/Blocks/FilePreviewBlock/FilePreviewBlock";
 import Trash from "@/app/(auxiliary)/components/UI/SVG/Trash/Trash";
@@ -20,7 +20,7 @@ interface PropsType {
     }
 }
 
-const FileList: FC<PropsType> = ({
+const EditorFileList: FC<PropsType> = ({
                                      data,
                                      contentForEditor
                                  }) => {
@@ -28,6 +28,7 @@ const FileList: FC<PropsType> = ({
     const currentFileName = useAppSelector(selectCurrentFileName)
 
     const chooseAnotherFile = (fileName: string) => {
+        dispatch(setCurrentOpenedFileName({fileName}))
         contentForEditor.switchToAnotherFile(fileName)
     }
 
@@ -80,4 +81,4 @@ const FileList: FC<PropsType> = ({
     );
 };
 
-export default FileList;
+export default EditorFileList;
