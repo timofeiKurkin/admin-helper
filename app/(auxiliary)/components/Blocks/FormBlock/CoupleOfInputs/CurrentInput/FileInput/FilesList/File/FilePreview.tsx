@@ -1,4 +1,4 @@
-import React, {FC, useState} from 'react';
+import React, {FC, useMemo, useState} from 'react';
 import Image from "next/image";
 import styles from "./File.module.scss";
 import DeleteFile from "@/app/(auxiliary)/components/UI/SVG/DeleteFile/DeleteFile";
@@ -13,11 +13,11 @@ interface PropsType {
 
 }
 
-const FilePreview: FC<PropsType> = ({
-                                 file,
-                                 removeHandler,
-                                 changeFile
-                             }) => {
+const FilePreview: FC<PropsType> = React.memo(({
+                                                   file,
+                                                   removeHandler,
+                                                   changeFile
+                                               }) => {
 
     const [visibleHover, setVisibleHover] = useState<boolean>(false)
 
@@ -31,7 +31,7 @@ const FilePreview: FC<PropsType> = ({
     }
 
     return (
-        <div className={styles.fileWrapper}
+        <div className={styles.filePreviewWrapper}
              onMouseEnter={() => handleHover(true)}
              onMouseLeave={() => handleHover(false)}>
 
@@ -51,6 +51,6 @@ const FilePreview: FC<PropsType> = ({
                               alt={`user's file - ${file.name}`}/>
         </div>
     );
-};
+});
 
 export default FilePreview;

@@ -3,7 +3,7 @@ import {Crop, PercentCrop, PixelCrop, ReactCrop} from "react-image-crop";
 import Image from "next/image";
 import styles from "./Editor.module.scss";
 import 'react-image-crop/src/ReactCrop.scss';
-import {getScaledSizesOfImage, onDownloadCropClick} from "@/app/(auxiliary)/func/editorHandlers";
+import {centerPositionOfAxes, getScaledSizesOfImage, onDownloadCropClick} from "@/app/(auxiliary)/func/editorHandlers";
 import {useDebounceEffect} from "@/app/(auxiliary)/hooks/useDebounceEffect";
 import {canvasPreview, getRotateDimensions} from "@/app/(auxiliary)/components/Blocks/PhotoEditor/canvasPreview";
 import {
@@ -15,16 +15,16 @@ import {
 
 interface PropsType {
     currentPhoto: File; // CustomFileType;
-    updateCrop: (newCrop: Crop) => void
-    parentCrop: Crop;
+    setCrop: (newCrop: Crop) => void
+    crop: Crop;
     scale: number;
     rotate: number;
 }
 
 const Editor: FC<PropsType> = ({
                                    currentPhoto,
-                                   updateCrop,
-                                   parentCrop,
+                                   setCrop,
+                                   crop,
                                    scale,
                                    rotate
                                }) => {
@@ -38,7 +38,6 @@ const Editor: FC<PropsType> = ({
     const [croppingBoundary, setCroppingBoundary] =
         useState<PossibleCroppingBoundaryType>()
 
-    const [crop, setCrop] = useState<Crop>(() => parentCrop)
     const [completedCrop, setCompletedCrop] =
         useState<PixelCrop>({
             unit: "px",
@@ -55,7 +54,7 @@ const Editor: FC<PropsType> = ({
     const hiddenAnchorRef = useRef<HTMLAnchorElement>(null)
 
     /**
-     * Функция для изменения crop
+     * Функция для создания crop
      * @param width - оригинальная ширина изображения
      * @param height - оригинальная высота изображения
      * @param widthScaled - уменьшенная ширина изображения под редактор
@@ -67,19 +66,11 @@ const Editor: FC<PropsType> = ({
         widthScaled: number,
         heightScaled: number
     ) => {
-        /**
-         * Координаты для позиционирования crop по оси Y. Позиционирование так, чтобы crop помещал в себя всю ширину изображения на холсте
-         */
-        const centerImageY = height !== heightScaled ? (height / 2 - heightScaled / 2) : 0
-
-        /**
-         * Координаты для позиционирования crop по оси X. Позиционирование так, чтобы crop помещал в себя всю длину изображения на холсте
-         */
-        const centerImageX = width !== widthScaled ? (width / 2 - widthScaled / 2) : 0
+        const {x, y} = centerPositionOfAxes(width, height, widthScaled, heightScaled)
 
         const cropSettings = {
-            x: centerImageX,
-            y: centerImageY,
+            x: x,
+            y: y,
             width: widthScaled,
             height: heightScaled
         }
@@ -93,8 +84,8 @@ const Editor: FC<PropsType> = ({
             ...cropSettings
         })
 
-        return {x: centerImageX, y: centerImageY}
-    }, [])
+        return {x, y}
+    }, [setCrop])
 
 
     /**
@@ -125,6 +116,15 @@ const Editor: FC<PropsType> = ({
                 naturalWidthScaled,
                 naturalHeightScaled
             )
+
+            setCroppingBoundary({
+                x, y,
+                width: naturalWidthScaled,
+                height: naturalHeightScaled,
+                orientation: currentOrientation
+            })
+        } else {
+            const {x, y} = centerPositionOfAxes(width, height, naturalWidthScaled, naturalHeightScaled)
 
             setCroppingBoundary({
                 x, y,
@@ -175,30 +175,29 @@ const Editor: FC<PropsType> = ({
             const couldChangeCrop = sizeBoundary && positionBoundary // Финальное условие, позволяющее изменить crop
 
             if (couldChangeCrop) {
-                setCrop(() => pixelCrop)
+                setCrop(pixelCrop)
             } else {
-                setCrop((prevState) => imageOrientation === HORIZONTAL ? (
-                    {
-                        ...prevState,
+                if (imageOrientation === HORIZONTAL) {
+                    setCrop({
+                        ...crop,
                         width: pixelCrop.width,
                         x: pixelCrop.x
-                    }
-                ) : (
-                    {
-                        ...prevState,
+                    })
+                } else {
+                    setCrop({
+                        ...crop,
                         height: pixelCrop.height,
                         y: pixelCrop.y
-                    }
-                )) // Создание эффекта "скольжения" по границе рамки за счет установки новых значений для каждой оси и сохранения предыдущих
+                    })
+                } // Создание эффекта "скольжения" по границе рамки за счет установки новых значений для каждой оси и сохранения предыдущих
             }
         }
-    }, [croppingBoundary, imageOrientation])
-
-    useEffect(() => {
-        if (crop) {
-            updateCrop(crop)
-        }
-    }, [crop, updateCrop]);
+    }, [
+        croppingBoundary,
+        imageOrientation,
+        setCrop,
+        crop
+    ])
 
     useEffect(() => {
         setImgSrc(() => URL.createObjectURL(currentPhoto))

@@ -65,7 +65,7 @@ const DropZone: FC<PropsType> = ({
             filteredFiles.forEach((file) => {
                 dispatch(changePhotoSettings({
                     ...defaultPhotoSettings,
-                    fileName: file.name
+                    name: file.name
                 }))
             })
             dispatch(setCurrentOpenedFileName({

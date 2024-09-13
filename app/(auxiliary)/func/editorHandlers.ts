@@ -18,13 +18,54 @@ export const getScaledSizesOfImage = (
     naturalHeight: number,
     imgSize: number
 ) => {
-    const squareSize = Math.max(naturalWidth, naturalHeight) // Взять максимальную ширину или высоту для создания холста в виде квадрата
-    const scaleX = imgSize / squareSize // Коэффициент масштабирования по оси X для приведения изображения к оригинальным размерам.
-    const naturalWidthScaled = Math.floor(naturalWidth * scaleX)
-    const naturalHeightScaled = Math.floor(naturalHeight * scaleX)
+    /**
+     * Взять максимальную ширину или высоту для создания холста в виде квадрата
+     */
+    const squareSize = Math.max(naturalWidth, naturalHeight)
+
+    /**
+     * Т.к. изображение рисуется на квадрате, нужно узнать только одно значение коэффициента пропорции оригинального квадрата (squareSize*squareSize) и квадрата в редакторе (640*640 на экране 1920px)
+     *
+     */
+    const scale = imgSize / squareSize
+
+    /**
+     * Вычисление ширины и высоты изображения после его изменения пропорционально оригинальным размерам и размеру холста в редакторе
+     */
+    const naturalWidthScaled = Math.floor(naturalWidth * scale)
+    const naturalHeightScaled = Math.floor(naturalHeight * scale)
 
     return {
         naturalWidthScaled, naturalHeightScaled
+    }
+}
+
+
+/**
+ * Функция, которая определяет координаты X и Y, для позиционирования рамки обрезки crop, соответственно размерам и положению изображения на холсте
+ * @param width
+ * @param height
+ * @param widthScaled
+ * @param heightScaled
+ */
+export const centerPositionOfAxes = (
+    width: number,
+    height: number,
+    widthScaled: number,
+    heightScaled: number
+) => {
+    /**
+     * Координаты для позиционирования crop по оси Y. Позиционирование так, чтобы crop помещал в себя всю ширину изображения на холсте
+     */
+    const centerImageY = height !== heightScaled ? (height / 2 - heightScaled / 2) : 0
+
+    /**
+     * Координаты для позиционирования crop по оси X. Позиционирование так, чтобы crop помещал в себя всю длину изображения на холсте
+     */
+    const centerImageX = width !== widthScaled ? (width / 2 - widthScaled / 2) : 0
+
+    return {
+        x: centerImageX, y: centerImageY
     }
 }
 
@@ -37,6 +78,7 @@ interface OnDownloadCropClickArgs {
     hiddenAnchorRef: RefObject<HTMLAnchorElement>;
     rotate: number;
 }
+
 /**
  * Проверочная функция для загрузки фотографии после редактирования
  * @param imgRef
@@ -219,6 +261,6 @@ export const getDefaultPhotoSettings = (fileName: string): PhotoEditorSettingsTy
     return {...defaultPhotoSettings, name: fileName}
 }
 
-export const findFile = <T extends {name: string}>(file: T, fileName: string) => {
+export const findFile = <T extends { name: string }>(file: T, fileName: string) => {
     return file.name === fileName
 }

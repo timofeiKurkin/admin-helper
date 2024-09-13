@@ -1,4 +1,4 @@
-import React, {FC, useEffect, useState} from 'react';
+import React, {FC, useCallback, useEffect, useRef, useState} from 'react';
 import styles from "./FilesList.module.scss";
 import ButtonText from "@/app/(auxiliary)/components/UI/TextTemplates/ButtonText";
 import FilePreview
@@ -10,6 +10,8 @@ import {
     deleteFileData,
     selectFormFileData
 } from "@/app/(auxiliary)/libs/redux-toolkit/store/slices/UserFormDataSlice/UserFormDataSlice";
+import ArrowForList from "@/app/(auxiliary)/components/UI/SVG/ArrowForList/ArrowForList";
+import HorizontalScroll from "@/app/(auxiliary)/components/Blocks/HorizontalScroll/HorizontalScroll";
 
 interface PropsType {
     placeholder: string;
@@ -27,6 +29,7 @@ const FilesList: FC<PropsType> = ({
 
     const [currentFilesList, setCurrentFilesList] =
         useState<FileListStateType>(() => formFileData[type] || {} as FileListStateType)
+    const [filesListLength, setFilesListLength] = useState<number>(currentFilesList.files.length)
 
     const removeFile = (
         fileName: string,
@@ -40,35 +43,19 @@ const FilesList: FC<PropsType> = ({
     }
 
     useEffect(() => {
-        setCurrentFilesList(() => formFileData[type] || {} as FileListStateType)
+        setCurrentFilesList(() => formFileData[type])
+        setFilesListLength(() => formFileData[type].files.length)
     }, [
         type,
         formFileData
     ]);
 
 
-    return (
-        <div className={styles.filesListWrapper}>
-            <div className={styles.filesList} style={{
-                gridTemplateColumns: currentFilesList.files.length ? `repeat(${currentFilesList.files.length}, 5rem)` : "1fr",
-                overflowX: currentFilesList.files.length ? "auto" : "hidden"
-            }}>
-                {currentFilesList.files.length ? (
-                        currentFilesList.files.map((file, i) => (
-                            <FilePreview key={`key=${i}`}
-                                         file={file}
-                                         removeHandler={removeFile}
-                                         changeFile={changeFile}/>
-                        ))
-                    )
-                    :
-                    <div className={styles.emptyList}>
-                        <ButtonText>{placeholder}</ButtonText>
-                    </div>
-                }
-            </div>
-        </div>
-    );
+    return <HorizontalScroll filesListLength={filesListLength}
+                             placeholder={placeholder}
+                             currentFilesList={currentFilesList}
+                             removeFile={removeFile}
+                             changeFile={changeFile}/>
 };
 
 export default FilesList;

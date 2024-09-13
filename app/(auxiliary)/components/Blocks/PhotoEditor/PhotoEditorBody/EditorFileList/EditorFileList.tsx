@@ -29,6 +29,7 @@ const EditorFileList: FC<PropsType> = ({
 
     const chooseAnotherFile = (fileName: string) => {
         dispatch(setCurrentOpenedFileName({fileName}))
+        // console.log("new file: ", fileName, "prev file name: ", currentFileName)
         contentForEditor.switchToAnotherFile(fileName)
     }
 
@@ -50,32 +51,34 @@ const EditorFileList: FC<PropsType> = ({
         <div className={styles.photoListWrapper}>
             <Text>{data.uploadedPhotos}</Text>
 
-            <div className={styles.photoList} style={{
-                gridTemplateRows: `repeat(${contentForEditor.fileList.files.length}, 4rem)`
-            }}>
-                {contentForEditor.fileList.files.map((file, index) => {
-                    return (
-                        <div key={`key=${index}`}
-                             className={`${styles.fileItem} ${file.name === currentFileName && styles.fileItemSelected}`}
-                             onClick={() => chooseAnotherFile(file.name)}
-                        >
-                            <div className={styles.photoPreview}>
-                                <FilePreviewBlock url={URL.createObjectURL(file)}
-                                                  alt={`user's file for change - ${file.name}`}/>
-                            </div>
+            <div className={styles.photoList}>
+                <div className={styles.photoListScroll} style={{
+                    gridTemplateRows: `repeat(${contentForEditor.fileList.files.length}, 4rem)`
+                }}>
+                    {contentForEditor.fileList.files.map((file, index) => {
+                        return (
+                            <div key={`key=${index}`}
+                                 className={`${styles.fileItem} ${file.name === currentFileName && styles.fileItemSelected}`}
+                                 onClick={() => chooseAnotherFile(file.name)}
+                            >
+                                <div className={styles.photoPreview}>
+                                    <FilePreviewBlock url={URL.createObjectURL(file)}
+                                                      alt={`user's file for change - ${file.name}`}/>
+                                </div>
 
-                            <Text>{trimLongTitle(file.name.split(".")[0], 14)}</Text>
+                                <Text>{trimLongTitle(file.name.split(".")[0], 14)}</Text>
 
-                            <div className={styles.removeFile} onClick={() => removeFile(file.name)}>
-                                <Trash style={{
-                                    fill: "black",
-                                    width: 18,
-                                    height: 18
-                                }}/>
+                                <div className={styles.removeFile} onClick={() => removeFile(file.name)}>
+                                    <Trash style={{
+                                        fill: "black",
+                                        width: 18,
+                                        height: 18
+                                    }}/>
+                                </div>
                             </div>
-                        </div>
-                    )
-                })}
+                        )
+                    })}
+                </div>
             </div>
         </div>
     );

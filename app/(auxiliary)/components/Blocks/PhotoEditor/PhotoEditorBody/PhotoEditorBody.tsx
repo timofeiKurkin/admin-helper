@@ -115,7 +115,8 @@ const PhotoEditorBody: FC<PropsType> = ({
     /**
      * Сбросить настройки увеличения и поворота у выбранной фотографии
      */
-    const resetSettingsHandler = (fileName: string) => {
+    const resetSettingsHandler = () => {
+        setCurrentPhotoSettings((prevState) => ({...prevState, scale: 1, rotate: 0}))
         setScale(() => 1)
         setRotate(() => 0)
     }
@@ -131,39 +132,51 @@ const PhotoEditorBody: FC<PropsType> = ({
 
     /**
      * Переключение на другой файл
-     * @param fileName
+     * @param anotherFileName
      */
-    const switchToAnotherFile = (fileName: string) => {
-        setCurrentPhoto(contentForEditor.fileList.files.find((f) => findCurrentFile(f, fileName)) || {} as File)
-        console.log("fileName: ", fileName)
-        console.log("temporary list before updating: ", temporaryPhotosSettings)
+    const switchToAnotherFile = (anotherFileName: string) => {
+        const prevFileName = currentPhotoSettings.name
+        // console.log("")
 
         setTemporaryPhotosSettings((prevState) => {
             return prevState.map((settings) => {
-                if(settings.name === fileName) {
-                    return currentPhotoSettings
+                if (settings.name === prevFileName) {
+
+                    // console.log("prev name: ", prevFileName)
+                    // console.log("crop: ", crop)
+                    // console.log("rotate: ", rotate)
+
+                    return {
+                        ...settings,
+                        scale,
+                        rotate,
+                        crop
+                    }
                 }
 
                 return settings
             })
         })
 
-        console.log("temporary list after updating: ", temporaryPhotosSettings)
+        setCurrentPhoto(contentForEditor.fileList.files.find((f) => findCurrentFile(f, anotherFileName)) || {} as File)
+        const anotherSetting = temporaryPhotosSettings.find((f) => findCurrentFile(f, anotherFileName)) || getDefaultPhotoSettings(anotherFileName)
+        // console.log("another settings after updating temporary list of settings: ", anotherSetting)
 
-        const anotherSetting = temporaryPhotosSettings.find((f) => findCurrentFile(f, fileName)) || getDefaultPhotoSettings(fileName)
         setCurrentPhotoSettings(anotherSetting)
-        setCrop(anotherSetting.crop)
+        updateCrop(anotherSetting.crop)
         setRotate(anotherSetting.rotate)
         setScale(anotherSetting.scale)
     }
+
+    // console.log("temporary list: ", temporaryPhotosSettings)
 
     return (
         <div className={styles.photoEditorBody}>
             <div className={styles.editorGrid}>
                 <Editor scale={scale}
                         rotate={rotate}
-                        updateCrop={updateCrop}
-                        parentCrop={crop}
+                        setCrop={updateCrop}
+                        crop={crop}
                         currentPhoto={currentPhoto}/>
             </div>
 
@@ -223,7 +236,7 @@ const PhotoEditorBody: FC<PropsType> = ({
                     </div>
                 </div>
 
-                <div className={styles.resetSettings} onClick={() => resetSettingsHandler(currentFileName)}>
+                <div className={styles.resetSettings} onClick={() => resetSettingsHandler()}>
                     <Text style={{color: blue_light}}>{data.editor.resetSettings}</Text>
                 </div>
             </div>
