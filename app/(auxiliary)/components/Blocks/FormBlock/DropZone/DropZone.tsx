@@ -18,7 +18,6 @@ import {
     changePhotoSettings,
     setCurrentOpenedFileName
 } from "@/app/(auxiliary)/libs/redux-toolkit/store/slices/PhotoEditorSlice/PhotoEditorSlice";
-import {CustomFileType} from "@/app/(auxiliary)/types/AppTypes/Context";
 import {defaultPhotoSettings} from "@/app/(auxiliary)/types/PhotoEditorTypes/PhotoEditorTypes";
 
 
@@ -37,6 +36,7 @@ const DropZone: FC<PropsType> = ({
                                  }) => {
     const dispatch = useAppDispatch()
     const formFileData = useAppSelector(selectFormFileData)
+
     const [uploadingFilesStatus, setUploadingFilesStatus] =
         useState<boolean>(false)
 
@@ -71,10 +71,11 @@ const DropZone: FC<PropsType> = ({
             dispatch(setCurrentOpenedFileName({
                 fileName: userFiles[0].name
             }))
+
+            visibleDragDropZone()
+            openPhotoEditor()
         }
 
-        visibleDragDropZone()
-        openPhotoEditor()
     }, [
         dispatch,
         formFileData,
@@ -87,6 +88,11 @@ const DropZone: FC<PropsType> = ({
         file: File
     ): FileError | FileError[] | null | any => {
 
+        if (formFileData[inputType].files.filter((f) => f.name === file.name).length) {
+            return {}
+        }
+
+        return null
     }
 
     const acceptSettings: { [key: string]: { [accept: string]: string[] } } = {
@@ -103,7 +109,7 @@ const DropZone: FC<PropsType> = ({
     }
 
     const {
-        fileRejections,
+        // fileRejections,
         getRootProps,
         getInputProps,
         isDragActive

@@ -252,6 +252,8 @@ const Editor: FC<PropsType> = ({
                     scale,
                     rotate,
                     imageOrientation: croppingBoundary.orientation
+                }).then((url) => {
+                    console.log("Created URl: ", url)
                 })
             }
         },

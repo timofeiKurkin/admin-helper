@@ -17,14 +17,20 @@ export interface AppContextType {
     setAppState: React.Dispatch<React.SetStateAction<ProviderStateType>>;
 }
 
-export interface CustomFileType {
-    url: string;
+// export interface CustomFileType {
+//     url: string;
+//     name: string;
+// }
+
+export interface FileLinkPreviewType {
     name: string;
+    link: string;
 }
 
 export interface FileListStateType {
     type: PhotoAndVideoKeysTypes;
-    files: File[] // CustomFileType[];
+    files: File[]; // CustomFileType[];
+    filesLinksPreview: FileLinkPreviewType[]; // Ссылки, которые используются на превью
 }
 
 export interface FormDataItemType<T> {

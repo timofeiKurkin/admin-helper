@@ -101,4 +101,12 @@ export const canvasPreview = async ({
     )
 
     ctx.restore();
+
+    return new Promise((res) => {
+        canvas.toBlob((file) => {
+            if (file) {
+                res(URL.createObjectURL(file))
+            }
+        }, "image/png")
+    })
 }

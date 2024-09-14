@@ -1,8 +1,4 @@
-import React, {FC, useCallback, useEffect, useRef, useState} from 'react';
-import styles from "./FilesList.module.scss";
-import ButtonText from "@/app/(auxiliary)/components/UI/TextTemplates/ButtonText";
-import FilePreview
-    from "@/app/(auxiliary)/components/Blocks/FormBlock/CoupleOfInputs/CurrentInput/FileInput/FilesList/File/FilePreview";
+import React, {FC, useEffect, useState} from 'react';
 import {FileListStateType} from "@/app/(auxiliary)/types/AppTypes/Context";
 import {PhotoAndVideoKeysTypes} from "@/app/(auxiliary)/types/AppTypes/InputHooksTypes";
 import {useAppDispatch, useAppSelector} from "@/app/(auxiliary)/libs/redux-toolkit/store/hooks";
@@ -10,7 +6,6 @@ import {
     deleteFileData,
     selectFormFileData
 } from "@/app/(auxiliary)/libs/redux-toolkit/store/slices/UserFormDataSlice/UserFormDataSlice";
-import ArrowForList from "@/app/(auxiliary)/components/UI/SVG/ArrowForList/ArrowForList";
 import HorizontalScroll from "@/app/(auxiliary)/components/Blocks/HorizontalScroll/HorizontalScroll";
 
 interface PropsType {

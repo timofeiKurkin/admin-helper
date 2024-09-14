@@ -39,9 +39,7 @@ const PhotoEditor: FC<PropsType> = ({
 
                         <PhotoEditorBody data={photoEditorData}
                                          visiblePhotoEditor={visiblePhotoEditor}
-                                         contentForEditor={{
-                                             fileList: fileList,
-                                         }}/>
+                                         fileList={fileList}/>
                     </div>
                 </div>
             </Backdrop>

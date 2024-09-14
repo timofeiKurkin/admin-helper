@@ -1,10 +1,8 @@
-import React, {FC, useMemo, useState} from 'react';
-import Image from "next/image";
+import React, {FC, memo, useState} from 'react';
 import styles from "./File.module.scss";
 import DeleteFile from "@/app/(auxiliary)/components/UI/SVG/DeleteFile/DeleteFile";
 import ChangePhoto from "@/app/(auxiliary)/components/UI/SVG/ChangePhoto/ChangePhoto";
 import FilePreviewBlock from "@/app/(auxiliary)/components/Blocks/FilePreviewBlock/FilePreviewBlock";
-import {CustomFileType} from "@/app/(auxiliary)/types/AppTypes/Context";
 
 interface PropsType {
     file: File; // CustomFileType;
@@ -13,11 +11,11 @@ interface PropsType {
 
 }
 
-const FilePreview: FC<PropsType> = React.memo(({
+const FilePreview: FC<PropsType> = memo(function Example({
                                                    file,
                                                    removeHandler,
                                                    changeFile
-                                               }) => {
+                                               }) {
 
     const [visibleHover, setVisibleHover] = useState<boolean>(false)
 

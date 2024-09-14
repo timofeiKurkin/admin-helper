@@ -15,7 +15,7 @@
 
 .filesListWrapper {
 	grid-template-columns: 22px 1fr 22px;
-	justify-items: center;
+	//justify-items: center;
 
 	.arrowForListRight,
 	.arrowForListLeft {
@@ -30,11 +30,17 @@
 
 	}
 
-	.filesListAndScroll {
+	.listArrowItem {
+		display: flex;
+		justify-content: center;
+	}
+
+	.filesListWithoutScroll {
+		width: 100%;
 		height: 100%;
 
 		display: grid;
-		grid-template-rows: 1fr 17px;
+		grid-template-rows: 1fr;
 		grid-template-columns: 1fr;
 		align-items: center;
 
@@ -43,7 +49,7 @@
 			height: 100%;
 
 			display: grid;
-			align-items: end;
+			align-items: center;
 			grid-template-rows: 1fr;
 
 			@media screen and ($desktop1920) {
@@ -122,6 +128,14 @@
 				background-color: $black;
 				border-radius: $border_radius;
 			}
+		}
+	}
+
+	.filesListAndScroll {
+		grid-template-rows: 1fr 17px;
+
+		.filesList {
+			align-items: end;
 		}
 	}
 

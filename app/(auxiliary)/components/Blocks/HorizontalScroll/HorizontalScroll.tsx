@@ -144,13 +144,13 @@ const HorizontalScroll: FC<PropsType> = ({
 
     return filesListLength ? (
         <div className={styles.filesListWrapper}>
-            <div onClick={arrowMoveLeft}>
+            <div className={styles.listArrowItem} onClick={arrowMoveLeft}>
                 <ArrowForList
                     activeStatus={!!scrollPosition}
                     className={styles.arrowForListLeft}/>
             </div>
 
-            <div className={styles.filesListAndScroll}>
+            <div className={`${styles.filesListWithoutScroll} ${filesListLength > 3 && styles.filesListAndScroll}`}>
                 <div ref={scrollContainerRef}
                      onScroll={handleScroll}
                      className={styles.filesList}
@@ -181,7 +181,7 @@ const HorizontalScroll: FC<PropsType> = ({
                 )}
             </div>
 
-            <div onClick={arrowMoveRight}>
+            <div className={styles.listArrowItem} onClick={arrowMoveRight}>
                 <ArrowForList activeStatus={endOfList}
                               className={styles.arrowForListRight}/>
             </div>

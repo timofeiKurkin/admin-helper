@@ -12,7 +12,7 @@ import {
     VIDEO_KEY
 } from "@/app/(auxiliary)/types/AppTypes/InputHooksTypes";
 import {
-    CustomFileType,
+    FileLinkPreviewType,
     FormDataItemType,
     PermissionsOfFormStatesType,
     UserFormDataType
@@ -29,11 +29,14 @@ const initialState: InitialStateType = {
         // [MESSAGE_KEY]: {} as File,
         [PHOTO_KEY]: {
             type: PHOTO_KEY,
-            files: []
+            files: [],
+            filesLinksPreview: []
         },
         [VIDEO_KEY]: {
             type: VIDEO_KEY,
-            files: []
+            files: [],
+            filesLinksPreview: []
+
         }
     },
     text_data: {
@@ -90,11 +93,22 @@ export const userFormDataSlice = createAppSlice({
                 state.text_data[action.payload.key] = action.payload.data
             }
         ),
+        changePhotosPreview: create.reducer((
+            state,
+            action: PayloadAction<FileLinkPreviewType[]>
+        ) => {
+            state.file_data["photo"].filesLinksPreview = action.payload
+        }),
         addFileData: create.reducer(
             (
                 state,
                 action: PayloadAction<DataActionType<PhotoAndVideoKeysTypes, FormDataItemType<File[]>>> // CustomFileType[]
             ) => {
+                state.file_data[action.payload.key].filesLinksPreview = action.payload.data.value.map((file) => ({
+                    name: file.name,
+                    link: URL.createObjectURL(file)
+                }))
+
                 state.file_data[action.payload.key].files = [
                     ...state.file_data[action.payload.key].files,
                     ...action.payload.data.value
@@ -145,7 +159,8 @@ export const {
     deleteFileData,
     setPermissionPolitic,
     setUserCanTalk,
-    setValidationFormStatus
+    setValidationFormStatus,
+    changePhotosPreview,
 } = userFormDataSlice.actions
 
 export const {

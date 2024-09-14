@@ -11,6 +11,7 @@ import {deleteFileData} from "@/app/(auxiliary)/libs/redux-toolkit/store/slices/
 import {
     selectCurrentFileName, setCurrentOpenedFileName
 } from "@/app/(auxiliary)/libs/redux-toolkit/store/slices/PhotoEditorSlice/PhotoEditorSlice";
+import SmallText from "@/app/(auxiliary)/components/UI/TextTemplates/SmallText";
 
 interface PropsType {
     data: PhotoListDataType;
@@ -61,6 +62,8 @@ const EditorFileList: FC<PropsType> = ({
                                  className={`${styles.fileItem} ${file.name === currentFileName && styles.fileItemSelected}`}
                                  onClick={() => chooseAnotherFile(file.name)}
                             >
+                                <div><Text>{++index}.</Text></div>
+
                                 <div className={styles.photoPreview}>
                                     <FilePreviewBlock url={URL.createObjectURL(file)}
                                                       alt={`user's file for change - ${file.name}`}/>

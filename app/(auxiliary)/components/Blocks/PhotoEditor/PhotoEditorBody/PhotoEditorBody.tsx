@@ -8,7 +8,7 @@ import Button from "@/app/(auxiliary)/components/UI/Button/Button";
 import {blue_dark, blue_light, grey} from "@/styles/colors";
 import Text from "@/app/(auxiliary)/components/UI/TextTemplates/Text";
 import Range from "@/app/(auxiliary)/components/UI/Inputs/Range/Range";
-import {FileListStateType} from "@/app/(auxiliary)/types/AppTypes/Context";
+import {FileLinkPreviewType, FileListStateType} from "@/app/(auxiliary)/types/AppTypes/Context";
 import {useAppDispatch, useAppSelector} from "@/app/(auxiliary)/libs/redux-toolkit/store/hooks";
 import {
     changePhotoSettings,
@@ -24,19 +24,20 @@ import {
 } from "@/app/(auxiliary)/func/editorHandlers";
 import {PhotoEditorSettingsType} from "@/app/(auxiliary)/types/PhotoEditorTypes/PhotoEditorTypes";
 import {Crop} from "react-image-crop";
+import {
+    changePhotosPreview
+} from "@/app/(auxiliary)/libs/redux-toolkit/store/slices/UserFormDataSlice/UserFormDataSlice";
 
 
 interface PropsType {
     data: PhotoEditorDataType;
-    contentForEditor: {
-        fileList: FileListStateType;
-    }
+    fileList: FileListStateType;
     visiblePhotoEditor: () => void;
 }
 
 const PhotoEditorBody: FC<PropsType> = ({
                                             data,
-                                            contentForEditor,
+                                            fileList,
                                             visiblePhotoEditor
                                         }) => {
     const dispatch = useAppDispatch()
@@ -56,6 +57,8 @@ const PhotoEditorBody: FC<PropsType> = ({
      */
     const [temporaryPhotosSettings, setTemporaryPhotosSettings] =
         useState<PhotoEditorSettingsType[]>(() => photosSettings)
+    const [photosLinksPreview, setPhotosLinksPreview] =
+        useState<FileLinkPreviewType[]>([])
 
     //
 
@@ -73,7 +76,7 @@ const PhotoEditorBody: FC<PropsType> = ({
      */
     const [currentPhoto, setCurrentPhoto] =
         useState<File>(() => (
-            contentForEditor.fileList.files.find((f) => findCurrentFile(f, currentFileName)) || {} as File
+            fileList.files.find((f) => findCurrentFile(f, currentFileName)) || {} as File
         ))
 
     /**
@@ -126,6 +129,9 @@ const PhotoEditorBody: FC<PropsType> = ({
      * @param settings
      */
     const saveSettingsHandler = (settings: PhotoEditorSettingsType) => {
+        dispatch(changePhotosPreview([])) //
+
+
         dispatch(changePhotoSettings(settings))
         visiblePhotoEditor()
     }
@@ -158,7 +164,7 @@ const PhotoEditorBody: FC<PropsType> = ({
             })
         })
 
-        setCurrentPhoto(contentForEditor.fileList.files.find((f) => findCurrentFile(f, anotherFileName)) || {} as File)
+        setCurrentPhoto(fileList.files.find((f) => findCurrentFile(f, anotherFileName)) || {} as File)
         const anotherSetting = temporaryPhotosSettings.find((f) => findCurrentFile(f, anotherFileName)) || getDefaultPhotoSettings(anotherFileName)
         // console.log("another settings after updating temporary list of settings: ", anotherSetting)
 
@@ -246,7 +252,7 @@ const PhotoEditorBody: FC<PropsType> = ({
             <div className={styles.fileListGrid}>
                 <FileList data={data.photoList}
                           contentForEditor={{
-                              fileList: contentForEditor.fileList,
+                              fileList,
                               switchToAnotherFile: switchToAnotherFile,
                           }}
                 />
