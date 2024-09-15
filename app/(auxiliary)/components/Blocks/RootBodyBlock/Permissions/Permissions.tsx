@@ -24,11 +24,11 @@ const Permissions: FC<PropsType> = ({
     const permissionsOfForm = useAppSelector(selectPermissionsOfForm)
 
     const canTalkHandle = () => {
-        dispatch(setPermissionPolitic())
+        dispatch(setUserCanTalk())
     }
 
     const agreePermissionHandler = () => {
-        dispatch(setUserCanTalk())
+        dispatch(setPermissionPolitic())
     }
 
     return (

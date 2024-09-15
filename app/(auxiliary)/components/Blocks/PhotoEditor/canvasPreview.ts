@@ -41,7 +41,7 @@ export const canvasPreview = async ({
                                         scale = 1,
                                         rotate = 0,
                                         imageOrientation
-                                    }: CanvasPreviewProps) => {
+                                    }: CanvasPreviewProps): Promise<string> => {
     const ctx = canvas.getContext('2d') // Получаем 2Д контекст для рисования на холсте
 
     if (!ctx) {

@@ -45,6 +45,10 @@ const FilesList: FC<PropsType> = ({
         formFileData
     ]);
 
+    console.log("formFileData: ", formFileData[type].filesLinksPreview)
+    // console.log()
+    
+
 
     return <HorizontalScroll filesListLength={filesListLength}
                              placeholder={placeholder}

@@ -57,8 +57,12 @@ const PhotoEditorBody: FC<PropsType> = ({
      */
     const [temporaryPhotosSettings, setTemporaryPhotosSettings] =
         useState<PhotoEditorSettingsType[]>(() => photosSettings)
-    const [photosLinksPreview, setPhotosLinksPreview] =
-        useState<FileLinkPreviewType[]>([])
+    
+    /**
+     * 
+     */
+    const [photosPreview, setPhotosPreview] = 
+        useState<FileLinkPreviewType[]>(fileList.filesLinksPreview)
 
     //
 
@@ -129,7 +133,7 @@ const PhotoEditorBody: FC<PropsType> = ({
      * @param settings
      */
     const saveSettingsHandler = (settings: PhotoEditorSettingsType) => {
-        dispatch(changePhotosPreview([])) //
+        dispatch(changePhotosPreview(photosPreview)) // Изменение preview для каждой фотографии
 
 
         dispatch(changePhotoSettings(settings))
@@ -174,7 +178,18 @@ const PhotoEditorBody: FC<PropsType> = ({
         setScale(anotherSetting.scale)
     }
 
-    // console.log("temporary list: ", temporaryPhotosSettings)
+    
+    const updatePhotoPreview = useCallback((newPreview: FileLinkPreviewType) => {
+        console.log("new preview: ", newPreview)
+        setPhotosPreview((prevState) => {
+            return prevState.map((preview) => {
+                if (preview.name === newPreview.name) {
+                    return newPreview
+                }
+                return preview
+            })
+        })
+    }, [])
 
     return (
         <div className={styles.photoEditorBody}>
@@ -182,6 +197,7 @@ const PhotoEditorBody: FC<PropsType> = ({
                 <Editor scale={scale}
                         rotate={rotate}
                         setCrop={updateCrop}
+                        updatePhotoPreview={updatePhotoPreview}
                         crop={crop}
                         currentPhoto={currentPhoto}/>
             </div>

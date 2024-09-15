@@ -11,11 +11,13 @@ import {
     PossibleCroppingBoundaryType,
     VERTICAL
 } from "@/app/(auxiliary)/types/PhotoEditorTypes/PhotoEditorTypes";
+import { FileLinkPreviewType } from '@/app/(auxiliary)/types/AppTypes/Context';
 
 
 interface PropsType {
     currentPhoto: File; // CustomFileType;
-    setCrop: (newCrop: Crop) => void
+    setCrop: (newCrop: Crop) => void;
+    updatePhotoPreview: (newPreview: FileLinkPreviewType) => void;
     crop: Crop;
     scale: number;
     rotate: number;
@@ -24,6 +26,7 @@ interface PropsType {
 const Editor: FC<PropsType> = ({
                                    currentPhoto,
                                    setCrop,
+                                   updatePhotoPreview,
                                    crop,
                                    scale,
                                    rotate
@@ -234,8 +237,11 @@ const Editor: FC<PropsType> = ({
         imgRef,
         updateCropHandler,
         croppingBoundary
-    ]);
+    ]);    
 
+    /**
+     * Эффект, срабатывающий при изменении crop 
+     */
     useDebounceEffect({
         fn: async () => {
             if (
@@ -253,7 +259,13 @@ const Editor: FC<PropsType> = ({
                     rotate,
                     imageOrientation: croppingBoundary.orientation
                 }).then((url) => {
-                    console.log("Created URl: ", url)
+                    if(url) {
+                        updatePhotoPreview({
+                            name: currentPhoto.name,
+                            link: url
+                        })
+                        // URL.revokeObjectURL
+                    }
                 })
             }
         },

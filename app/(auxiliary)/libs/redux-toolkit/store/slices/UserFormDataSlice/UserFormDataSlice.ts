@@ -81,10 +81,27 @@ interface DeleteFileAction {
     name: string;
 }
 
+/**
+ * Работа с данными формы:
+ * - changeTextData
+ * - addFileData
+ * - deleteFileData
+ * - changePhotosPreview
+ * 
+ * Разрешения формы:
+ * - setPermissionPolitic
+ * - setUserCanTalk
+ * 
+ * Валидация формы
+ * - setValidationFormStatus
+ */
 export const userFormDataSlice = createAppSlice({
     name: "userFormDataSlice",
     initialState,
     reducers: (create) => ({
+        /**
+         * Slice для изменения только текстовых данных в состоянии
+         */
         changeTextData: create.reducer(
             (
                 state,
@@ -93,12 +110,9 @@ export const userFormDataSlice = createAppSlice({
                 state.text_data[action.payload.key] = action.payload.data
             }
         ),
-        changePhotosPreview: create.reducer((
-            state,
-            action: PayloadAction<FileLinkPreviewType[]>
-        ) => {
-            state.file_data["photo"].filesLinksPreview = action.payload
-        }),
+        /**
+         * Slice для добавления файлов в состояние. Добавить можно фото или видео
+         */
         addFileData: create.reducer(
             (
                 state,
@@ -115,6 +129,9 @@ export const userFormDataSlice = createAppSlice({
                 ]
             }
         ),
+        /**
+         * Удаление файлов из состояния
+         */
         deleteFileData: create.reducer(
             (
                 state,
@@ -126,6 +143,19 @@ export const userFormDataSlice = createAppSlice({
                     )
             }
         ),
+        /**
+         * Обновление preview у каждого фото после применения настроек в фоторедакторе
+         */
+        changePhotosPreview: create.reducer((
+            state,
+            action: PayloadAction<FileLinkPreviewType[]>
+        ) => {
+            state.file_data["photo"].filesLinksPreview = action.payload
+        }),
+        
+        /**
+         * 
+         */
         setPermissionPolitic: create.reducer(
             (state) => {
                 state.permissions.userAgreed = !state.permissions.userAgreed
@@ -136,6 +166,10 @@ export const userFormDataSlice = createAppSlice({
                 state.permissions.userCanTalk = !state.permissions.userCanTalk
             }
         ),
+        
+        /**
+         * Slice для изменения состояния всей валидации формы. Этот статус показывает, что все поля формы корректно заполнены, поэтому файлы могут быть отправлены на сервер
+         */
         setValidationFormStatus: create.reducer(
             (state) => {
                 const textDataKeys = Object.keys(state.text_data)
