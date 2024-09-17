@@ -41,7 +41,7 @@ export const canvasPreview = async ({
                                         scale = 1,
                                         rotate = 0,
                                         imageOrientation
-                                    }: CanvasPreviewProps): Promise<string> => {
+                                    }: CanvasPreviewProps): Promise<File> => {
     const ctx = canvas.getContext('2d') // Получаем 2Д контекст для рисования на холсте
 
     if (!ctx) {
@@ -85,12 +85,36 @@ export const canvasPreview = async ({
 
     ctx.save()
 
-    ctx.translate(-cropX, -cropY) // Перемещает контекст таким образом, чтобы область обрезки переместилась в начало системы координат canvas (0, 0)
-    ctx.translate(centerX, centerY) // Перемещает начало координат в центр изображения, чтобы поворот происходил относительно его центра
-    ctx.rotate(rotateRads) // Поворачивает изображение на заданный угол в радианах
-    ctx.scale(scale, scale) // Масштабирует изображение по осям X и Y на указанное значение
+    ctx.fillStyle = "black"
+    ctx.fillRect(0, 0, canvas.width, canvas.height)
 
-    ctx.translate(-centerX, -centerY) // Перемещает начало координат обратно в верхний левый угол изображения после выполнения поворота и масштабирования
+    /**
+     * Перемещает контекст таким образом, чтобы область обрезки переместилась в начало системы координат canvas (0, 0)
+     */
+    ctx.translate(-cropX, -cropY)
+
+
+    /**
+     * Перемещает начало координат в центр изображения, чтобы поворот происходил относительно его центра
+     */
+    ctx.translate(centerX, centerY)
+
+
+    /**
+     * Поворачивает изображение на заданный угол в радианах
+     */
+    ctx.rotate(rotateRads)
+
+
+    /**
+     * Масштабирует изображение по осям X и Y на указанное значение
+     */
+    ctx.scale(scale, scale)
+
+    /**
+     * Перемещает начало координат обратно в верхний левый угол изображения после выполнения поворота и масштабирования
+     */
+    ctx.translate(-centerX, -centerY)
     ctx.drawImage(
         image,
         0, 0,
@@ -103,10 +127,15 @@ export const canvasPreview = async ({
     ctx.restore();
 
     return new Promise((res) => {
-        canvas.toBlob((file) => {
-            if (file) {
-                res(URL.createObjectURL(file))
+        canvas.toBlob((blob) => {
+            if (blob) {
+                const newFile = new File([blob], image.alt, {
+                    type: "image/png",
+                    lastModified: Date.now()
+                })
+
+                res(newFile)
             }
-        }, "image/png")
+        }, "image/png", 1)
     })
 }

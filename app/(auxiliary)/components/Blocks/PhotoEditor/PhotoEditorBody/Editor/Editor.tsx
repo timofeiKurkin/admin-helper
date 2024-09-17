@@ -1,5 +1,5 @@
 import React, {FC, useCallback, useEffect, useRef, useState} from 'react';
-import {Crop, PercentCrop, PixelCrop, ReactCrop} from "react-image-crop";
+import {Crop, PixelCrop, ReactCrop} from "react-image-crop";
 import Image from "next/image";
 import styles from "./Editor.module.scss";
 import 'react-image-crop/src/ReactCrop.scss';
@@ -11,35 +11,41 @@ import {
     PossibleCroppingBoundaryType,
     VERTICAL
 } from "@/app/(auxiliary)/types/PhotoEditorTypes/PhotoEditorTypes";
-import { FileLinkPreviewType } from '@/app/(auxiliary)/types/AppTypes/Context';
 
 
 interface PropsType {
-    currentPhoto: File; // CustomFileType;
+    photo: File; // CustomFileType;
+    // photo: FilePreviewType; // CustomFileType;
     setCrop: (newCrop: Crop) => void;
-    updatePhotoPreview: (newPreview: FileLinkPreviewType) => void;
+    updatePhoto: (newFile: File) => void;
     crop: Crop;
     scale: number;
     rotate: number;
 }
 
 const Editor: FC<PropsType> = ({
-                                   currentPhoto,
+                                   photo,
                                    setCrop,
-                                   updatePhotoPreview,
+                                   updatePhoto,
                                    crop,
                                    scale,
                                    rotate
                                }) => {
 
     const [imgSrc, setImgSrc] =
-        useState<string>(() => URL.createObjectURL(currentPhoto))
+        useState<string>(() => URL.createObjectURL(photo))
 
     const [imageOrientation, setImageOrientation] =
         useState<"vertical" | "horizontal">(HORIZONTAL)
 
     const [croppingBoundary, setCroppingBoundary] =
         useState<PossibleCroppingBoundaryType>()
+
+    /**
+     * Статус для отслеживания изменения. Если происходит какое-либо изменения фото, то статус меняется на true, в обратном случае - на false.
+     * Нужно для асинхронной функции canvasPreview, которая после выполнения изменяет preview у всех фото.
+     */
+    const [isChanging, setIsChanging] = useState<boolean>(false)
 
     const [completedCrop, setCompletedCrop] =
         useState<PixelCrop>({
@@ -57,7 +63,7 @@ const Editor: FC<PropsType> = ({
     const hiddenAnchorRef = useRef<HTMLAnchorElement>(null)
 
     /**
-     * Функция для создания crop
+     * Функция для создания crop на время редактирования фотографии, а также финального crop
      * @param width - оригинальная ширина изображения
      * @param height - оригинальная высота изображения
      * @param widthScaled - уменьшенная ширина изображения под редактор
@@ -97,6 +103,8 @@ const Editor: FC<PropsType> = ({
      * @param currentCrop
      */
     const onImageLoad = (e: React.SyntheticEvent<HTMLImageElement>, currentCrop: Crop) => {
+        setIsChanging(() => true)
+
         const {
             naturalWidth,
             width,
@@ -138,15 +146,26 @@ const Editor: FC<PropsType> = ({
         }
     }
 
-    const changeCropHandler = useCallback((pixelCrop: PixelCrop, _percentCrop: PercentCrop) => {
+    /**
+     * Функция, срабатывающая при изменении crop. Принимает новый crop и устанавливает его в состояние.
+     * Т.е. функция на прямую не редактирует фотографию.
+     * @param pixelCrop - значения crop в пикселях
+     */
+    const changeCropHandler = useCallback((pixelCrop: PixelCrop) => {
         if (croppingBoundary) {
+            setIsChanging(() => true)
+
+            /**
+             * Оригинальные размеры фото и его положение по осям.
+             * За значения осей и размеров фото нельзя выходить
+             */
             const {
                 width,
                 height,
                 x,
                 y,
-                orientation // Оригинальная ориентация изображения. В отличие от imageOrientation не изменяется и является ориентиром
-            } = croppingBoundary // Оригинальные размеры фото и его положение по осям. За эти значения нельзя выходить
+                orientation // Оригинальная ориентация изображения. В отличие от состояния imageOrientation не изменяется и является ориентиром
+            } = croppingBoundary
             const {
                 width: cropWidth,
                 height: cropHeight,
@@ -202,15 +221,37 @@ const Editor: FC<PropsType> = ({
         crop
     ])
 
+    /**
+     * эффект для создания url фотографии, для отображения ее в редакторе
+     */
     useEffect(() => {
-        setImgSrc(() => URL.createObjectURL(currentPhoto))
-    }, [currentPhoto])
+        setImgSrc(() => URL.createObjectURL(photo))
 
+        // return () => {
+        //     if(imgSrc) {
+        //         URL.revokeObjectURL(imgSrc)
+        //     }
+        // }
+    }, [
+        photo,
+        // imgSrc
+    ])
+
+    /**
+     * Эффект для инициализации оригинальной ориентации изображения
+     */
     useEffect(() => {
         if (imgRef.current && croppingBoundary) {
-            const {naturalWidth, width, naturalHeight, height} = imgRef.current
+            const {
+                naturalWidth,
+                width,
+                naturalHeight,
+                height
+            } = imgRef.current
 
             if (naturalWidth && naturalHeight && width && height) {
+                setIsChanging(() => true)
+
                 const {
                     naturalRotatedWidth,
                     naturalRotatedHeight
@@ -237,14 +278,15 @@ const Editor: FC<PropsType> = ({
         imgRef,
         updateCropHandler,
         croppingBoundary
-    ]);    
+    ]);
 
     /**
-     * Эффект, срабатывающий при изменении crop 
+     * Эффект, срабатывающий при изменении crop
      */
     useDebounceEffect({
         fn: async () => {
             if (
+                // isChanging && // Статус изменение фотографии
                 completedCrop.width &&
                 completedCrop.height &&
                 imgRef.current &&
@@ -258,19 +300,21 @@ const Editor: FC<PropsType> = ({
                     scale,
                     rotate,
                     imageOrientation: croppingBoundary.orientation
-                }).then((url) => {
-                    if(url) {
-                        updatePhotoPreview({
-                            name: currentPhoto.name,
-                            link: url
-                        })
-                        // URL.revokeObjectURL
+                }).then((file) => {
+                    if (file && isChanging) {
+                        updatePhoto(file)
+                        setIsChanging(() => false)
                     }
                 })
             }
         },
         waitTime: 100,
-        deps: [completedCrop, scale, rotate]
+        deps: [
+            completedCrop,
+            scale,
+            rotate,
+            isChanging
+        ]
     })
 
     return (
@@ -297,7 +341,7 @@ const Editor: FC<PropsType> = ({
                                        objectFit: "contain"
                                    }}
                                    onLoad={(e) => onImageLoad(e, crop)}
-                                   alt={"image for crop"}
+                                   alt={photo.name}
                             />
                         </ReactCrop>
                     )}

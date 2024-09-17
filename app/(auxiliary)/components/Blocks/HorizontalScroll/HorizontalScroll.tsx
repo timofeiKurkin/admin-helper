@@ -2,14 +2,15 @@ import React, {FC, useCallback, useEffect, useRef, useState} from 'react';
 import styles from "./HorizontalScroll.module.scss";
 import ArrowForList from "@/app/(auxiliary)/components/UI/SVG/ArrowForList/ArrowForList";
 import ButtonText from "@/app/(auxiliary)/components/UI/TextTemplates/ButtonText";
-import FilePreview
-    from "@/app/(auxiliary)/components/Blocks/FormBlock/CoupleOfInputs/CurrentInput/FileInput/FilesList/File/FilePreview";
-import {FileListStateType} from "@/app/(auxiliary)/types/AppTypes/Context";
+import FilePreviewWithHandlers
+    from "@/app/(auxiliary)/components/Blocks/FormBlock/CoupleOfInputs/CurrentInput/FileInput/FilesList/File/FilePreviewWithHandlers";
 
 interface PropsType {
     filesListLength: number;
     placeholder: string;
-    currentFilesList: FileListStateType;
+    // filesList: FileListStateType;
+    // filesList: FilePreviewType[];
+    filesList: File[];
     removeFile: (fileName: string) => void;
     changeFile: (fileName: string) => void;
 }
@@ -17,7 +18,7 @@ interface PropsType {
 const HorizontalScroll: FC<PropsType> = ({
                                              filesListLength,
                                              placeholder,
-                                             currentFilesList,
+                                             filesList,
                                              removeFile,
                                              changeFile
                                          }) => {
@@ -158,11 +159,11 @@ const HorizontalScroll: FC<PropsType> = ({
                          gridTemplateColumns: filesListLength ? `repeat(${filesListLength}, 5rem)` : "1fr",
                          overflowX: filesListLength ? "auto" : "hidden"
                      }}>
-                    {currentFilesList.files.map((file, i) => (
+                    {filesList.map((file, i) => (
                         <div key={`key=${i}`} className={styles.fileWrapper}>
-                            <FilePreview file={file}
-                                         removeHandler={removeFile}
-                                         changeFile={changeFile}/>
+                            <FilePreviewWithHandlers file={file}
+                                                     removeHandler={removeFile}
+                                                     changeFile={changeFile}/>
 
                         </div>
                     ))}

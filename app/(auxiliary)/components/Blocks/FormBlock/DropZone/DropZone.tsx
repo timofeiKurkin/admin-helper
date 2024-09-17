@@ -15,6 +15,7 @@ import {
     selectFormFileData
 } from "@/app/(auxiliary)/libs/redux-toolkit/store/slices/UserFormDataSlice/UserFormDataSlice";
 import {
+    changeEditorVisibility,
     changePhotoSettings,
     setCurrentOpenedFileName
 } from "@/app/(auxiliary)/libs/redux-toolkit/store/slices/PhotoEditorSlice/PhotoEditorSlice";
@@ -25,14 +26,14 @@ interface PropsType {
     content: ContentOfUploadBlockType;
     inputType: PhotoAndVideoKeysTypes;
     visibleDragDropZone: () => void;
-    openPhotoEditor: () => void;
+    // openPhotoEditor: () => void;
 }
 
 const DropZone: FC<PropsType> = ({
                                      content,
                                      inputType,
                                      visibleDragDropZone,
-                                     openPhotoEditor
+                                     // openPhotoEditor
                                  }) => {
     const dispatch = useAppDispatch()
     const formFileData = useAppSelector(selectFormFileData)
@@ -41,15 +42,6 @@ const DropZone: FC<PropsType> = ({
         useState<boolean>(false)
 
     const onDrop = useCallback((userFiles: FilesListType) => {
-        // const listOfUrls = userFiles.map((file): CustomFileType =>
-        //     ({
-        //         name: file.name,
-        //         url: URL.createObjectURL(file)
-        //     })
-        // )
-        // const filteredFiles =
-        //     listOfUrls.filter((file) => !formFileData[inputType].files.includes(file))
-
         const filteredFiles =
             userFiles.filter((file) => !formFileData[inputType].files.includes(file))
 
@@ -61,6 +53,9 @@ const DropZone: FC<PropsType> = ({
                     value: filteredFiles
                 }
             }))
+            dispatch(setCurrentOpenedFileName({
+                fileName: userFiles[0].name
+            }))
 
             filteredFiles.forEach((file) => {
                 dispatch(changePhotoSettings({
@@ -68,18 +63,15 @@ const DropZone: FC<PropsType> = ({
                     name: file.name
                 }))
             })
-            dispatch(setCurrentOpenedFileName({
-                fileName: userFiles[0].name
-            }))
 
             visibleDragDropZone()
-            openPhotoEditor()
+            dispatch(changeEditorVisibility())
         }
 
     }, [
         dispatch,
         formFileData,
-        openPhotoEditor,
+        // openPhotoEditor,
         visibleDragDropZone,
         inputType,
     ])

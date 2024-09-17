@@ -5,15 +5,15 @@ import {PhotoEditorSettingsType} from "@/app/(auxiliary)/types/PhotoEditorTypes/
 
 
 interface InitialState {
-    currentFileIndex: number;
     currentFileName: string;
     photoListSettings: PhotoEditorSettingsType[];
+    editorIsOpen: boolean;
 }
 
 const initialState: InitialState = {
-    currentFileIndex: 0,
     currentFileName: "",
-    photoListSettings: []
+    photoListSettings: [],
+    editorIsOpen: false
 }
 
 export const photoEditorSlice = createAppSlice({
@@ -43,22 +43,38 @@ export const photoEditorSlice = createAppSlice({
                     state.photoListSettings.push(action.payload as WritableDraft<PhotoEditorSettingsType>)
                 }
             }
+        ),
+
+        /**
+         * Изменение состояния на открытие и закрытие фоторедактора
+         */
+        changeEditorVisibility: create.reducer(
+            (state) => {
+                state.editorIsOpen = !state.editorIsOpen
+            }
+        ),
+
+        deletePhotoSettings: create.reducer(
+            (state, action: PayloadAction<{name: string}>) => {
+                state.photoListSettings = state.photoListSettings.filter((setting) => setting.name !== action.payload.name)
+            }
         )
     }),
     selectors: {
-        selectCurrentFileIndex: (state) => state.currentFileIndex,
         selectCurrentFileName: (state) => state.currentFileName,
-        selectPhotoListSettings: (state) => state.photoListSettings
+        selectPhotoListSettings: (state) => state.photoListSettings,
+        selectEditorIsOpen: (state) => state.editorIsOpen
     }
 })
 
 export const {
     setCurrentOpenedFileName,
-    changePhotoSettings
+    changePhotoSettings,
+    changeEditorVisibility
 } = photoEditorSlice.actions
 
 export const {
-    selectCurrentFileIndex,
     selectCurrentFileName,
-    selectPhotoListSettings
+    selectPhotoListSettings,
+    selectEditorIsOpen
 } = photoEditorSlice.selectors

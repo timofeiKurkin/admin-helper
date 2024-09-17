@@ -64,7 +64,7 @@ const CurrentInput: FC<PropsType> = ({currentInput}) => {
             )}
 
             {photoAndVideoInputsData.includes(currentInput.type as PhotoAndVideoKeysTypes) && (
-                <FileInput currentInput={currentInput as PhotoAndVideoInputType}/>
+                <FileInput input={currentInput as PhotoAndVideoInputType}/>
             )}
         </FormFieldWrapper>
     )

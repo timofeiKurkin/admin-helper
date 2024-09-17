@@ -1,10 +1,10 @@
-import {useEffect, DependencyList} from "react";
-import {PixelCrop} from "react-image-crop";
+import {useEffect} from "react";
 
 interface HookProps {
     fn: () => void;
     waitTime: number;
-    deps: [PixelCrop, number, number];
+    // deps: [PixelCrop, number, number];
+    deps: any[];
 }
 
 export const useDebounceEffect = ({
@@ -14,7 +14,7 @@ export const useDebounceEffect = ({
 }: HookProps) => {
     useEffect(() => {
         const time = setTimeout(() => {
-            fn.apply(undefined, deps as any)
+             fn.apply(undefined, deps as [])
         }, waitTime)
 
         return () => {

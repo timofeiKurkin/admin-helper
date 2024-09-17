@@ -1,9 +1,8 @@
 import React, {FC, useEffect, useState} from 'react';
-import {FileListStateType} from "@/app/(auxiliary)/types/AppTypes/Context";
 import {PhotoAndVideoKeysTypes} from "@/app/(auxiliary)/types/AppTypes/InputHooksTypes";
 import {useAppDispatch, useAppSelector} from "@/app/(auxiliary)/libs/redux-toolkit/store/hooks";
 import {
-    deleteFileData,
+    deleteFile,
     selectFormFileData
 } from "@/app/(auxiliary)/libs/redux-toolkit/store/slices/UserFormDataSlice/UserFormDataSlice";
 import HorizontalScroll from "@/app/(auxiliary)/components/Blocks/HorizontalScroll/HorizontalScroll";
@@ -20,16 +19,21 @@ const FilesList: FC<PropsType> = ({
                                       changeFile
                                   }) => {
     const dispatch = useAppDispatch()
-    const formFileData = useAppSelector(selectFormFileData)
+    const formFileData = useAppSelector(selectFormFileData)[type]
+    console.log("formFileData: ", formFileData)
 
-    const [currentFilesList, setCurrentFilesList] =
-        useState<FileListStateType>(() => formFileData[type] || {} as FileListStateType)
-    const [filesListLength, setFilesListLength] = useState<number>(currentFilesList.files.length)
+    // const [filesList, setFilesList] =
+    //     useState<File[]>(() => formFileData[type].filesFinally || formFileData[type].files)
+    // const [filesListLength, setFilesListLength] =
+    //     useState<number>(filesList.length)
 
     const removeFile = (
         fileName: string,
     ) => {
-        dispatch(deleteFileData({
+        console.log("name: ", fileName)
+        console.log("key: ", type)
+
+        dispatch(deleteFile({
             key: type,
             data: {
                 name: fileName
@@ -37,22 +41,17 @@ const FilesList: FC<PropsType> = ({
         }))
     }
 
-    useEffect(() => {
-        setCurrentFilesList(() => formFileData[type])
-        setFilesListLength(() => formFileData[type].files.length)
-    }, [
-        type,
-        formFileData
-    ]);
+    // useEffect(() => {
+    //     setFilesList(() => formFileData[type].filesFinally || formFileData[type].files)
+    //     setFilesListLength(() => formFileData[type].files.length)
+    // }, [
+    //     type,
+    //     formFileData
+    // ]);
 
-    console.log("formFileData: ", formFileData[type].filesLinksPreview)
-    // console.log()
-    
-
-
-    return <HorizontalScroll filesListLength={filesListLength}
+    return <HorizontalScroll filesListLength={formFileData.files.length}
                              placeholder={placeholder}
-                             currentFilesList={currentFilesList}
+                             filesList={formFileData.filesFinally || formFileData.files}
                              removeFile={removeFile}
                              changeFile={changeFile}/>
 };

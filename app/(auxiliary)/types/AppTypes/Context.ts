@@ -8,8 +8,8 @@ import {
     NUMBER_PC_KEY,
     PHONE_KEY,
     PHOTO_KEY,
-    VIDEO_KEY,
     PhotoAndVideoKeysTypes,
+    VIDEO_KEY,
 } from "@/app/(auxiliary)/types/AppTypes/InputHooksTypes";
 
 export interface AppContextType {
@@ -22,15 +22,16 @@ export interface AppContextType {
 //     name: string;
 // }
 
-export interface FileLinkPreviewType {
+export interface FilePreviewType {
     name: string;
     link: string;
 }
 
 export interface FileListStateType {
     type: PhotoAndVideoKeysTypes;
-    files: File[]; // CustomFileType[];
-    filesLinksPreview: FileLinkPreviewType[]; // Ссылки, которые используются на превью
+    filesNames: string[]; // Список имен файлов, доступных для открытия
+    files: File[]; // Список исходных файлов, которые загрузил пользователь
+    filesFinally?: File[]; // Список файлов, прошедших изменения пользователя в фоторедакторе
 }
 
 export interface FormDataItemType<T> {

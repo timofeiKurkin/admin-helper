@@ -1,4 +1,4 @@
-import React, {FC, useState} from 'react';
+import React, {FC, useEffect, useState} from 'react';
 import {PhotoAndVideoInputType} from "@/app/(auxiliary)/types/Data/Interface/RootPage/RootPageContentType";
 import styles from "./FileInput.module.scss";
 import Toggle from "@/app/(auxiliary)/components/Common/Switches/Toggle/Toggle";
@@ -17,24 +17,25 @@ import {
     setSwitchedMessageBlock
 } from "@/app/(auxiliary)/libs/redux-toolkit/store/slices/AppSlice/AppSlice";
 import {
+    changeEditorVisibility,
+    selectEditorIsOpen,
     setCurrentOpenedFileName
 } from "@/app/(auxiliary)/libs/redux-toolkit/store/slices/PhotoEditorSlice/PhotoEditorSlice";
 
 
 interface PropsType {
-    currentInput: PhotoAndVideoInputType;
+    input: PhotoAndVideoInputType;
 }
 
-const FileInput: FC<PropsType> = ({currentInput}) => {
+const FileInput: FC<PropsType> = ({input}) => {
     const dispatch = useAppDispatch()
     const userDevice = useAppSelector(selectUserDevice)
     const rootPageContent = useAppSelector(selectRootPageContent)
+    const editorIsOpen = useAppSelector(selectEditorIsOpen)
 
     const [haveMediaFile, setHaveMediaFile] =
         useState<boolean>(false)
     const [dragDropZoneIsOpen, setDragDropZoneIsOpen] =
-        useState<boolean>(false)
-    const [photoEditorIsOpen, setPhotoEditorIsOpen] =
         useState<boolean>(false)
 
     const openDragDropZone = () => {
@@ -47,14 +48,14 @@ const FileInput: FC<PropsType> = ({currentInput}) => {
         }
     }
 
-    const openPhotoEditor = () => {
-        setDragDropZoneIsOpen((prevState) => (prevState ? !prevState : prevState))
-        setPhotoEditorIsOpen((prevState) => (!prevState))
-    }
+    // const openPhotoEditor = () => {
+    //     // setDragDropZoneIsOpen((prevState) => (prevState ? !prevState : prevState))
+    //     dispatch(changeEditorVisibility())
+    // }
 
     const openSelectedFile = (fileName: string) => {
-        setPhotoEditorIsOpen((prevState) => (!prevState))
         dispatch(setCurrentOpenedFileName({fileName}))
+        dispatch(changeEditorVisibility())
     }
 
     const fileBlockHandler = () => {
@@ -63,51 +64,53 @@ const FileInput: FC<PropsType> = ({currentInput}) => {
         if (userDevice.padAdaptive640_992) {
             dispatch(setSwitchedMessageBlock(!haveMediaFile))
         } else {
-            if (currentInput.type === PHOTO_KEY) {
+            if (input.type === PHOTO_KEY) {
                 dispatch(setOpenedPhotoBlock(!haveMediaFile))
             }
 
-            if (currentInput.type === VIDEO_KEY) {
+            if (input.type === VIDEO_KEY) {
                 dispatch(setOpenedVideoBlock(!haveMediaFile))
             }
         }
     }
 
+    // useEffect(() => {
+    //     if(editorIsOpen) { setDragDropZoneIsOpen(false) }
+    // }, [editorIsOpen]);
+
     return (
         <div className={styles.fileInputWrapper}>
             <Toggle toggleStatus={haveMediaFile}
                     onClick={fileBlockHandler}>
-                {currentInput.toggleText}
+                {input.toggleText}
             </Toggle>
 
             {haveMediaFile && (
-                <div className={styles.filesBlock}>
-                    <div className={styles.fileList}>
-                        <FilesList placeholder={currentInput.inputPlaceholder || ""}
-                                   type={currentInput.type as any}
-                                   changeFile={openSelectedFile}/>
+                <>
+                    <div className={styles.filesBlock}>
+                        <div className={styles.fileList}>
+                            <FilesList placeholder={input.inputPlaceholder || ""}
+                                       type={input.type as PhotoAndVideoKeysTypes}
+                                       changeFile={openSelectedFile}/>
+                        </div>
+
+                        <div className={styles.addFiles}>
+                            <Button onClick={openDragDropZone}>{input.button}</Button>
+                        </div>
                     </div>
 
-                    <div className={styles.addFiles}>
-                        <Button onClick={openDragDropZone}>{currentInput.button}</Button>
-                    </div>
-                </div>
+                    {(dragDropZoneIsOpen && rootPageContent) ? (
+                        <DropZone content={rootPageContent.contentOfUploadBlock}
+                                  inputType={input.type as any}
+                                  visibleDragDropZone={openDragDropZone}
+                        />
+                    ) : null}
+
+                    {editorIsOpen &&
+                        <PhotoEditor inputType={input.type as PhotoAndVideoKeysTypes}/>}
+                </>
+
             )}
-
-            {(dragDropZoneIsOpen && rootPageContent) ? (
-                <DropZone content={rootPageContent.contentOfUploadBlock}
-                          inputType={currentInput.type as any}
-                          visibleDragDropZone={openDragDropZone}
-                          openPhotoEditor={openPhotoEditor}
-                />
-            ) : null}
-            {/*{haveMediaFile && (<DragDrop currentContent={currentInput}/>)}*/}
-
-            {photoEditorIsOpen &&
-                <PhotoEditor visiblePhotoEditor={openPhotoEditor}
-                             dataForEditor={{
-                                 inputType: currentInput.type as PhotoAndVideoKeysTypes,
-                             }}/>}
         </div>
     );
 };

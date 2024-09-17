@@ -6,45 +6,42 @@ import PhotoEditorData from "@/data/interface/photo-editor/data.json"
 import {PhotoEditorDataType} from "@/app/(auxiliary)/types/Data/Interface/PhotoEditor/PhotoEditorDataType";
 import PhotoEditorBody from "@/app/(auxiliary)/components/Blocks/PhotoEditor/PhotoEditorBody/PhotoEditorBody";
 import {PhotoAndVideoKeysTypes} from "@/app/(auxiliary)/types/AppTypes/InputHooksTypes";
-import {useAppSelector} from "@/app/(auxiliary)/libs/redux-toolkit/store/hooks";
+import {useAppDispatch} from "@/app/(auxiliary)/libs/redux-toolkit/store/hooks";
 import {
-    selectFormFileData
-} from "@/app/(auxiliary)/libs/redux-toolkit/store/slices/UserFormDataSlice/UserFormDataSlice";
+    changeEditorVisibility
+} from "@/app/(auxiliary)/libs/redux-toolkit/store/slices/PhotoEditorSlice/PhotoEditorSlice";
 
 interface PropsType {
-    visiblePhotoEditor: () => void;
-    dataForEditor: {
-        inputType: PhotoAndVideoKeysTypes;
-    }
+    inputType: PhotoAndVideoKeysTypes;
 }
 
 const PhotoEditor: FC<PropsType> = ({
-                                        visiblePhotoEditor,
-                                        dataForEditor
+                                        inputType
                                     }) => {
-    const formFileData = useAppSelector(selectFormFileData)
+    const dispatch = useAppDispatch()
     const photoEditorData: PhotoEditorDataType = PhotoEditorData
 
-    if (formFileData[dataForEditor.inputType]) {
-        const fileList = formFileData[dataForEditor.inputType]
+    // console.log("input type: ", inputType)
 
-        return (
-            <Backdrop onBackdropClick={visiblePhotoEditor}>
-                <div className={styles.photoEditorWrapper}
-                     onClick={(e) => e.stopPropagation()}>
-                    <div className={styles.photoEditor}>
-                        <div className={styles.photoEditorTitle}>
-                            <Title>{photoEditorData.title}</Title>
-                        </div>
-
-                        <PhotoEditorBody data={photoEditorData}
-                                         visiblePhotoEditor={visiblePhotoEditor}
-                                         fileList={fileList}/>
-                    </div>
-                </div>
-            </Backdrop>
-        );
+    const backDropClickHandler = () => {
+        dispatch(changeEditorVisibility())
     }
+
+    return (
+        <Backdrop onBackdropClick={backDropClickHandler}>
+            <div className={styles.photoEditorWrapper}
+                 onClick={(e) => e.stopPropagation()}>
+                <div className={styles.photoEditor}>
+                    <div className={styles.photoEditorTitle}>
+                        <Title>{photoEditorData.title}</Title>
+                    </div>
+
+                    <PhotoEditorBody data={photoEditorData}
+                                     type={inputType}/>
+                </div>
+            </div>
+        </Backdrop>
+    );
 };
 
 export default PhotoEditor;

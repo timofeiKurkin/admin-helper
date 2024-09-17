@@ -1,19 +1,20 @@
-import React, {FC, useCallback, useState} from 'react';
+import React, {FC, useCallback, useEffect, useState} from 'react';
 import Editor from "@/app/(auxiliary)/components/Blocks/PhotoEditor/PhotoEditorBody/Editor/Editor";
 import styles from "./PhotoEditorBody.module.scss";
 import SeparatingLine from "@/app/(auxiliary)/components/UI/SeparatingLine/SeparatingLine";
-import FileList from "@/app/(auxiliary)/components/Blocks/PhotoEditor/PhotoEditorBody/EditorFileList/EditorFileList";
+import EditorFileList
+    from "@/app/(auxiliary)/components/Blocks/PhotoEditor/PhotoEditorBody/EditorFileList/EditorFileList";
 import {PhotoEditorDataType} from "@/app/(auxiliary)/types/Data/Interface/PhotoEditor/PhotoEditorDataType";
 import Button from "@/app/(auxiliary)/components/UI/Button/Button";
 import {blue_dark, blue_light, grey} from "@/styles/colors";
 import Text from "@/app/(auxiliary)/components/UI/TextTemplates/Text";
 import Range from "@/app/(auxiliary)/components/UI/Inputs/Range/Range";
-import {FileLinkPreviewType, FileListStateType} from "@/app/(auxiliary)/types/AppTypes/Context";
 import {useAppDispatch, useAppSelector} from "@/app/(auxiliary)/libs/redux-toolkit/store/hooks";
 import {
+    changeEditorVisibility,
     changePhotoSettings,
     selectCurrentFileName,
-    selectPhotoListSettings
+    selectPhotoListSettings, setCurrentOpenedFileName
 } from "@/app/(auxiliary)/libs/redux-toolkit/store/slices/PhotoEditorSlice/PhotoEditorSlice";
 import SmallText from "@/app/(auxiliary)/components/UI/TextTemplates/SmallText";
 import {
@@ -25,27 +26,28 @@ import {
 import {PhotoEditorSettingsType} from "@/app/(auxiliary)/types/PhotoEditorTypes/PhotoEditorTypes";
 import {Crop} from "react-image-crop";
 import {
-    changePhotosPreview
+    changePhotosPreview,
+    selectFormFileData
 } from "@/app/(auxiliary)/libs/redux-toolkit/store/slices/UserFormDataSlice/UserFormDataSlice";
+import {PhotoAndVideoKeysTypes} from "@/app/(auxiliary)/types/AppTypes/InputHooksTypes";
 
 
 interface PropsType {
     data: PhotoEditorDataType;
-    fileList: FileListStateType;
-    visiblePhotoEditor: () => void;
+    type: PhotoAndVideoKeysTypes;
 }
 
 const PhotoEditorBody: FC<PropsType> = ({
                                             data,
-                                            fileList,
-                                            visiblePhotoEditor
+                                            type
                                         }) => {
     const dispatch = useAppDispatch()
+    const formFileData = useAppSelector(selectFormFileData)[type]
 
     /**
      * Название открытого в данный момент файла
      */
-    const currentFileName = useAppSelector(selectCurrentFileName)
+    const fileName = useAppSelector(selectCurrentFileName)
 
     /**
      * Настройки изображений из состояния приложения. Если добавлены новые фотографии, то создается объект с настройками по умолчанию, т.е. объект для файла существует и не является пустым
@@ -57,12 +59,12 @@ const PhotoEditorBody: FC<PropsType> = ({
      */
     const [temporaryPhotosSettings, setTemporaryPhotosSettings] =
         useState<PhotoEditorSettingsType[]>(() => photosSettings)
-    
+
     /**
-     * 
+     * Файлы для превью фотографий для списка фото в редакторе и в форме
      */
-    const [photosPreview, setPhotosPreview] = 
-        useState<FileLinkPreviewType[]>(fileList.filesLinksPreview)
+    const [listOfPreviews, setListOfPreviews] =
+        useState<File[]>(() => formFileData.filesFinally || formFileData.files)
 
     //
 
@@ -78,9 +80,9 @@ const PhotoEditorBody: FC<PropsType> = ({
     /**
      * Выбранное изображение в данный момент пользователем в виде объекта с типом File
      */
-    const [currentPhoto, setCurrentPhoto] =
+    const [photo, setPhoto] =
         useState<File>(() => (
-            fileList.files.find((f) => findCurrentFile(f, currentFileName)) || {} as File
+            formFileData.files.find((f) => findCurrentFile(f, fileName)) || {} as File
         ))
 
     /**
@@ -88,7 +90,7 @@ const PhotoEditorBody: FC<PropsType> = ({
      * Настройки выбранного изображения извлекаются из состояния temporaryPhotosSettings
      */
     const [currentPhotoSettings, setCurrentPhotoSettings] =
-        useState(() => temporaryPhotosSettings.find((f) => findCurrentFile(f, currentFileName)) || getDefaultPhotoSettings(currentFileName))
+        useState(() => temporaryPhotosSettings.find((f) => findCurrentFile(f, fileName)) || getDefaultPhotoSettings(fileName))
 
     /**
      * Значение увеличения открытой фотографии
@@ -123,7 +125,11 @@ const PhotoEditorBody: FC<PropsType> = ({
      * Сбросить настройки увеличения и поворота у выбранной фотографии
      */
     const resetSettingsHandler = () => {
-        setCurrentPhotoSettings((prevState) => ({...prevState, scale: 1, rotate: 0}))
+        setCurrentPhotoSettings((prevState) => ({
+            ...prevState,
+            scale: 1,
+            rotate: 0
+        }))
         setScale(() => 1)
         setRotate(() => 0)
     }
@@ -133,11 +139,21 @@ const PhotoEditorBody: FC<PropsType> = ({
      * @param settings
      */
     const saveSettingsHandler = (settings: PhotoEditorSettingsType) => {
-        dispatch(changePhotosPreview(photosPreview)) // Изменение preview для каждой фотографии
+        /**
+         * Изменение preview у всего списка фотографий
+         */
+        dispatch(changePhotosPreview(listOfPreviews))
 
 
+        /**
+         * Сохранение всех настроек для каждого фото
+         */
         dispatch(changePhotoSettings(settings))
-        visiblePhotoEditor()
+        dispatch(changeEditorVisibility())
+    }
+
+    const closeEditorHandler = () => {
+        dispatch(changeEditorVisibility())
     }
 
     /**
@@ -146,16 +162,10 @@ const PhotoEditorBody: FC<PropsType> = ({
      */
     const switchToAnotherFile = (anotherFileName: string) => {
         const prevFileName = currentPhotoSettings.name
-        // console.log("")
 
         setTemporaryPhotosSettings((prevState) => {
             return prevState.map((settings) => {
                 if (settings.name === prevFileName) {
-
-                    // console.log("prev name: ", prevFileName)
-                    // console.log("crop: ", crop)
-                    // console.log("rotate: ", rotate)
-
                     return {
                         ...settings,
                         scale,
@@ -168,9 +178,12 @@ const PhotoEditorBody: FC<PropsType> = ({
             })
         })
 
-        setCurrentPhoto(fileList.files.find((f) => findCurrentFile(f, anotherFileName)) || {} as File)
-        const anotherSetting = temporaryPhotosSettings.find((f) => findCurrentFile(f, anotherFileName)) || getDefaultPhotoSettings(anotherFileName)
-        // console.log("another settings after updating temporary list of settings: ", anotherSetting)
+        dispatch(setCurrentOpenedFileName({fileName: anotherFileName}))
+
+        setPhoto(formFileData.files.find((f) => findCurrentFile(f, anotherFileName)) || {} as File)
+        const anotherSetting = temporaryPhotosSettings
+            .find((f) =>
+                findCurrentFile(f, anotherFileName)) || getDefaultPhotoSettings(anotherFileName)
 
         setCurrentPhotoSettings(anotherSetting)
         updateCrop(anotherSetting.crop)
@@ -178,18 +191,28 @@ const PhotoEditorBody: FC<PropsType> = ({
         setScale(anotherSetting.scale)
     }
 
-    
-    const updatePhotoPreview = useCallback((newPreview: FileLinkPreviewType) => {
-        console.log("new preview: ", newPreview)
-        setPhotosPreview((prevState) => {
-            return prevState.map((preview) => {
-                if (preview.name === newPreview.name) {
-                    return newPreview
+
+    const updatePhotoPreview = (newFile: File) => {
+        setListOfPreviews((prevState) => {
+            return prevState.map((file) => {
+                if (file.name === newFile.name) {
+                    return newFile
                 }
-                return preview
+                return file
             })
         })
-    }, [])
+    }
+
+    useEffect(() => {
+        setListOfPreviews(() => formFileData.filesFinally || formFileData.files)
+    }, [
+        formFileData.files,
+        formFileData.filesFinally
+    ]);
+
+    // console.log("Where is my photo?")
+    // console.log("photo: ", photo)
+    // console.log("")
 
     return (
         <div className={styles.photoEditorBody}>
@@ -197,13 +220,12 @@ const PhotoEditorBody: FC<PropsType> = ({
                 <Editor scale={scale}
                         rotate={rotate}
                         setCrop={updateCrop}
-                        updatePhotoPreview={updatePhotoPreview}
+                        updatePhoto={updatePhotoPreview}
                         crop={crop}
-                        currentPhoto={currentPhoto}/>
+                        photo={photo}/>
             </div>
 
             <div className={styles.editorControlsWrapper}>
-                {/*{content.rotate}*/}
 
                 <div className={styles.editorControls}>
                     <div className={styles.editorTitle}><Text>{data.editor.scale}</Text></div>
@@ -266,26 +288,31 @@ const PhotoEditorBody: FC<PropsType> = ({
             <SeparatingLine className={styles.separatedLine}/>
 
             <div className={styles.fileListGrid}>
-                <FileList data={data.photoList}
-                          contentForEditor={{
-                              fileList,
-                              switchToAnotherFile: switchToAnotherFile,
-                          }}
+                <EditorFileList contentForEditor={{
+                    listOfPreviews: listOfPreviews,
+                    type: type,
+                    data: data.photoList,
+                    switchToAnotherFile: switchToAnotherFile,
+                }}
                 />
             </div>
 
             <div className={styles.photoEditorButtons}>
-                <Button style={{backgroundColor: blue_dark}} onClick={() => saveSettingsHandler({
-                    name: currentFileName,
-                    scale,
-                    rotate,
-                    crop
-                })}>
+                <Button style={{backgroundColor: blue_dark}}
+                        onClick={() => saveSettingsHandler({
+                            name: fileName,
+                            scale,
+                            rotate,
+                            crop
+                        })}>
                     {data.buttons.save}
                 </Button>
-                <Button onClick={visiblePhotoEditor}
+
+                <Button onClick={closeEditorHandler}
                         style={{backgroundColor: grey}}
-                >{data.buttons.close}</Button>
+                >
+                    {data.buttons.close}
+                </Button>
             </div>
         </div>
     );

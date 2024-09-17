@@ -12,7 +12,6 @@ import {
     VIDEO_KEY
 } from "@/app/(auxiliary)/types/AppTypes/InputHooksTypes";
 import {
-    FileLinkPreviewType,
     FormDataItemType,
     PermissionsOfFormStatesType,
     UserFormDataType
@@ -29,14 +28,15 @@ const initialState: InitialStateType = {
         // [MESSAGE_KEY]: {} as File,
         [PHOTO_KEY]: {
             type: PHOTO_KEY,
+            filesNames: [],
             files: [],
-            filesLinksPreview: []
+            filesFinally: []
         },
         [VIDEO_KEY]: {
             type: VIDEO_KEY,
+            filesNames: [],
             files: [],
-            filesLinksPreview: []
-
+            // filesFinally: []
         }
     },
     text_data: {
@@ -87,11 +87,11 @@ interface DeleteFileAction {
  * - addFileData
  * - deleteFileData
  * - changePhotosPreview
- * 
+ *
  * Разрешения формы:
  * - setPermissionPolitic
  * - setUserCanTalk
- * 
+ *
  * Валидация формы
  * - setValidationFormStatus
  */
@@ -118,29 +118,55 @@ export const userFormDataSlice = createAppSlice({
                 state,
                 action: PayloadAction<DataActionType<PhotoAndVideoKeysTypes, FormDataItemType<File[]>>> // CustomFileType[]
             ) => {
-                state.file_data[action.payload.key].filesLinksPreview = action.payload.data.value.map((file) => ({
-                    name: file.name,
-                    link: URL.createObjectURL(file)
-                }))
+                state.file_data[action.payload.key].files =
+                    state.file_data[action.payload.key].files.concat(action.payload.data.value)
 
-                state.file_data[action.payload.key].files = [
-                    ...state.file_data[action.payload.key].files,
-                    ...action.payload.data.value
-                ]
+                state.file_data[action.payload.key].filesFinally =
+                    state.file_data[action.payload.key].filesFinally?.concat(action.payload.data.value)
+
+                state.file_data[action.payload.key].filesNames = state.file_data[action.payload.key].filesNames.concat(action.payload.data.value.map((f) => f.name))
             }
         ),
         /**
          * Удаление файлов из состояния
          */
-        deleteFileData: create.reducer(
+        deleteFile: create.reducer(
             (
                 state,
                 action: PayloadAction<DataActionType<PhotoAndVideoKeysTypes, DeleteFileAction>>
             ) => {
-                state.file_data[action.payload.key].files =
-                    state.file_data[action.payload.key].files.filter(
-                        (file) => file.name !== action.payload.data.name
-                    )
+                const filter = <T extends File | string>(item: T) => {
+                    if (item instanceof File) {
+                        return item.name !== action.payload.data.name
+                    } else if (typeof item === "string") {
+                        return item !== action.payload.data.name
+                    }
+                }
+
+                // /**
+                //  * Удаление исходного файла
+                //  */
+                // state.file_data[action.payload.key].files =
+                //     state.file_data[action.payload.key].files.filter(filter)
+                //
+                // /**
+                //  * Удаление файла, подвергшийся изменениям пользователя в фоторедакторе
+                //  */
+                // state.file_data[action.payload.key].filesFinally =
+                //     state.file_data[action.payload.key].filesFinally?.filter(filter)
+                //
+                // /**
+                //  * Удаление имени из списка доступных файлов к открытию
+                //  */
+                // state.file_data[action.payload.key].filesNames =
+                //     state.file_data[action.payload.key].filesNames.filter(filter)
+
+                state.file_data[action.payload.key] = {
+                    type: action.payload.key,
+                    files: state.file_data[action.payload.key].files.filter(filter),
+                    filesFinally: state.file_data[action.payload.key].filesFinally?.filter(filter),
+                    filesNames: state.file_data[action.payload.key].filesNames.filter(filter)
+                }
             }
         ),
         /**
@@ -148,13 +174,13 @@ export const userFormDataSlice = createAppSlice({
          */
         changePhotosPreview: create.reducer((
             state,
-            action: PayloadAction<FileLinkPreviewType[]>
+            action: PayloadAction<File[]>
         ) => {
-            state.file_data["photo"].filesLinksPreview = action.payload
+            state.file_data["photo"].filesFinally = action.payload
         }),
-        
+
         /**
-         * 
+         *
          */
         setPermissionPolitic: create.reducer(
             (state) => {
@@ -166,7 +192,7 @@ export const userFormDataSlice = createAppSlice({
                 state.permissions.userCanTalk = !state.permissions.userCanTalk
             }
         ),
-        
+
         /**
          * Slice для изменения состояния всей валидации формы. Этот статус показывает, что все поля формы корректно заполнены, поэтому файлы могут быть отправлены на сервер
          */
@@ -180,17 +206,17 @@ export const userFormDataSlice = createAppSlice({
         )
     }),
     selectors: {
-        selectFormTextData: (sel) => sel.text_data,
-        selectFormFileData: (sel) => sel.file_data,
-        selectPermissionsOfForm: (sel) => sel.permissions,
-        selectValidationFormStatus: (sel) => sel.validationFormStatus
+        selectFormTextData: (state) => state.text_data,
+        selectFormFileData: (state) => state.file_data,
+        selectPermissionsOfForm: (state) => state.permissions,
+        selectValidationFormStatus: (state) => state.validationFormStatus
     }
 })
 
 export const {
     changeTextData,
     addFileData,
-    deleteFileData,
+    deleteFile,
     setPermissionPolitic,
     setUserCanTalk,
     setValidationFormStatus,
