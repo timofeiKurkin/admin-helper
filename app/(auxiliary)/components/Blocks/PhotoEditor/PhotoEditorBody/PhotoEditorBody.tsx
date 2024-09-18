@@ -14,7 +14,8 @@ import {
     changeEditorVisibility,
     changePhotoSettings,
     selectCurrentFileName,
-    selectPhotoListSettings, setCurrentOpenedFileName
+    selectPhotoListSettings,
+    setCurrentOpenedFileName
 } from "@/app/(auxiliary)/libs/redux-toolkit/store/slices/PhotoEditorSlice/PhotoEditorSlice";
 import SmallText from "@/app/(auxiliary)/components/UI/TextTemplates/SmallText";
 import {
@@ -29,12 +30,12 @@ import {
     changePhotosPreview,
     selectFormFileData
 } from "@/app/(auxiliary)/libs/redux-toolkit/store/slices/UserFormDataSlice/UserFormDataSlice";
-import {PhotoAndVideoKeysTypes} from "@/app/(auxiliary)/types/AppTypes/InputHooksTypes";
+import {PHOTO_KEY} from "@/app/(auxiliary)/types/AppTypes/InputHooksTypes";
 
 
 interface PropsType {
     data: PhotoEditorDataType;
-    type: PhotoAndVideoKeysTypes;
+    type: typeof PHOTO_KEY;
 }
 
 const PhotoEditorBody: FC<PropsType> = ({
@@ -210,10 +211,6 @@ const PhotoEditorBody: FC<PropsType> = ({
         formFileData.filesFinally
     ]);
 
-    // console.log("Where is my photo?")
-    // console.log("photo: ", photo)
-    // console.log("")
-
     return (
         <div className={styles.photoEditorBody}>
             <div className={styles.editorGrid}>
@@ -247,10 +244,9 @@ const PhotoEditorBody: FC<PropsType> = ({
                                           style={{
                                               left: `${((scaleX - min) / (max - min)) * 100}%`
                                           }}
-                                          onClick={() => scaleImageHandler(scaleX)}
-                                    >
-                                    <SmallText>{scaleX}x</SmallText>
-                                </span>
+                                          onClick={() => scaleImageHandler(scaleX)}>
+                                        <SmallText>{scaleX}x</SmallText>
+                                    </span>
                                 )
                             })}
                         </div>
@@ -264,8 +260,7 @@ const PhotoEditorBody: FC<PropsType> = ({
                                value={rotate}
                                maxValue={180}
                                minValue={-180}
-                               step={1}
-                        />
+                               step={1}/>
 
                         <div className={styles.rotateSliderTicks}>
                             {rotatePoints.map((degree) => (
@@ -309,8 +304,7 @@ const PhotoEditorBody: FC<PropsType> = ({
                 </Button>
 
                 <Button onClick={closeEditorHandler}
-                        style={{backgroundColor: grey}}
-                >
+                        style={{backgroundColor: grey}}>
                     {data.buttons.close}
                 </Button>
             </div>

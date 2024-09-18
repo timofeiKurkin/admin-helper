@@ -5,6 +5,12 @@ export interface PhotoEditorDataType {
     buttons: EditorsButtonsDataType;
 }
 
+export interface VideoPlayerDataType {
+    title: string;
+    photoList: { uploadedPhotos: string; }
+    buttons: { close: string; }
+}
+
 export interface EditorDataType {
     scale: string;
     rotate: string;

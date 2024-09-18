@@ -21,6 +21,7 @@ import {
     selectEditorIsOpen,
     setCurrentOpenedFileName
 } from "@/app/(auxiliary)/libs/redux-toolkit/store/slices/PhotoEditorSlice/PhotoEditorSlice";
+import VideoPlayerPopup from "@/app/(auxiliary)/components/Blocks/VideoPlayerPopup/VideoPlayerPopup";
 
 
 interface PropsType {
@@ -48,11 +49,6 @@ const FileInput: FC<PropsType> = ({input}) => {
         }
     }
 
-    // const openPhotoEditor = () => {
-    //     // setDragDropZoneIsOpen((prevState) => (prevState ? !prevState : prevState))
-    //     dispatch(changeEditorVisibility())
-    // }
-
     const openSelectedFile = (fileName: string) => {
         dispatch(setCurrentOpenedFileName({fileName}))
         dispatch(changeEditorVisibility())
@@ -73,10 +69,6 @@ const FileInput: FC<PropsType> = ({input}) => {
             }
         }
     }
-
-    // useEffect(() => {
-    //     if(editorIsOpen) { setDragDropZoneIsOpen(false) }
-    // }, [editorIsOpen]);
 
     return (
         <div className={styles.fileInputWrapper}>
@@ -106,8 +98,11 @@ const FileInput: FC<PropsType> = ({input}) => {
                         />
                     ) : null}
 
-                    {editorIsOpen &&
-                        <PhotoEditor inputType={input.type as PhotoAndVideoKeysTypes}/>}
+                    {editorIsOpen && input.type === "photo" &&
+                        <PhotoEditor/>}
+
+                    {editorIsOpen && input.type === "video" &&
+                        <VideoPlayerPopup/>}
                 </>
 
             )}

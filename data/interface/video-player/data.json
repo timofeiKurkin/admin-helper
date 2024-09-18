@@ -1,0 +1,9 @@
+{
+    "title": "Видеоплеер",
+    "photoList": {
+        "uploadedPhotos": "Загруженные видео:"
+    },
+    "buttons": {
+        "close": "Закрыть"
+    }
+}

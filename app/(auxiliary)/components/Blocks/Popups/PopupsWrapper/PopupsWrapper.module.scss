@@ -1,28 +1,24 @@
-@import "@/styles/variables.module";
+@import "@/styles/variables.module.scss";
 
-.photoEditorWrapper {
-	//width: 67.625rem;
-	//height: 43.375rem;
-
-	//width: 78.6875rem;
-	height: 51.25rem;
+.popupWrapper {
 
 	border-radius: $border_radius;
 	background-color: $white_1;
 	overflow: hidden;
 
-	padding: 2.5rem 4.38rem;
+	@media screen and ($desktop1920) {
+		padding: 2.5rem 4.38rem;
+	}
 
-	.photoEditor {
+	.popup {
 		display: grid;
 		grid-template-columns: 1fr;
 		grid-template-rows: min-content 1fr min-content;
+		row-gap: 2.5rem;
 
-
-		.photoEditorTitle {
+		.popupTitle {
 			display: flex;
 			justify-content: center;
-			//text-align: center;
 		}
 	}
 }

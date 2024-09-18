@@ -20,7 +20,6 @@ const FilesList: FC<PropsType> = ({
                                   }) => {
     const dispatch = useAppDispatch()
     const formFileData = useAppSelector(selectFormFileData)[type]
-    console.log("formFileData: ", formFileData)
 
     // const [filesList, setFilesList] =
     //     useState<File[]>(() => formFileData[type].filesFinally || formFileData[type].files)
@@ -30,9 +29,6 @@ const FilesList: FC<PropsType> = ({
     const removeFile = (
         fileName: string,
     ) => {
-        console.log("name: ", fileName)
-        console.log("key: ", type)
-
         dispatch(deleteFile({
             key: type,
             data: {

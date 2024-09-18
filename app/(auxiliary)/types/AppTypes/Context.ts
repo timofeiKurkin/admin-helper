@@ -22,10 +22,10 @@ export interface AppContextType {
 //     name: string;
 // }
 
-export interface FilePreviewType {
-    name: string;
-    link: string;
-}
+// export interface FilePreviewType {
+//     name: string;
+//     link: string;
+// }
 
 export interface FileListStateType {
     type: PhotoAndVideoKeysTypes;
@@ -59,42 +59,6 @@ export interface UserFormDataType {
     text_data: UserTextDataType;
 }
 
-// const MY_CONSTANT = 'MY_CONSTANT'
-// const SOMETHING_ELSE = 'SOMETHING_ELSE'
-// type MyType = typeof MY_CONSTANT | typeof SOMETHING_ELSE
-
-interface UserDataKeysType {
-    text_keys: {
-        device_key: typeof DEVICE_KEY;
-        name_key: typeof NAME_KEY;
-        message_text_key: typeof MESSAGE_KEY;
-        company_key: typeof COMPANY_KEY;
-        number_pc_key: typeof NUMBER_PC_KEY;
-        phone_key: typeof PHONE_KEY;
-    },
-    file_keys: {
-        photo_key: typeof PHOTO_KEY;
-        message_file_key: typeof MESSAGE_KEY,
-        video_key: typeof VIDEO_KEY;
-    }
-}
-
-// export const KEYS_OF_USER_FORM_DATA: UserDataKeysType = {
-//     text_keys: {
-//         device_key: DEVICE_KEY,
-//         name_key: NAME_KEY,
-//         message_text_key: MESSAGE_KEY,
-//         company_key: COMPANY_KEY,
-//         number_pc_key: NUMBER_PC_KEY,
-//         phone_key: PHONE_KEY,
-//     },
-//     file_keys: {
-//         photo_key: PHOTO_KEY,
-//         message_file_key: MESSAGE_KEY,
-//         video_key: VIDEO_KEY,
-//     }
-// }
-
 export interface UserDeviceStateType {
     phoneAdaptive: boolean;
     padAdaptive: boolean;
@@ -125,8 +89,6 @@ export interface ProviderStateType {
     rootPageContent?: {
         uploadFileContent: ContentOfUploadBlockType;
     };
-    // photoList?: FileListStateType;
-    // videoList?: FileListStateType;
     openedPhotoBlock?: boolean;
     openedVideoBlock?: boolean;
     switchedMessageBlock?: boolean;
