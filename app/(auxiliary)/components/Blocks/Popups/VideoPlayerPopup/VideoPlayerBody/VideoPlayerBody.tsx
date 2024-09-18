@@ -1,12 +1,20 @@
-import React, {FC, useEffect} from 'react';
+import React, {FC, useCallback, useEffect, useState} from 'react';
 import {VideoPlayerDataType} from "@/app/(auxiliary)/types/Data/Interface/PhotoEditor/PhotoEditorDataType";
 import {VIDEO_KEY} from "@/app/(auxiliary)/types/AppTypes/InputHooksTypes";
-import {useAppSelector} from "@/app/(auxiliary)/libs/redux-toolkit/store/hooks";
+import {useAppDispatch, useAppSelector} from "@/app/(auxiliary)/libs/redux-toolkit/store/hooks";
 import {
     selectFormFileData
 } from "@/app/(auxiliary)/libs/redux-toolkit/store/slices/UserFormDataSlice/UserFormDataSlice";
 import VideoPlayer
     from "@/app/(auxiliary)/components/Blocks/Popups/VideoPlayerPopup/VideoPlayerBody/VideoPlayer/VideoPlayer";
+import styles from "./VideoPlayerBody.module.scss"
+import popupsCommonStyles from "@/app/(auxiliary)/components/Common/Popups/PopupsWrapper/PopupsCommomStyles.module.scss"
+import PopupFileList from "@/app/(auxiliary)/components/Common/Popups/PopupsWrapper/PopupFileList/PopupFileList";
+import Button from "@/app/(auxiliary)/components/UI/Button/Button";
+import {
+    changeEditorVisibility, selectOpenedFileName, setCurrentOpenedFileName
+} from "@/app/(auxiliary)/libs/redux-toolkit/store/slices/PhotoEditorSlice/PhotoEditorSlice";
+
 
 interface PropsType {
     data: VideoPlayerDataType;
@@ -14,22 +22,63 @@ interface PropsType {
 }
 
 const VideoPlayerBody: FC<PropsType> = ({data, type}) => {
-
+    const dispatch = useAppDispatch()
     const formFileData = useAppSelector(selectFormFileData)[type].files
-    const firstVideo = formFileData[0]
-    const firstVideoURl = URL.createObjectURL(firstVideo)
+    const openedFileName = useAppSelector(selectOpenedFileName)
+
+    /**
+     * Callback для поиска файла или настройки файла по его названию. Используется в инициализации состояния и его обновления
+     */
+    const findCurrentFile = useCallback(<T extends { name: string }>(file: T, name: string) => {
+        return file.name === name
+    }, [])
+
+    const [videoURl, setVideoURl] = useState<string>(() => URL.createObjectURL(
+            formFileData.find((f) => findCurrentFile(f, openedFileName)) ||
+            formFileData[0]
+        )
+    )
+
+    const switchToAnotherFile = () => {
+    }
+
+    const closeVideoPlayer = () => {
+        dispatch(changeEditorVisibility())
+    }
+
+    useEffect(() => {
+        setVideoURl(() => URL.createObjectURL(
+            formFileData.find((f) => findCurrentFile(f, openedFileName)) ||
+            formFileData[0]
+        ))
+    }, [
+        findCurrentFile,
+        formFileData,
+        openedFileName
+    ]);
 
     useEffect(() => {
         return () => {
-            if (firstVideoURl) {
-                URL.revokeObjectURL(firstVideoURl)
+            if (videoURl) {
+                URL.revokeObjectURL(videoURl)
             }
         }
-    }, [firstVideoURl]);
+    }, [videoURl]);
 
     return (
-        <div>
-            <VideoPlayer videoURL={firstVideoURl}/>
+        <div className={`${popupsCommonStyles.popupBody} ${styles.videoPlayerBody}`}>
+            <VideoPlayer videoURL={videoURl}/>
+
+            <PopupFileList contentForEditor={{
+                titleOfList: data.photoList.uploadedPhotos,
+                listOfPreviews: [],
+                switchToAnotherFile,
+                type,
+            }}/>
+
+            <div className={`${styles.closeButton} ${popupsCommonStyles.buttons}`}>
+                <Button onClick={closeVideoPlayer}>{data.buttons.close}</Button>
+            </div>
         </div>
     );
 };

@@ -1,5 +1,6 @@
 import React, {FC, useCallback, useEffect, useState} from 'react';
 import styles from "./PhotoEditorBody.module.scss";
+import popupsCommonStyles from "@/app/(auxiliary)/components/Common/Popups/PopupsWrapper/PopupsCommomStyles.module.scss"
 import SeparatingLine from "@/app/(auxiliary)/components/UI/SeparatingLine/SeparatingLine";
 import {PhotoEditorDataType} from "@/app/(auxiliary)/types/Data/Interface/PhotoEditor/PhotoEditorDataType";
 import Button from "@/app/(auxiliary)/components/UI/Button/Button";
@@ -10,7 +11,7 @@ import {useAppDispatch, useAppSelector} from "@/app/(auxiliary)/libs/redux-toolk
 import {
     changeEditorVisibility,
     changePhotoSettings,
-    selectCurrentFileName,
+    selectOpenedFileName,
     selectPhotoListSettings,
     setCurrentOpenedFileName
 } from "@/app/(auxiliary)/libs/redux-toolkit/store/slices/PhotoEditorSlice/PhotoEditorSlice";
@@ -29,8 +30,7 @@ import {
 } from "@/app/(auxiliary)/libs/redux-toolkit/store/slices/UserFormDataSlice/UserFormDataSlice";
 import {PHOTO_KEY} from "@/app/(auxiliary)/types/AppTypes/InputHooksTypes";
 import Editor from "@/app/(auxiliary)/components/Blocks/Popups/PhotoEditorPopup/PhotoEditorBody/Editor/Editor";
-import EditorFileList
-    from "@/app/(auxiliary)/components/Blocks/Popups/PhotoEditorPopup/PhotoEditorBody/EditorFileList/EditorFileList";
+import PopupFileList from "@/app/(auxiliary)/components/Common/Popups/PopupsWrapper/PopupFileList/PopupFileList";
 
 
 interface PropsType {
@@ -48,7 +48,7 @@ const PhotoEditorBody: FC<PropsType> = ({
     /**
      * Название открытого в данный момент файла
      */
-    const fileName = useAppSelector(selectCurrentFileName)
+    const fileName = useAppSelector(selectOpenedFileName)
 
     /**
      * Настройки изображений из состояния приложения. Если добавлены новые фотографии, то создается объект с настройками по умолчанию, т.е. объект для файла существует и не является пустым
@@ -179,8 +179,6 @@ const PhotoEditorBody: FC<PropsType> = ({
             })
         })
 
-        dispatch(setCurrentOpenedFileName({fileName: anotherFileName}))
-
         setPhoto(formFileData.files.find((f) => findCurrentFile(f, anotherFileName)) || {} as File)
         const anotherSetting = temporaryPhotosSettings
             .find((f) =>
@@ -212,7 +210,7 @@ const PhotoEditorBody: FC<PropsType> = ({
     ]);
 
     return (
-        <div className={styles.photoEditorBody}>
+        <div className={`${popupsCommonStyles.popupBody} ${styles.photoEditorBody}`}>
             <div className={styles.editorGrid}>
                 <Editor scale={scale}
                         rotate={rotate}
@@ -276,23 +274,23 @@ const PhotoEditorBody: FC<PropsType> = ({
                 </div>
 
                 <div className={styles.resetSettings} onClick={() => resetSettingsHandler()}>
-                    <Text style={{color: blue_light}}>{data.editor.resetSettings}</Text>
+                    <Text style={{color: blue_light}}>
+                        {data.editor.resetSettings}
+                    </Text>
                 </div>
             </div>
 
             <SeparatingLine className={styles.separatedLine}/>
 
-            <div className={styles.fileListGrid}>
-                <EditorFileList contentForEditor={{
-                    listOfPreviews: listOfPreviews,
-                    type: type,
-                    data: data.photoList,
-                    switchToAnotherFile: switchToAnotherFile,
-                }}
-                />
-            </div>
+            <PopupFileList contentForEditor={{
+                listOfPreviews: listOfPreviews,
+                type: type,
+                titleOfList: data.photoList.uploadedPhotos,
+                switchToAnotherFile: switchToAnotherFile,
+            }}
+            />
 
-            <div className={styles.photoEditorButtons}>
+            <div className={`${popupsCommonStyles.buttons} ${styles.photoEditorButtons}`}>
                 <Button style={{backgroundColor: blue_dark}}
                         onClick={() => saveSettingsHandler({
                             name: fileName,

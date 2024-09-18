@@ -1,16 +1,9 @@
-
 .photoEditorBody {
-	//margin: 3.12rem 0 2.5rem 0;
-
-	width: inherit;
-	height: inherit;
-
-	display: grid;
-	grid-template-columns: 40rem 22.5625rem;
 	grid-template-rows: 152px 2px 20.75rem 3.3125rem;
-	grid-template-areas: "editor editor-controls" "editor separated-line" "editor file-list" "editor buttons";
-	column-gap: 3.75rem;
-	row-gap: 1.87rem;
+	grid-template-areas: "editor editor-controls"
+						 "editor separated-line"
+						 "editor popup-file-list"
+						 "editor buttons";
 
 	.editorGrid {
 		grid-area: editor;
@@ -104,12 +97,11 @@
 		margin: 1.56px 0;
 	}
 
-	.fileListGrid {
-		grid-area: file-list;
-	}
+	//.fileListGrid {
+	//	grid-area: file-list;
+	//}
 
 	.photoEditorButtons {
-		grid-area: buttons;
 		display: grid;
 		grid-template-columns: repeat(2, 10.3125rem);
 		column-gap: 1.81rem;

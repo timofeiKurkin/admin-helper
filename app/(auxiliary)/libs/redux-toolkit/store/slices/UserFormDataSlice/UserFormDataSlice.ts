@@ -36,7 +36,7 @@ const initialState: InitialStateType = {
             type: VIDEO_KEY,
             filesNames: [],
             files: [],
-            // filesFinally: []
+            filesFinally: []
         }
     },
     text_data: {
@@ -143,28 +143,22 @@ export const userFormDataSlice = createAppSlice({
                     }
                 }
 
-                // /**
-                //  * Удаление исходного файла
-                //  */
-                // state.file_data[action.payload.key].files =
-                //     state.file_data[action.payload.key].files.filter(filter)
-                //
-                // /**
-                //  * Удаление файла, подвергшийся изменениям пользователя в фоторедакторе
-                //  */
-                // state.file_data[action.payload.key].filesFinally =
-                //     state.file_data[action.payload.key].filesFinally?.filter(filter)
-                //
-                // /**
-                //  * Удаление имени из списка доступных файлов к открытию
-                //  */
-                // state.file_data[action.payload.key].filesNames =
-                //     state.file_data[action.payload.key].filesNames.filter(filter)
-
                 state.file_data[action.payload.key] = {
                     type: action.payload.key,
+
+                    /**
+                     * Удаление исходного файла
+                     */
                     files: state.file_data[action.payload.key].files.filter(filter),
+
+                    /**
+                     * Удаление файла, подвергшийся изменениям пользователя в фоторедакторе
+                     */
                     filesFinally: state.file_data[action.payload.key].filesFinally?.filter(filter),
+
+                    /**
+                     * Удаление имени из списка доступных файлов к открытию
+                     */
                     filesNames: state.file_data[action.payload.key].filesNames.filter(filter)
                 }
             }

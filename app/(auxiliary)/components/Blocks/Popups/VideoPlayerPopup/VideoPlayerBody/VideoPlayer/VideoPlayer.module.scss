@@ -1,32 +1,27 @@
-@import "@/styles/variables.module";
+@import "@/styles/variables.module.scss";
 
-.editorBody {
+.videoPlayerWrapper {
+	grid-area: video-player;
+
 	display: flex;
 	flex-direction: column;
 	border-radius: $border_radius;
 	overflow: hidden;
 	user-select: none;
-	//row-gap: 1.87rem;
 
-	.editorBackground {
+	.videoPlayerBackground {
+
 		@media screen and ($desktop1920) {
 			width: 640px;
 			height: 640px;
 		}
-
 		background-color: #0f0f0f;
 
-		.editorWrapper {
+		.videoPlayerBody {
+			width: inherit;
 			height: inherit;
-
 			display: flex;
 			align-items: center;
-
-			.reactCrop {
-				& > div:first-child {
-					overflow: hidden;
-				}
-			}
 		}
 	}
 }

@@ -6,14 +6,14 @@ import Trash from "@/app/(auxiliary)/components/UI/SVG/Trash/Trash";
 import {useAppDispatch, useAppSelector} from "@/app/(auxiliary)/libs/redux-toolkit/store/hooks";
 import {
     changeEditorVisibility,
-    selectCurrentFileName,
+    selectOpenedFileName,
     setCurrentOpenedFileName
 } from "@/app/(auxiliary)/libs/redux-toolkit/store/slices/PhotoEditorSlice/PhotoEditorSlice";
 import {
     deleteFile,
     selectFormFileData
 } from "@/app/(auxiliary)/libs/redux-toolkit/store/slices/UserFormDataSlice/UserFormDataSlice";
-import styles from "./EditorFile.module.scss";
+import styles from "./PopupFile.module.scss";
 import {PhotoAndVideoKeysTypes} from "@/app/(auxiliary)/types/AppTypes/InputHooksTypes";
 
 
@@ -24,7 +24,7 @@ interface PropsType {
     type: PhotoAndVideoKeysTypes;
 }
 
-const EditorFile: FC<PropsType> = ({
+const PopupFile: FC<PropsType> = ({
                                        index,
                                        file,
                                        switchToAnotherFile,
@@ -32,7 +32,7 @@ const EditorFile: FC<PropsType> = ({
                                    }) => {
 
     const dispatch = useAppDispatch()
-    const currentFileName = useAppSelector(selectCurrentFileName)
+    const currentFileName = useAppSelector(selectOpenedFileName)
     const filesNames = useAppSelector(selectFormFileData)[type].filesNames
 
     const chooseAnotherFile = (fileName: string) => {
@@ -68,7 +68,7 @@ const EditorFile: FC<PropsType> = ({
 
             <div className={styles.photoPreview}>
                 <FilePreviewBlock url={URL.createObjectURL(file)}
-                                  alt={`user's file for change - ${file.name}`}/>
+                                  alt={file.name}/>
             </div>
 
             <Text>{trimLongTitle(file.name.split(".")[0], 14)}</Text>
@@ -84,4 +84,4 @@ const EditorFile: FC<PropsType> = ({
     )
 };
 
-export default EditorFile;
+export default PopupFile;

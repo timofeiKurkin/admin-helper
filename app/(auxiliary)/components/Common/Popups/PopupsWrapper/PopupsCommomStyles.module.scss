@@ -1,0 +1,13 @@
+.popupBody {
+	width: inherit;
+	height: inherit;
+
+	display: grid;
+	grid-template-columns: 40rem 22.5625rem;
+	column-gap: 3.75rem;
+	row-gap: 1.87rem;
+}
+
+.buttons {
+	grid-area: buttons;
+}

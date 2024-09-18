@@ -5,13 +5,13 @@ import {PhotoEditorSettingsType} from "@/app/(auxiliary)/types/PhotoEditorTypes/
 
 
 interface InitialState {
-    currentFileName: string;
+    openedFileName: string;
     photoListSettings: PhotoEditorSettingsType[];
     editorIsOpen: boolean;
 }
 
 const initialState: InitialState = {
-    currentFileName: "",
+    openedFileName: "",
     photoListSettings: [],
     editorIsOpen: false
 }
@@ -22,7 +22,7 @@ export const photoEditorSlice = createAppSlice({
     reducers: (create) => ({
         setCurrentOpenedFileName: create.reducer(
             (state, action: PayloadAction<{ fileName: string }>) => {
-                state.currentFileName = action.payload.fileName
+                state.openedFileName = action.payload.fileName
             }
         ),
         changePhotoSettings: create.reducer(
@@ -61,7 +61,7 @@ export const photoEditorSlice = createAppSlice({
         )
     }),
     selectors: {
-        selectCurrentFileName: (state) => state.currentFileName,
+        selectOpenedFileName: (state) => state.openedFileName,
         selectPhotoListSettings: (state) => state.photoListSettings,
         selectEditorIsOpen: (state) => state.editorIsOpen
     }
@@ -74,7 +74,7 @@ export const {
 } = photoEditorSlice.actions
 
 export const {
-    selectCurrentFileName,
+    selectOpenedFileName,
     selectPhotoListSettings,
     selectEditorIsOpen
 } = photoEditorSlice.selectors

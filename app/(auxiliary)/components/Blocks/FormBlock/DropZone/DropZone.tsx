@@ -71,7 +71,6 @@ const DropZone: FC<PropsType> = ({
     }, [
         dispatch,
         formFileData,
-        // openPhotoEditor,
         visibleDragDropZone,
         inputType,
     ])
@@ -117,7 +116,6 @@ const DropZone: FC<PropsType> = ({
         const handleKeyDown = async () => {
             try {
                 const data = await navigator.clipboard.read()
-                console.log("data", data)
 
                 if (data[0].types.includes("image/png")) {
                     const blobOutput = await data[0].getType("image/png")
@@ -136,7 +134,16 @@ const DropZone: FC<PropsType> = ({
                             // }]
                         }
                     }))
+                    dispatch(changePhotoSettings({
+                        ...defaultPhotoSettings,
+                        name: newFile.name
+                    }))
+                    dispatch(setCurrentOpenedFileName({
+                        fileName: newFile.name
+                    }))
+
                     visibleDragDropZone()
+                    dispatch(changeEditorVisibility())
                 }
             } catch (e) {
                 console.error("Error with paste a clipboard: ", e)
