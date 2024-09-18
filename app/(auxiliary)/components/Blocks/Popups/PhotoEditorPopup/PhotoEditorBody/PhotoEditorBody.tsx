@@ -1,9 +1,6 @@
 import React, {FC, useCallback, useEffect, useState} from 'react';
-import Editor from "@/app/(auxiliary)/components/Blocks/PhotoEditor/PhotoEditorBody/Editor/Editor";
 import styles from "./PhotoEditorBody.module.scss";
 import SeparatingLine from "@/app/(auxiliary)/components/UI/SeparatingLine/SeparatingLine";
-import EditorFileList
-    from "@/app/(auxiliary)/components/Blocks/PhotoEditor/PhotoEditorBody/EditorFileList/EditorFileList";
 import {PhotoEditorDataType} from "@/app/(auxiliary)/types/Data/Interface/PhotoEditor/PhotoEditorDataType";
 import Button from "@/app/(auxiliary)/components/UI/Button/Button";
 import {blue_dark, blue_light, grey} from "@/styles/colors";
@@ -31,6 +28,9 @@ import {
     selectFormFileData
 } from "@/app/(auxiliary)/libs/redux-toolkit/store/slices/UserFormDataSlice/UserFormDataSlice";
 import {PHOTO_KEY} from "@/app/(auxiliary)/types/AppTypes/InputHooksTypes";
+import Editor from "@/app/(auxiliary)/components/Blocks/Popups/PhotoEditorPopup/PhotoEditorBody/Editor/Editor";
+import EditorFileList
+    from "@/app/(auxiliary)/components/Blocks/Popups/PhotoEditorPopup/PhotoEditorBody/EditorFileList/EditorFileList";
 
 
 interface PropsType {

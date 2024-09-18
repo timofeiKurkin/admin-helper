@@ -2,9 +2,9 @@ import React, {FC} from 'react';
 import {PhotoListDataType} from "@/app/(auxiliary)/types/Data/Interface/PhotoEditor/PhotoEditorDataType";
 import styles from "./EditorFileList.module.scss";
 import Text from "@/app/(auxiliary)/components/UI/TextTemplates/Text";
-import EditorFile
-    from "@/app/(auxiliary)/components/Blocks/PhotoEditor/PhotoEditorBody/EditorFileList/EditorFile/EditorFile";
 import {PhotoAndVideoKeysTypes} from "@/app/(auxiliary)/types/AppTypes/InputHooksTypes";
+import EditorFile
+    from "@/app/(auxiliary)/components/Blocks/Popups/PhotoEditorPopup/PhotoEditorBody/EditorFileList/EditorFile/EditorFile";
 
 interface PropsType {
     contentForEditor: {

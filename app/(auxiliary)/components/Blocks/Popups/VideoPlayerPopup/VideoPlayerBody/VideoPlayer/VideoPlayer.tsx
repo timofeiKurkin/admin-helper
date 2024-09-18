@@ -1,11 +1,11 @@
-import React from 'react';
+import React, {FC} from 'react';
 
 interface PropsType {
-    video: File;
+    videoURL: string;
 }
 
-const VideoPlayer = () => {
-
+const VideoPlayer: FC<PropsType> = ({videoURL}) => {
+    console.log("video URL: ", videoURL)
 
     return (
         <div>

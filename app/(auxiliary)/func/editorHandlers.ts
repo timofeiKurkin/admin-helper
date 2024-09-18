@@ -1,7 +1,7 @@
 import React, {MutableRefObject, RefObject} from "react";
 import {centerCrop, convertToPixelCrop, makeAspectCrop, PixelCrop} from "react-image-crop";
-import {getRotateDimensions} from "@/app/(auxiliary)/components/Blocks/PhotoEditor/canvasPreview";
 import {defaultPhotoSettings, PhotoEditorSettingsType} from "@/app/(auxiliary)/types/PhotoEditorTypes/PhotoEditorTypes";
+import {getRotateDimensions} from "@/app/(auxiliary)/components/Blocks/Popups/PhotoEditorPopup/canvasPreview";
 
 
 export const scalePoints = [0.5, 1, 2, 2.5]

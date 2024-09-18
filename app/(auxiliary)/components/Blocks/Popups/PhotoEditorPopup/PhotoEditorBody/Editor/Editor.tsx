@@ -5,7 +5,7 @@ import styles from "./Editor.module.scss";
 import 'react-image-crop/src/ReactCrop.scss';
 import {centerPositionOfAxes, getScaledSizesOfImage, onDownloadCropClick} from "@/app/(auxiliary)/func/editorHandlers";
 import {useDebounceEffect} from "@/app/(auxiliary)/hooks/useDebounceEffect";
-import {canvasPreview, getRotateDimensions} from "@/app/(auxiliary)/components/Blocks/PhotoEditor/canvasPreview";
+import {canvasPreview, getRotateDimensions} from "@/app/(auxiliary)/components/Blocks/Popups/PhotoEditorPopup/canvasPreview";
 import {
     HORIZONTAL,
     PossibleCroppingBoundaryType,
