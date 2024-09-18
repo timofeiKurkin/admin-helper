@@ -21,7 +21,7 @@ import {
     selectEditorIsOpen,
     setCurrentOpenedFileName
 } from "@/app/(auxiliary)/libs/redux-toolkit/store/slices/PhotoEditorSlice/PhotoEditorSlice";
-import VideoPlayerPopup from "@/app/(auxiliary)/components/Blocks/VideoPlayerPopup/VideoPlayerPopup";
+import VideoPlayerPopup from "@/app/(auxiliary)/components/Blocks/Popups/VideoPlayerPopup/VideoPlayerPopup";
 
 
 interface PropsType {

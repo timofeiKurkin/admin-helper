@@ -3,9 +3,9 @@ import PhotoEditorData from "@/data/interface/photo-editor/data.json"
 import {PhotoEditorDataType} from "@/app/(auxiliary)/types/Data/Interface/PhotoEditor/PhotoEditorDataType";
 import PhotoEditorBody from "@/app/(auxiliary)/components/Blocks/PhotoEditor/PhotoEditorBody/PhotoEditorBody";
 import {PHOTO_KEY} from "@/app/(auxiliary)/types/AppTypes/InputHooksTypes";
-import PopupsWrapper from "@/app/(auxiliary)/components/Blocks/Popups/PopupsWrapper/PopupsWrapper";
+import PopupsWrapper from "@/app/(auxiliary)/components/Common/Popups/PopupsWrapper/PopupsWrapper";
 
-const PhotoEditor: FC = () => {
+const PhotoEditorPopup: FC = () => {
     const photoEditorData: PhotoEditorDataType = PhotoEditorData
     const photoInput: typeof PHOTO_KEY = PHOTO_KEY
 
@@ -17,4 +17,4 @@ const PhotoEditor: FC = () => {
     );
 };
 
-export default PhotoEditor;
+export default PhotoEditorPopup;
