@@ -3,7 +3,10 @@ import PopupsWrapper from "@/app/(auxiliary)/components/Common/Popups/PopupsWrap
 import VideoPlayerData from "@/data/interface/video-player/data.json"
 import {VIDEO_KEY} from "@/app/(auxiliary)/types/AppTypes/InputHooksTypes";
 import {VideoPlayerDataType} from "@/app/(auxiliary)/types/Data/Interface/PhotoEditor/PhotoEditorDataType";
-import VideoPlayerBody from "@/app/(auxiliary)/components/Blocks/Popups/VideoPlayerPopup/VideoPlayerBody/VideoPlayerBody";
+import VideoPlayerBody
+    from "@/app/(auxiliary)/components/Blocks/Popups/VideoPlayerPopup/VideoPlayerBody/VideoPlayerBody";
+import CreateVideoPreview
+    from "@/app/(auxiliary)/components/Blocks/FormBlock/DropZone/CreateVideoPreview/CreateVideoPreview";
 
 const VideoPlayerPopup = () => {
     const videoPlayerData: VideoPlayerDataType = VideoPlayerData

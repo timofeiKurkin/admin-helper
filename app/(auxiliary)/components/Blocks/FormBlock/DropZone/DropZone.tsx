@@ -1,7 +1,7 @@
 import React, {FC, useCallback, useEffect, useState} from "react";
-import {FilesListType} from "@/app/(auxiliary)/types/DropZoneTypes/DropZoneTypes";
+import {FileListType} from "@/app/(auxiliary)/types/DropZoneTypes/DropZoneTypes";
 import {FileError, useDropzone} from "react-dropzone";
-import {PhotoAndVideoKeysTypes} from "@/app/(auxiliary)/types/AppTypes/InputHooksTypes";
+import {PhotoAndVideoKeysTypes, VIDEO_KEY} from "@/app/(auxiliary)/types/AppTypes/InputHooksTypes";
 import styles from "./DropZone.module.scss"
 import Button from "@/app/(auxiliary)/components/UI/Button/Button";
 import {ContentOfUploadBlockType} from "@/app/(auxiliary)/types/Data/Interface/RootPage/RootPageContentType";
@@ -20,52 +20,53 @@ import {
     setCurrentOpenedFileName
 } from "@/app/(auxiliary)/libs/redux-toolkit/store/slices/PhotoEditorSlice/PhotoEditorSlice";
 import {defaultPhotoSettings} from "@/app/(auxiliary)/types/PhotoEditorTypes/PhotoEditorTypes";
+import {acceptSettings} from "@/app/(auxiliary)/components/Blocks/FormBlock/DropZone/possibleFileExtensions";
 
 
 interface PropsType {
     content: ContentOfUploadBlockType;
     inputType: PhotoAndVideoKeysTypes;
     visibleDragDropZone: () => void;
-    // openPhotoEditor: () => void;
 }
 
 const DropZone: FC<PropsType> = ({
                                      content,
                                      inputType,
                                      visibleDragDropZone,
-                                     // openPhotoEditor
                                  }) => {
     const dispatch = useAppDispatch()
-    const formFileData = useAppSelector(selectFormFileData)
+    const formFileData = useAppSelector(selectFormFileData)[inputType]
 
     const [uploadingFilesStatus, setUploadingFilesStatus] =
         useState<boolean>(false)
 
-    const onDrop = useCallback((userFiles: FilesListType) => {
-        const filteredFiles =
-            userFiles.filter((file) => !formFileData[inputType].files.includes(file))
+    const onDrop = useCallback((userFiles: FileListType) => {
+        if (inputType) {
+            const filteredFiles =
+                userFiles.filter((file) => !formFileData.files.includes(file))
 
-        if (filteredFiles.length) {
-            dispatch(addFileData({
-                key: inputType,
-                data: {
-                    validationStatus: true,
-                    value: filteredFiles
-                }
-            }))
-            dispatch(setCurrentOpenedFileName({
-                fileName: userFiles[0].name
-            }))
-
-            filteredFiles.forEach((file) => {
-                dispatch(changePhotoSettings({
-                    ...defaultPhotoSettings,
-                    name: file.name
+            if (filteredFiles.length) {
+                dispatch(addFileData({
+                    key: inputType,
+                    data: {
+                        validationStatus: true,
+                        value: filteredFiles
+                    }
                 }))
-            })
+                dispatch(setCurrentOpenedFileName({
+                    fileName: userFiles[0].name
+                }))
 
-            visibleDragDropZone()
-            dispatch(changeEditorVisibility())
+                filteredFiles.forEach((file) => {
+                    dispatch(changePhotoSettings({
+                        ...defaultPhotoSettings,
+                        name: file.name
+                    }))
+                })
+
+                visibleDragDropZone()
+                dispatch(changeEditorVisibility())
+            }
         }
 
     }, [
@@ -75,28 +76,14 @@ const DropZone: FC<PropsType> = ({
         inputType,
     ])
 
-    const nonRepeatingFiles = (
+    const fileValidator = (
         file: File
     ): FileError | FileError[] | null | any => {
-
-        if (formFileData[inputType].files.filter((f) => f.name === file.name).length) {
+        if (formFileData.files.filter((f) => f.name === file.name).length) {
             return {}
         }
 
         return null
-    }
-
-    const acceptSettings: { [key: string]: { [accept: string]: string[] } } = {
-        "video": {
-            "video/*": [
-                ".mp4", ".mkv", ".webm", ".avi", ".mov", ".wmv", ".flv", ".m4v", ".mpg", ".mpeg", ".3gp"
-            ]
-        },
-        "photo": {
-            "image/*": [
-                ".jpg", ".jpeg", ".png", ".gif", ".bmp", ".tiff", ".ico", ".webp", ".svg"
-            ]
-        }
     }
 
     const {
@@ -105,7 +92,7 @@ const DropZone: FC<PropsType> = ({
         getInputProps,
         isDragActive
     } = useDropzone({
-        validator: nonRepeatingFiles,
+        validator: fileValidator,
         onDrop,
         accept: acceptSettings[inputType],
         maxFiles: 10,
@@ -121,17 +108,12 @@ const DropZone: FC<PropsType> = ({
                     const blobOutput = await data[0].getType("image/png")
                     const pastedImageName = `pasted-image-${formattedTime()}`
                     const newFile = new File([blobOutput], pastedImageName)
-                    // const newFileURL = URL.createObjectURL(newFile)
 
                     dispatch(addFileData({
                         key: inputType,
                         data: {
                             validationStatus: true,
                             value: [newFile] // If state is of files
-                            // value: [{ // If state is of urls
-                            //     name: pastedImageName,
-                            //     url: newFileURL
-                            // }]
                         }
                     }))
                     dispatch(changePhotoSettings({
@@ -161,34 +143,10 @@ const DropZone: FC<PropsType> = ({
         visibleDragDropZone
     ])
 
-    // useEffect(() => {
-    //     const test = bufferRef.current
-    //     test?.focus()
-    //
-    //     const pasteHandler = (e: any) => {
-    //         console.log("navigator content", navigator)
-    //         console.log("press paste", e)
-    //     }
-    //
-    //     test?.addEventListener("paste", pasteHandler)
-    //
-    //
-    //     return () => {
-    //         test?.removeEventListener("paste", pasteHandler)
-    //     }
-    // }, []);
-
-    // const pasteHandler = async (e: any) => {
-    //     const data = await navigator.clipboard.read()
-    //     console.log("navigator content", data)
-    //     console.log("press paste", e)
-    // }
-
     return (
-        <div className={styles.dropZoneWrapper}
-            // ref={bufferRef}
-            // onPaste={pasteHandler}
-        >
+        <div className={styles.dropZoneWrapper}>
+
+
             <div {...getRootProps({
                 style: {
                     width: "inherit",

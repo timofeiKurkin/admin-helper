@@ -12,11 +12,13 @@ import {
     VIDEO_KEY
 } from "@/app/(auxiliary)/types/AppTypes/InputHooksTypes";
 import {
+    FileListStateType,
     FormDataItemType,
     PermissionsOfFormStatesType,
     UserFormDataType
 } from "@/app/(auxiliary)/types/AppTypes/Context";
 import {PayloadAction} from "@reduxjs/toolkit";
+import {FileListType} from "@/app/(auxiliary)/types/DropZoneTypes/DropZoneTypes";
 
 interface InitialStateType extends UserFormDataType {
     permissions: PermissionsOfFormStatesType;
@@ -77,6 +79,8 @@ interface DataActionType<K, T> {
     data: T
 }
 
+type ChangePreviewActionType = DataActionType<PhotoAndVideoKeysTypes, File | File[]>
+
 interface DeleteFileAction {
     name: string;
 }
@@ -122,9 +126,28 @@ export const userFormDataSlice = createAppSlice({
                     state.file_data[action.payload.key].files.concat(action.payload.data.value)
 
                 state.file_data[action.payload.key].filesFinally =
-                    state.file_data[action.payload.key].filesFinally?.concat(action.payload.data.value)
+                    state.file_data[action.payload.key].filesFinally.concat(action.payload.data.value)
 
                 state.file_data[action.payload.key].filesNames = state.file_data[action.payload.key].filesNames.concat(action.payload.data.value.map((f) => f.name))
+            }
+        ),
+        addVideoPreview: create.reducer(
+            (
+                state,
+                action: PayloadAction<File>
+            ) => {
+                const previewExists = state.file_data["video"].filesFinally.find((f) => f.name === action.payload.name)
+
+                if (previewExists) {
+                    state.file_data["video"].filesFinally = state.file_data["video"].filesFinally.map((f) => {
+                        if (f.name === action.payload.name) {
+                            f = action.payload
+                        }
+                        return f
+                    })
+                } else {
+                    state.file_data["video"].filesFinally.push(action.payload)
+                }
             }
         ),
         /**
@@ -154,7 +177,7 @@ export const userFormDataSlice = createAppSlice({
                     /**
                      * Удаление файла, подвергшийся изменениям пользователя в фоторедакторе
                      */
-                    filesFinally: state.file_data[action.payload.key].filesFinally?.filter(filter),
+                    filesFinally: state.file_data[action.payload.key].filesFinally.filter(filter),
 
                     /**
                      * Удаление имени из списка доступных файлов к открытию
@@ -168,9 +191,37 @@ export const userFormDataSlice = createAppSlice({
          */
         changePhotosPreview: create.reducer((
             state,
-            action: PayloadAction<File[]>
+            action: PayloadAction<FileListType>
         ) => {
-            state.file_data["photo"].filesFinally = action.payload
+            state.file_data["photo"].filesFinally = state.file_data["photo"].filesFinally.concat(action.payload)
+        }),
+
+        changePreview: create.reducer((
+            state,
+            action: PayloadAction<ChangePreviewActionType>
+        ) => {
+            const changePreview = (newFile: File, key: PhotoAndVideoKeysTypes) => {
+                const previewExists = state.file_data[key].filesFinally.find((f) => f.name === newFile.name)
+
+                if (previewExists) {
+                    state.file_data[key].filesFinally = state.file_data[key].filesFinally.map((f) => {
+                        if (f.name === newFile.name) {
+                            f = newFile
+                        }
+                        return f
+                    })
+                } else {
+                    state.file_data[key].filesFinally.push(newFile)
+                }
+            }
+
+            if (Array.isArray(action.payload.data)) {
+                action.payload.data.forEach((file) => {
+                    changePreview(file, action.payload.key)
+                })
+            } else if (action.payload.data instanceof File) {
+                changePreview(action.payload.data, action.payload.key)
+            }
         }),
 
         /**
@@ -214,7 +265,10 @@ export const {
     setPermissionPolitic,
     setUserCanTalk,
     setValidationFormStatus,
+
+    addVideoPreview,
     changePhotosPreview,
+    changePreview
 } = userFormDataSlice.actions
 
 export const {

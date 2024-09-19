@@ -23,7 +23,9 @@ interface PropsType {
 
 const VideoPlayerBody: FC<PropsType> = ({data, type}) => {
     const dispatch = useAppDispatch()
-    const formFileData = useAppSelector(selectFormFileData)[type].files
+    const formFileData = useAppSelector(selectFormFileData)[type]
+    const files = formFileData.files
+    const previews = formFileData.filesFinally
     const openedFileName = useAppSelector(selectOpenedFileName)
 
     /**
@@ -34,8 +36,8 @@ const VideoPlayerBody: FC<PropsType> = ({data, type}) => {
     }, [])
 
     const [videoURl, setVideoURl] = useState<string>(() => URL.createObjectURL(
-            formFileData.find((f) => findCurrentFile(f, openedFileName)) ||
-            formFileData[0]
+            files.find((f) => findCurrentFile(f, openedFileName)) ||
+            files[0]
         )
     )
 
@@ -48,12 +50,12 @@ const VideoPlayerBody: FC<PropsType> = ({data, type}) => {
 
     useEffect(() => {
         setVideoURl(() => URL.createObjectURL(
-            formFileData.find((f) => findCurrentFile(f, openedFileName)) ||
-            formFileData[0]
+            files.find((f) => findCurrentFile(f, openedFileName)) ||
+            files[0]
         ))
     }, [
         findCurrentFile,
-        formFileData,
+        files,
         openedFileName
     ]);
 
@@ -71,7 +73,7 @@ const VideoPlayerBody: FC<PropsType> = ({data, type}) => {
 
             <PopupFileList contentForEditor={{
                 titleOfList: data.photoList.uploadedPhotos,
-                listOfPreviews: [],
+                listOfPreviews: previews,
                 switchToAnotherFile,
                 type,
             }}/>

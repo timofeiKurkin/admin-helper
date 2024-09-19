@@ -31,7 +31,7 @@ export interface FileListStateType {
     type: PhotoAndVideoKeysTypes;
     filesNames: string[]; // Список имен файлов, доступных для открытия
     files: File[]; // Список исходных файлов, которые загрузил пользователь
-    filesFinally?: File[]; // Список файлов, прошедших изменения пользователя в фоторедакторе
+    filesFinally: File[]; // Список файлов, прошедших изменения пользователя в фоторедакторе
 }
 
 export interface FormDataItemType<T> {

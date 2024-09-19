@@ -7,13 +7,11 @@ interface PropsType {
 }
 
 const VideoPlayer: FC<PropsType> = ({videoURL}) => {
-    console.log("video URL: ", videoURL)
-
     return (
         <div className={styles.videoPlayerWrapper}>
             <div className={styles.videoPlayerBackground}>
                 <div className={styles.videoPlayerBody}>
-                    <ReactPlayer width={640} height={360} url={videoURL} controls={true}/>
+                    <ReactPlayer width={640} height={360} url={videoURL} controls/>
                 </div>
             </div>
         </div>

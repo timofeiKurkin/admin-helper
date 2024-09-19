@@ -12,8 +12,7 @@ import {
     changeEditorVisibility,
     changePhotoSettings,
     selectOpenedFileName,
-    selectPhotoListSettings,
-    setCurrentOpenedFileName
+    selectPhotoListSettings
 } from "@/app/(auxiliary)/libs/redux-toolkit/store/slices/PhotoEditorSlice/PhotoEditorSlice";
 import SmallText from "@/app/(auxiliary)/components/UI/TextTemplates/SmallText";
 import {
@@ -25,7 +24,7 @@ import {
 import {PhotoEditorSettingsType} from "@/app/(auxiliary)/types/PhotoEditorTypes/PhotoEditorTypes";
 import {Crop} from "react-image-crop";
 import {
-    changePhotosPreview,
+    changePreview,
     selectFormFileData
 } from "@/app/(auxiliary)/libs/redux-toolkit/store/slices/UserFormDataSlice/UserFormDataSlice";
 import {PHOTO_KEY} from "@/app/(auxiliary)/types/AppTypes/InputHooksTypes";
@@ -143,8 +142,10 @@ const PhotoEditorBody: FC<PropsType> = ({
         /**
          * Изменение preview у всего списка фотографий
          */
-        dispatch(changePhotosPreview(listOfPreviews))
-
+        dispatch(changePreview({
+            key: PHOTO_KEY,
+            data: listOfPreviews
+        }))
 
         /**
          * Сохранение всех настроек для каждого фото

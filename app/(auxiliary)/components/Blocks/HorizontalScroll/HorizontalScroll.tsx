@@ -159,7 +159,7 @@ const HorizontalScroll: FC<PropsType> = ({
                          gridTemplateColumns: filesListLength ? `repeat(${filesListLength}, 5rem)` : "1fr",
                          overflowX: filesListLength ? "auto" : "hidden"
                      }}>
-                    {filesList.map((file, i) => (
+                    {filesList.length && filesList.map((file, i) => (
                         <div key={`key=${i}`} className={styles.fileWrapper}>
                             <FilePreviewWithHandlers file={file}
                                                      removeHandler={removeFile}

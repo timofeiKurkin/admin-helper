@@ -93,16 +93,18 @@ const FileInput: FC<PropsType> = ({input}) => {
 
                     {(dragDropZoneIsOpen && rootPageContent) ? (
                         <DropZone content={rootPageContent.contentOfUploadBlock}
-                                  inputType={input.type as any}
+                                  inputType={input.type as PhotoAndVideoKeysTypes}
                                   visibleDragDropZone={openDragDropZone}
                         />
                     ) : null}
 
-                    {editorIsOpen && input.type === "photo" &&
-                        <PhotoEditor/>}
+                    {editorIsOpen && input.type === "photo" && (
+                        <PhotoEditor/>
+                    )}
 
-                    {editorIsOpen && input.type === "video" &&
-                        <VideoPlayerPopup/>}
+                    {editorIsOpen && input.type === "video" && (
+                        <VideoPlayerPopup/>
+                    )}
                 </>
 
             )}

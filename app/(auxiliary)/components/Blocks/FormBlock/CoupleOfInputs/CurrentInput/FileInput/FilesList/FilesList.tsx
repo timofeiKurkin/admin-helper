@@ -21,11 +21,6 @@ const FilesList: FC<PropsType> = ({
     const dispatch = useAppDispatch()
     const formFileData = useAppSelector(selectFormFileData)[type]
 
-    // const [filesList, setFilesList] =
-    //     useState<File[]>(() => formFileData[type].filesFinally || formFileData[type].files)
-    // const [filesListLength, setFilesListLength] =
-    //     useState<number>(filesList.length)
-
     const removeFile = (
         fileName: string,
     ) => {
@@ -37,17 +32,11 @@ const FilesList: FC<PropsType> = ({
         }))
     }
 
-    // useEffect(() => {
-    //     setFilesList(() => formFileData[type].filesFinally || formFileData[type].files)
-    //     setFilesListLength(() => formFileData[type].files.length)
-    // }, [
-    //     type,
-    //     formFileData
-    // ]);
+    console.log("previews: ", formFileData.filesFinally)
 
     return <HorizontalScroll filesListLength={formFileData.files.length}
                              placeholder={placeholder}
-                             filesList={formFileData.filesFinally || formFileData.files}
+                             filesList={formFileData.filesFinally}
                              removeFile={removeFile}
                              changeFile={changeFile}/>
 };
