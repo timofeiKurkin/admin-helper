@@ -2,6 +2,11 @@ import {Crop} from "react-image-crop";
 
 export type ImageOrientationType = "vertical" | "horizontal";
 
+export interface VideoOrientationType {
+    name: string;
+    orientation: "horizontal" | "vertical";
+}
+
 export interface PossibleCroppingBoundaryType {
     x: number;
     y: number;

@@ -1,6 +1,5 @@
 import React, {FC} from 'react';
 import {AllTypesOfInputsArray} from "@/app/(auxiliary)/types/Data/Interface/RootPage/RootPageContentType";
-import Text from "@/app/(auxiliary)/components/UI/TextTemplates/Text";
 import styles from "./CoupleOfInputs.module.scss"
 import CurrentInput from "@/app/(auxiliary)/components/Blocks/FormBlock/CoupleOfInputs/CurrentInput/CurrentInput";
 

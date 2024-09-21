@@ -19,6 +19,7 @@ import {
 } from "@/app/(auxiliary)/types/AppTypes/Context";
 import {PayloadAction} from "@reduxjs/toolkit";
 import {FileListType} from "@/app/(auxiliary)/types/DropZoneTypes/DropZoneTypes";
+import {indexOfObject} from "@/app/(auxiliary)/func/handlers";
 
 interface InitialStateType extends UserFormDataType {
     permissions: PermissionsOfFormStatesType;
@@ -125,29 +126,7 @@ export const userFormDataSlice = createAppSlice({
                 state.file_data[action.payload.key].files =
                     state.file_data[action.payload.key].files.concat(action.payload.data.value)
 
-                state.file_data[action.payload.key].filesFinally =
-                    state.file_data[action.payload.key].filesFinally.concat(action.payload.data.value)
-
                 state.file_data[action.payload.key].filesNames = state.file_data[action.payload.key].filesNames.concat(action.payload.data.value.map((f) => f.name))
-            }
-        ),
-        addVideoPreview: create.reducer(
-            (
-                state,
-                action: PayloadAction<File>
-            ) => {
-                const previewExists = state.file_data["video"].filesFinally.find((f) => f.name === action.payload.name)
-
-                if (previewExists) {
-                    state.file_data["video"].filesFinally = state.file_data["video"].filesFinally.map((f) => {
-                        if (f.name === action.payload.name) {
-                            f = action.payload
-                        }
-                        return f
-                    })
-                } else {
-                    state.file_data["video"].filesFinally.push(action.payload)
-                }
             }
         ),
         /**
@@ -186,30 +165,20 @@ export const userFormDataSlice = createAppSlice({
                 }
             }
         ),
-        /**
-         * Обновление preview у каждого фото после применения настроек в фоторедакторе
-         */
-        changePhotosPreview: create.reducer((
-            state,
-            action: PayloadAction<FileListType>
-        ) => {
-            state.file_data["photo"].filesFinally = state.file_data["photo"].filesFinally.concat(action.payload)
-        }),
 
+        /**
+         * Обновление и создание preview для каждого файла: фото и видео.
+         * Также обновление превью у каждого фото после применения настроек в фоторедакторе
+         */
         changePreview: create.reducer((
             state,
             action: PayloadAction<ChangePreviewActionType>
         ) => {
             const changePreview = (newFile: File, key: PhotoAndVideoKeysTypes) => {
-                const previewExists = state.file_data[key].filesFinally.find((f) => f.name === newFile.name)
+                const previewIndex = indexOfObject(state.file_data[key].filesFinally, newFile)
 
-                if (previewExists) {
-                    state.file_data[key].filesFinally = state.file_data[key].filesFinally.map((f) => {
-                        if (f.name === newFile.name) {
-                            f = newFile
-                        }
-                        return f
-                    })
+                if (previewIndex !== -1) {
+                    state.file_data[key].filesFinally[previewIndex] = newFile
                 } else {
                     state.file_data[key].filesFinally.push(newFile)
                 }
@@ -266,8 +235,8 @@ export const {
     setUserCanTalk,
     setValidationFormStatus,
 
-    addVideoPreview,
-    changePhotosPreview,
+    // addVideoPreview,
+    // changePhotosPreview,
     changePreview
 } = userFormDataSlice.actions
 

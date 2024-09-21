@@ -1,5 +1,5 @@
 import {PixelCrop} from 'react-image-crop'
-import {HORIZONTAL, ImageOrientationType, VERTICAL} from "@/app/(auxiliary)/types/PhotoEditorTypes/PhotoEditorTypes";
+import {HORIZONTAL, ImageOrientationType, VERTICAL} from "@/app/(auxiliary)/types/PopupTypes/PopupTypes";
 
 const TO_RADIANS = Math.PI / 180
 
@@ -57,10 +57,7 @@ export const canvasPreview = async ({
         naturalHeight,
         height
     } = image
-    // const {naturalWidth, naturalHeight} = getRotateDimensions(image.naturalWidth, image.naturalHeight, rotate) // Размер оригинального изображения при повороте
 
-    // console.log("j", width, height)
-    // console.log("n", naturalWidth, naturalHeight)
     const rotateRads = rotate * TO_RADIANS // Вычисление угла поворота
 
     const squareSize = Math.max(naturalWidth, naturalHeight) // Взять максимальную ширину или высоту для создания холста в виде квадрата

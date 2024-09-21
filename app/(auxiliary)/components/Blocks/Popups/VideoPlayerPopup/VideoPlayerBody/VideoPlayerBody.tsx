@@ -12,8 +12,10 @@ import popupsCommonStyles from "@/app/(auxiliary)/components/Common/Popups/Popup
 import PopupFileList from "@/app/(auxiliary)/components/Common/Popups/PopupsWrapper/PopupFileList/PopupFileList";
 import Button from "@/app/(auxiliary)/components/UI/Button/Button";
 import {
-    changeEditorVisibility, selectOpenedFileName, setCurrentOpenedFileName
-} from "@/app/(auxiliary)/libs/redux-toolkit/store/slices/PhotoEditorSlice/PhotoEditorSlice";
+    changeEditorVisibility,
+    selectOpenedFileName, selectVideoOrientations
+} from "@/app/(auxiliary)/libs/redux-toolkit/store/slices/PopupSlice/PopupSlice";
+import {HORIZONTAL} from "@/app/(auxiliary)/types/PopupTypes/PopupTypes";
 
 
 interface PropsType {
@@ -24,9 +26,11 @@ interface PropsType {
 const VideoPlayerBody: FC<PropsType> = ({data, type}) => {
     const dispatch = useAppDispatch()
     const formFileData = useAppSelector(selectFormFileData)[type]
+    const openedFileName = useAppSelector(selectOpenedFileName)
+    const videoOrientations = useAppSelector(selectVideoOrientations).find((orient) => orient.name === openedFileName) || {orientation: HORIZONTAL}
+
     const files = formFileData.files
     const previews = formFileData.filesFinally
-    const openedFileName = useAppSelector(selectOpenedFileName)
 
     /**
      * Callback для поиска файла или настройки файла по его названию. Используется в инициализации состояния и его обновления
@@ -69,7 +73,7 @@ const VideoPlayerBody: FC<PropsType> = ({data, type}) => {
 
     return (
         <div className={`${popupsCommonStyles.popupBody} ${styles.videoPlayerBody}`}>
-            <VideoPlayer videoURL={videoURl}/>
+            <VideoPlayer video={videoURl} orientation={videoOrientations.orientation}/>
 
             <PopupFileList contentForEditor={{
                 titleOfList: data.photoList.uploadedPhotos,

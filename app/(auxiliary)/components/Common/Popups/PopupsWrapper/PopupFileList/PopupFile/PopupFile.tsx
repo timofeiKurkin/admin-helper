@@ -8,7 +8,7 @@ import {
     changeEditorVisibility,
     selectOpenedFileName,
     setCurrentOpenedFileName
-} from "@/app/(auxiliary)/libs/redux-toolkit/store/slices/PhotoEditorSlice/PhotoEditorSlice";
+} from "@/app/(auxiliary)/libs/redux-toolkit/store/slices/PopupSlice/PopupSlice";
 import {
     deleteFile,
     selectFormFileData
@@ -64,14 +64,16 @@ const PopupFile: FC<PropsType> = ({
         <div className={`${styles.fileItem} ${file.name === currentFileName && styles.fileItemSelected}`}
              onClick={() => chooseAnotherFile(file.name)}
         >
-            <div><Text>{++index}.</Text></div>
+            <div className={styles.fileIndex}><Text>{++index}.</Text></div>
 
             <div className={styles.photoPreview}>
                 <FilePreviewBlock url={URL.createObjectURL(file)}
                                   alt={file.name}/>
             </div>
 
-            <Text>{trimLongTitle(file.name.split(".")[0], 14)}</Text>
+            <div className={styles.fileName}>
+                <Text>{trimLongTitle(file.name.split(".")[0], 16)}</Text>
+            </div>
 
             <div className={styles.removeFile} onClick={() => removeFile(file.name)}>
                 <Trash style={{

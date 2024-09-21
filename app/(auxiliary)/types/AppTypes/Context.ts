@@ -32,6 +32,7 @@ export interface FileListStateType {
     filesNames: string[]; // Список имен файлов, доступных для открытия
     files: File[]; // Список исходных файлов, которые загрузил пользователь
     filesFinally: File[]; // Список файлов, прошедших изменения пользователя в фоторедакторе
+    // filesOrientation: FileOrientationType;
 }
 
 export interface FormDataItemType<T> {

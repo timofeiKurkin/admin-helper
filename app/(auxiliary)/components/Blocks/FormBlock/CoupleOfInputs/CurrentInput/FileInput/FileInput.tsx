@@ -16,12 +16,12 @@ import {
     setOpenedVideoBlock,
     setSwitchedMessageBlock
 } from "@/app/(auxiliary)/libs/redux-toolkit/store/slices/AppSlice/AppSlice";
+import VideoPlayerPopup from "@/app/(auxiliary)/components/Blocks/Popups/VideoPlayerPopup/VideoPlayerPopup";
 import {
     changeEditorVisibility,
     selectEditorIsOpen,
     setCurrentOpenedFileName
-} from "@/app/(auxiliary)/libs/redux-toolkit/store/slices/PhotoEditorSlice/PhotoEditorSlice";
-import VideoPlayerPopup from "@/app/(auxiliary)/components/Blocks/Popups/VideoPlayerPopup/VideoPlayerPopup";
+} from "@/app/(auxiliary)/libs/redux-toolkit/store/slices/PopupSlice/PopupSlice";
 
 
 interface PropsType {
@@ -105,6 +105,8 @@ const FileInput: FC<PropsType> = ({input}) => {
                     {editorIsOpen && input.type === "video" && (
                         <VideoPlayerPopup/>
                     )}
+
+                    {/*<CreatePreview type={input.type}/>*/}
                 </>
 
             )}

@@ -1,11 +1,20 @@
 import React, {MutableRefObject, RefObject} from "react";
 import {centerCrop, convertToPixelCrop, makeAspectCrop, PixelCrop} from "react-image-crop";
-import {defaultPhotoSettings, PhotoEditorSettingsType} from "@/app/(auxiliary)/types/PhotoEditorTypes/PhotoEditorTypes";
+import {
+    defaultPhotoSettings,
+    HORIZONTAL,
+    PhotoEditorSettingsType,
+    VERTICAL
+} from "@/app/(auxiliary)/types/PopupTypes/PopupTypes";
 import {getRotateDimensions} from "@/app/(auxiliary)/components/Blocks/Popups/PhotoEditorPopup/canvasPreview";
 
 
 export const scalePoints = [0.5, 1, 2, 2.5]
 export const rotatePoints = [-180, -90, 0, 90, 180]
+
+export const determineOrientation = (width: number, height: number) => {
+    return width >= height ? HORIZONTAL : VERTICAL
+}
 
 /**
  * Функция для сохранения соотношения пропорций у фотографий в редакторе. Т.к. размер фотографий разный, а размер редактора одинаковый, нужно учесть соотношение сторон. Т.е. пропорционально уменьшить или увеличить изображение, чтобы оно влезло в редактор

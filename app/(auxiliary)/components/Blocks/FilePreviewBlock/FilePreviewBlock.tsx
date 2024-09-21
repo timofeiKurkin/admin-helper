@@ -8,7 +8,7 @@ interface PropsType {
     imageProps?: ImageProps;
 }
 
-const FilePreview: FC<PropsType> = (props) => {
+const FilePreviewBlock: FC<PropsType> =  (props) => {
     return (
         <Image {...props.imageProps}
                src={props.url}
@@ -24,8 +24,6 @@ const FilePreview: FC<PropsType> = (props) => {
                }}
         />
     );
-}
+};
 
-const FilePreviewBlock = memo(FilePreview);
-
-export default FilePreviewBlock;
+export default React.memo(FilePreviewBlock);

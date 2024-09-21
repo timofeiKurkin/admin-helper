@@ -13,7 +13,7 @@ import {
     changePhotoSettings,
     selectOpenedFileName,
     selectPhotoListSettings
-} from "@/app/(auxiliary)/libs/redux-toolkit/store/slices/PhotoEditorSlice/PhotoEditorSlice";
+} from "@/app/(auxiliary)/libs/redux-toolkit/store/slices/PopupSlice/PopupSlice";
 import SmallText from "@/app/(auxiliary)/components/UI/TextTemplates/SmallText";
 import {
     getDefaultPhotoSettings,

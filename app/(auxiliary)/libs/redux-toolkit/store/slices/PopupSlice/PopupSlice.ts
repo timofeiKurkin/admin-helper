@@ -1,22 +1,27 @@
 import {createAppSlice} from "@/app/(auxiliary)/libs/redux-toolkit/store/createAppSlice";
 import {PayloadAction} from "@reduxjs/toolkit";
 import {WritableDraft} from "immer";
-import {PhotoEditorSettingsType} from "@/app/(auxiliary)/types/PhotoEditorTypes/PhotoEditorTypes";
+import {PhotoEditorSettingsType, VideoOrientationType} from "@/app/(auxiliary)/types/PopupTypes/PopupTypes";
+import {indexOfObject} from "@/app/(auxiliary)/func/handlers";
 
 
 interface InitialState {
     openedFileName: string;
     photoListSettings: PhotoEditorSettingsType[];
-    editorIsOpen: boolean;
+    videoOrientations: VideoOrientationType[];
+    photoEditorIsOpen: boolean;
+    videoPlayerIfOpen: boolean;
 }
 
 const initialState: InitialState = {
     openedFileName: "",
     photoListSettings: [],
-    editorIsOpen: false
+    videoOrientations: [],
+    photoEditorIsOpen: false,
+    videoPlayerIfOpen: false
 }
 
-export const photoEditorSlice = createAppSlice({
+export const popupSlice = createAppSlice({
     name: "photo-editor",
     initialState,
     reducers: (create) => ({
@@ -27,18 +32,10 @@ export const photoEditorSlice = createAppSlice({
         ),
         changePhotoSettings: create.reducer(
             (state, action: PayloadAction<PhotoEditorSettingsType>) => {
-                const objectIs = state.photoListSettings.find(
-                    (item) => item.name === action.payload.name
-                )
+                const settingIndex = indexOfObject(state.photoListSettings, action.payload)
 
-                if (objectIs) {
-                    state.photoListSettings.forEach(
-                        (photoSetting, index) => {
-                            if (photoSetting.name === action.payload.name) {
-                                state.photoListSettings[index] = {...state.photoListSettings[index], ...action.payload as WritableDraft<PhotoEditorSettingsType>};
-                            }
-                        }
-                    );
+                if (settingIndex !== -1) {
+                    state.photoListSettings[settingIndex] = {...state.photoListSettings[settingIndex], ...action.payload as WritableDraft<PhotoEditorSettingsType>}
                 } else {
                     state.photoListSettings.push(action.payload as WritableDraft<PhotoEditorSettingsType>)
                 }
@@ -50,31 +47,46 @@ export const photoEditorSlice = createAppSlice({
          */
         changeEditorVisibility: create.reducer(
             (state) => {
-                state.editorIsOpen = !state.editorIsOpen
+                state.photoEditorIsOpen = !state.photoEditorIsOpen
             }
         ),
 
         deletePhotoSettings: create.reducer(
-            (state, action: PayloadAction<{name: string}>) => {
+            (state, action: PayloadAction<{ name: string }>) => {
                 state.photoListSettings = state.photoListSettings.filter((setting) => setting.name !== action.payload.name)
+            }
+        ),
+
+        changeVideoOrientation: create.reducer(
+            (state, action: PayloadAction<VideoOrientationType>) => {
+                const orientationIndex = indexOfObject(state.videoOrientations, action.payload)
+
+                if(orientationIndex !== -1) {
+                    state.videoOrientations[orientationIndex] = action.payload
+                } else {
+                    state.videoOrientations.push(action.payload)
+                }
             }
         )
     }),
     selectors: {
         selectOpenedFileName: (state) => state.openedFileName,
         selectPhotoListSettings: (state) => state.photoListSettings,
-        selectEditorIsOpen: (state) => state.editorIsOpen
+        selectEditorIsOpen: (state) => state.photoEditorIsOpen,
+        selectVideoOrientations: (state) => state.videoOrientations
     }
 })
 
 export const {
     setCurrentOpenedFileName,
     changePhotoSettings,
-    changeEditorVisibility
-} = photoEditorSlice.actions
+    changeEditorVisibility,
+    changeVideoOrientation
+} = popupSlice.actions
 
 export const {
     selectOpenedFileName,
     selectPhotoListSettings,
-    selectEditorIsOpen
-} = photoEditorSlice.selectors
+    selectEditorIsOpen,
+    selectVideoOrientations
+} = popupSlice.selectors

@@ -3,7 +3,8 @@ export const possiblePhotoExtensions = [
 ]
 
 export const possibleVideoExtensions = [
-    ".mp4", ".mkv", ".webm", ".avi", ".mov", ".wmv", ".flv", ".m4v", ".mpg", ".mpeg", ".3gp"
+    // ".mp4", ".mkv", ".webm", ".avi", ".mov", ".wmv", ".flv", ".m4v", ".mpg", ".mpeg", ".3gp"
+    ".mp4"
 ]
 
 export const acceptSettings: { [type: string]: { [permissions: string]: string[] } } = {

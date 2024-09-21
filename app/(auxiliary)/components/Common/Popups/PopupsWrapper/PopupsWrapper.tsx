@@ -2,7 +2,7 @@ import React, {FC} from 'react';
 import {useAppDispatch} from "@/app/(auxiliary)/libs/redux-toolkit/store/hooks";
 import {
     changeEditorVisibility
-} from "@/app/(auxiliary)/libs/redux-toolkit/store/slices/PhotoEditorSlice/PhotoEditorSlice";
+} from "@/app/(auxiliary)/libs/redux-toolkit/store/slices/PopupSlice/PopupSlice";
 import Backdrop from "@/app/(auxiliary)/components/UI/Wrappers/Backdrop/Backdrop";
 import styles from "./PopupsWrapper.module.scss"
 import Title from "@/app/(auxiliary)/components/UI/TextTemplates/Title";

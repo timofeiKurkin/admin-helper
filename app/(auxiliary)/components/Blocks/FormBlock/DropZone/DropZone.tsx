@@ -1,7 +1,7 @@
-import React, {FC, useCallback, useEffect, useState} from "react";
+import React, {FC, useCallback, useEffect, useRef, useState} from "react";
 import {FileListType} from "@/app/(auxiliary)/types/DropZoneTypes/DropZoneTypes";
 import {FileError, useDropzone} from "react-dropzone";
-import {PhotoAndVideoKeysTypes, VIDEO_KEY} from "@/app/(auxiliary)/types/AppTypes/InputHooksTypes";
+import {PHOTO_KEY, PhotoAndVideoKeysTypes, VIDEO_KEY} from "@/app/(auxiliary)/types/AppTypes/InputHooksTypes";
 import styles from "./DropZone.module.scss"
 import Button from "@/app/(auxiliary)/components/UI/Button/Button";
 import {ContentOfUploadBlockType} from "@/app/(auxiliary)/types/Data/Interface/RootPage/RootPageContentType";
@@ -11,16 +11,17 @@ import UploadFile from "@/app/(auxiliary)/components/UI/SVG/UploadFile/UploadFil
 import {formattedTime} from "@/app/(auxiliary)/func/formattedTime";
 import {useAppDispatch, useAppSelector} from "@/app/(auxiliary)/libs/redux-toolkit/store/hooks";
 import {
-    addFileData,
+    addFileData, changePreview,
     selectFormFileData
 } from "@/app/(auxiliary)/libs/redux-toolkit/store/slices/UserFormDataSlice/UserFormDataSlice";
 import {
     changeEditorVisibility,
-    changePhotoSettings,
+    changePhotoSettings, changeVideoOrientation,
     setCurrentOpenedFileName
-} from "@/app/(auxiliary)/libs/redux-toolkit/store/slices/PhotoEditorSlice/PhotoEditorSlice";
-import {defaultPhotoSettings} from "@/app/(auxiliary)/types/PhotoEditorTypes/PhotoEditorTypes";
+} from "@/app/(auxiliary)/libs/redux-toolkit/store/slices/PopupSlice/PopupSlice";
+import {defaultPhotoSettings} from "@/app/(auxiliary)/types/PopupTypes/PopupTypes";
 import {acceptSettings} from "@/app/(auxiliary)/components/Blocks/FormBlock/DropZone/possibleFileExtensions";
+import {determineOrientation} from "@/app/(auxiliary)/func/editorHandlers";
 
 
 interface PropsType {
@@ -39,6 +40,21 @@ const DropZone: FC<PropsType> = ({
 
     const [uploadingFilesStatus, setUploadingFilesStatus] =
         useState<boolean>(false)
+
+    const videoRef = useRef<HTMLVideoElement>(null)
+    const canvasRef = useRef<HTMLCanvasElement>(null)
+
+    const createPhotoPreviews = useCallback((newFiles: File[]) => {
+        newFiles.forEach((file) => {
+            dispatch(changePreview({
+                key: inputType,
+                data: file
+            }))
+        })
+    }, [
+        dispatch,
+        inputType
+    ])
 
     const onDrop = useCallback((userFiles: FileListType) => {
         if (inputType) {
@@ -64,6 +80,72 @@ const DropZone: FC<PropsType> = ({
                     }))
                 })
 
+                const newFiles = userFiles.filter((file) => {
+                    return !formFileData.filesFinally.find((name) => name.name === file.name)
+                })
+
+                if (inputType === VIDEO_KEY) {
+                    newFiles.forEach((file) => {
+                        const videoRef = document.createElement("video")
+                        const canvasRef = document.createElement("canvas")
+
+                        const videoURL = URL.createObjectURL(file)
+                        const videoElement = videoRef
+                        videoElement.src = videoURL
+                        const {videoWidth, videoHeight} = videoElement
+
+                        const loadedMetaDataHandler = () => {
+                            videoElement.currentTime = 0
+                        }
+
+                        const canPlayHandler = () => {
+                            const canvas = canvasRef
+                            const ctx = canvas.getContext("2d")
+
+                            if (!ctx) {
+                                return;
+                            }
+
+                            canvas.width = videoWidth
+                            canvas.height = videoHeight
+
+                            ctx.drawImage(videoElement, 0, 0, canvas.width, canvas.height)
+
+                            canvas.toBlob((blob) => {
+                                if (blob) {
+                                    const newFile = new File([blob], file.name, {
+                                        type: "image/png",
+                                        lastModified: Date.now()
+                                    })
+
+                                    dispatch(changePreview({
+                                        key: inputType,
+                                        data: newFile
+                                    }))
+
+                                    dispatch(changeVideoOrientation({
+                                        name: file.name,
+                                        orientation: determineOrientation(videoWidth, videoHeight)
+                                    }))
+                                }
+                            }, "image/png", 1)
+                        }
+
+                        videoElement.addEventListener("loadedmetadata", loadedMetaDataHandler)
+                        videoElement.addEventListener("canplay", canPlayHandler)
+
+                        return () => {
+                            URL.revokeObjectURL(videoURL)
+
+                            videoElement.removeEventListener("loadedmetadata", loadedMetaDataHandler)
+                            videoElement.removeEventListener("canplay", canPlayHandler)
+                            videoElement.src = ""
+                        }
+                    })
+                } else if (inputType === PHOTO_KEY) {
+                    createPhotoPreviews(newFiles)
+                }
+
                 visibleDragDropZone()
                 dispatch(changeEditorVisibility())
             }
@@ -71,9 +153,11 @@ const DropZone: FC<PropsType> = ({
 
     }, [
         dispatch,
-        formFileData,
-        visibleDragDropZone,
         inputType,
+        formFileData.files,
+        formFileData.filesFinally,
+        visibleDragDropZone,
+        createPhotoPreviews
     ])
 
     const fileValidator = (
@@ -123,6 +207,7 @@ const DropZone: FC<PropsType> = ({
                     dispatch(setCurrentOpenedFileName({
                         fileName: newFile.name
                     }))
+                    createPhotoPreviews([newFile])
 
                     visibleDragDropZone()
                     dispatch(changeEditorVisibility())
@@ -146,6 +231,10 @@ const DropZone: FC<PropsType> = ({
     return (
         <div className={styles.dropZoneWrapper}>
 
+            <div className={styles.createVideoPreview}>
+                <video ref={videoRef}></video>
+                <canvas ref={canvasRef}></canvas>
+            </div>
 
             <div {...getRootProps({
                 style: {
@@ -153,11 +242,9 @@ const DropZone: FC<PropsType> = ({
                     height: "inherit",
                     userSelect: "none",
                     cursor: uploadingFilesStatus ? "default" : "pointer"
-                },
-                // onPaste: (e) => pasteHandler(e)
+                }
             })}>
                 <input {...getInputProps({})}
-                    // onPaste={(e) => pasteHandler(e)}
                        className={styles.dropInput}/>
 
                 <div className={styles.dropZoneContentWrapper}>
@@ -189,6 +276,7 @@ const DropZone: FC<PropsType> = ({
                 </div>
             </div>
         </div>
+
     );
 };
 

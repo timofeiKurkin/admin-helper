@@ -31,7 +31,7 @@ export interface FormPartType {
 // Inputs
 export interface InputType {
     id: number;
-    type: AllKeysTypesOfInputs | string; // TODO: REMOVE STRING TYPE
+    // type: AllKeysTypesOfInputs; // TODO: REMOVE STRING TYPE
     inputTitle: string;
     inputPlaceholder?: string;
     toggleText?: string;
@@ -39,35 +39,35 @@ export interface InputType {
 }
 
 export interface DeviceInputType extends InputType {
-    // type: typeof DEVICE_KEY;
+    type: typeof DEVICE_KEY;
     helpfulList: InputHelpfulItemType[];
 }
 
 export interface MessageInputType extends InputType {
-    // type: typeof MESSAGE_KEY;
+    type: typeof MESSAGE_KEY;
     voiceMessage?: MessageType;
     textMessage?: MessageType;
 }
 
 export interface PhotoAndVideoInputType extends InputType, Button {
-    // type: PhotoAndVideoType;
+    type: PhotoAndVideoKeysTypes;
 }
 
 export interface NameInputType extends InputType {
-    // type: typeof NAME_KEY;
+    type: typeof NAME_KEY;
 }
 
 export interface CompanyInputType extends InputType {
-    // type: typeof COMPANY_KEY;
+    type: typeof COMPANY_KEY;
     helpfulList: InputHelpfulItemType[];
 }
 
 export interface PhoneNumberInputType extends InputType {
-    // type: typeof PHONE_KEY;
+    type: typeof PHONE_KEY;
 }
 
 export interface NumberPcInputType extends InputType {
-    // type: typeof NUMBER_PC_KEY;
+    type: typeof NUMBER_PC_KEY;
 }
 
 export type AllTypesOfInputsArray = AllTypesOfInputs[]

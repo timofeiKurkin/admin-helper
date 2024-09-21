@@ -2,11 +2,11 @@
 	grid-template-rows: 1fr;
 	grid-template-areas: "video-player popup-file-list"
 						 "video-player buttons";
+	align-items: end;
 
 	.fileListAndClose {
 		display: flex;
 		flex-direction: column;
 		row-gap: 25px;
 	}
-
 }

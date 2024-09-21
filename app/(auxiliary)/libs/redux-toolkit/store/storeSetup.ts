@@ -1,10 +1,14 @@
 import {combineSlices, configureStore} from "@reduxjs/toolkit";
 import {userFormDataSlice} from "@/app/(auxiliary)/libs/redux-toolkit/store/slices/UserFormDataSlice/UserFormDataSlice";
 import {appSlice} from "@/app/(auxiliary)/libs/redux-toolkit/store/slices/AppSlice/AppSlice";
-import {photoEditorSlice} from "@/app/(auxiliary)/libs/redux-toolkit/store/slices/PhotoEditorSlice/PhotoEditorSlice";
+import {popupSlice} from "@/app/(auxiliary)/libs/redux-toolkit/store/slices/PopupSlice/PopupSlice";
 
 
-const rootReducer = combineSlices(userFormDataSlice, appSlice, photoEditorSlice)
+const rootReducer = combineSlices(
+    userFormDataSlice,
+    appSlice,
+    popupSlice
+)
 export type RootState = ReturnType<typeof rootReducer>
 
 export const storeSetup = () => {

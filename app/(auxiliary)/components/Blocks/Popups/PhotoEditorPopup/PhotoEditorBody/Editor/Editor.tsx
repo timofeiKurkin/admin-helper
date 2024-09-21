@@ -3,14 +3,19 @@ import {Crop, PixelCrop, ReactCrop} from "react-image-crop";
 import Image from "next/image";
 import styles from "./Editor.module.scss";
 import 'react-image-crop/src/ReactCrop.scss';
-import {centerPositionOfAxes, getScaledSizesOfImage, onDownloadCropClick} from "@/app/(auxiliary)/func/editorHandlers";
+import {
+    centerPositionOfAxes,
+    determineOrientation,
+    getScaledSizesOfImage,
+    onDownloadCropClick
+} from "@/app/(auxiliary)/func/editorHandlers";
 import {useDebounceEffect} from "@/app/(auxiliary)/hooks/useDebounceEffect";
 import {canvasPreview, getRotateDimensions} from "@/app/(auxiliary)/components/Blocks/Popups/PhotoEditorPopup/canvasPreview";
 import {
     HORIZONTAL,
     PossibleCroppingBoundaryType,
     VERTICAL
-} from "@/app/(auxiliary)/types/PhotoEditorTypes/PhotoEditorTypes";
+} from "@/app/(auxiliary)/types/PopupTypes/PopupTypes";
 
 
 interface PropsType {
@@ -117,7 +122,7 @@ const Editor: FC<PropsType> = ({
             naturalHeight,
             width
         )
-        const currentOrientation = naturalWidth >= naturalHeight ? HORIZONTAL : VERTICAL
+        const currentOrientation = determineOrientation(naturalWidth, naturalHeight)
         setImageOrientation(() => currentOrientation)
 
         if (!currentCrop.x && !currentCrop.y && currentCrop.unit === "%") {
@@ -226,16 +231,15 @@ const Editor: FC<PropsType> = ({
      */
     useEffect(() => {
         setImgSrc(() => URL.createObjectURL(photo))
-
-        // return () => {
-        //     if(imgSrc) {
-        //         URL.revokeObjectURL(imgSrc)
-        //     }
-        // }
     }, [
         photo,
-        // imgSrc
     ])
+
+    useEffect(() => {
+        return () => {
+            URL.revokeObjectURL(imgSrc)
+        }
+    }, [imgSrc]);
 
     /**
      * Эффект для инициализации оригинальной ориентации изображения
