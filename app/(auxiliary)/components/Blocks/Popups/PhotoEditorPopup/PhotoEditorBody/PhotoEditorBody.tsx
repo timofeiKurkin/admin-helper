@@ -9,7 +9,7 @@ import Text from "@/app/(auxiliary)/components/UI/TextTemplates/Text";
 import Range from "@/app/(auxiliary)/components/UI/Inputs/Range/Range";
 import {useAppDispatch, useAppSelector} from "@/app/(auxiliary)/libs/redux-toolkit/store/hooks";
 import {
-    changeEditorVisibility,
+    changePhotoEditorVisibility,
     changePhotoSettings,
     selectOpenedFileName,
     selectPhotoListSettings
@@ -17,11 +17,11 @@ import {
 import SmallText from "@/app/(auxiliary)/components/UI/TextTemplates/SmallText";
 import {
     getDefaultPhotoSettings,
-    rotatePoints,
-    scalePoints,
+    rotatePoints, rotateStickPoint,
+    scalePoints, scaleStickPoint,
     stickToClosestValue
 } from "@/app/(auxiliary)/func/editorHandlers";
-import {PhotoEditorSettingsType} from "@/app/(auxiliary)/types/PhotoEditorTypes/PhotoEditorTypes";
+import {PhotoEditorSettingsType} from "@/app/(auxiliary)/types/PopupTypes/PopupTypes";
 import {Crop} from "react-image-crop";
 import {
     changePreview,
@@ -30,6 +30,10 @@ import {
 import {PHOTO_KEY} from "@/app/(auxiliary)/types/AppTypes/InputHooksTypes";
 import Editor from "@/app/(auxiliary)/components/Blocks/Popups/PhotoEditorPopup/PhotoEditorBody/Editor/Editor";
 import PopupFileList from "@/app/(auxiliary)/components/Common/Popups/PopupsWrapper/PopupFileList/PopupFileList";
+import CloseEditor
+    from "@/app/(auxiliary)/components/Blocks/Popups/PhotoEditorPopup/PhotoEditorBody/Buttons/CloseEditor/CloseEditor";
+import SaveSettings
+    from "@/app/(auxiliary)/components/Blocks/Popups/PhotoEditorPopup/PhotoEditorBody/Buttons/SaveSettings/SaveSettings";
 
 
 interface PropsType {
@@ -64,7 +68,7 @@ const PhotoEditorBody: FC<PropsType> = ({
      * Файлы для превью фотографий для списка фото в редакторе и в форме
      */
     const [listOfPreviews, setListOfPreviews] =
-        useState<File[]>(() => formFileData.filesFinally || formFileData.files)
+        useState<File[]>(() => formFileData.filesFinally)
 
     //
 
@@ -90,7 +94,9 @@ const PhotoEditorBody: FC<PropsType> = ({
      * Настройки выбранного изображения извлекаются из состояния temporaryPhotosSettings
      */
     const [currentPhotoSettings, setCurrentPhotoSettings] =
-        useState(() => temporaryPhotosSettings.find((f) => findCurrentFile(f, fileName)) || getDefaultPhotoSettings(fileName))
+        useState<PhotoEditorSettingsType>(
+            () => temporaryPhotosSettings.find((f) => findCurrentFile(f, fileName)) || getDefaultPhotoSettings(fileName)
+        )
 
     /**
      * Значение увеличения открытой фотографии
@@ -107,55 +113,25 @@ const PhotoEditorBody: FC<PropsType> = ({
     /**
      * Настройка обрезки
      */
-    const [crop, setCrop] = useState<Crop>(currentPhotoSettings.crop)
-    const updateCrop = useCallback((newCrop: Crop) => setCrop(() => newCrop), [])
+    const [crop, setCrop] = useState<Crop>(() => currentPhotoSettings.crop)
+    const updateCrop = useCallback((newCrop: Crop) => setCrop(newCrop), [])
 
     const scaleImageHandler = (value: number) => {
-        const stickStep = 0.05
-        setScale(stickToClosestValue(value, scalePoints, stickStep))
+        setScale(stickToClosestValue(value, scalePoints, scaleStickPoint))
     }
 
     const rotateImageHandler = (value: number) => {
         const newValue = Math.min(180, Math.max(-180, Number(value)))
-        const stickStep = 5
-        setRotate(stickToClosestValue(newValue, rotatePoints, stickStep))
+        setRotate(stickToClosestValue(newValue, rotatePoints, rotateStickPoint))
     }
 
     /**
      * Сбросить настройки увеличения и поворота у выбранной фотографии
      */
     const resetSettingsHandler = () => {
-        setCurrentPhotoSettings((prevState) => ({
-            ...prevState,
-            scale: 1,
-            rotate: 0
-        }))
-        setScale(() => 1)
-        setRotate(() => 0)
-    }
-
-    /**
-     * Сохранить настройки фотографий и закрыть редактор
-     * @param settings
-     */
-    const saveSettingsHandler = (settings: PhotoEditorSettingsType) => {
-        /**
-         * Изменение preview у всего списка фотографий
-         */
-        dispatch(changePreview({
-            key: PHOTO_KEY,
-            data: listOfPreviews
-        }))
-
-        /**
-         * Сохранение всех настроек для каждого фото
-         */
-        dispatch(changePhotoSettings(settings))
-        dispatch(changeEditorVisibility())
-    }
-
-    const closeEditorHandler = () => {
-        dispatch(changeEditorVisibility())
+        setCurrentPhotoSettings(getDefaultPhotoSettings(fileName))
+        setScale(1)
+        setRotate(0)
     }
 
     /**
@@ -164,6 +140,8 @@ const PhotoEditorBody: FC<PropsType> = ({
      */
     const switchToAnotherFile = (anotherFileName: string) => {
         const prevFileName = currentPhotoSettings.name
+
+        if (prevFileName === anotherFileName) return
 
         setTemporaryPhotosSettings((prevState) => {
             return prevState.map((settings) => {
@@ -203,12 +181,13 @@ const PhotoEditorBody: FC<PropsType> = ({
         })
     }
 
-    useEffect(() => {
-        setListOfPreviews(() => formFileData.filesFinally || formFileData.files)
-    }, [
-        formFileData.files,
-        formFileData.filesFinally
-    ]);
+    // useEffect(() => {
+    //     setListOfPreviews(() => formFileData.filesFinally)
+    // }, [
+    //     formFileData.filesFinally
+    // ]);
+
+    console.log("photo editor body render")
 
     return (
         <div className={`${popupsCommonStyles.popupBody} ${styles.photoEditorBody}`}>
@@ -253,9 +232,7 @@ const PhotoEditorBody: FC<PropsType> = ({
 
                     <div className={styles.editorTitle}><Text>{data.editor.rotate}</Text></div>
                     <div className={styles.rotateWrapper}>
-                        <Range onChange={(e) =>
-                            rotateImageHandler(Number(e.target.value))
-                        }
+                        <Range onChange={(e) => rotateImageHandler(Number(e.target.value))}
                                value={rotate}
                                maxValue={180}
                                minValue={-180}
@@ -292,20 +269,16 @@ const PhotoEditorBody: FC<PropsType> = ({
             />
 
             <div className={`${popupsCommonStyles.buttons} ${styles.photoEditorButtons}`}>
-                <Button style={{backgroundColor: blue_dark}}
-                        onClick={() => saveSettingsHandler({
-                            name: fileName,
-                            scale,
-                            rotate,
-                            crop
-                        })}>
-                    {data.buttons.save}
-                </Button>
+                <SaveSettings data={data.buttons.save}
+                              saveFuncArgs={{
+                                  name: fileName,
+                                  scale,
+                                  rotate,
+                                  crop
+                              }}
+                              listOfPreviews={listOfPreviews}/>
 
-                <Button onClick={closeEditorHandler}
-                        style={{backgroundColor: grey}}>
-                    {data.buttons.close}
-                </Button>
+                <CloseEditor data={data.buttons.close}/>
             </div>
         </div>
     );

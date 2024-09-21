@@ -11,12 +11,14 @@ import UploadFile from "@/app/(auxiliary)/components/UI/SVG/UploadFile/UploadFil
 import {formattedTime} from "@/app/(auxiliary)/func/formattedTime";
 import {useAppDispatch, useAppSelector} from "@/app/(auxiliary)/libs/redux-toolkit/store/hooks";
 import {
-    addFileData, changePreview,
+    addFileData,
+    changePreview,
     selectFormFileData
 } from "@/app/(auxiliary)/libs/redux-toolkit/store/slices/UserFormDataSlice/UserFormDataSlice";
 import {
-    changeEditorVisibility,
-    changePhotoSettings, changeVideoOrientation,
+    changePhotoEditorVisibility,
+    changePhotoSettings,
+    changeVideoOrientation, changeVideoPlayerVisibility,
     setCurrentOpenedFileName
 } from "@/app/(auxiliary)/libs/redux-toolkit/store/slices/PopupSlice/PopupSlice";
 import {defaultPhotoSettings} from "@/app/(auxiliary)/types/PopupTypes/PopupTypes";
@@ -56,6 +58,77 @@ const DropZone: FC<PropsType> = ({
         inputType
     ])
 
+    const createVideoPreviews = useCallback((newFiles: File[]) => {
+        newFiles.forEach((file) => {
+            const videoElement = document.createElement("video")
+            const canvas = document.createElement("canvas")
+
+            const videoURL = URL.createObjectURL(file)
+            videoElement.src = videoURL
+
+            const loadedMetaDataHandler = () => {
+                videoElement.currentTime = 1
+            }
+
+            const canPlay = () => {
+                const ctx = canvas.getContext("2d")
+
+                if (!ctx) {
+                    return;
+                }
+
+                ctx.clearRect(0, 0, canvas.width, canvas.height)
+
+                const {videoWidth, videoHeight} = videoElement
+                canvas.width = videoWidth
+                canvas.height = videoHeight
+
+                ctx.save()
+                ctx.drawImage(videoElement, 0, 0, canvas.width, canvas.height)
+
+                canvas.toBlob((blob) => {
+                    console.log("blob is ahead the condition: ", blob)
+                    if (blob) {
+                        const newFile = new File([blob], file.name, {
+                            type: "image/png",
+                            lastModified: Date.now()
+                        })
+
+                        console.log("file for app state: ", newFile)
+
+                        dispatch(changePreview({
+                            key: inputType,
+                            data: newFile
+                        }))
+
+                        dispatch(changeVideoOrientation({
+                            name: file.name,
+                            orientation: determineOrientation(videoWidth, videoHeight)
+                        }))
+                    }
+                }, "image/png", 1)
+
+                ctx.restore()
+            }
+
+            videoElement.onloadedmetadata = loadedMetaDataHandler
+
+            videoElement.oncanplay = () => {
+                if (videoElement.readyState >= 2) {
+                    canPlay()
+                }
+            }
+
+            return () => {
+                URL.revokeObjectURL(videoURL)
+                videoElement.src = ""
+            }
+        })
+    }, [
+        dispatch,
+        inputType
+    ])
+
     const onDrop = useCallback((userFiles: FileListType) => {
         if (inputType) {
             const filteredFiles =
@@ -85,69 +158,15 @@ const DropZone: FC<PropsType> = ({
                 })
 
                 if (inputType === VIDEO_KEY) {
-                    newFiles.forEach((file) => {
-                        const videoRef = document.createElement("video")
-                        const canvasRef = document.createElement("canvas")
-
-                        const videoURL = URL.createObjectURL(file)
-                        const videoElement = videoRef
-                        videoElement.src = videoURL
-                        const {videoWidth, videoHeight} = videoElement
-
-                        const loadedMetaDataHandler = () => {
-                            videoElement.currentTime = 0
-                        }
-
-                        const canPlayHandler = () => {
-                            const canvas = canvasRef
-                            const ctx = canvas.getContext("2d")
-
-                            if (!ctx) {
-                                return;
-                            }
-
-                            canvas.width = videoWidth
-                            canvas.height = videoHeight
-
-                            ctx.drawImage(videoElement, 0, 0, canvas.width, canvas.height)
-
-                            canvas.toBlob((blob) => {
-                                if (blob) {
-                                    const newFile = new File([blob], file.name, {
-                                        type: "image/png",
-                                        lastModified: Date.now()
-                                    })
-
-                                    dispatch(changePreview({
-                                        key: inputType,
-                                        data: newFile
-                                    }))
-
-                                    dispatch(changeVideoOrientation({
-                                        name: file.name,
-                                        orientation: determineOrientation(videoWidth, videoHeight)
-                                    }))
-                                }
-                            }, "image/png", 1)
-                        }
-
-                        videoElement.addEventListener("loadedmetadata", loadedMetaDataHandler)
-                        videoElement.addEventListener("canplay", canPlayHandler)
-
-                        return () => {
-                            URL.revokeObjectURL(videoURL)
-
-                            videoElement.removeEventListener("loadedmetadata", loadedMetaDataHandler)
-                            videoElement.removeEventListener("canplay", canPlayHandler)
-                            videoElement.src = ""
-                        }
-                    })
+                    createVideoPreviews(newFiles)
+                    visibleDragDropZone()
+                    dispatch(changeVideoPlayerVisibility())
                 } else if (inputType === PHOTO_KEY) {
                     createPhotoPreviews(newFiles)
+                    visibleDragDropZone()
+                    dispatch(changePhotoEditorVisibility())
                 }
 
-                visibleDragDropZone()
-                dispatch(changeEditorVisibility())
             }
         }
 
@@ -156,8 +175,11 @@ const DropZone: FC<PropsType> = ({
         inputType,
         formFileData.files,
         formFileData.filesFinally,
+
         visibleDragDropZone,
-        createPhotoPreviews
+
+        createPhotoPreviews,
+        createVideoPreviews
     ])
 
     const fileValidator = (
@@ -184,45 +206,48 @@ const DropZone: FC<PropsType> = ({
     })
 
     useEffect(() => {
-        const handleKeyDown = async () => {
-            try {
-                const data = await navigator.clipboard.read()
+        if (inputType === PHOTO_KEY) {
+            const handleKeyDown = async () => {
+                try {
+                    const data = await navigator.clipboard.read()
 
-                if (data[0].types.includes("image/png")) {
-                    const blobOutput = await data[0].getType("image/png")
-                    const pastedImageName = `pasted-image-${formattedTime()}`
-                    const newFile = new File([blobOutput], pastedImageName)
+                    if (data[0].types.includes("image/png")) {
+                        const blobOutput = await data[0].getType("image/png")
+                        const pastedImageName = `pasted-image-${formattedTime()}`
+                        const newFile = new File([blobOutput], pastedImageName)
 
-                    dispatch(addFileData({
-                        key: inputType,
-                        data: {
-                            validationStatus: true,
-                            value: [newFile] // If state is of files
-                        }
-                    }))
-                    dispatch(changePhotoSettings({
-                        ...defaultPhotoSettings,
-                        name: newFile.name
-                    }))
-                    dispatch(setCurrentOpenedFileName({
-                        fileName: newFile.name
-                    }))
-                    createPhotoPreviews([newFile])
+                        dispatch(addFileData({
+                            key: inputType,
+                            data: {
+                                validationStatus: true,
+                                value: [newFile] // If state is of files
+                            }
+                        }))
+                        dispatch(changePhotoSettings({
+                            ...defaultPhotoSettings,
+                            name: newFile.name
+                        }))
+                        dispatch(setCurrentOpenedFileName({
+                            fileName: newFile.name
+                        }))
+                        createPhotoPreviews([newFile])
 
-                    visibleDragDropZone()
-                    dispatch(changeEditorVisibility())
+                        visibleDragDropZone()
+                        dispatch(changePhotoEditorVisibility())
+                    }
+                } catch (e) {
+                    console.error("Error with paste a clipboard: ", e)
                 }
-            } catch (e) {
-                console.error("Error with paste a clipboard: ", e)
+            }
+
+            window.addEventListener("paste", handleKeyDown)
+
+            return () => {
+                window.removeEventListener("paste", handleKeyDown)
             }
         }
-
-        window.addEventListener("paste", handleKeyDown)
-
-        return () => {
-            window.removeEventListener("paste", handleKeyDown)
-        }
     }, [
+        createPhotoPreviews,
         dispatch,
         inputType,
         visibleDragDropZone

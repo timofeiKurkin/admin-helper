@@ -7,10 +7,10 @@ import PopupsWrapper from "@/app/(auxiliary)/components/Common/Popups/PopupsWrap
 
 const PhotoEditorPopup: FC = () => {
     const photoEditorData: PhotoEditorDataType = PhotoEditorData
-    const photoInput: typeof PHOTO_KEY = PHOTO_KEY
+    const photoInput = PHOTO_KEY
 
     return (
-        <PopupsWrapper popupTitle={photoEditorData.title}>
+        <PopupsWrapper popupTitle={photoEditorData.title} type={photoInput}>
             <PhotoEditorBody data={photoEditorData}
                              type={photoInput}/>
         </PopupsWrapper>

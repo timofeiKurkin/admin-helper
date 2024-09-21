@@ -4,15 +4,14 @@ import ArrowForList from "@/app/(auxiliary)/components/UI/SVG/ArrowForList/Arrow
 import ButtonText from "@/app/(auxiliary)/components/UI/TextTemplates/ButtonText";
 import FilePreviewWithHandlers
     from "@/app/(auxiliary)/components/Blocks/FormBlock/CoupleOfInputs/CurrentInput/FileInput/FilesList/File/FilePreviewWithHandlers";
+import {OpenFileFuncType, RemoveFileFuncType} from "@/app/(auxiliary)/types/PopupTypes/FuncTypes";
 
 interface PropsType {
     filesListLength: number;
     placeholder: string;
-    // filesList: FileListStateType;
-    // filesList: FilePreviewType[];
     filesList: File[];
-    removeFile: (fileName: string) => void;
-    changeFile: (fileName: string) => void;
+    removeFile: RemoveFileFuncType;
+    openFile: OpenFileFuncType;
 }
 
 const HorizontalScroll: FC<PropsType> = ({
@@ -20,7 +19,7 @@ const HorizontalScroll: FC<PropsType> = ({
                                              placeholder,
                                              filesList,
                                              removeFile,
-                                             changeFile
+                                             openFile
                                          }) => {
     /**
      * Custom scroll
@@ -143,6 +142,10 @@ const HorizontalScroll: FC<PropsType> = ({
         scrollContainer.scrollLeft += newScrollPosition
     }, [])
 
+    const openFileHandler = (fileName: string) => {
+        openFile(fileName, )
+    }
+
     return filesListLength ? (
         <div className={styles.filesListWrapper}>
             <div className={styles.listArrowItem} onClick={arrowMoveLeft}>
@@ -159,14 +162,14 @@ const HorizontalScroll: FC<PropsType> = ({
                          gridTemplateColumns: filesListLength ? `repeat(${filesListLength}, 5rem)` : "1fr",
                          overflowX: filesListLength ? "auto" : "hidden"
                      }}>
-                    {filesList.length && filesList.map((file, i) => (
+                    {filesList.length ? filesList.map((file, i) => (
                         <div key={`key=${i}`} className={styles.fileWrapper}>
                             <FilePreviewWithHandlers file={file}
-                                                     removeHandler={removeFile}
-                                                     changeFile={changeFile}/>
+                                                     removeFile={removeFile}
+                                                     openFile={openFile}/>
 
                         </div>
-                    ))}
+                    )) : null}
                 </div>
 
                 {filesListLength > 3 && (

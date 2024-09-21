@@ -3,22 +3,29 @@ import {PayloadAction} from "@reduxjs/toolkit";
 import {WritableDraft} from "immer";
 import {PhotoEditorSettingsType, VideoOrientationType} from "@/app/(auxiliary)/types/PopupTypes/PopupTypes";
 import {indexOfObject} from "@/app/(auxiliary)/func/handlers";
+import {PHOTO_KEY, VIDEO_KEY} from "@/app/(auxiliary)/types/AppTypes/InputHooksTypes";
 
 
 interface InitialState {
     openedFileName: string;
     photoListSettings: PhotoEditorSettingsType[];
     videoOrientations: VideoOrientationType[];
-    photoEditorIsOpen: boolean;
-    videoPlayerIfOpen: boolean;
+    popups: {
+        [PHOTO_KEY]: boolean
+        [VIDEO_KEY]: boolean
+        // photoEditorIsOpen: boolean;
+        // videoPlayerIsOpen: boolean;
+    }
 }
 
 const initialState: InitialState = {
     openedFileName: "",
     photoListSettings: [],
     videoOrientations: [],
-    photoEditorIsOpen: false,
-    videoPlayerIfOpen: false
+    popups: {
+        [PHOTO_KEY]: false,
+        [VIDEO_KEY]: false
+    }
 }
 
 export const popupSlice = createAppSlice({
@@ -45,9 +52,15 @@ export const popupSlice = createAppSlice({
         /**
          * Изменение состояния на открытие и закрытие фоторедактора
          */
-        changeEditorVisibility: create.reducer(
+        changePhotoEditorVisibility: create.reducer(
             (state) => {
-                state.photoEditorIsOpen = !state.photoEditorIsOpen
+                state.popups[PHOTO_KEY] = !state.popups[PHOTO_KEY]
+            }
+        ),
+
+        changeVideoPlayerVisibility: create.reducer(
+            (state) => {
+                state.popups[VIDEO_KEY] = !state.popups[VIDEO_KEY]
             }
         ),
 
@@ -61,7 +74,7 @@ export const popupSlice = createAppSlice({
             (state, action: PayloadAction<VideoOrientationType>) => {
                 const orientationIndex = indexOfObject(state.videoOrientations, action.payload)
 
-                if(orientationIndex !== -1) {
+                if (orientationIndex !== -1) {
                     state.videoOrientations[orientationIndex] = action.payload
                 } else {
                     state.videoOrientations.push(action.payload)
@@ -72,21 +85,22 @@ export const popupSlice = createAppSlice({
     selectors: {
         selectOpenedFileName: (state) => state.openedFileName,
         selectPhotoListSettings: (state) => state.photoListSettings,
-        selectEditorIsOpen: (state) => state.photoEditorIsOpen,
-        selectVideoOrientations: (state) => state.videoOrientations
+        selectVideoOrientations: (state) => state.videoOrientations,
+        selectPopups: (state) => state.popups,
     }
 })
 
 export const {
     setCurrentOpenedFileName,
     changePhotoSettings,
-    changeEditorVisibility,
+    changePhotoEditorVisibility,
+    changeVideoPlayerVisibility,
     changeVideoOrientation
 } = popupSlice.actions
 
 export const {
     selectOpenedFileName,
     selectPhotoListSettings,
-    selectEditorIsOpen,
-    selectVideoOrientations
+    selectVideoOrientations,
+    selectPopups
 } = popupSlice.selectors

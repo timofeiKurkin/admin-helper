@@ -18,9 +18,7 @@ import {
 } from "@/app/(auxiliary)/libs/redux-toolkit/store/slices/AppSlice/AppSlice";
 import VideoPlayerPopup from "@/app/(auxiliary)/components/Blocks/Popups/VideoPlayerPopup/VideoPlayerPopup";
 import {
-    changeEditorVisibility,
-    selectEditorIsOpen,
-    setCurrentOpenedFileName
+    selectPopups
 } from "@/app/(auxiliary)/libs/redux-toolkit/store/slices/PopupSlice/PopupSlice";
 
 
@@ -32,7 +30,7 @@ const FileInput: FC<PropsType> = ({input}) => {
     const dispatch = useAppDispatch()
     const userDevice = useAppSelector(selectUserDevice)
     const rootPageContent = useAppSelector(selectRootPageContent)
-    const editorIsOpen = useAppSelector(selectEditorIsOpen)
+    const popupVisibility = useAppSelector(selectPopups)[input.type]
 
     const [haveMediaFile, setHaveMediaFile] =
         useState<boolean>(false)
@@ -47,11 +45,6 @@ const FileInput: FC<PropsType> = ({input}) => {
         } else {
             document.body.style.overflow = "auto"
         }
-    }
-
-    const openSelectedFile = (fileName: string) => {
-        dispatch(setCurrentOpenedFileName({fileName}))
-        dispatch(changeEditorVisibility())
     }
 
     const fileBlockHandler = () => {
@@ -82,8 +75,7 @@ const FileInput: FC<PropsType> = ({input}) => {
                     <div className={styles.filesBlock}>
                         <div className={styles.fileList}>
                             <FilesList placeholder={input.inputPlaceholder || ""}
-                                       type={input.type as PhotoAndVideoKeysTypes}
-                                       changeFile={openSelectedFile}/>
+                                       type={input.type as PhotoAndVideoKeysTypes}/>
                         </div>
 
                         <div className={styles.addFiles}>
@@ -98,17 +90,16 @@ const FileInput: FC<PropsType> = ({input}) => {
                         />
                     ) : null}
 
-                    {editorIsOpen && input.type === "photo" && (
+                    {popupVisibility && input.type === PHOTO_KEY && (
                         <PhotoEditor/>
                     )}
 
-                    {editorIsOpen && input.type === "video" && (
+                    {popupVisibility && input.type === VIDEO_KEY && (
                         <VideoPlayerPopup/>
                     )}
 
                     {/*<CreatePreview type={input.type}/>*/}
                 </>
-
             )}
         </div>
     );

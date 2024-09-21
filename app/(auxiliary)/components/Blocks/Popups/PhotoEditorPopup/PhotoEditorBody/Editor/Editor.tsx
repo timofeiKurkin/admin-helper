@@ -10,16 +10,16 @@ import {
     onDownloadCropClick
 } from "@/app/(auxiliary)/func/editorHandlers";
 import {useDebounceEffect} from "@/app/(auxiliary)/hooks/useDebounceEffect";
-import {canvasPreview, getRotateDimensions} from "@/app/(auxiliary)/components/Blocks/Popups/PhotoEditorPopup/canvasPreview";
 import {
-    HORIZONTAL,
-    PossibleCroppingBoundaryType,
-    VERTICAL
-} from "@/app/(auxiliary)/types/PopupTypes/PopupTypes";
+    canvasPreview,
+    getRotateDimensions
+} from "@/app/(auxiliary)/components/Blocks/Popups/PhotoEditorPopup/PhotoEditorBody/canvasPreview";
+import {HORIZONTAL, PossibleCroppingBoundaryType, VERTICAL} from "@/app/(auxiliary)/types/PopupTypes/PopupTypes";
 
 
 interface PropsType {
     photo: File; // CustomFileType;
+    // photo: {url: string; name: string}; // CustomFileType;
     // photo: FilePreviewType; // CustomFileType;
     setCrop: (newCrop: Crop) => void;
     updatePhoto: (newFile: File) => void;
@@ -38,7 +38,7 @@ const Editor: FC<PropsType> = ({
                                }) => {
 
     const [imgSrc, setImgSrc] =
-        useState<string>(() => URL.createObjectURL(photo))
+        useState<string>(URL.createObjectURL(photo))
 
     const [imageOrientation, setImageOrientation] =
         useState<"vertical" | "horizontal">(HORIZONTAL)
@@ -108,7 +108,7 @@ const Editor: FC<PropsType> = ({
      * @param currentCrop
      */
     const onImageLoad = (e: React.SyntheticEvent<HTMLImageElement>, currentCrop: Crop) => {
-        setIsChanging(() => true)
+        setIsChanging(true)
 
         const {
             naturalWidth,
@@ -123,7 +123,7 @@ const Editor: FC<PropsType> = ({
             width
         )
         const currentOrientation = determineOrientation(naturalWidth, naturalHeight)
-        setImageOrientation(() => currentOrientation)
+        setImageOrientation(currentOrientation)
 
         if (!currentCrop.x && !currentCrop.y && currentCrop.unit === "%") {
             const {x, y} = updateCropHandler(
@@ -158,7 +158,7 @@ const Editor: FC<PropsType> = ({
      */
     const changeCropHandler = useCallback((pixelCrop: PixelCrop) => {
         if (croppingBoundary) {
-            setIsChanging(() => true)
+            setIsChanging(true)
 
             /**
              * Оригинальные размеры фото и его положение по осям.
@@ -230,7 +230,7 @@ const Editor: FC<PropsType> = ({
      * эффект для создания url фотографии, для отображения ее в редакторе
      */
     useEffect(() => {
-        setImgSrc(() => URL.createObjectURL(photo))
+        setImgSrc(URL.createObjectURL(photo))
     }, [
         photo,
     ])
@@ -254,7 +254,7 @@ const Editor: FC<PropsType> = ({
             } = imgRef.current
 
             if (naturalWidth && naturalHeight && width && height) {
-                setIsChanging(() => true)
+                setIsChanging(true)
 
                 const {
                     naturalRotatedWidth,
@@ -275,7 +275,6 @@ const Editor: FC<PropsType> = ({
 
                 updateCropHandler(width, height, naturalWidthScaled, naturalHeightScaled)
             }
-
         }
     }, [
         rotate,
@@ -306,8 +305,8 @@ const Editor: FC<PropsType> = ({
                     imageOrientation: croppingBoundary.orientation
                 }).then((file) => {
                     if (file && isChanging) {
-                        updatePhoto(file)
-                        setIsChanging(() => false)
+                        // updatePhoto(file)
+                        setIsChanging(false)
                     }
                 })
             }
@@ -350,22 +349,22 @@ const Editor: FC<PropsType> = ({
                         </ReactCrop>
                     )}
 
-                    <div style={{
-                        position: "absolute",
-                        top: 100,
-                        zIndex: 5,
-                    }}>
-                        <a onClick={() => onDownloadCropClick({
-                            imgRef,
-                            previewCanvasRef,
-                            completedCrop,
-                            blobUrlRef,
-                            hiddenAnchorRef,
-                            rotate
-                        })}>
-                            download
-                        </a>
-                    </div>
+                    {/*<div style={{*/}
+                    {/*    position: "absolute",*/}
+                    {/*    top: 100,*/}
+                    {/*    zIndex: 5,*/}
+                    {/*}}>*/}
+                    {/*    <a onClick={() => onDownloadCropClick({*/}
+                    {/*        imgRef,*/}
+                    {/*        previewCanvasRef,*/}
+                    {/*        completedCrop,*/}
+                    {/*        blobUrlRef,*/}
+                    {/*        hiddenAnchorRef,*/}
+                    {/*        rotate*/}
+                    {/*    })}>*/}
+                    {/*        download*/}
+                    {/*    </a>*/}
+                    {/*</div>*/}
 
                     <div style={{
                         position: "fixed",

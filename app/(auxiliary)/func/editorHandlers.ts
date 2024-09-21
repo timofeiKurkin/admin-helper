@@ -6,11 +6,14 @@ import {
     PhotoEditorSettingsType,
     VERTICAL
 } from "@/app/(auxiliary)/types/PopupTypes/PopupTypes";
-import {getRotateDimensions} from "@/app/(auxiliary)/components/Blocks/Popups/PhotoEditorPopup/canvasPreview";
+import {getRotateDimensions} from "@/app/(auxiliary)/components/Blocks/Popups/PhotoEditorPopup/PhotoEditorBody/canvasPreview";
 
 
 export const scalePoints = [0.5, 1, 2, 2.5]
+export const scaleStickPoint = 0.05
+
 export const rotatePoints = [-180, -90, 0, 90, 180]
+export const rotateStickPoint = 5
 
 export const determineOrientation = (width: number, height: number) => {
     return width >= height ? HORIZONTAL : VERTICAL

@@ -1,4 +1,4 @@
-import React, {FC, useEffect, useState} from 'react';
+import React, {FC} from 'react';
 import styles from "./VideoPlayer.module.scss"
 import ReactPlayer from "react-player";
 import {HORIZONTAL, ImageOrientationType, VERTICAL} from "@/app/(auxiliary)/types/PopupTypes/PopupTypes";
@@ -23,7 +23,7 @@ const VideoPlayer: FC<PropsType> = ({
             <div className={styles.videoPlayerBackground}>
                 <div className={styles.videoPlayerBody}>
                     <ReactPlayer width={orientation === HORIZONTAL ? 640 : 360}
-                                 height={orientation === VERTICAL ? 360 : 640}
+                                 height={orientation === HORIZONTAL ? 360 : 640}
                                  url={video}
                                  volume={0.5}
                                  controls/>

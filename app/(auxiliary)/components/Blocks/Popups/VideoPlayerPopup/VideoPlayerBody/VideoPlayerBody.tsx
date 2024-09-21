@@ -12,8 +12,9 @@ import popupsCommonStyles from "@/app/(auxiliary)/components/Common/Popups/Popup
 import PopupFileList from "@/app/(auxiliary)/components/Common/Popups/PopupsWrapper/PopupFileList/PopupFileList";
 import Button from "@/app/(auxiliary)/components/UI/Button/Button";
 import {
-    changeEditorVisibility,
-    selectOpenedFileName, selectVideoOrientations
+    changeVideoPlayerVisibility,
+    selectOpenedFileName,
+    selectVideoOrientations
 } from "@/app/(auxiliary)/libs/redux-toolkit/store/slices/PopupSlice/PopupSlice";
 import {HORIZONTAL} from "@/app/(auxiliary)/types/PopupTypes/PopupTypes";
 
@@ -30,7 +31,6 @@ const VideoPlayerBody: FC<PropsType> = ({data, type}) => {
     const videoOrientations = useAppSelector(selectVideoOrientations).find((orient) => orient.name === openedFileName) || {orientation: HORIZONTAL}
 
     const files = formFileData.files
-    const previews = formFileData.filesFinally
 
     /**
      * Callback для поиска файла или настройки файла по его названию. Используется в инициализации состояния и его обновления
@@ -49,7 +49,7 @@ const VideoPlayerBody: FC<PropsType> = ({data, type}) => {
     }
 
     const closeVideoPlayer = () => {
-        dispatch(changeEditorVisibility())
+        dispatch(changeVideoPlayerVisibility())
     }
 
     useEffect(() => {
@@ -71,19 +71,25 @@ const VideoPlayerBody: FC<PropsType> = ({data, type}) => {
         }
     }, [videoURl]);
 
+    console.log("list of previews: ", formFileData.filesFinally)
+
     return (
         <div className={`${popupsCommonStyles.popupBody} ${styles.videoPlayerBody}`}>
             <VideoPlayer video={videoURl} orientation={videoOrientations.orientation}/>
 
+            <div className={styles.nothing}></div>
+
             <PopupFileList contentForEditor={{
                 titleOfList: data.photoList.uploadedPhotos,
-                listOfPreviews: previews,
+                listOfPreviews: formFileData.filesFinally,
                 switchToAnotherFile,
                 type,
             }}/>
 
             <div className={`${styles.closeButton} ${popupsCommonStyles.buttons}`}>
-                <Button onClick={closeVideoPlayer}>{data.buttons.close}</Button>
+                <Button onClick={closeVideoPlayer}>
+                    {data.buttons.close}
+                </Button>
             </div>
         </div>
     );

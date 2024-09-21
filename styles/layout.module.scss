@@ -4,10 +4,6 @@
 	width: 100dvw;
 	height: 100dvh;
 
-	@media screen and ($desktop1920) {
-		overflow: hidden;
-	}
-
 	@media screen and ($pad992_1279),
 	screen and ($pad640_991),
 	screen and ($phone375_639) {
@@ -21,6 +17,12 @@
 		display: grid;
 		grid-template-rows: 1fr;
 		justify-content: center;
+
+		@media screen and ($desktop1920) {
+			width: inherit;
+			height: inherit;
+			overflow: hidden;
+		}
 
 		@media screen and ($desktop1920) {
 			padding: 2.81rem 0;

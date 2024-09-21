@@ -1,40 +1,32 @@
-import React, {FC, useEffect, useRef, useState} from 'react';
+import {FC, useEffect, useState} from 'react';
 import {useAppDispatch, useAppSelector} from "@/app/(auxiliary)/libs/redux-toolkit/store/hooks";
 import {
     changePreview,
     selectFormFileData
 } from "@/app/(auxiliary)/libs/redux-toolkit/store/slices/UserFormDataSlice/UserFormDataSlice";
 import {PHOTO_KEY, PhotoAndVideoKeysTypes, VIDEO_KEY} from "@/app/(auxiliary)/types/AppTypes/InputHooksTypes";
-import styles from "./CreateVideoPreview.module.scss"
 
 interface PropsType {
     type: PhotoAndVideoKeysTypes;
-    // changeVisibility: () => void;
-    // children: React.ReactNode;
 }
 
 const CreatePreview: FC<PropsType> = ({
-                                          type,
-                                          // changeVisibility,
-                                          // children
+                                          type
                                       }) => {
     const dispatch = useAppDispatch()
 
     const formFileData = useAppSelector(selectFormFileData)[type]
-    const [previews, setPreviews] =
-        useState<File[]>(formFileData.filesFinally)
-
-    // const videoRef = useRef<HTMLVideoElement>(null)
-    // const canvasRef = useRef<HTMLCanvasElement>(null)
+    // const [previews, setPreviews] =
+    //     useState<File[]>(formFileData.filesFinally)
 
     useEffect(() => {
-        const difference = formFileData.files.filter((file) => {
-            return !previews.find((name) => name.name === file.name)
+        const newFiles = formFileData.files.filter((file) => {
+            return !formFileData.filesFinally.find((name) => name.name === file.name)
         })
 
-        if (difference.length) {
+        if (newFiles.length) {
             if (type === VIDEO_KEY) {
-                difference.forEach((file) => {
+                newFiles.forEach((file) => {
                     const videoRef = document.createElement("video")
                     const canvasRef = document.createElement("canvas")
 
@@ -90,7 +82,7 @@ const CreatePreview: FC<PropsType> = ({
                     }
                 })
             } else if (type === PHOTO_KEY) {
-                difference.forEach((file) => {
+                newFiles.forEach((file) => {
                     dispatch(changePreview({
                         key: type,
                         data: file
@@ -102,12 +94,12 @@ const CreatePreview: FC<PropsType> = ({
         console.log("create preview works")
 
         return () => {
-            difference.length = 0
+            newFiles.length = 0
         }
     }, [
         dispatch,
         formFileData.files,
-        previews,
+        formFileData.filesFinally,
         type
     ]);
 

@@ -1,0 +1,13 @@
+.editorControls {
+	display: grid;
+	grid-template-columns: min-content 240px;
+	grid-template-rows: repeat(2, 45px);
+	column-gap: 1.25rem;
+	row-gap: 1.25rem;
+}
+
+.editorTitle {
+	margin-top: 5px;
+}
+
+

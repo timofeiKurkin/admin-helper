@@ -1,8 +1,18 @@
+@import "@/styles/variables.module.scss";
+
 .videoPlayerBody {
 	grid-template-rows: 1fr;
-	grid-template-areas: "video-player popup-file-list"
-						 "video-player buttons";
+	grid-template-areas: "video-player nothing" "video-player popup-file-list" "video-player buttons";
 	align-items: end;
+
+	.nothing {
+		grid-area: nothing;
+
+		width: 100%;
+		height: 100%;
+		border-radius: $border_radius;
+		background-color: $cold_white;
+	}
 
 	.fileListAndClose {
 		display: flex;

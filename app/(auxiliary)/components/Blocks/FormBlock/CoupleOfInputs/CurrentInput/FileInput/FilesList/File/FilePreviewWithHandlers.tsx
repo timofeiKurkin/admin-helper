@@ -3,20 +3,21 @@ import styles from "./File.module.scss";
 import DeleteFile from "@/app/(auxiliary)/components/UI/SVG/DeleteFile/DeleteFile";
 import ChangePhoto from "@/app/(auxiliary)/components/UI/SVG/ChangePhoto/ChangePhoto";
 import FilePreview from "@/app/(auxiliary)/components/Blocks/FilePreviewBlock/FilePreviewBlock";
+import {RemoveFileFuncType} from "@/app/(auxiliary)/types/PopupTypes/FuncTypes";
 
 interface PropsType {
     file: File; // CustomFileType;
     // file: FilePreviewType; // CustomFileType;
-    removeHandler: (fileName: string) => void;
-    changeFile: (fileName: string) => void;
+    removeFile: RemoveFileFuncType;
+    openFile: (fileName: string) => void;
 
 }
 
 
 const FilePreviewWithHandlers: FC<PropsType> = ({
                                                     file,
-                                                    removeHandler,
-                                                    changeFile
+                                                    removeFile,
+                                                    openFile
                                                 }) => {
 
     const [visibleHover, setVisibleHover] = useState<boolean>(false)
@@ -27,7 +28,7 @@ const FilePreviewWithHandlers: FC<PropsType> = ({
 
     const handleRemove = (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
         e.stopPropagation()
-        removeHandler(file.name)
+        removeFile(file.name)
     }
 
     return (
@@ -37,7 +38,7 @@ const FilePreviewWithHandlers: FC<PropsType> = ({
 
             {visibleHover ? (
                 <div className={styles.fileCover}
-                     onClick={() => changeFile(file.name)}>
+                     onClick={() => openFile(file.name)}>
                     <div className={styles.fileRemove}
                          onClick={(e) => handleRemove(e)}>
                         <DeleteFile/>

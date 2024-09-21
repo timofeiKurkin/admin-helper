@@ -23,6 +23,12 @@ export interface PhotoEditorSettingsType {
     crop: Crop;
 }
 
+export interface ControlsPropsType {
+    data: string;
+    value: number;
+    updateFunc: (value: number) => void;
+}
+
 export const defaultCropSettings: Crop = {
     unit: "%",
     x: 0,

@@ -8,10 +8,10 @@ import VideoPlayerBody
 
 const VideoPlayerPopup = () => {
     const videoPlayerData: VideoPlayerDataType = VideoPlayerData
-    const videoInput: typeof VIDEO_KEY = VIDEO_KEY
+    const videoInput = VIDEO_KEY
 
     return (
-        <PopupsWrapper popupTitle={videoPlayerData.title}>
+        <PopupsWrapper popupTitle={videoPlayerData.title} type={videoInput}>
             <VideoPlayerBody type={videoInput} data={videoPlayerData}/>
         </PopupsWrapper>
     );

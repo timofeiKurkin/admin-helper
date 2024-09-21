@@ -5,7 +5,6 @@ import {trimLongTitle} from "@/app/(auxiliary)/func/trimLongTitle";
 import Trash from "@/app/(auxiliary)/components/UI/SVG/Trash/Trash";
 import {useAppDispatch, useAppSelector} from "@/app/(auxiliary)/libs/redux-toolkit/store/hooks";
 import {
-    changeEditorVisibility,
     selectOpenedFileName,
     setCurrentOpenedFileName
 } from "@/app/(auxiliary)/libs/redux-toolkit/store/slices/PopupSlice/PopupSlice";
@@ -44,7 +43,7 @@ const PopupFile: FC<PropsType> = ({
         fileName: string,
     ) => {
         if (filesNames.length === 1) {
-            dispatch(changeEditorVisibility())
+            // dispatch(changeEditorVisibility())
             dispatch(setCurrentOpenedFileName({fileName: ""}))
         } else {
             dispatch(setCurrentOpenedFileName({
@@ -59,6 +58,8 @@ const PopupFile: FC<PropsType> = ({
             }
         }))
     }
+
+    console.log("popup file render")
 
     return (
         <div className={`${styles.fileItem} ${file.name === currentFileName && styles.fileItemSelected}`}

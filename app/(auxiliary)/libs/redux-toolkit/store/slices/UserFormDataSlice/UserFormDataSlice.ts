@@ -12,13 +12,11 @@ import {
     VIDEO_KEY
 } from "@/app/(auxiliary)/types/AppTypes/InputHooksTypes";
 import {
-    FileListStateType,
     FormDataItemType,
     PermissionsOfFormStatesType,
     UserFormDataType
 } from "@/app/(auxiliary)/types/AppTypes/Context";
 import {PayloadAction} from "@reduxjs/toolkit";
-import {FileListType} from "@/app/(auxiliary)/types/DropZoneTypes/DropZoneTypes";
 import {indexOfObject} from "@/app/(auxiliary)/func/handlers";
 
 interface InitialStateType extends UserFormDataType {
