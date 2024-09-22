@@ -1,11 +1,11 @@
 import React, {FC} from 'react';
-import styles from "./RotateControl.module.scss"
 import commonStyles from "../CommonEditorStyles.module.scss"
 import Text from "@/app/(auxiliary)/components/UI/TextTemplates/Text";
 import Range from "@/app/(auxiliary)/components/UI/Inputs/Range/Range";
 import {rotatePoints, rotateStickPoint, stickToClosestValue} from "@/app/(auxiliary)/func/editorHandlers";
-import SmallText from "@/app/(auxiliary)/components/UI/TextTemplates/SmallText";
 import {ControlsPropsType} from "@/app/(auxiliary)/types/PopupTypes/PopupTypes";
+import RangeTicks
+    from "@/app/(auxiliary)/components/Blocks/Popups/PhotoEditorPopup/PhotoEditorBody/EditorControls/RangeTicks/RangeTicks";
 
 
 const RotateControl: FC<ControlsPropsType> = ({
@@ -22,22 +22,15 @@ const RotateControl: FC<ControlsPropsType> = ({
     return (
         <>
             <div className={commonStyles.editorTitle}><Text>{data}</Text></div>
-            <div className={styles.rotateWrapper}>
+            <div className={commonStyles.controlsWrapper}>
                 <Range onChange={(e) => rotateImageHandler(Number(e.target.value))}
                        value={value}
                        maxValue={180}
                        minValue={-180}
                        step={1}/>
 
-                <div className={styles.rotateSliderTicks}>
-                    {rotatePoints.map((degree) => (
-                        <span key={`key=${degree}`}
-                              className={styles.sliderTick}
-                              onClick={() => rotateImageHandler(degree)}>
-                                    <SmallText>{degree}</SmallText>
-                                </span>
-                    ))}
-                </div>
+                <RangeTicks changeImageHandler={rotateImageHandler}
+                            type={"rotate"}/>
             </div>
         </>
     );

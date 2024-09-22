@@ -6,7 +6,6 @@ import {
     selectFormFileData
 } from "@/app/(auxiliary)/libs/redux-toolkit/store/slices/UserFormDataSlice/UserFormDataSlice";
 import HorizontalScroll from "@/app/(auxiliary)/components/Blocks/HorizontalScroll/HorizontalScroll";
-import {OpenFileFuncType} from "@/app/(auxiliary)/types/PopupTypes/FuncTypes";
 import {
     changePhotoEditorVisibility,
     changeVideoPlayerVisibility,
@@ -38,6 +37,7 @@ const FilesList: FC<PropsType> = ({
 
     const openFile = (fileName: string) => {
         dispatch(setCurrentOpenedFileName({fileName}))
+
         if (type === VIDEO_KEY) {
             dispatch(changeVideoPlayerVisibility())
         } else if (type === PHOTO_KEY) {

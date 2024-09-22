@@ -14,52 +14,32 @@ import {
     setSwitchedMessageBlock
 } from "@/app/(auxiliary)/libs/redux-toolkit/store/slices/AppSlice/AppSlice";
 import {
-    addFileData,
-    changeTextData
+    addMessageData,
+    deleteMessageRecorder
 } from "@/app/(auxiliary)/libs/redux-toolkit/store/slices/UserFormDataSlice/UserFormDataSlice";
 
 interface PropsType {
-    currentInput: MessageInputType;
+    inputData: MessageInputType;
 }
 
-const Message: FC<PropsType> = ({currentInput}) => {
+const Message: FC<PropsType> = ({inputData}) => {
     const [userCannotTalk, setUserCannotTalk] =
-        useState<boolean>(false);
+        useState<boolean>(false)
     const userDevice = useAppSelector(selectUserDevice)
     const dispatch = useAppDispatch()
-
-    // const {appState, setAppState} = useContext(AppContext)
 
     const setNewMessageHandler = (
         newMessage: File | string,
         validationStatus: boolean
     ) => {
-        if(typeof newMessage === "string") {
-            dispatch(changeTextData({
-                key: currentInput.type,
-                data: {
-                    validationStatus,
-                    value: newMessage
-                }
-            }))
-        } else if (newMessage instanceof File) {
-            dispatch(addFileData({
-                key: currentInput.type,
-                data: {
-                    validationStatus,
-                    value: [newMessage]
-                }
-            }))
-        }
+        dispatch(addMessageData({
+            validationStatus,
+            value: newMessage
+        }))
+    }
 
-        // updateFormsDataState({
-        //     setAppState,
-        //     newValue: {
-        //         validationStatus,
-        //         value: newMessage
-        //     },
-        //     key: currentInput.type
-        // })
+    const removerRecorderHandler = () => {
+        dispatch(deleteMessageRecorder())
     }
 
     useEffect(() => {
@@ -83,21 +63,22 @@ const Message: FC<PropsType> = ({currentInput}) => {
             {
                 !userCannotTalk && (
                     <div className={styles.voiceWrapper}>
-                        <VoiceInput voicePlaceHolder={currentInput.voiceMessage?.inputPlaceholder}
-                                    setNewMessage={setNewMessageHandler}/>
+                        <VoiceInput voicePlaceHolder={inputData.voiceMessage?.inputPlaceholder}
+                                    setNewMessage={setNewMessageHandler}
+                                    removeRecoder={removerRecorderHandler}/>
                     </div>
                 )
             }
 
             <Toggle toggleStatus={userCannotTalk}
                     onClick={switchTypeMessageHandler}>
-                {currentInput.toggleText}
+                {inputData.toggleText}
             </Toggle>
 
             {
                 userCannotTalk && (
-                    <MessageInput type={currentInput.type as typeof MESSAGE_KEY}
-                                  placeholder={currentInput.textMessage?.inputPlaceholder || ""}
+                    <MessageInput type={inputData.type as typeof MESSAGE_KEY}
+                                  placeholder={inputData.textMessage?.inputPlaceholder || ""}
                                   setNewMessage={setNewMessageHandler}/>
                 )
             }

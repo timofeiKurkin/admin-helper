@@ -1,9 +1,7 @@
 import {createAppSlice} from "@/app/(auxiliary)/libs/redux-toolkit/store/createAppSlice";
-import {
-    RootPageContentType
-} from "@/app/(auxiliary)/types/Data/Interface/RootPage/RootPageContentType";
+import {RootPageContentType} from "@/app/(auxiliary)/types/Data/Interface/RootPage/RootPageContentType";
 import {PayloadAction} from "@reduxjs/toolkit";
-import {BlocksMovingType, EditorStateType, UserDeviceStateType} from "@/app/(auxiliary)/types/AppTypes/Context";
+import {BlocksMovingType, UserDeviceStateType} from "@/app/(auxiliary)/types/AppTypes/Context";
 
 interface InitialStateType {
     userDevice: UserDeviceStateType;

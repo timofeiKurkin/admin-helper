@@ -38,6 +38,11 @@ const initialState: InitialStateType = {
             filesNames: [],
             files: [],
             filesFinally: []
+        },
+        [MESSAGE_KEY]: {
+            validationStatus: false,
+            // type: MESSAGE_KEY,
+            value: {} as File
         }
     },
     text_data: {
@@ -113,6 +118,35 @@ export const userFormDataSlice = createAppSlice({
                 state.text_data[action.payload.key] = action.payload.data
             }
         ),
+
+        addMessageData: create.reducer((
+            state,
+            action: PayloadAction<FormDataItemType<string | File>>
+        ) => {
+            const payload = action.payload
+
+            if (typeof payload.value === "string") {
+                state.text_data[MESSAGE_KEY] = {
+                    value: payload.value,
+                    validationStatus: payload.validationStatus
+                }
+            } else if (payload.value instanceof File || !Object.keys(payload.value).length) {
+                state.file_data[MESSAGE_KEY] = {
+                    value: payload.value,
+                    validationStatus: payload.validationStatus
+                }
+            }
+        }),
+
+        deleteMessageRecorder: create.reducer((
+            state
+        ) => {
+            state.file_data[MESSAGE_KEY] = {
+                value: {} as File,
+                validationStatus: false
+            }
+        }),
+
         /**
          * Slice для добавления файлов в состояние. Добавить можно фото или видео
          */
@@ -121,10 +155,12 @@ export const userFormDataSlice = createAppSlice({
                 state,
                 action: PayloadAction<DataActionType<PhotoAndVideoKeysTypes, FormDataItemType<File[]>>> // CustomFileType[]
             ) => {
-                state.file_data[action.payload.key].files =
-                    state.file_data[action.payload.key].files.concat(action.payload.data.value)
+                const key = action.payload.key
+                const newFile = action.payload.data.value
 
-                state.file_data[action.payload.key].filesNames = state.file_data[action.payload.key].filesNames.concat(action.payload.data.value.map((f) => f.name))
+                state.file_data[key].files = state.file_data[key].files.concat(newFile)
+                state.file_data[key].filesNames =
+                    state.file_data[key].filesNames.concat(newFile.map((f) => f.name))
             }
         ),
         /**
@@ -135,6 +171,8 @@ export const userFormDataSlice = createAppSlice({
                 state,
                 action: PayloadAction<DataActionType<PhotoAndVideoKeysTypes, DeleteFileAction>>
             ) => {
+                const key = action.payload.key
+
                 const filter = <T extends File | string>(item: T) => {
                     if (item instanceof File) {
                         return item.name !== action.payload.data.name
@@ -143,23 +181,23 @@ export const userFormDataSlice = createAppSlice({
                     }
                 }
 
-                state.file_data[action.payload.key] = {
-                    type: action.payload.key,
+                state.file_data[key] = {
+                    type: key,
 
                     /**
                      * Удаление исходного файла
                      */
-                    files: state.file_data[action.payload.key].files.filter(filter),
+                    files: state.file_data[key].files.filter(filter),
 
                     /**
                      * Удаление файла, подвергшийся изменениям пользователя в фоторедакторе
                      */
-                    filesFinally: state.file_data[action.payload.key].filesFinally.filter(filter),
+                    filesFinally: state.file_data[key].filesFinally.filter(filter),
 
                     /**
                      * Удаление имени из списка доступных файлов к открытию
                      */
-                    filesNames: state.file_data[action.payload.key].filesNames.filter(filter)
+                    filesNames: state.file_data[key].filesNames.filter(filter)
                 }
             }
         ),
@@ -172,6 +210,8 @@ export const userFormDataSlice = createAppSlice({
             state,
             action: PayloadAction<ChangePreviewActionType>
         ) => {
+            const key = action.payload.key
+
             const changePreview = (newFile: File, key: PhotoAndVideoKeysTypes) => {
                 const previewIndex = indexOfObject(state.file_data[key].filesFinally, newFile)
 
@@ -184,10 +224,10 @@ export const userFormDataSlice = createAppSlice({
 
             if (Array.isArray(action.payload.data)) {
                 action.payload.data.forEach((file) => {
-                    changePreview(file, action.payload.key)
+                    changePreview(file, key)
                 })
             } else if (action.payload.data instanceof File) {
-                changePreview(action.payload.data, action.payload.key)
+                changePreview(action.payload.data, key)
             }
         }),
 
@@ -199,6 +239,7 @@ export const userFormDataSlice = createAppSlice({
                 state.permissions.userAgreed = !state.permissions.userAgreed
             }
         ),
+
         setUserCanTalk: create.reducer(
             (state) => {
                 state.permissions.userCanTalk = !state.permissions.userCanTalk
@@ -232,9 +273,9 @@ export const {
     setPermissionPolitic,
     setUserCanTalk,
     setValidationFormStatus,
+    addMessageData,
+    deleteMessageRecorder,
 
-    // addVideoPreview,
-    // changePhotosPreview,
     changePreview
 } = userFormDataSlice.actions
 

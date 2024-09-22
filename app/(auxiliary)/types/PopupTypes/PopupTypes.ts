@@ -1,6 +1,7 @@
 import {Crop} from "react-image-crop";
 
 export type ImageOrientationType = "vertical" | "horizontal";
+export type RangeTickType = "scale" | "rotate";
 
 export interface VideoOrientationType {
     name: string;
@@ -27,6 +28,15 @@ export interface ControlsPropsType {
     data: string;
     value: number;
     updateFunc: (value: number) => void;
+}
+
+export interface RangeTicksProps {
+    value: number;
+    max?: number;
+    min?: number;
+    type: RangeTickType;
+    unit: "%" | "x"
+    pickTick: (value: number) => void
 }
 
 export const defaultCropSettings: Crop = {

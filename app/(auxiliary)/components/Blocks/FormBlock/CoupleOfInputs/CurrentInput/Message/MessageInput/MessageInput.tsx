@@ -6,6 +6,7 @@ import {
 } from "@/app/(auxiliary)/components/Blocks/FormBlock/CoupleOfInputs/CurrentInput/inputValidations";
 import styles from "./MessageInput.module.scss";
 import {MESSAGE_KEY} from "@/app/(auxiliary)/types/AppTypes/InputHooksTypes";
+import {TextareaChangeEventHandler} from "@/app/(auxiliary)/types/AppTypes/AppTypes";
 
 
 interface PropsType {
@@ -19,19 +20,13 @@ const MessageInput: FC<PropsType> = ({
                                          type,
                                          setNewMessage
                                      }) => {
-    const message = useInput<HTMLTextAreaElement>("", type, inputValidations[type]);
+    const message =
+        useInput<HTMLTextAreaElement>("", type, inputValidations[type]);
 
-    useEffect(() => {
-        setNewMessage(message.value, message.inputValid)
-
-        return () => {
-            setNewMessage("", false);
-        }
-    }, [
-        // setNewMessage,
-        message.value,
-        message.inputValid
-    ]);
+    const onChangeHandler = (e: TextareaChangeEventHandler) => {
+        message.onChange(e)
+        setNewMessage(e.target.value, message.inputValid)
+    }
 
     return (
         <div className={styles.messageWrapper}>
@@ -40,7 +35,7 @@ const MessageInput: FC<PropsType> = ({
                       maxLength={inputValidations[type].maxLength}
                       tabIndex={1}
                       onBlur={message.onBlur}
-                      onChange={message.onChange}
+                      onChange={onChangeHandler}
                       inputIsDirty={message.isDirty}/>
         </div>
     );

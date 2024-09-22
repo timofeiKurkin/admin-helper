@@ -1,27 +1,47 @@
 "use client"
 
-import React, {FC, useEffect, useRef, useState} from "react";
+import React, {FC, useRef, useState} from "react";
 import Button from "@/app/(auxiliary)/components/UI/Button/Button";
 import Microphone from "@/app/(auxiliary)/components/UI/SVG/Microphone/Microphone";
 import {blue_dark, blue_light} from "@/styles/colors";
 import ReadyVoice
     from "@/app/(auxiliary)/components/Blocks/FormBlock/CoupleOfInputs/CurrentInput/Message/VoiceInput/ReadyVoice";
+import {useAppSelector} from "@/app/(auxiliary)/libs/redux-toolkit/store/hooks";
+import {
+    selectFormFileData
+} from "@/app/(auxiliary)/libs/redux-toolkit/store/slices/UserFormDataSlice/UserFormDataSlice";
+import {MESSAGE_KEY} from "@/app/(auxiliary)/types/AppTypes/InputHooksTypes";
 import {formattedTime} from "@/app/(auxiliary)/func/formattedTime";
 
 interface PropsType {
     voicePlaceHolder?: string;
     setNewMessage: (newMessage: File, validationStatus: boolean) => void;
+    removeRecoder: () => void;
 }
 
 const VoiceInput: FC<PropsType> = ({
                                        voicePlaceHolder,
-                                       setNewMessage
+                                       setNewMessage,
+                                       removeRecoder
                                    }) => {
-    const [isRecording, setIsRecording] = useState(false)
-    const [recordingIsDone, setRecordingIsDone] = useState<boolean>(false)
+    const voiceMessage = useAppSelector(selectFormFileData)[MESSAGE_KEY]
 
-    // const [audioURL, setAudioURL] = useState("");
-    const [audioBlob, setAudioBlob] = useState<Blob | null>(null)
+    const [isRecording, setIsRecording] =
+        useState(false)
+    const [recordingIsDone, setRecordingIsDone] =
+        useState<boolean>(voiceMessage.validationStatus)
+
+    const [audioBlob, setAudioBlob] =
+        useState<Blob | null>(() => {
+            if (voiceMessage.validationStatus) {
+                return new Blob(
+                    [voiceMessage.value],
+                    {type: voiceMessage.value.type}
+                )
+            }
+
+            return null
+        })
 
     const mediaRecorderRef = useRef<MediaRecorder | null>(null)
     const audioChunksRef = useRef<Blob[]>([])
@@ -40,8 +60,17 @@ const VoiceInput: FC<PropsType> = ({
             const blob = new Blob(audioChunksRef.current, {type: "audio/wav"})
 
             if (blob) {
-                // setNewMessage(audioFile, true)
                 setAudioBlob(blob)
+
+                const newAudioFile = new File(
+                    [blob],
+                    `voice-record-${formattedTime()}`,
+                    {
+                        type: "audio/wav",
+                        lastModified: Date.now()
+                    }
+                )
+                setNewMessage(newAudioFile, !!blob)
             }
         };
 
@@ -49,39 +78,20 @@ const VoiceInput: FC<PropsType> = ({
     }
 
     const stopRecording = () => {
-        setIsRecording((prevState) => !prevState)
-        setRecordingIsDone((prevState) => !prevState)
-
         if (mediaRecorderRef.current) {
             mediaRecorderRef.current.stop()
         }
+
+        setIsRecording((prevState) => !prevState)
+        setRecordingIsDone((prevState) => !prevState)
     }
 
     const deleteCurrentRecord = () => {
-        setRecordingIsDone((prevState) => !prevState);
-
-        if (audioBlob) {
-            setAudioBlob(null)
-            setNewMessage({} as File, false)
-        }
+        removeRecoder()
+        setRecordingIsDone(false);
+        setAudioBlob(null)
+        // setNewMessage({} as File, false)
     }
-
-    useEffect(() => {
-        if (audioBlob) {
-            const audioFile = new File([audioBlob], `user-record-${formattedTime()}`, {
-                type: "audio/wav",
-                lastModified: new Date().getDate(),
-            })
-            setNewMessage(audioFile, true)
-        }
-
-        return () => {
-            setNewMessage({} as File, false)
-        }
-    }, [
-        audioBlob,
-        // setNewMessage
-    ]);
 
     if (!audioBlob && !recordingIsDone) {
         return (
@@ -100,7 +110,7 @@ const VoiceInput: FC<PropsType> = ({
     } else if (audioBlob && recordingIsDone) {
         return (
             <ReadyVoice audioBlob={audioBlob}
-                        removeCurrentRecord={() => deleteCurrentRecord()}/>
+                        removeCurrentRecord={deleteCurrentRecord}/>
         )
     }
 };

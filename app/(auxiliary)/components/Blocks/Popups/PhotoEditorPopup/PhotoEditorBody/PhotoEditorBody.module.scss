@@ -15,76 +15,76 @@
 		flex-direction: column;
 		row-gap: 1.25rem;
 
-		.editorControls {
-			display: grid;
-			grid-template-columns: min-content 240px;
-			grid-template-rows: repeat(2, 45px);
-			column-gap: 1.25rem;
-			row-gap: 1.25rem;
-
-			.editorTitle {
-				margin-top: 5px;
-			}
-
-			.scaleWrapper, .rotateWrapper {
-				width: 100%;
-
-				.scaleSliderTicks, .rotateSliderTicks {
-					display: flex;
-					margin: 0 5px;
-				}
-			}
-
-			.scaleWrapper {
-				.scaleSliderTicks {
-					position: relative;
-
-					span {
-						position: absolute;
-						transform: translateX(-50%);
-						cursor: pointer;
-						top: 8px;
-
-						display: flex;
-						justify-content: center;
-
-						&:before {
-							position: absolute;
-							content: "";
-
-							top: -8px;
-
-							width: 1px;
-							height: 5px;
-							background: #d3d3d3;
-						}
-					}
-
-					//justify-content: space-between;
-					//padding: 0 5px;
-				}
-			}
-
-			.rotateWrapper {
-				.rotateSliderTicks {
-					justify-content: space-between;
-
-					.sliderTick {
-						display: flex;
-						justify-content: center;
-						width: 1px;
-						height: 5px;
-						background: #d3d3d3;
-						line-height: 30px;
-						cursor: pointer;
-
-						p {
-							line-height: inherit;
-						}
-					}
-				}
-			}
-		}
+		//.editorControls {
+		//	display: grid;
+		//	grid-template-columns: min-content 240px;
+		//	grid-template-rows: repeat(2, 45px);
+		//	column-gap: 1.25rem;
+		//	row-gap: 1.25rem; // ... took it
+		//
+		//	.editorTitle { // took it
+		//		margin-top: 5px;
+		//	}
+		//
+		//	.scaleWrapper, .rotateWrapper { // took it
+		//		width: 100%;
+		//
+		//		.scaleSliderTicks, .rotateSliderTicks { // took it
+		//			display: flex;
+		//			margin: 0 5px;
+		//		}
+		//	}
+		//
+		//	.scaleWrapper { // took it
+		//		.scaleSliderTicks {
+		//			position: relative;
+		//
+		//			span {
+		//				position: absolute;
+		//				transform: translateX(-50%);
+		//				cursor: pointer;
+		//				top: 8px;
+		//
+		//				display: flex;
+		//				justify-content: center;
+		//
+		//				&:before {
+		//					position: absolute;
+		//					content: "";
+		//
+		//					top: -8px;
+		//
+		//					width: 1px;
+		//					height: 5px;
+		//					background: #d3d3d3;
+		//				}
+		//			}
+		//
+		//			//justify-content: space-between;
+		//			//padding: 0 5px;
+		//		}
+		//	}
+		//
+		//	.rotateWrapper { // took it
+		//		.rotateSliderTicks {
+		//			justify-content: space-between;
+		//
+		//			.sliderTick {
+		//				display: flex;
+		//				justify-content: center;
+		//				width: 1px;
+		//				height: 5px;
+		//				background: #d3d3d3;
+		//				line-height: 30px;
+		//				cursor: pointer;
+		//
+		//				p {
+		//					line-height: inherit;
+		//				}
+		//			}
+		//		}
+		//	}
+		//}
 
 		.resetSettings {
 			cursor: pointer;

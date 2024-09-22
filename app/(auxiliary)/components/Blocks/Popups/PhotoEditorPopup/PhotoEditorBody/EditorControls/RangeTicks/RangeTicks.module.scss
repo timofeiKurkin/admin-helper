@@ -1,0 +1,59 @@
+@import "@/styles/variables.module";
+
+.rangeTicksList {
+	display: flex;
+	position: relative;
+	justify-content: space-between;
+	//padding: 0 5px;
+}
+
+.scaleSliderTicks, .rotateSliderTicks {
+	display: flex;
+	margin: 0 5px;
+}
+
+.scaleSliderTicks {
+	position: absolute;
+	transform: translateX(-50%);
+	cursor: pointer;
+	top: 8px;
+	display: flex;
+	justify-content: center;
+
+	&:before {
+		position: absolute;
+		content: "";
+		top: -8px;
+		width: 1px;
+		height: 5px;
+		background: $grey;
+	}
+}
+
+.rotateSliderTicks {
+	display: flex;
+	justify-content: center;
+	width: 1px;
+	height: 5px;
+	background: #d3d3d3;
+	line-height: 30px;
+	cursor: pointer;
+
+	p {
+		line-height: inherit;
+	}
+}
+
+.sliderTick {
+	display: flex;
+	justify-content: center;
+	width: 1px;
+	height: 5px;
+	background: #d3d3d3;
+	line-height: 30px;
+	cursor: pointer;
+
+	p {
+		line-height: inherit;
+	}
+}

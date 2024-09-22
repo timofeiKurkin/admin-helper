@@ -1,30 +1,26 @@
-import React, {FC, useCallback, useEffect, useState} from 'react';
+import React, {FC, useCallback, useState} from 'react';
 import styles from "./PhotoEditorBody.module.scss";
 import popupsCommonStyles from "@/app/(auxiliary)/components/Common/Popups/PopupsWrapper/PopupsCommomStyles.module.scss"
 import SeparatingLine from "@/app/(auxiliary)/components/UI/SeparatingLine/SeparatingLine";
 import {PhotoEditorDataType} from "@/app/(auxiliary)/types/Data/Interface/PhotoEditor/PhotoEditorDataType";
-import Button from "@/app/(auxiliary)/components/UI/Button/Button";
-import {blue_dark, blue_light, grey} from "@/styles/colors";
+import {blue_light} from "@/styles/colors";
 import Text from "@/app/(auxiliary)/components/UI/TextTemplates/Text";
-import Range from "@/app/(auxiliary)/components/UI/Inputs/Range/Range";
-import {useAppDispatch, useAppSelector} from "@/app/(auxiliary)/libs/redux-toolkit/store/hooks";
+import {useAppSelector} from "@/app/(auxiliary)/libs/redux-toolkit/store/hooks";
 import {
-    changePhotoEditorVisibility,
-    changePhotoSettings,
     selectOpenedFileName,
     selectPhotoListSettings
 } from "@/app/(auxiliary)/libs/redux-toolkit/store/slices/PopupSlice/PopupSlice";
-import SmallText from "@/app/(auxiliary)/components/UI/TextTemplates/SmallText";
 import {
     getDefaultPhotoSettings,
-    rotatePoints, rotateStickPoint,
-    scalePoints, scaleStickPoint,
+    rotatePoints,
+    rotateStickPoint,
+    scalePoints,
+    scaleStickPoint,
     stickToClosestValue
 } from "@/app/(auxiliary)/func/editorHandlers";
 import {PhotoEditorSettingsType} from "@/app/(auxiliary)/types/PopupTypes/PopupTypes";
 import {Crop} from "react-image-crop";
 import {
-    changePreview,
     selectFormFileData
 } from "@/app/(auxiliary)/libs/redux-toolkit/store/slices/UserFormDataSlice/UserFormDataSlice";
 import {PHOTO_KEY} from "@/app/(auxiliary)/types/AppTypes/InputHooksTypes";
@@ -34,6 +30,8 @@ import CloseEditor
     from "@/app/(auxiliary)/components/Blocks/Popups/PhotoEditorPopup/PhotoEditorBody/Buttons/CloseEditor/CloseEditor";
 import SaveSettings
     from "@/app/(auxiliary)/components/Blocks/Popups/PhotoEditorPopup/PhotoEditorBody/Buttons/SaveSettings/SaveSettings";
+import EditorControls
+    from "@/app/(auxiliary)/components/Blocks/Popups/PhotoEditorPopup/PhotoEditorBody/EditorControls/EditorControls";
 
 
 interface PropsType {
@@ -45,7 +43,6 @@ const PhotoEditorBody: FC<PropsType> = ({
                                             data,
                                             type
                                         }) => {
-    const dispatch = useAppDispatch()
     const formFileData = useAppSelector(selectFormFileData)[type]
 
     /**
@@ -181,12 +178,6 @@ const PhotoEditorBody: FC<PropsType> = ({
         })
     }
 
-    // useEffect(() => {
-    //     setListOfPreviews(() => formFileData.filesFinally)
-    // }, [
-    //     formFileData.filesFinally
-    // ]);
-
     console.log("photo editor body render")
 
     return (
@@ -202,54 +193,17 @@ const PhotoEditorBody: FC<PropsType> = ({
 
             <div className={styles.editorControlsWrapper}>
 
-                <div className={styles.editorControls}>
-                    <div className={styles.editorTitle}><Text>{data.editor.scale}</Text></div>
-                    <div className={styles.scaleWrapper}>
-                        <Range onChange={(e) => scaleImageHandler(Number(e.target.value))}
-                               value={scale}
-                               maxValue={2.5}
-                               minValue={0.5}
-                               step={0.01}
-                        />
-
-                        <div className={styles.scaleSliderTicks}>
-                            {scalePoints.map((scaleX) => {
-                                const min = 0.5
-                                const max = 2.5
-
-                                return (
-                                    <span key={`key=${scaleX}`}
-                                          style={{
-                                              left: `${((scaleX - min) / (max - min)) * 100}%`
-                                          }}
-                                          onClick={() => scaleImageHandler(scaleX)}>
-                                        <SmallText>{scaleX}x</SmallText>
-                                    </span>
-                                )
-                            })}
-                        </div>
-                    </div>
-
-                    <div className={styles.editorTitle}><Text>{data.editor.rotate}</Text></div>
-                    <div className={styles.rotateWrapper}>
-                        <Range onChange={(e) => rotateImageHandler(Number(e.target.value))}
-                               value={rotate}
-                               maxValue={180}
-                               minValue={-180}
-                               step={1}/>
-
-                        <div className={styles.rotateSliderTicks}>
-                            {rotatePoints.map((degree) => (
-                                <span key={`key=${degree}`}
-                                      className={styles.sliderTick}
-                                      onClick={() => rotateImageHandler(degree)}
-                                >
-                                    <SmallText>{degree}</SmallText>
-                                </span>
-                            ))}
-                        </div>
-                    </div>
-                </div>
+                <EditorControls
+                    scaleProps={{
+                        value: scale,
+                        data: data.editor.scale,
+                        updateFunc: scaleImageHandler
+                    }}
+                    rotateProps={{
+                        value: rotate,
+                        data: data.editor.rotate,
+                        updateFunc: rotateImageHandler
+                    }}/>
 
                 <div className={styles.resetSettings} onClick={() => resetSettingsHandler()}>
                     <Text style={{color: blue_light}}>

@@ -50,7 +50,7 @@ const CurrentInput: FC<PropsType> = ({currentInput}) => {
             )}
 
             {currentInput.type === MESSAGE_KEY && (
-                <Message currentInput={currentInput}/>
+                <Message inputData={currentInput}/>
             )}
 
             {currentInput.type === PHONE_KEY && (

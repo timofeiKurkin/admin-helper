@@ -35,6 +35,12 @@ export interface FileListStateType {
     // filesOrientation: FileOrientationType;
 }
 
+export interface VoiceMessageFileType {
+    validationStatus: boolean;
+    // type: typeof MESSAGE_KEY;
+    value: File;
+}
+
 export interface FormDataItemType<T> {
     validationStatus: boolean;
     value: T;
@@ -44,7 +50,7 @@ export interface FormDataItemType<T> {
 export interface UserTextDataType {
     [DEVICE_KEY]: FormDataItemType<string>;
     [NAME_KEY]: FormDataItemType<string>;
-    [MESSAGE_KEY]: FormDataItemType<string | File>;
+    [MESSAGE_KEY]: FormDataItemType<string>;
     [COMPANY_KEY]: FormDataItemType<string>;
     [NUMBER_PC_KEY]: FormDataItemType<string>;
     [PHONE_KEY]: FormDataItemType<string>;
@@ -53,6 +59,7 @@ export interface UserTextDataType {
 interface UserFileDataType {
     [PHOTO_KEY]: FileListStateType;
     [VIDEO_KEY]: FileListStateType;
+    [MESSAGE_KEY]: VoiceMessageFileType;
 }
 
 export interface UserFormDataType {
