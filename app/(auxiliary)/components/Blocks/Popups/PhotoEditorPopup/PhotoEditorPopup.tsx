@@ -10,7 +10,8 @@ const PhotoEditorPopup: FC = () => {
     const photoInput = PHOTO_KEY
 
     return (
-        <PopupsWrapper popupTitle={photoEditorData.title} type={photoInput}>
+        <PopupsWrapper popupTitle={photoEditorData.title}
+                       type={photoInput}>
             <PhotoEditorBody data={photoEditorData}
                              type={photoInput}/>
         </PopupsWrapper>

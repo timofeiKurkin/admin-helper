@@ -3,12 +3,7 @@ import {Crop, PixelCrop, ReactCrop} from "react-image-crop";
 import Image from "next/image";
 import styles from "./Editor.module.scss";
 import 'react-image-crop/src/ReactCrop.scss';
-import {
-    centerPositionOfAxes,
-    determineOrientation,
-    getScaledSizesOfImage,
-    onDownloadCropClick
-} from "@/app/(auxiliary)/func/editorHandlers";
+import {centerPositionOfAxes, determineOrientation, getScaledSizesOfImage} from "@/app/(auxiliary)/func/editorHandlers";
 import {useDebounceEffect} from "@/app/(auxiliary)/hooks/useDebounceEffect";
 import {
     canvasPreview,
@@ -63,9 +58,10 @@ const Editor: FC<PropsType> = ({
     const aspect = 0
 
     const imgRef = useRef<HTMLImageElement>(null)
-    const blobUrlRef = useRef('')
-    const previewCanvasRef = useRef<HTMLCanvasElement>(null)
-    const hiddenAnchorRef = useRef<HTMLAnchorElement>(null)
+    const canvas = document.createElement("canvas")
+    // const blobUrlRef = useRef('')
+    // const previewCanvasRef = useRef<HTMLCanvasElement>(null)
+    // const hiddenAnchorRef = useRef<HTMLAnchorElement>(null)
 
     /**
      * Функция для создания crop на время редактирования фотографии, а также финального crop
@@ -283,6 +279,10 @@ const Editor: FC<PropsType> = ({
         croppingBoundary
     ]);
 
+    useEffect(() => {
+        setIsChanging(true)
+    }, [scale]);
+
     /**
      * Эффект, срабатывающий при изменении crop
      */
@@ -293,20 +293,20 @@ const Editor: FC<PropsType> = ({
                 completedCrop.width &&
                 completedCrop.height &&
                 imgRef.current &&
-                previewCanvasRef.current &&
+                // previewCanvasRef.current &&
                 croppingBoundary
             ) {
                 await canvasPreview({
                     image: imgRef.current,
-                    canvas: previewCanvasRef.current,
+                    canvas: canvas,
                     crop: completedCrop,
                     scale,
                     rotate,
                     imageOrientation: croppingBoundary.orientation
                 }).then((file) => {
                     if (file && isChanging) {
-                        // updatePhoto(file)
                         setIsChanging(false)
+                        updatePhoto(file)
                     }
                 })
             }
@@ -366,23 +366,23 @@ const Editor: FC<PropsType> = ({
                     {/*    </a>*/}
                     {/*</div>*/}
 
-                    <div style={{
-                        position: "fixed",
-                        bottom: 0,
-                        left: 0,
-                        visibility: "visible",
-                        zIndex: 99
-                    }}>
-                        <canvas ref={previewCanvasRef}
-                                style={{
-                                    objectFit: 'contain',
-                                    width: completedCrop.width,
-                                    height: completedCrop.height
-                                }}/>
-                        <a ref={hiddenAnchorRef}
-                           download
-                           href={"#hidden"}></a>
-                    </div>
+                    {/*<div style={{*/}
+                    {/*    position: "fixed",*/}
+                    {/*    bottom: 0,*/}
+                    {/*    left: 0,*/}
+                    {/*    visibility: "visible",*/}
+                    {/*    zIndex: 99*/}
+                    {/*}}>*/}
+                    {/*    <canvas ref={previewCanvasRef}*/}
+                    {/*            style={{*/}
+                    {/*                objectFit: 'contain',*/}
+                    {/*                width: completedCrop.width,*/}
+                    {/*                height: completedCrop.height*/}
+                    {/*            }}/>*/}
+                    {/*    <a ref={hiddenAnchorRef}*/}
+                    {/*       download*/}
+                    {/*       href={"#hidden"}></a>*/}
+                    {/*</div>*/}
                 </div>
             </div>
         </div>

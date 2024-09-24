@@ -67,7 +67,8 @@ const TextInput: FC<PropsType> = ({
                                dataList={currentHelpfulList.length ? {
                                    list: currentHelpfulList,
                                    listType: currentInput.type
-                               } : undefined} inputIsDirty={value.isDirty}>
+                               } : undefined}
+                               inputIsDirty={value.isDirty}>
                 <div className={currentInputTypesClassName}>
                     <Input value={value.value}
                            placeholder={currentInput.inputPlaceholder || ""}

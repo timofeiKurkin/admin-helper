@@ -3,14 +3,14 @@ import {PayloadAction} from "@reduxjs/toolkit";
 import {WritableDraft} from "immer";
 import {PhotoEditorSettingsType, VideoOrientationType} from "@/app/(auxiliary)/types/PopupTypes/PopupTypes";
 import {indexOfObject} from "@/app/(auxiliary)/func/handlers";
-import {PHOTO_KEY, VIDEO_KEY} from "@/app/(auxiliary)/types/AppTypes/InputHooksTypes";
+import {PHOTO_KEY, PhotoAndVideoKeysTypes, VIDEO_KEY} from "@/app/(auxiliary)/types/AppTypes/InputHooksTypes";
 
 
 interface InitialState {
     openedFileName: string;
     photoListSettings: PhotoEditorSettingsType[];
     videoOrientations: VideoOrientationType[];
-    popups: {
+    openedPopup: {
         [PHOTO_KEY]: boolean
         [VIDEO_KEY]: boolean
         // photoEditorIsOpen: boolean;
@@ -22,7 +22,7 @@ const initialState: InitialState = {
     openedFileName: "",
     photoListSettings: [],
     videoOrientations: [],
-    popups: {
+    openedPopup: {
         [PHOTO_KEY]: false,
         [VIDEO_KEY]: false
     }
@@ -38,29 +38,36 @@ export const popupSlice = createAppSlice({
             }
         ),
         changePhotoSettings: create.reducer(
-            (state, action: PayloadAction<PhotoEditorSettingsType>) => {
-                const settingIndex = indexOfObject(state.photoListSettings, action.payload)
+            (
+                state,
+                action: PayloadAction<PhotoEditorSettingsType | PhotoEditorSettingsType[]>
+            ) => {
+                const changePhotoSettings = (setting: PhotoEditorSettingsType) => {
+                    const settingIndex = indexOfObject(state.photoListSettings, setting)
 
-                if (settingIndex !== -1) {
-                    state.photoListSettings[settingIndex] = {...state.photoListSettings[settingIndex], ...action.payload as WritableDraft<PhotoEditorSettingsType>}
-                } else {
-                    state.photoListSettings.push(action.payload as WritableDraft<PhotoEditorSettingsType>)
+                    if (settingIndex !== -1) {
+                        state.photoListSettings[settingIndex] =
+                            {...state.photoListSettings[settingIndex], ...setting}
+                    } else {
+                        state.photoListSettings.push(setting)
+                    }
                 }
+
+                if(Array.isArray(action.payload)) {
+
+                } else {
+                    changePhotoSettings(action.payload)
+                }
+
             }
         ),
 
         /**
-         * Изменение состояния на открытие и закрытие фоторедактора
+         * Изменение состояния открытия и закрытия фоторедактора или видео плеера, в зависимости от переданного типа
          */
-        changePhotoEditorVisibility: create.reducer(
-            (state) => {
-                state.popups[PHOTO_KEY] = !state.popups[PHOTO_KEY]
-            }
-        ),
-
-        changeVideoPlayerVisibility: create.reducer(
-            (state) => {
-                state.popups[VIDEO_KEY] = !state.popups[VIDEO_KEY]
+        changePopupVisibility: create.reducer(
+            (state, action: PayloadAction<{ type: PhotoAndVideoKeysTypes }>) => {
+                state.openedPopup[action.payload.type] = !state.openedPopup[action.payload.type]
             }
         ),
 
@@ -86,16 +93,19 @@ export const popupSlice = createAppSlice({
         selectOpenedFileName: (state) => state.openedFileName,
         selectPhotoListSettings: (state) => state.photoListSettings,
         selectVideoOrientations: (state) => state.videoOrientations,
-        selectPopups: (state) => state.popups,
+        selectPopups: (state) => state.openedPopup,
     }
 })
 
 export const {
     setCurrentOpenedFileName,
     changePhotoSettings,
-    changePhotoEditorVisibility,
-    changeVideoPlayerVisibility,
-    changeVideoOrientation
+
+    changePopupVisibility,
+
+    changeVideoOrientation,
+
+    deletePhotoSettings
 } = popupSlice.actions
 
 export const {

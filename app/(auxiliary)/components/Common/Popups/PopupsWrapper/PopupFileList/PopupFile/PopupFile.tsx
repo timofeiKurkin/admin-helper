@@ -1,69 +1,70 @@
-import React, {FC} from 'react';
+import React, {FC, useEffect, useState} from 'react';
 import Text from "@/app/(auxiliary)/components/UI/TextTemplates/Text";
 import FilePreviewBlock from "@/app/(auxiliary)/components/Blocks/FilePreviewBlock/FilePreviewBlock";
 import {trimLongTitle} from "@/app/(auxiliary)/func/trimLongTitle";
 import Trash from "@/app/(auxiliary)/components/UI/SVG/Trash/Trash";
-import {useAppDispatch, useAppSelector} from "@/app/(auxiliary)/libs/redux-toolkit/store/hooks";
-import {
-    selectOpenedFileName,
-    setCurrentOpenedFileName
-} from "@/app/(auxiliary)/libs/redux-toolkit/store/slices/PopupSlice/PopupSlice";
-import {
-    deleteFile,
-    selectFormFileData
-} from "@/app/(auxiliary)/libs/redux-toolkit/store/slices/UserFormDataSlice/UserFormDataSlice";
 import styles from "./PopupFile.module.scss";
-import {PhotoAndVideoKeysTypes} from "@/app/(auxiliary)/types/AppTypes/InputHooksTypes";
 
 
 interface PropsType {
     index: number;
     file: File;
-    switchToAnotherFile: (fileName: string) => void;
-    type: PhotoAndVideoKeysTypes;
+    currentFileName: string;
+    func: {
+        switchToAnotherFile: (fileName: string) => void;
+        removeFile: (removedFileName: string) => void;
+    }
 }
 
 const PopupFile: FC<PropsType> = ({
-                                       index,
-                                       file,
-                                       switchToAnotherFile,
-                                       type
-                                   }) => {
+                                      index,
+                                      file,
+                                      currentFileName,
+                                      func,
+                                  }) => {
 
-    const dispatch = useAppDispatch()
-    const currentFileName = useAppSelector(selectOpenedFileName)
-    const filesNames = useAppSelector(selectFormFileData)[type].filesNames
+    const [selectedItem, setSelectedItem] = useState<boolean>(file.name === currentFileName)
 
-    const chooseAnotherFile = (fileName: string) => {
-        dispatch(setCurrentOpenedFileName({fileName}))
-        switchToAnotherFile(fileName)
+    const chooseAnotherFile = (e: React.MouseEvent<HTMLDivElement, MouseEvent>, fileName: string) => {
+        // dispatch(setCurrentOpenedFileName({fileName}))
+        e.stopPropagation()
+        func.switchToAnotherFile(fileName)
     }
 
-    const removeFile = (
-        fileName: string,
-    ) => {
-        if (filesNames.length === 1) {
-            // dispatch(changeEditorVisibility())
-            dispatch(setCurrentOpenedFileName({fileName: ""}))
-        } else {
-            dispatch(setCurrentOpenedFileName({
-                fileName: filesNames.filter((fileName) => fileName !== fileName).filter(Boolean)[0]
-            }))
-        }
+    // const removeFile = (
+    //     fileName: string,
+    // ) => {
+    //     if (filesNames.length === 1) {
+    //         if (type === VIDEO_KEY) {
+    //             dispatch(changeVideoPlayerVisibility())
+    //         } else if (type === PHOTO_KEY) {
+    //             dispatch(changePhotoEditorVisibility())
+    //         }
+    //         dispatch(setCurrentOpenedFileName({fileName: ""}))
+    //     } else {
+    //         const anotherFile = filesNames.filter((fName) => fName !== fileName).filter(Boolean)[0]
+    //         dispatch(setCurrentOpenedFileName({fileName: anotherFile}))
+    //     }
+    //
+    //     dispatch(deleteFile({
+    //         key: type,
+    //         data: {
+    //             name: fileName
+    //         }
+    //     }))
+    //     dispatch(deletePhotoSettings({name: fileName}))
+    // }
 
-        dispatch(deleteFile({
-            key: "photo",
-            data: {
-                name: fileName
-            }
-        }))
-    }
-
-    console.log("popup file render")
+    useEffect(() => {
+        setSelectedItem(file.name === currentFileName)
+    }, [
+        currentFileName,
+        file.name
+    ]);
 
     return (
-        <div className={`${styles.fileItem} ${file.name === currentFileName && styles.fileItemSelected}`}
-             onClick={() => chooseAnotherFile(file.name)}
+        <div className={`${styles.fileItem} ${selectedItem && styles.fileItemSelected}`}
+             onClick={(e) => chooseAnotherFile(e, file.name)}
         >
             <div className={styles.fileIndex}><Text>{++index}.</Text></div>
 
@@ -76,7 +77,7 @@ const PopupFile: FC<PropsType> = ({
                 <Text>{trimLongTitle(file.name.split(".")[0], 16)}</Text>
             </div>
 
-            <div className={styles.removeFile} onClick={() => removeFile(file.name)}>
+            <div className={styles.removeFile} onClick={() => func.removeFile(file.name)}>
                 <Trash style={{
                     fill: "black",
                     width: 18,

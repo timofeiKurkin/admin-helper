@@ -1,13 +1,10 @@
 import React, {FC} from 'react';
 import {useAppDispatch} from "@/app/(auxiliary)/libs/redux-toolkit/store/hooks";
-import {
-    changePhotoEditorVisibility,
-    changeVideoPlayerVisibility
-} from "@/app/(auxiliary)/libs/redux-toolkit/store/slices/PopupSlice/PopupSlice";
+import {changePopupVisibility} from "@/app/(auxiliary)/libs/redux-toolkit/store/slices/PopupSlice/PopupSlice";
 import Backdrop from "@/app/(auxiliary)/components/UI/Wrappers/Backdrop/Backdrop";
 import styles from "./PopupsWrapper.module.scss"
 import Title from "@/app/(auxiliary)/components/UI/TextTemplates/Title";
-import {PHOTO_KEY, PhotoAndVideoKeysTypes, VIDEO_KEY} from "@/app/(auxiliary)/types/AppTypes/InputHooksTypes";
+import {PhotoAndVideoKeysTypes} from "@/app/(auxiliary)/types/AppTypes/InputHooksTypes";
 
 
 interface PropsType {
@@ -23,11 +20,7 @@ const PopupsWrapper: FC<PropsType> = ({
                                       }) => {
     const dispatch = useAppDispatch()
     const backDropClickHandler = () => {
-        if(type === PHOTO_KEY) {
-            dispatch(changePhotoEditorVisibility())
-        } else if (type === VIDEO_KEY) {
-            dispatch(changeVideoPlayerVisibility())
-        }
+        dispatch(changePopupVisibility({type}))
     }
 
     return (

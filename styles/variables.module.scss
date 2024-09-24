@@ -38,7 +38,7 @@ $background_error: var(--background_error, radial-gradient(197.36% 111.8% at 100
 }
 
 // Borders
-$black_input_border: 2px solid $black;
+$black_input_border: 2px solid rgba($black, 0.85);
 $blue_input_border: 2px solid $blue_dark;
 $black_input_border_inactive: 2px solid rgba($black, 0.5);
 $grey_input_border: 2px solid $grey;

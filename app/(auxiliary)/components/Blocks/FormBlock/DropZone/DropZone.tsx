@@ -16,9 +16,9 @@ import {
     selectFormFileData
 } from "@/app/(auxiliary)/libs/redux-toolkit/store/slices/UserFormDataSlice/UserFormDataSlice";
 import {
-    changePhotoEditorVisibility,
     changePhotoSettings,
-    changeVideoOrientation, changeVideoPlayerVisibility,
+    changePopupVisibility,
+    changeVideoOrientation,
     setCurrentOpenedFileName
 } from "@/app/(auxiliary)/libs/redux-toolkit/store/slices/PopupSlice/PopupSlice";
 import {defaultPhotoSettings} from "@/app/(auxiliary)/types/PopupTypes/PopupTypes";
@@ -87,14 +87,11 @@ const DropZone: FC<PropsType> = ({
                 ctx.drawImage(videoElement, 0, 0, canvas.width, canvas.height)
 
                 canvas.toBlob((blob) => {
-                    console.log("blob is ahead the condition: ", blob)
                     if (blob) {
                         const newFile = new File([blob], file.name, {
                             type: "image/png",
                             lastModified: Date.now()
                         })
-
-                        console.log("file for app state: ", newFile)
 
                         dispatch(changePreview({
                             key: inputType,
@@ -159,14 +156,12 @@ const DropZone: FC<PropsType> = ({
 
                 if (inputType === VIDEO_KEY) {
                     createVideoPreviews(newFiles)
-                    visibleDragDropZone()
-                    dispatch(changeVideoPlayerVisibility())
                 } else if (inputType === PHOTO_KEY) {
                     createPhotoPreviews(newFiles)
-                    visibleDragDropZone()
-                    dispatch(changePhotoEditorVisibility())
                 }
 
+                visibleDragDropZone()
+                dispatch(changePopupVisibility({type: inputType}))
             }
         }
 
@@ -233,7 +228,7 @@ const DropZone: FC<PropsType> = ({
                         createPhotoPreviews([newFile])
 
                         visibleDragDropZone()
-                        dispatch(changePhotoEditorVisibility())
+                        dispatch(changePopupVisibility({type: PHOTO_KEY}))
                     }
                 } catch (e) {
                     console.error("Error with paste a clipboard: ", e)

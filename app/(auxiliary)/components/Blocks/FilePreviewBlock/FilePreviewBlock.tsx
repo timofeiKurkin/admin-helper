@@ -26,4 +26,4 @@ const FilePreviewBlock: FC<PropsType> =  (props) => {
     );
 };
 
-export default React.memo(FilePreviewBlock);
+export default FilePreviewBlock;

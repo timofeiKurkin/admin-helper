@@ -163,6 +163,7 @@ export const userFormDataSlice = createAppSlice({
                     state.file_data[key].filesNames.concat(newFile.map((f) => f.name))
             }
         ),
+
         /**
          * Удаление файлов из состояния
          */

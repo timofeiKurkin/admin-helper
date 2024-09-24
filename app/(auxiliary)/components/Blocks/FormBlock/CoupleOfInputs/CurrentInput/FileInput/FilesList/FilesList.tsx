@@ -1,5 +1,5 @@
 import React, {FC} from 'react';
-import {PHOTO_KEY, PhotoAndVideoKeysTypes, VIDEO_KEY} from "@/app/(auxiliary)/types/AppTypes/InputHooksTypes";
+import {PhotoAndVideoKeysTypes} from "@/app/(auxiliary)/types/AppTypes/InputHooksTypes";
 import {useAppDispatch, useAppSelector} from "@/app/(auxiliary)/libs/redux-toolkit/store/hooks";
 import {
     deleteFile,
@@ -7,8 +7,7 @@ import {
 } from "@/app/(auxiliary)/libs/redux-toolkit/store/slices/UserFormDataSlice/UserFormDataSlice";
 import HorizontalScroll from "@/app/(auxiliary)/components/Blocks/HorizontalScroll/HorizontalScroll";
 import {
-    changePhotoEditorVisibility,
-    changeVideoPlayerVisibility,
+    changePopupVisibility,
     setCurrentOpenedFileName
 } from "@/app/(auxiliary)/libs/redux-toolkit/store/slices/PopupSlice/PopupSlice";
 
@@ -37,12 +36,7 @@ const FilesList: FC<PropsType> = ({
 
     const openFile = (fileName: string) => {
         dispatch(setCurrentOpenedFileName({fileName}))
-
-        if (type === VIDEO_KEY) {
-            dispatch(changeVideoPlayerVisibility())
-        } else if (type === PHOTO_KEY) {
-            dispatch(changePhotoEditorVisibility())
-        }
+        dispatch(changePopupVisibility({type}))
     }
 
     return <HorizontalScroll filesListLength={formFileData.files.length}

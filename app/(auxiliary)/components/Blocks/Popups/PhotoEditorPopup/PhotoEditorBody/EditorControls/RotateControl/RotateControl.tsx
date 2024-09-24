@@ -27,7 +27,7 @@ const RotateControl: FC<ControlsPropsType> = ({
                        value={value}
                        maxValue={180}
                        minValue={-180}
-                       step={1}/>
+                       step={2}/>
 
                 <RangeTicks changeImageHandler={rotateImageHandler}
                             type={"rotate"}/>

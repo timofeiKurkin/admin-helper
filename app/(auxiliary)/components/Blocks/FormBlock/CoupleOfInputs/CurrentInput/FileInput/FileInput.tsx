@@ -97,8 +97,6 @@ const FileInput: FC<PropsType> = ({input}) => {
                     {popupVisibility && input.type === VIDEO_KEY && (
                         <VideoPlayerPopup/>
                     )}
-
-                    {/*<CreatePreview type={input.type}/>*/}
                 </>
             )}
         </div>

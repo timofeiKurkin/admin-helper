@@ -6,7 +6,9 @@ import {
     PhotoEditorSettingsType,
     VERTICAL
 } from "@/app/(auxiliary)/types/PopupTypes/PopupTypes";
-import {getRotateDimensions} from "@/app/(auxiliary)/components/Blocks/Popups/PhotoEditorPopup/PhotoEditorBody/canvasPreview";
+import {
+    getRotateDimensions
+} from "@/app/(auxiliary)/components/Blocks/Popups/PhotoEditorPopup/PhotoEditorBody/canvasPreview";
 
 
 export const scalePoints = [0.5, 1, 2, 2.5]
@@ -17,6 +19,11 @@ export const rotateStickPoint = 5
 
 export const determineOrientation = (width: number, height: number) => {
     return width >= height ? HORIZONTAL : VERTICAL
+}
+
+export const arrayDifference = <T extends {name: string}>(oldArr: T[], newArr: T[]) => {
+    const setNewArr = new Set(newArr.map(item => item.name))
+    return oldArr.filter(item => !setNewArr.has(item.name))
 }
 
 /**

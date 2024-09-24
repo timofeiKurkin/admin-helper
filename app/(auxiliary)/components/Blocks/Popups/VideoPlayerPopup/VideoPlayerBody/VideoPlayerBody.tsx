@@ -12,7 +12,7 @@ import popupsCommonStyles from "@/app/(auxiliary)/components/Common/Popups/Popup
 import PopupFileList from "@/app/(auxiliary)/components/Common/Popups/PopupsWrapper/PopupFileList/PopupFileList";
 import Button from "@/app/(auxiliary)/components/UI/Button/Button";
 import {
-    changeVideoPlayerVisibility,
+    changePopupVisibility,
     selectOpenedFileName,
     selectVideoOrientations
 } from "@/app/(auxiliary)/libs/redux-toolkit/store/slices/PopupSlice/PopupSlice";
@@ -49,7 +49,11 @@ const VideoPlayerBody: FC<PropsType> = ({data, type}) => {
     }
 
     const closeVideoPlayer = () => {
-        dispatch(changeVideoPlayerVisibility())
+        dispatch(changePopupVisibility({type}))
+    }
+
+    const removeFile = (removedName: string) => {
+
     }
 
     useEffect(() => {
@@ -79,12 +83,12 @@ const VideoPlayerBody: FC<PropsType> = ({data, type}) => {
 
             <div className={styles.nothing}></div>
 
-            <PopupFileList contentForEditor={{
-                titleOfList: data.photoList.uploadedPhotos,
-                listOfPreviews: formFileData.filesFinally,
-                switchToAnotherFile,
-                type,
-            }}/>
+            <PopupFileList titleOfList={data.photoList.uploadedPhotos}
+                           listOfPreviews={formFileData.filesFinally}
+                           func={{
+                               switchToAnotherFile,
+                               removeFile
+                           }}/>
 
             <div className={`${styles.closeButton} ${popupsCommonStyles.buttons}`}>
                 <Button onClick={closeVideoPlayer}>

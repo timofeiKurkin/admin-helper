@@ -6,8 +6,8 @@
 	padding: 0.625rem 0.94rem;
 
 	display: grid;
-	grid-template-columns: min-content 4.25rem 11.6875rem 1.125rem;
-	//grid-template-rows: ;
+	grid-template-columns: min-content 4.25rem 1fr 1.125rem;
+	column-gap: 12px;
 	justify-content: space-between;
 	align-items: center;
 	cursor: pointer;

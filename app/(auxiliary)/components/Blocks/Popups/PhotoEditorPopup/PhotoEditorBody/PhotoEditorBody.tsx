@@ -5,10 +5,12 @@ import SeparatingLine from "@/app/(auxiliary)/components/UI/SeparatingLine/Separ
 import {PhotoEditorDataType} from "@/app/(auxiliary)/types/Data/Interface/PhotoEditor/PhotoEditorDataType";
 import {blue_light} from "@/styles/colors";
 import Text from "@/app/(auxiliary)/components/UI/TextTemplates/Text";
-import {useAppSelector} from "@/app/(auxiliary)/libs/redux-toolkit/store/hooks";
+import {useAppDispatch, useAppSelector} from "@/app/(auxiliary)/libs/redux-toolkit/store/hooks";
 import {
+    changePopupVisibility,
     selectOpenedFileName,
-    selectPhotoListSettings
+    selectPhotoListSettings,
+    setCurrentOpenedFileName
 } from "@/app/(auxiliary)/libs/redux-toolkit/store/slices/PopupSlice/PopupSlice";
 import {
     getDefaultPhotoSettings,
@@ -21,17 +23,18 @@ import {
 import {PhotoEditorSettingsType} from "@/app/(auxiliary)/types/PopupTypes/PopupTypes";
 import {Crop} from "react-image-crop";
 import {
+    deleteFile,
     selectFormFileData
 } from "@/app/(auxiliary)/libs/redux-toolkit/store/slices/UserFormDataSlice/UserFormDataSlice";
 import {PHOTO_KEY} from "@/app/(auxiliary)/types/AppTypes/InputHooksTypes";
 import Editor from "@/app/(auxiliary)/components/Blocks/Popups/PhotoEditorPopup/PhotoEditorBody/Editor/Editor";
 import PopupFileList from "@/app/(auxiliary)/components/Common/Popups/PopupsWrapper/PopupFileList/PopupFileList";
-import CloseEditor
-    from "@/app/(auxiliary)/components/Blocks/Popups/PhotoEditorPopup/PhotoEditorBody/Buttons/CloseEditor/CloseEditor";
 import SaveSettings
     from "@/app/(auxiliary)/components/Blocks/Popups/PhotoEditorPopup/PhotoEditorBody/Buttons/SaveSettings/SaveSettings";
 import EditorControls
     from "@/app/(auxiliary)/components/Blocks/Popups/PhotoEditorPopup/PhotoEditorBody/EditorControls/EditorControls";
+import ClosePopup
+    from "@/app/(auxiliary)/components/Blocks/Popups/PhotoEditorPopup/PhotoEditorBody/Buttons/ClosePopup/ClosePopup";
 
 
 interface PropsType {
@@ -43,6 +46,7 @@ const PhotoEditorBody: FC<PropsType> = ({
                                             data,
                                             type
                                         }) => {
+    const dispatch = useAppDispatch()
     const formFileData = useAppSelector(selectFormFileData)[type]
 
     /**
@@ -72,9 +76,7 @@ const PhotoEditorBody: FC<PropsType> = ({
     /**
      * Callback для поиска файла или настройки файла по его названию. Используется в инициализации состояния и его обновления
      */
-    const findCurrentFile = useCallback(<T extends { name: string }>(file: T, name: string) => {
-        return file.name === name
-    }, [])
+    const findCurrentFile = useCallback(<T extends { name: string }>(file: T, name: string) => file.name === name, [])
 
     //
 
@@ -113,10 +115,18 @@ const PhotoEditorBody: FC<PropsType> = ({
     const [crop, setCrop] = useState<Crop>(() => currentPhotoSettings.crop)
     const updateCrop = useCallback((newCrop: Crop) => setCrop(newCrop), [])
 
+    /**
+     *
+     * @param value
+     */
     const scaleImageHandler = (value: number) => {
         setScale(stickToClosestValue(value, scalePoints, scaleStickPoint))
     }
 
+    /**
+     *
+     * @param value
+     */
     const rotateImageHandler = (value: number) => {
         const newValue = Math.min(180, Math.max(-180, Number(value)))
         setRotate(stickToClosestValue(newValue, rotatePoints, rotateStickPoint))
@@ -131,6 +141,15 @@ const PhotoEditorBody: FC<PropsType> = ({
         setRotate(0)
     }
 
+    const getAnotherSettings = useCallback((anotherFileName: string) => {
+        return temporaryPhotosSettings
+            .find((f) => findCurrentFile(f, anotherFileName)) ||
+            getDefaultPhotoSettings(anotherFileName)
+    }, [
+        findCurrentFile,
+        temporaryPhotosSettings
+    ])
+
     /**
      * Переключение на другой файл
      * @param anotherFileName
@@ -139,6 +158,7 @@ const PhotoEditorBody: FC<PropsType> = ({
         const prevFileName = currentPhotoSettings.name
 
         if (prevFileName === anotherFileName) return
+        dispatch(setCurrentOpenedFileName({fileName: anotherFileName}))
 
         setTemporaryPhotosSettings((prevState) => {
             return prevState.map((settings) => {
@@ -156,16 +176,32 @@ const PhotoEditorBody: FC<PropsType> = ({
         })
 
         setPhoto(formFileData.files.find((f) => findCurrentFile(f, anotherFileName)) || {} as File)
-        const anotherSetting = temporaryPhotosSettings
-            .find((f) =>
-                findCurrentFile(f, anotherFileName)) || getDefaultPhotoSettings(anotherFileName)
 
+        const anotherSetting = getAnotherSettings(anotherFileName)
         setCurrentPhotoSettings(anotherSetting)
         updateCrop(anotherSetting.crop)
         setRotate(anotherSetting.rotate)
         setScale(anotherSetting.scale)
     }
 
+    /**
+     * Удаление файла из списка
+     * @param removedFileName
+     */
+    const removeFile = (removedFileName: string) => {
+        dispatch(deleteFile({key: type, data: {name: removedFileName}}))
+
+        setListOfPreviews((prevState) => prevState.filter((preview) => preview.name !== removedFileName))
+        setTemporaryPhotosSettings((prevState) => prevState.filter((setting) => setting.name !== removedFileName))
+
+        if (listOfPreviews.length <= 1) {
+            dispatch(changePopupVisibility({type}))
+        } else {
+            const anotherFile = formFileData.filesNames.filter((name) => name !== removedFileName)[0]
+            dispatch(setCurrentOpenedFileName({fileName: anotherFile}))
+            switchToAnotherFile(anotherFile)
+        }
+    }
 
     const updatePhotoPreview = (newFile: File) => {
         setListOfPreviews((prevState) => {
@@ -177,8 +213,6 @@ const PhotoEditorBody: FC<PropsType> = ({
             })
         })
     }
-
-    console.log("photo editor body render")
 
     return (
         <div className={`${popupsCommonStyles.popupBody} ${styles.photoEditorBody}`}>
@@ -192,7 +226,6 @@ const PhotoEditorBody: FC<PropsType> = ({
             </div>
 
             <div className={styles.editorControlsWrapper}>
-
                 <EditorControls
                     scaleProps={{
                         value: scale,
@@ -205,7 +238,8 @@ const PhotoEditorBody: FC<PropsType> = ({
                         updateFunc: rotateImageHandler
                     }}/>
 
-                <div className={styles.resetSettings} onClick={() => resetSettingsHandler()}>
+                <div className={styles.resetSettings}
+                     onClick={() => resetSettingsHandler()}>
                     <Text style={{color: blue_light}}>
                         {data.editor.resetSettings}
                     </Text>
@@ -214,25 +248,21 @@ const PhotoEditorBody: FC<PropsType> = ({
 
             <SeparatingLine className={styles.separatedLine}/>
 
-            <PopupFileList contentForEditor={{
-                listOfPreviews: listOfPreviews,
-                type: type,
-                titleOfList: data.photoList.uploadedPhotos,
-                switchToAnotherFile: switchToAnotherFile,
-            }}
+            <PopupFileList listOfPreviews={listOfPreviews}
+                           titleOfList={data.title}
+                           func={{
+                               switchToAnotherFile,
+                               removeFile
+                           }}
             />
 
             <div className={`${popupsCommonStyles.buttons} ${styles.photoEditorButtons}`}>
                 <SaveSettings data={data.buttons.save}
-                              saveFuncArgs={{
-                                  name: fileName,
-                                  scale,
-                                  rotate,
-                                  crop
-                              }}
-                              listOfPreviews={listOfPreviews}/>
+                              type={type}
+                              settingsForSaving={temporaryPhotosSettings}
+                              listOfFiles={listOfPreviews}/>
 
-                <CloseEditor data={data.buttons.close}/>
+                <ClosePopup data={data.buttons.close} type={type}/>
             </div>
         </div>
     );
