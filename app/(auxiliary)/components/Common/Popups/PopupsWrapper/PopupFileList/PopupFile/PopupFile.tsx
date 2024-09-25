@@ -4,6 +4,7 @@ import FilePreviewBlock from "@/app/(auxiliary)/components/Blocks/FilePreviewBlo
 import {trimLongTitle} from "@/app/(auxiliary)/func/trimLongTitle";
 import Trash from "@/app/(auxiliary)/components/UI/SVG/Trash/Trash";
 import styles from "./PopupFile.module.scss";
+import {DivMouseEventHandler} from "@/app/(auxiliary)/types/AppTypes/AppTypes";
 
 
 interface PropsType {
@@ -25,35 +26,14 @@ const PopupFile: FC<PropsType> = ({
 
     const [selectedItem, setSelectedItem] = useState<boolean>(file.name === currentFileName)
 
-    const chooseAnotherFile = (e: React.MouseEvent<HTMLDivElement, MouseEvent>, fileName: string) => {
-        // dispatch(setCurrentOpenedFileName({fileName}))
-        e.stopPropagation()
+    const chooseAnotherFile = (e: DivMouseEventHandler, fileName: string) => {
         func.switchToAnotherFile(fileName)
     }
 
-    // const removeFile = (
-    //     fileName: string,
-    // ) => {
-    //     if (filesNames.length === 1) {
-    //         if (type === VIDEO_KEY) {
-    //             dispatch(changeVideoPlayerVisibility())
-    //         } else if (type === PHOTO_KEY) {
-    //             dispatch(changePhotoEditorVisibility())
-    //         }
-    //         dispatch(setCurrentOpenedFileName({fileName: ""}))
-    //     } else {
-    //         const anotherFile = filesNames.filter((fName) => fName !== fileName).filter(Boolean)[0]
-    //         dispatch(setCurrentOpenedFileName({fileName: anotherFile}))
-    //     }
-    //
-    //     dispatch(deleteFile({
-    //         key: type,
-    //         data: {
-    //             name: fileName
-    //         }
-    //     }))
-    //     dispatch(deletePhotoSettings({name: fileName}))
-    // }
+    const removeFile = (e: DivMouseEventHandler, fileName: string) => {
+        e.stopPropagation()
+        func.removeFile(fileName)
+    }
 
     useEffect(() => {
         setSelectedItem(file.name === currentFileName)
@@ -77,7 +57,7 @@ const PopupFile: FC<PropsType> = ({
                 <Text>{trimLongTitle(file.name.split(".")[0], 16)}</Text>
             </div>
 
-            <div className={styles.removeFile} onClick={() => func.removeFile(file.name)}>
+            <div className={styles.removeFile} onClick={(e) => removeFile(e, file.name)}>
                 <Trash style={{
                     fill: "black",
                     width: 18,

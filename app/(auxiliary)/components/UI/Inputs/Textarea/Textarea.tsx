@@ -42,7 +42,7 @@ const Textarea: FC<
             </div>
 
             <div className={inputStyles.borderBox}>
-                {!inputIsDirty && (
+                {!inputIsDirty && !value.length && (
                     <span className={borderStyles.inactiveInputState}></span>
                 )}
                 <span className={borderStyles.inputBorder}></span>

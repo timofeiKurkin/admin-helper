@@ -26,6 +26,8 @@ export const arrayDifference = <T extends {name: string}>(oldArr: T[], newArr: T
     return oldArr.filter(item => !setNewArr.has(item.name))
 }
 
+export const findElement = <T extends { name: string }>(file: T, name: string) => file.name === name
+
 /**
  * Функция для сохранения соотношения пропорций у фотографий в редакторе. Т.к. размер фотографий разный, а размер редактора одинаковый, нужно учесть соотношение сторон. Т.е. пропорционально уменьшить или увеличить изображение, чтобы оно влезло в редактор
  * @param naturalWidth

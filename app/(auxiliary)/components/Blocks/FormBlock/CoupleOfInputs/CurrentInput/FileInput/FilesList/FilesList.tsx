@@ -10,6 +10,9 @@ import {
     changePopupVisibility,
     setCurrentOpenedFileName
 } from "@/app/(auxiliary)/libs/redux-toolkit/store/slices/PopupSlice/PopupSlice";
+import styles from "@/app/(auxiliary)/components/Blocks/HorizontalScroll/HorizontalScroll.module.scss";
+import FilePreviewWithHandlers
+    from "@/app/(auxiliary)/components/Blocks/FormBlock/CoupleOfInputs/CurrentInput/FileInput/FilesList/File/FilePreviewWithHandlers";
 
 interface PropsType {
     placeholder: string;
@@ -39,11 +42,19 @@ const FilesList: FC<PropsType> = ({
         dispatch(changePopupVisibility({type}))
     }
 
-    return <HorizontalScroll filesListLength={formFileData.files.length}
-                             placeholder={placeholder}
-                             filesList={formFileData.filesFinally}
-                             removeFile={removeFile}
-                             openFile={openFile}/>
+    return (
+        <HorizontalScroll filesListLength={formFileData.files.length}
+                          placeholder={placeholder}>
+            {formFileData.filesFinally.length ? formFileData.filesFinally.map((file, i) => (
+                <div key={`key=${i}`} className={styles.fileWrapper}>
+                    <FilePreviewWithHandlers file={file}
+                                             removeFile={removeFile}
+                                             openFile={openFile}/>
+
+                </div>
+            )) : null}
+        </HorizontalScroll>
+    )
 };
 
 export default FilesList;

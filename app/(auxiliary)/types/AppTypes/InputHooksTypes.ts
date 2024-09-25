@@ -1,4 +1,3 @@
-import React from "react";
 import {ChangeEventHandlerType} from "@/app/(auxiliary)/types/AppTypes/AppTypes";
 
 export const DEVICE_KEY = "device"
@@ -44,7 +43,7 @@ export const savedInputsData: SavedInputsKeysTypes[] = [
     NUMBER_PC_KEY,
 ]
 
-export const photoAndVideoInputsData: PhotoAndVideoKeysTypes[] = [PHOTO_KEY, VIDEO_KEY]
+// export const photoAndVideoInputsData: PhotoAndVideoKeysTypes[] = [PHOTO_KEY, VIDEO_KEY]
 
 export interface ValidationReturnDataType {
     isEmpty: boolean;

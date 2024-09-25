@@ -2,6 +2,7 @@ import {Crop} from "react-image-crop";
 
 export type ImageOrientationType = "vertical" | "horizontal";
 export type RangeTickType = "scale" | "rotate";
+export type PhotoSettingKeysType = "scale" | "rotate" | "crop" | "name"
 
 export interface VideoOrientationType {
     name: string;

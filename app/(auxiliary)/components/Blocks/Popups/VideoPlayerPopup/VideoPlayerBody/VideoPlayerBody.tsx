@@ -3,6 +3,7 @@ import {VideoPlayerDataType} from "@/app/(auxiliary)/types/Data/Interface/PhotoE
 import {VIDEO_KEY} from "@/app/(auxiliary)/types/AppTypes/InputHooksTypes";
 import {useAppDispatch, useAppSelector} from "@/app/(auxiliary)/libs/redux-toolkit/store/hooks";
 import {
+    deleteFile,
     selectFormFileData
 } from "@/app/(auxiliary)/libs/redux-toolkit/store/slices/UserFormDataSlice/UserFormDataSlice";
 import VideoPlayer
@@ -14,9 +15,10 @@ import Button from "@/app/(auxiliary)/components/UI/Button/Button";
 import {
     changePopupVisibility,
     selectOpenedFileName,
-    selectVideoOrientations
+    selectVideoOrientations, setCurrentOpenedFileName
 } from "@/app/(auxiliary)/libs/redux-toolkit/store/slices/PopupSlice/PopupSlice";
 import {HORIZONTAL} from "@/app/(auxiliary)/types/PopupTypes/PopupTypes";
+import {findElement} from "@/app/(auxiliary)/func/editorHandlers";
 
 
 interface PropsType {
@@ -29,15 +31,12 @@ const VideoPlayerBody: FC<PropsType> = ({data, type}) => {
     const formFileData = useAppSelector(selectFormFileData)[type]
     const openedFileName = useAppSelector(selectOpenedFileName)
     const videoOrientations = useAppSelector(selectVideoOrientations).find((orient) => orient.name === openedFileName) || {orientation: HORIZONTAL}
-
     const files = formFileData.files
 
     /**
      * Callback для поиска файла или настройки файла по его названию. Используется в инициализации состояния и его обновления
      */
-    const findCurrentFile = useCallback(<T extends { name: string }>(file: T, name: string) => {
-        return file.name === name
-    }, [])
+    const findCurrentFile = useCallback(findElement, [])
 
     const [videoURl, setVideoURl] = useState<string>(() => URL.createObjectURL(
             files.find((f) => findCurrentFile(f, openedFileName)) ||
@@ -45,7 +44,12 @@ const VideoPlayerBody: FC<PropsType> = ({data, type}) => {
         )
     )
 
-    const switchToAnotherFile = () => {
+    const switchToAnotherFile = (fileName: string) => {
+        setVideoURl(URL.createObjectURL(
+            files.find((f) => findCurrentFile(f, fileName)) ||
+            files[0]
+        ))
+        dispatch(setCurrentOpenedFileName({fileName}))
     }
 
     const closeVideoPlayer = () => {
@@ -53,7 +57,23 @@ const VideoPlayerBody: FC<PropsType> = ({data, type}) => {
     }
 
     const removeFile = (removedName: string) => {
+        if (files.length <= 1) {
+            dispatch(changePopupVisibility({type}))
+        } else {
+            const anotherFile = files.filter((f) => f.name !== removedName)[0].name
+            setVideoURl(URL.createObjectURL(
+                files.find((f) => findCurrentFile(f, anotherFile)) ||
+                files[0]
+            ))
+            dispatch(setCurrentOpenedFileName({fileName: anotherFile}))
+        }
 
+        dispatch(deleteFile({
+            key: type,
+            data: {
+                name: removedName
+            }
+        }))
     }
 
     useEffect(() => {
@@ -74,8 +94,6 @@ const VideoPlayerBody: FC<PropsType> = ({data, type}) => {
             }
         }
     }, [videoURl]);
-
-    console.log("list of previews: ", formFileData.filesFinally)
 
     return (
         <div className={`${popupsCommonStyles.popupBody} ${styles.videoPlayerBody}`}>

@@ -1,25 +1,24 @@
 import React, {FC, useCallback, useEffect, useRef, useState} from 'react';
 import styles from "./HorizontalScroll.module.scss";
-import ArrowForList from "@/app/(auxiliary)/components/UI/SVG/ArrowForList/ArrowForList";
 import ButtonText from "@/app/(auxiliary)/components/UI/TextTemplates/ButtonText";
-import FilePreviewWithHandlers
-    from "@/app/(auxiliary)/components/Blocks/FormBlock/CoupleOfInputs/CurrentInput/FileInput/FilesList/File/FilePreviewWithHandlers";
-import {OpenFileFuncType, RemoveFileFuncType} from "@/app/(auxiliary)/types/PopupTypes/FuncTypes";
 
 interface PropsType {
     filesListLength: number;
     placeholder: string;
-    filesList: File[];
-    removeFile: RemoveFileFuncType;
-    openFile: OpenFileFuncType;
+    children: React.ReactNode
+    // openFile: OpenFileFuncType;
+    // removeFile: RemoveFileFuncType;
+    // filesList: File[];
 }
 
 const HorizontalScroll: FC<PropsType> = ({
                                              filesListLength,
                                              placeholder,
-                                             filesList,
-                                             removeFile,
-                                             openFile
+                                             children,
+
+                                             // filesList,
+                                             // removeFile,
+                                             // openFile
                                          }) => {
     /**
      * Custom scroll
@@ -32,9 +31,9 @@ const HorizontalScroll: FC<PropsType> = ({
         useState(0)
     const [scrollThumbWidth, setScrollThumbWidth] =
         useState(0)
-    const [endOfList, setEndOfList] = useState<boolean>(true)
+    // const [endOfList, setEndOfList] = useState<boolean>(true)
 
-    const arrowMoveStep = 70
+    // const arrowMoveStep = 70
 
     useEffect(() => {
         const scrollContainer = scrollContainerRef.current
@@ -128,30 +127,29 @@ const HorizontalScroll: FC<PropsType> = ({
         isDragging
     ]);
 
-    const arrowMoveLeft = useCallback(() => {
+    // const arrowMoveLeft = useCallback(() => {
+    // }, [])
 
-    }, [])
+    // const arrowMoveRight = useCallback(() => {
+    //     const scrollContainer = scrollContainerRef.current
+    //     if (!scrollContainer) return
+    //
+    //     const moveRatio = scrollContainer.scrollWidth / scrollContainer.clientWidth
+    //     const newScrollPosition = arrowMoveStep * moveRatio
+    //
+    //     scrollContainer.scrollLeft += newScrollPosition
+    // }, [])
 
-    const arrowMoveRight = useCallback(() => {
-        const scrollContainer = scrollContainerRef.current
-        if (!scrollContainer) return
-
-        const moveRatio = scrollContainer.scrollWidth / scrollContainer.clientWidth
-        const newScrollPosition = arrowMoveStep * moveRatio
-
-        scrollContainer.scrollLeft += newScrollPosition
-    }, [])
-
-    const openFileHandler = (fileName: string) => {
-        openFile(fileName, )
-    }
+    // const openFileHandler = (fileName: string) => {
+    //     openFile(fileName, )
+    // }
 
     return filesListLength ? (
         <div className={styles.filesListWrapper}>
-            <div className={styles.listArrowItem} onClick={arrowMoveLeft}>
-                <ArrowForList
-                    activeStatus={!!scrollPosition}
-                    className={styles.arrowForListLeft}/>
+            <div className={styles.listArrowItem}>
+                {/*<ArrowForList*/}
+                {/*    activeStatus={!!scrollPosition}*/}
+                {/*    className={styles.arrowForListLeft}/>*/}
             </div>
 
             <div className={`${styles.filesListWithoutScroll} ${filesListLength > 3 && styles.filesListAndScroll}`}>
@@ -160,16 +158,9 @@ const HorizontalScroll: FC<PropsType> = ({
                      className={styles.filesList}
                      style={{
                          gridTemplateColumns: filesListLength ? `repeat(${filesListLength}, 5rem)` : "1fr",
-                         overflowX: filesListLength ? "auto" : "hidden"
+                         // overflowX: filesListLength ? "auto" : "hidden"
                      }}>
-                    {filesList.length ? filesList.map((file, i) => (
-                        <div key={`key=${i}`} className={styles.fileWrapper}>
-                            <FilePreviewWithHandlers file={file}
-                                                     removeFile={removeFile}
-                                                     openFile={openFile}/>
-
-                        </div>
-                    )) : null}
+                    {children}
                 </div>
 
                 {filesListLength > 3 && (
@@ -185,9 +176,9 @@ const HorizontalScroll: FC<PropsType> = ({
                 )}
             </div>
 
-            <div className={styles.listArrowItem} onClick={arrowMoveRight}>
-                <ArrowForList activeStatus={endOfList}
-                              className={styles.arrowForListRight}/>
+            <div className={styles.listArrowItem}>
+                {/*<ArrowForList activeStatus={endOfList}*/}
+                {/*              className={styles.arrowForListRight}/>*/}
             </div>
         </div>
     ) : (

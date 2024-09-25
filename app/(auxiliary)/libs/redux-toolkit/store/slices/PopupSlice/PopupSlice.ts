@@ -53,12 +53,11 @@ export const popupSlice = createAppSlice({
                     }
                 }
 
-                if(Array.isArray(action.payload)) {
-
+                if (Array.isArray(action.payload)) {
+                    action.payload.forEach((setting) => changePhotoSettings(setting))
                 } else {
                     changePhotoSettings(action.payload)
                 }
-
             }
         ),
 

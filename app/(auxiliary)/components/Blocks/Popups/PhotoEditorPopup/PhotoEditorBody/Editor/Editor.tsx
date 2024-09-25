@@ -13,9 +13,7 @@ import {HORIZONTAL, PossibleCroppingBoundaryType, VERTICAL} from "@/app/(auxilia
 
 
 interface PropsType {
-    photo: File; // CustomFileType;
-    // photo: {url: string; name: string}; // CustomFileType;
-    // photo: FilePreviewType; // CustomFileType;
+    photo: File;
     setCrop: (newCrop: Crop) => void;
     updatePhoto: (newFile: File) => void;
     crop: Crop;
@@ -38,6 +36,9 @@ const Editor: FC<PropsType> = ({
     const [imageOrientation, setImageOrientation] =
         useState<"vertical" | "horizontal">(HORIZONTAL)
 
+    /**
+     * Состояние, хранящее информацию об оригинальном изображении
+     */
     const [croppingBoundary, setCroppingBoundary] =
         useState<PossibleCroppingBoundaryType>()
 
@@ -59,9 +60,8 @@ const Editor: FC<PropsType> = ({
 
     const imgRef = useRef<HTMLImageElement>(null)
     const canvas = document.createElement("canvas")
-    // const blobUrlRef = useRef('')
-    // const previewCanvasRef = useRef<HTMLCanvasElement>(null)
-    // const hiddenAnchorRef = useRef<HTMLAnchorElement>(null)
+    const previewCanvasRef = useRef<HTMLCanvasElement>(null)
+
 
     /**
      * Функция для создания crop на время редактирования фотографии, а также финального crop
@@ -99,7 +99,9 @@ const Editor: FC<PropsType> = ({
 
 
     /**
-     * Функция, которая срабатывает при отображении изображения в редакторе. Используется для определения оригинальных размеров изображения и его ориентации. Определяет пропорциональное соотношение сторон, чтобы корректно поместить фотографию в редактор
+     * Функция, которая срабатывает при инициализации изображения в редакторе.
+     * Используется для определения оригинальных размеров изображения и его ориентации.
+     * Определяет пропорциональное соотношение сторон, чтобы корректно поместить фотографию в редактор
      * @param e
      * @param currentCrop
      */
@@ -111,8 +113,11 @@ const Editor: FC<PropsType> = ({
             width,
             naturalHeight,
             height
-        } = e.currentTarget
+        } = e.currentTarget // Информация об изображении из компонента Image
 
+        /**
+         * Измененный размеры в соответствии с масштабом соотношения оригинала и окна редактора
+         */
         const {naturalWidthScaled, naturalHeightScaled} = getScaledSizesOfImage(
             naturalWidth,
             naturalHeight,
@@ -121,7 +126,11 @@ const Editor: FC<PropsType> = ({
         const currentOrientation = determineOrientation(naturalWidth, naturalHeight)
         setImageOrientation(currentOrientation)
 
-        if (!currentCrop.x && !currentCrop.y && currentCrop.unit === "%") {
+        /**
+         * Условие, если изображение не имеет настроек, то создать их. Также определить оригинальный Crop изображения (croppingBoundary).
+         *
+         */
+        if (currentCrop.x === 0 && currentCrop.y === 0 && currentCrop.unit === "%") {
             const {x, y} = updateCropHandler(
                 width,
                 height,
@@ -155,6 +164,7 @@ const Editor: FC<PropsType> = ({
     const changeCropHandler = useCallback((pixelCrop: PixelCrop) => {
         if (croppingBoundary) {
             setIsChanging(true)
+            // console.log("pixel crop of args changeCropHandler: ", pixelCrop)
 
             /**
              * Оригинальные размеры фото и его положение по осям.
@@ -238,7 +248,7 @@ const Editor: FC<PropsType> = ({
     }, [imgSrc]);
 
     /**
-     * Эффект для инициализации оригинальной ориентации изображения
+     * Эффект для инициализации ориентации изображения при повороте
      */
     useEffect(() => {
         if (imgRef.current && croppingBoundary) {
@@ -275,7 +285,7 @@ const Editor: FC<PropsType> = ({
     }, [
         rotate,
         imgRef,
-        updateCropHandler,
+        // updateCropHandler,
         croppingBoundary
     ]);
 
@@ -293,12 +303,12 @@ const Editor: FC<PropsType> = ({
                 completedCrop.width &&
                 completedCrop.height &&
                 imgRef.current &&
-                // previewCanvasRef.current &&
+                previewCanvasRef.current &&
                 croppingBoundary
             ) {
                 await canvasPreview({
                     image: imgRef.current,
-                    canvas: canvas,
+                    canvas: previewCanvasRef.current,
                     crop: completedCrop,
                     scale,
                     rotate,
@@ -366,23 +376,23 @@ const Editor: FC<PropsType> = ({
                     {/*    </a>*/}
                     {/*</div>*/}
 
-                    {/*<div style={{*/}
-                    {/*    position: "fixed",*/}
-                    {/*    bottom: 0,*/}
-                    {/*    left: 0,*/}
-                    {/*    visibility: "visible",*/}
-                    {/*    zIndex: 99*/}
-                    {/*}}>*/}
-                    {/*    <canvas ref={previewCanvasRef}*/}
-                    {/*            style={{*/}
-                    {/*                objectFit: 'contain',*/}
-                    {/*                width: completedCrop.width,*/}
-                    {/*                height: completedCrop.height*/}
-                    {/*            }}/>*/}
-                    {/*    <a ref={hiddenAnchorRef}*/}
-                    {/*       download*/}
-                    {/*       href={"#hidden"}></a>*/}
-                    {/*</div>*/}
+                    <div style={{
+                        position: "fixed",
+                        bottom: 0,
+                        left: 0,
+                        visibility: "visible",
+                        zIndex: 99
+                    }}>
+                        <canvas ref={previewCanvasRef}
+                                style={{
+                                    objectFit: 'contain',
+                                    width: completedCrop.width,
+                                    height: completedCrop.height
+                                }}/>
+                        {/*<a ref={hiddenAnchorRef}*/}
+                        {/*   download*/}
+                        {/*   href={"#hidden"}></a>*/}
+                    </div>
                 </div>
             </div>
         </div>
