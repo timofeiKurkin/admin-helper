@@ -127,7 +127,7 @@ const PhotoEditorBody: FC<PropsType> = ({
      * Сбросить настройки увеличения и поворота у выбранной фотографии
      */
     const resetSettingsHandler = () => {
-        setCurrentPhotoSettings(getDefaultPhotoSettings(fileName))
+        setCurrentPhotoSettings((prevState) => ({...prevState, scale: 1, rotate: 0}))
     }
 
     const getAnotherSettings = useCallback((anotherFileName: string) => {

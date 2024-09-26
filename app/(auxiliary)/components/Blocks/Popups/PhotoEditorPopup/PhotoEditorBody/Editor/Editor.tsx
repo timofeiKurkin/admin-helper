@@ -49,22 +49,25 @@ const Editor: FC<PropsType> = ({
     const [isChanging, setIsChanging] = useState<boolean>(false)
 
     const [completedCrop, setCompletedCrop] =
-        useState<PixelCrop>({
-            unit: "px",
-            x: 0,
-            y: 0,
-            width: 0,
-            height: 0,
-        })
+        useState<PixelCrop>(
+            {
+                // ...crop,
+                unit: "px",
+                x: 0,
+                y: 0,
+                width: 0,
+                height: 0,
+            }
+        )
     const aspect = 0
 
     const imgRef = useRef<HTMLImageElement>(null)
+    // const previewCanvasRef = useRef<HTMLCanvasElement>(null)
     const canvas = document.createElement("canvas")
-    const previewCanvasRef = useRef<HTMLCanvasElement>(null)
 
 
     /**
-     * Функция для создания crop на время редактирования фотографии, а также финального crop
+     * Функция для создания и обновления crop на время редактирования фотографии, а также редактирует финальный crop
      * @param width - оригинальная ширина изображения
      * @param height - оригинальная высота изображения
      * @param widthScaled - уменьшенная ширина изображения под редактор
@@ -106,8 +109,6 @@ const Editor: FC<PropsType> = ({
      * @param currentCrop
      */
     const onImageLoad = (e: React.SyntheticEvent<HTMLImageElement>, currentCrop: Crop) => {
-        setIsChanging(true)
-
         const {
             naturalWidth,
             width,
@@ -127,16 +128,15 @@ const Editor: FC<PropsType> = ({
         setImageOrientation(currentOrientation)
 
         /**
-         * Условие, если изображение не имеет настроек, то создать их. Также определить оригинальный Crop изображения (croppingBoundary).
-         *
+         * Условие, если изображение открывается впервые и не имеет своего crop.
          */
-        if (currentCrop.x === 0 && currentCrop.y === 0 && currentCrop.unit === "%") {
+        if (!currentCrop.x && !currentCrop.y && currentCrop.unit === "%") {
             const {x, y} = updateCropHandler(
                 width,
                 height,
                 naturalWidthScaled,
                 naturalHeightScaled
-            )
+            ) // Создание и обновление crop и completedCrop
 
             setCroppingBoundary({
                 x, y,
@@ -233,14 +233,12 @@ const Editor: FC<PropsType> = ({
     ])
 
     /**
-     * эффект для создания url фотографии, для отображения ее в редакторе
+     * Первый эффект для создания url фотографии и отображения ее в редакторе.
+     * Второй эффект для удаления ссылки на фотографию
      */
     useEffect(() => {
         setImgSrc(URL.createObjectURL(photo))
-    }, [
-        photo,
-    ])
-
+    }, [photo])
     useEffect(() => {
         return () => {
             URL.revokeObjectURL(imgSrc)
@@ -248,19 +246,25 @@ const Editor: FC<PropsType> = ({
     }, [imgSrc]);
 
     /**
-     * Эффект для инициализации ориентации изображения при повороте
+     * Эффект для обновления crop при повороте изображения.
      */
     useEffect(() => {
-        if (imgRef.current && croppingBoundary) {
+        if (imgRef.current && croppingBoundary && (!completedCrop.width && !completedCrop.height)) {
             const {
                 naturalWidth,
-                width,
                 naturalHeight,
+                width,
                 height
-            } = imgRef.current
+            } = imgRef.current // Информация об изображении из компонента Image
 
             if (naturalWidth && naturalHeight && width && height) {
-                setIsChanging(true)
+                setIsChanging(true) // Изменение статуса редактирования
+
+                if ((rotate < 90 && rotate > -90) || (rotate === 180 || rotate === -180)) {
+                    setImageOrientation(croppingBoundary.orientation === HORIZONTAL ? HORIZONTAL : VERTICAL)
+                } else {
+                    setImageOrientation(croppingBoundary.orientation === VERTICAL ? HORIZONTAL : VERTICAL)
+                }
 
                 const {
                     naturalRotatedWidth,
@@ -272,21 +276,14 @@ const Editor: FC<PropsType> = ({
                     naturalHeightScaled
                 } = getScaledSizesOfImage(naturalRotatedWidth, naturalRotatedHeight, width)
 
-                setImageOrientation(() => {
-                    if ((rotate < 90 && rotate > -90) || (rotate === 180 || rotate === -180)) {
-                        return croppingBoundary.orientation === HORIZONTAL ? HORIZONTAL : VERTICAL
-                    }
-                    return croppingBoundary.orientation === VERTICAL ? HORIZONTAL : VERTICAL
-                })
-
                 updateCropHandler(width, height, naturalWidthScaled, naturalHeightScaled)
             }
         }
     }, [
         rotate,
-        imgRef,
-        // updateCropHandler,
-        croppingBoundary
+        updateCropHandler,
+        croppingBoundary,
+        completedCrop
     ]);
 
     useEffect(() => {
@@ -303,12 +300,13 @@ const Editor: FC<PropsType> = ({
                 completedCrop.width &&
                 completedCrop.height &&
                 imgRef.current &&
-                previewCanvasRef.current &&
+                // previewCanvasRef.current && //
                 croppingBoundary
             ) {
                 await canvasPreview({
                     image: imgRef.current,
-                    canvas: previewCanvasRef.current,
+                    // canvas: previewCanvasRef.current,
+                    canvas: canvas,
                     crop: completedCrop,
                     scale,
                     rotate,
@@ -321,7 +319,7 @@ const Editor: FC<PropsType> = ({
                 })
             }
         },
-        waitTime: 100,
+        waitTime: 200,
         deps: [
             completedCrop,
             scale,
@@ -376,23 +374,23 @@ const Editor: FC<PropsType> = ({
                     {/*    </a>*/}
                     {/*</div>*/}
 
-                    <div style={{
-                        position: "fixed",
-                        bottom: 0,
-                        left: 0,
-                        visibility: "visible",
-                        zIndex: 99
-                    }}>
-                        <canvas ref={previewCanvasRef}
-                                style={{
-                                    objectFit: 'contain',
-                                    width: completedCrop.width,
-                                    height: completedCrop.height
-                                }}/>
-                        {/*<a ref={hiddenAnchorRef}*/}
-                        {/*   download*/}
-                        {/*   href={"#hidden"}></a>*/}
-                    </div>
+                    {/*<div style={{*/}
+                    {/*    position: "fixed",*/}
+                    {/*    bottom: 0,*/}
+                    {/*    left: 0,*/}
+                    {/*    visibility: "visible",*/}
+                    {/*    zIndex: 99*/}
+                    {/*}}>*/}
+                    {/*    <canvas ref={previewCanvasRef}*/}
+                    {/*            style={{*/}
+                    {/*                objectFit: 'contain',*/}
+                    {/*                width: completedCrop.width,*/}
+                    {/*                height: completedCrop.height*/}
+                    {/*            }}/>*/}
+                    {/*    /!*<a ref={hiddenAnchorRef}*!/*/}
+                    {/*    /!*   download*!/*/}
+                    {/*    /!*   href={"#hidden"}></a>*!/*/}
+                    {/*</div>*/}
                 </div>
             </div>
         </div>

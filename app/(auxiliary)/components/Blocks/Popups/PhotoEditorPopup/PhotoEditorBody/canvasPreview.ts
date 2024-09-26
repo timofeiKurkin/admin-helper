@@ -4,6 +4,12 @@ import {HORIZONTAL, ImageOrientationType, VERTICAL} from "@/app/(auxiliary)/type
 const TO_RADIANS = Math.PI / 180
 
 
+/**
+ * Функция для определения оригинальных размеров изображения при повороте
+ * @param naturalWidth
+ * @param naturalHeight
+ * @param rotateAngle
+ */
 export const getRotateDimensions = (
     naturalWidth: number,
     naturalHeight: number,

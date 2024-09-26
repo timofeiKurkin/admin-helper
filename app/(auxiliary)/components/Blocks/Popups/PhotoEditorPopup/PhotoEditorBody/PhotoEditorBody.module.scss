@@ -1,5 +1,5 @@
 .photoEditorBody {
-	grid-template-rows: 152px 2px 20.75rem 3.3125rem;
+	grid-template-rows: 152px 2px 1fr 3.3125rem; // 20.75rem
 	grid-template-areas: "editor editor-controls"
 						 "editor separated-line"
 						 "editor popup-file-list"
