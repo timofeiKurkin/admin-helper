@@ -2,38 +2,9 @@
 
 import React, {FC, useEffect, useState} from 'react';
 import {AllTypesOfInputsArray} from "@/app/(auxiliary)/types/Data/Interface/RootPage/RootPageContentType";
-import CoupleOfInputs from "@/app/(auxiliary)/components/Blocks/FormBlock/CoupleOfInputs/CoupleOfInputs";
-import styles from "./FormBlock.module.scss";
+import PartOfForm from "@/app/(auxiliary)/components/Blocks/FormBlock/PartOfForm/PartOfForm";
 import {useAppSelector} from "@/app/(auxiliary)/libs/redux-toolkit/store/hooks";
-import {
-    selectBlocksMoving,
-    selectUserDevice
-} from "@/app/(auxiliary)/libs/redux-toolkit/store/slices/AppSlice/AppSlice";
-
-interface FormComponentsProps {
-    formPartNumber: number;
-    partOfInputsOne: any;
-    partOfInputsTwo: any;
-}
-
-const FormComponents: FC<FormComponentsProps> = ({
-                                                     formPartNumber,
-                                                     partOfInputsOne,
-                                                     partOfInputsTwo
-                                                 }) => {
-    const userDevice = useAppSelector(selectUserDevice)
-    const blocksMoving = useAppSelector(selectBlocksMoving)
-
-    const columnGapStatus = (userDevice.padAdaptive640_992 && !formPartNumber) ? blocksMoving.openedPhotoBlock : blocksMoving.switchedMessageBlock
-
-    return (
-        <div
-            className={`${styles.formBlockWrapper} ${formPartNumber ? styles.formBlockPartTwoWrapper : styles.formBlockPartOneWrapper} ${columnGapStatus && styles.formBlockPartOneActiveWrapper}`}>
-            <CoupleOfInputs contentOfInputs={partOfInputsOne}/>
-            <CoupleOfInputs contentOfInputs={partOfInputsTwo}/>
-        </div>
-    )
-}
+import {selectUserDevice} from "@/app/(auxiliary)/libs/redux-toolkit/store/slices/AppSlice/AppSlice";
 
 
 interface PropsType {
@@ -46,31 +17,50 @@ const FormBlock: FC<PropsType> = ({
                                       formPartNumber
                                   }) => {
     const userDevice = useAppSelector(selectUserDevice)
-    const [partOfInputsOne, setPartOfInputsOne] =
-        useState(() => inputContent.slice(0, 2))
-    const [partOfInputsTwo, setPartOfInputsTwo] =
-        useState(() => inputContent.slice(2, 5))
+    const [inputCouples, setInputCouples] = useState<{
+        first: AllTypesOfInputsArray,
+        second: AllTypesOfInputsArray
+    }>({
+        first: inputContent.slice(0, 2),
+        second: inputContent.slice(2, 5)
+    })
 
     useEffect(() => {
-        if (!formPartNumber && (userDevice.padAdaptive)) {
-            setPartOfInputsOne([inputContent[0], inputContent[2]])
-            setPartOfInputsTwo([inputContent[1], inputContent[3]])
+
+        if (userDevice.desktopAdaptive) {
+            setInputCouples({
+                first: inputContent.slice(0, 2),
+                second: inputContent.slice(2, 5)
+            })
         }
 
-        if(formPartNumber && (userDevice.phoneAdaptive)) {
-            setPartOfInputsOne([inputContent[0], inputContent[2]])
-            setPartOfInputsTwo([inputContent[1], inputContent[3]])
+        if (!formPartNumber) {
+            if (userDevice.padAdaptive) {
+                setInputCouples({
+                    first: [inputContent[0], inputContent[2]],
+                    second: [inputContent[1], inputContent[3]]
+                })
+            }
+        } else {
+            if (userDevice.phoneAdaptive) {
+                setInputCouples({
+                    first: [inputContent[0], inputContent[2]],
+                    second: [inputContent[1], inputContent[3]]
+                })
+            }
         }
+
     }, [
         userDevice.padAdaptive,
         userDevice.phoneAdaptive,
+        userDevice.desktopAdaptive,
         formPartNumber,
         inputContent
     ])
 
-    return <FormComponents formPartNumber={formPartNumber}
-                           partOfInputsOne={partOfInputsOne}
-                           partOfInputsTwo={partOfInputsTwo}/>;
+    return <PartOfForm formPartNumber={formPartNumber}
+                       partOfInputsOne={inputCouples.first}
+                       partOfInputsTwo={inputCouples.second}/>;
 };
 
 export default FormBlock;

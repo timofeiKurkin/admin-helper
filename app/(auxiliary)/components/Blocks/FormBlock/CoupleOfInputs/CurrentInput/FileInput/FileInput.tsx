@@ -2,8 +2,8 @@ import React, {FC, useState} from 'react';
 import {PhotoAndVideoInputType} from "@/app/(auxiliary)/types/Data/Interface/RootPage/RootPageContentType";
 import styles from "./FileInput.module.scss";
 import Toggle from "@/app/(auxiliary)/components/Common/Switches/Toggle/Toggle";
-import FilesList
-    from "@/app/(auxiliary)/components/Blocks/FormBlock/CoupleOfInputs/CurrentInput/FileInput/FilesList/FilesList";
+import FileList
+    from "@/app/(auxiliary)/components/Blocks/FormBlock/CoupleOfInputs/CurrentInput/FileInput/FilesList/FileList";
 import Button from "@/app/(auxiliary)/components/UI/Button/Button";
 import DropZone from "@/app/(auxiliary)/components/Blocks/FormBlock/DropZone/DropZone";
 import PhotoEditor from "@/app/(auxiliary)/components/Blocks/Popups/PhotoEditorPopup/PhotoEditorPopup";
@@ -74,8 +74,8 @@ const FileInput: FC<PropsType> = ({input}) => {
                 <>
                     <div className={styles.filesBlock}>
                         <div className={styles.fileList}>
-                            <FilesList placeholder={input.inputPlaceholder || ""}
-                                       type={input.type as PhotoAndVideoKeysTypes}/>
+                            <FileList placeholder={input.inputPlaceholder || ""}
+                                      type={input.type as PhotoAndVideoKeysTypes}/>
                         </div>
 
                         <div className={styles.addFiles}>

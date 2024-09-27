@@ -54,7 +54,4 @@ const FilePreviewWithHandlers: FC<PropsType> = ({
     );
 }
 
-
-// const FilePreviewWithHandlers = memo(PreviewWithHandlers);
-
 export default FilePreviewWithHandlers;

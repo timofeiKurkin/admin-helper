@@ -6,7 +6,9 @@
 	background-color: $white_1;
 	overflow: hidden;
 
-	@media screen and ($desktop1920) {
+	@media screen and ($desktop1920),
+	screen and ($desktop1440_1919),
+	screen and ($desktop1280_1439) {
 		padding: 2.5rem 4.38rem;
 	}
 

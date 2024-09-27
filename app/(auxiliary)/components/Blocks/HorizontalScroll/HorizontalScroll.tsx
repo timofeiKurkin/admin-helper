@@ -6,19 +6,12 @@ interface PropsType {
     filesListLength: number;
     placeholder: string;
     children: React.ReactNode
-    // openFile: OpenFileFuncType;
-    // removeFile: RemoveFileFuncType;
-    // filesList: File[];
 }
 
 const HorizontalScroll: FC<PropsType> = ({
                                              filesListLength,
                                              placeholder,
-                                             children,
-
-                                             // filesList,
-                                             // removeFile,
-                                             // openFile
+                                             children
                                          }) => {
     /**
      * Custom scroll
@@ -127,24 +120,7 @@ const HorizontalScroll: FC<PropsType> = ({
         isDragging
     ]);
 
-    // const arrowMoveLeft = useCallback(() => {
-    // }, [])
-
-    // const arrowMoveRight = useCallback(() => {
-    //     const scrollContainer = scrollContainerRef.current
-    //     if (!scrollContainer) return
-    //
-    //     const moveRatio = scrollContainer.scrollWidth / scrollContainer.clientWidth
-    //     const newScrollPosition = arrowMoveStep * moveRatio
-    //
-    //     scrollContainer.scrollLeft += newScrollPosition
-    // }, [])
-
-    // const openFileHandler = (fileName: string) => {
-    //     openFile(fileName, )
-    // }
-
-    return filesListLength ? (
+    return (
         <div className={styles.filesListWrapper}>
             <div className={styles.listArrowItem}>
                 {/*<ArrowForList*/}
@@ -181,15 +157,7 @@ const HorizontalScroll: FC<PropsType> = ({
                 {/*              className={styles.arrowForListRight}/>*/}
             </div>
         </div>
-    ) : (
-        <div className={styles.filesListEmptyWrapper}>
-            <div className={styles.emptyFileList}>
-                <div className={styles.emptyListMessage}>
-                    <ButtonText>{placeholder}</ButtonText>
-                </div>
-            </div>
-        </div>
-    );
+    )
 };
 
 export default HorizontalScroll;
