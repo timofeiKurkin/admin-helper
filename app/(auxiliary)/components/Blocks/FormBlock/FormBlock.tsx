@@ -35,7 +35,7 @@ const FormBlock: FC<PropsType> = ({
         }
 
         if (!formPartNumber) {
-            if (userDevice.padAdaptive) {
+            if (userDevice.padAdaptive || userDevice.padAdaptive640_992) {
                 setInputCouples({
                     first: [inputContent[0], inputContent[2]],
                     second: [inputContent[1], inputContent[3]]
@@ -47,10 +47,16 @@ const FormBlock: FC<PropsType> = ({
                     first: [inputContent[0], inputContent[2]],
                     second: [inputContent[1], inputContent[3]]
                 })
+            } else if (userDevice.padAdaptive640_992) {
+                setInputCouples({
+                    first: inputContent.slice(0, 2),
+                    second: inputContent.slice(2, 5)
+                })
             }
         }
 
     }, [
+        userDevice.padAdaptive640_992,
         userDevice.padAdaptive,
         userDevice.phoneAdaptive,
         userDevice.desktopAdaptive,

@@ -22,7 +22,9 @@
     }
     
     @media screen and ($desktop1280_1439) {
-        grid-template-columns: calc(36.25rem + 4.25rem) min-content max-content;
+        //grid-template-columns: calc(36.25rem + 4.25rem) min-content max-content;
+        grid-template-columns: 36.25rem min-content max-content;
+        //grid-template-columns: 1fr min-content max-content;
     }
     
     @media screen and ($pad992_1279) {
@@ -131,7 +133,8 @@
     //}
     
     @media screen and ($desktop1280_1439) {
-        grid-template-columns: calc(36.875rem + 3.62rem) min-content max-content;
+        //grid-template-columns: calc(36.875rem + 3.62rem) min-content max-content;
+        grid-template-columns: 36.875rem min-content max-content;
     }
     
     @media screen and ($pad992_1279) {

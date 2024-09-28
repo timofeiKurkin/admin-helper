@@ -259,7 +259,7 @@ const PhotoEditorBody: FC<PropsType> = ({
             <SeparatingLine className={styles.separatedLine}/>
 
             <PopupFileList listOfPreviews={listOfPreviews}
-                           titleOfList={data.title}
+                           titleOfList={data.photoList.uploadedPhotos}
                            func={{
                                switchToAnotherFile,
                                removeFile

@@ -35,8 +35,8 @@
 		}
 
 		@media screen and ($desktop1280_1439) {
-			padding: 2.5rem 0;
-			grid-template-columns: 71.25rem;
+			padding: 2.5rem 4.38rem;
+			grid-template-columns: minmax(71.25rem, 1fr);
 		}
 
 		@media screen and ($pad992_1279) {
@@ -45,8 +45,8 @@
 		}
 
 		@media screen and ($pad640_991) {
-			padding: 1.87rem 0;
-			grid-template-columns: 36.875rem;
+			padding: 1.87rem 10%; // 1.56rem
+			grid-template-columns: minmax(36.875rem, 1fr);
 		}
 
 		@media screen and ($phone375_639) {
@@ -86,3 +86,10 @@
 	}
 }
 
+.openedPopup {
+	@media screen and ($pad992_1279),
+	screen and ($pad640_991),
+	screen and ($phone375_639) {
+		overflow-y: hidden;
+	}
+}

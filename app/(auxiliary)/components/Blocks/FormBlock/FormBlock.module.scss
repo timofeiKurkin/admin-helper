@@ -9,6 +9,11 @@
         flex-direction: column;
         row-gap: 1.87rem;
     }
+
+    @media screen and ($pad640_991) {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(15.9375rem, 24rem)); //
+    }
 }
 
 .formBlockPartOneWrapper {
@@ -21,7 +26,10 @@
     }
     
     @media screen and ($desktop1280_1439) {
-        column-gap: 2.31rem;
+        //column-gap: 2.31rem;
+        //display: grid;
+        //grid-template-columns: repeat(2, minmax(15.9375rem, 19rem));
+        column-gap: 2.5rem;
     }
     
     @media screen and ($pad992_1279) {

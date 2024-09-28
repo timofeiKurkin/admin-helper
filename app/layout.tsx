@@ -5,7 +5,6 @@ import styles from "@/styles/layout.module.scss";
 import {ChildrenType} from "@/app/(auxiliary)/types/AppTypes/AppTypes";
 import Header from "@/app/(auxiliary)/components/Common/Header/Header";
 import Background from "@/app/(auxiliary)/components/UI/Background/Background";
-import Provider from "@/app/(auxiliary)/components/Common/Provider/Provider";
 import AppWrapper from "@/app/(auxiliary)/components/Common/AppWrapper/AppWrapper";
 import {cookies} from "next/headers";
 import AppProvider from "@/app/(auxiliary)/libs/redux-toolkit/AppProvider";

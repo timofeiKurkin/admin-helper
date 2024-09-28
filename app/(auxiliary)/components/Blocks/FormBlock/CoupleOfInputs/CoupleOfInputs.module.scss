@@ -9,6 +9,10 @@
     screen and ($desktop1440_1919) {
         row-gap: 1.88rem;
     }
+
+    @media screen and ($desktop1280_1439) {
+        //grid-template-columns: 1.1fr;
+    }
     
     @media screen and ($desktop1280_1439),
     screen and ($pad992_1279){
@@ -16,6 +20,7 @@
     }
     
     @media screen and ($pad640_991) {
+        grid-template-columns: 1fr; //
         row-gap: 2.25rem;
     }
     

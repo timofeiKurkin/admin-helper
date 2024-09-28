@@ -23,8 +23,18 @@
 			align-items: center;
 
 			.reactCrop {
-				& > div:first-child {
-					overflow: hidden;
+				position: relative;
+
+				@media screen and ($desktop1920),
+				screen and ($desktop1440_1919),
+				screen and ($desktop1280_1439) {
+					width: 640px;
+					height: 640px;
+				}
+
+				@media screen and ($pad992_1279) {
+					width: 600px;
+					height: 600px;
 				}
 			}
 		}

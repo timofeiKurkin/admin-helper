@@ -1,15 +1,39 @@
+@import "@/styles/variables.module.scss";
+
 .editorControls {
 	display: grid;
-	grid-template-columns: min-content 240px;
-	grid-template-rows: repeat(2, 45px);
-	column-gap: 1.25rem;
-	row-gap: 1.25rem;
+
+	@media screen and ($desktop1920),
+	screen and ($desktop1440_1919),
+	screen and ($desktop1280_1439) {
+		grid-template-columns: min-content 240px;
+		grid-template-rows: repeat(2, 45px);
+		column-gap: 1.25rem;
+		row-gap: 1.25rem;
+	}
+
+	@media screen and ($pad992_1279) {
+		display: flex;
+		flex-direction: column;
+	}
 }
 
 .editorTitle {
 	margin-top: 5px;
+
+	@media screen and ($pad992_1279) {
+		margin-top: 0;
+		margin-bottom: 0.94rem;
+	}
 }
 
 .controlsWrapper {
 	width: 100%;
+	height: 2rem;
+
+	@media screen and ($pad992_1279) {
+		display: flex;
+		flex-direction: column;
+		margin-bottom: 1.25rem;
+	}
 }

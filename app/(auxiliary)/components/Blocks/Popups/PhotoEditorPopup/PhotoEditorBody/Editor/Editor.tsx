@@ -344,8 +344,9 @@ const Editor: FC<PropsType> = ({
                                    minHeight={100}
                         >
                             <Image ref={imgRef}
-                                   width={640}
-                                   height={640}
+                                // width={640}
+                                // height={640}
+                                   fill={true}
                                    src={imgSrc}
                                    style={{
                                        transform: `scale(${scale}) rotate(${rotate}deg)`,

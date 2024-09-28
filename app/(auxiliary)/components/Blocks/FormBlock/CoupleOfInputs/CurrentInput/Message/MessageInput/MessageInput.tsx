@@ -1,10 +1,10 @@
-import React, {FC, useEffect} from 'react';
+import React, {FC} from 'react';
 import Textarea from "@/app/(auxiliary)/components/UI/Inputs/Textarea/Textarea";
 import useInput from "@/app/(auxiliary)/hooks/useInput";
 import {
     inputValidations
 } from "@/app/(auxiliary)/components/Blocks/FormBlock/CoupleOfInputs/CurrentInput/inputValidations";
-import styles from "./MessageInput.module.scss";
+import styles from "../../InputsStyles.module.scss";
 import {MESSAGE_KEY} from "@/app/(auxiliary)/types/AppTypes/InputHooksTypes";
 import {TextareaChangeEventHandler} from "@/app/(auxiliary)/types/AppTypes/AppTypes";
 

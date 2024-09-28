@@ -1,4 +1,4 @@
-import React, {FC, useState} from 'react';
+import React, {FC, useEffect, useState} from 'react';
 import {PhotoAndVideoInputType} from "@/app/(auxiliary)/types/Data/Interface/RootPage/RootPageContentType";
 import styles from "./FileInput.module.scss";
 import Toggle from "@/app/(auxiliary)/components/Common/Switches/Toggle/Toggle";
@@ -62,6 +62,18 @@ const FileInput: FC<PropsType> = ({input}) => {
             }
         }
     }
+
+    useEffect(() => {
+        if(popupVisibility) {
+            document.body.style.overflow = "hidden"
+        }
+
+        return () => {
+            document.body.style.overflow = "auto"
+        }
+    }, [
+        popupVisibility
+    ]);
 
     return (
         <div className={styles.fileInputWrapper}>

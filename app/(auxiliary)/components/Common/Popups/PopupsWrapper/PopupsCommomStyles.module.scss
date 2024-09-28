@@ -1,11 +1,23 @@
+@import "@/styles/variables.module.scss";
+
 .popupBody {
 	width: inherit;
 	height: inherit;
 
 	display: grid;
-	grid-template-columns: 40rem 22.5625rem;
-	column-gap: 3.75rem;
-	row-gap: 1.87rem;
+
+	@media screen and ($desktop1920),
+	screen and ($desktop1440_1919),
+	screen and ($desktop1280_1439) {
+		grid-template-columns: 40rem 22.5625rem;
+		column-gap: 3.75rem;
+		row-gap: 1.87rem;
+	}
+
+	@media screen and ($pad992_1279) {
+		grid-template-columns: 37.5rem 17.3125rem;
+		column-gap: 3.44rem;
+	}
 }
 
 .buttons {

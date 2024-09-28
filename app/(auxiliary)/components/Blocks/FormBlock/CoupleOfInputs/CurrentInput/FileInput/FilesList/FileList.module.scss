@@ -18,8 +18,8 @@
 		user-select: none;
 		box-sizing: border-box;
 
-		@media screen and ($desktop1280_1439) {
-			//padding: 0 3.25rem;
+		@media screen and ($pad640_991) {
+			padding: 0 2rem;
 		}
 	}
 }

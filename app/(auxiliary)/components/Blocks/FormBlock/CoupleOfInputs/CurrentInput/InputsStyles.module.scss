@@ -5,77 +5,122 @@
 .phoneNumberInputWrapper,
 .numberPCInputWrapper,
 .companyInputWrapper {
-    @media screen and ($desktop1920) {
-        height: 3.3125rem;
-    }
-    
-    height: 3.125rem;
-    
-    overflow: visible;
-    
-    @media screen and ($phone375_639) {
-        width: 95%;
-    }
+	@media screen and ($desktop1920) {
+		height: 3.3125rem;
+	}
+
+	height: 3.125rem;
+
+	overflow: visible;
+
+	@media screen and ($phone375_639) {
+		width: 95%;
+	}
 }
 
 .deviceInputWrapper {
-    @media screen and ($desktop1920) {
-        width: 18.75rem;
-    }
-    
-    @media screen and ($pad992_1279) {
-        width: 15.4375rem;
-    }
-    
-    @media screen and ($pad640_991) {
-        width: 14.75rem;
-    }
+	@media screen and ($desktop1920) {
+		width: 18.75rem;
+	}
+
+	@media screen and ($desktop1280_1439) {
+		width: 100%;
+	}
+
+	@media screen and ($pad992_1279) {
+		width: 15.4375rem;
+	}
+
+	@media screen and ($pad640_991) {
+		min-width: 16rem;
+		max-width: 19rem;
+	}
 }
 
+
+.messageWrapper {
+	@media screen and ($desktop1920) {
+		width: 21.5625rem;
+		height: 7.5rem;
+	}
+
+	@media screen and ($desktop1440_1919) {
+		width: 17.375rem;
+		height: 11.25rem;
+	}
+
+	@media screen and ($desktop1280_1439) {
+		width: 100%;
+		height: 7.5rem;
+	}
+
+	@media screen and ($pad992_1279) {
+		width: 23.0625rem;
+		height: 6.25rem;
+	}
+
+	@media screen and ($pad640_991) {
+		min-width: 17.1875rem;
+		max-width: 95%;
+		height: 6.25rem;
+	}
+
+	@media screen and ($phone375_639) {
+		width: 20.3125rem;
+		height: 5.625rem;
+	}
+}
+
+
 .nameInputWrapper {
-    @media screen and ($desktop1920) {
-        width: 13.125rem;
-    }
-    
-    @media screen and ($desktop1440_1919) {
-        width: 11.9375rem;
-    }
-    
-    @media screen and ($desktop1280_1439) {
-        width: 12.3125rem;
-    }
-    
-    @media screen and ($pad992_1279) {
-        width: 11.5rem;
-    }
-    
-    @media screen and ($pad640_991) {
-        width: 12.25rem;
-    }
+	@media screen and ($desktop1920) {
+		width: 13.125rem;
+	}
+
+	@media screen and ($desktop1440_1919) {
+		width: 11.9375rem;
+	}
+
+	@media screen and ($desktop1280_1439) {
+		width: 12.3125rem;
+	}
+
+	@media screen and ($pad992_1279) {
+		width: 11.5rem;
+	}
+
+	@media screen and ($pad640_991) {
+		min-width: 12.25rem;
+		max-width: 17rem;
+	}
 }
 
 .companyInputWrapper {
-    @media screen and ($desktop1920),
-    screen and ($desktop1440_1919) {
-        width: 16.875rem;
-    }
-    
-    @media screen and ($desktop1280_1439),
-    screen and ($pad992_1279) {
-        width: 15.625rem;
-    }
-    
-    @media screen and ($pad640_991) {
-        width: 15.625rem;
-    }
+	@media screen and ($desktop1920) {
+		width: 16.875rem;
+	}
+
+	@media screen and ($desktop1440_1919) {
+		width: 17.875rem;
+	}
+
+	@media screen and ($desktop1280_1439),
+	screen and ($pad992_1279) {
+		width: 15.625rem;
+	}
+
+	@media screen and ($pad640_991) {
+		min-width: 15.625rem;
+		max-width: 19rem;
+	}
 }
 
 .numberPCInputWrapper {
-    
-    width: auto;
-    min-width: 2rem;
-    
-    input::placeholder {
-        //letter-spacing: 3.6px;
-    }
+
+	width: auto;
+	min-width: 2rem;
+
+	input::placeholder {
+		//letter-spacing: 3.6px;
+	}
 }
