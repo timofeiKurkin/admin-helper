@@ -14,7 +14,7 @@ const RangeTick: FC<RangeTicksProps> = ({
     const tickPosition = ((value - min) / (max - min)) * 100
 
     return (
-        <span className={type === "scale" ? styles.scaleSliderTicks : styles.rotateSliderTicks}
+        <span className={`${styles.padAdaptive} ${type === "scale" ? styles.scaleSliderTicks : styles.rotateSliderTicks}`}
               style={type === "scale" ? {left: `${tickPosition}%`} : undefined}
               onClick={() => pickTick(value)}>
             <SmallText>{value}{unit}</SmallText>

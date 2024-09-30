@@ -5,6 +5,7 @@ import Backdrop from "@/app/(auxiliary)/components/UI/Wrappers/Backdrop/Backdrop
 import styles from "./PopupsWrapper.module.scss"
 import Title from "@/app/(auxiliary)/components/UI/TextTemplates/Title";
 import {PhotoAndVideoKeysTypes} from "@/app/(auxiliary)/types/AppTypes/InputHooksTypes";
+import PopupScroll from "@/app/(auxiliary)/components/Common/Popups/PopupsWrapper/PopupScroll/PopupScroll";
 
 
 interface PropsType {
@@ -24,18 +25,20 @@ const PopupsWrapper: FC<PropsType> = ({
     }
 
     return (
-        <Backdrop onBackdropClick={backDropClickHandler}>
-            <div className={styles.popupWrapper}
-                 onClick={(e) => e.stopPropagation()}>
-                <div className={styles.popup}>
-                    <div className={styles.popupTitle}>
-                        <Title>{popupTitle}</Title>
-                    </div>
+        <PopupScroll>
+            <Backdrop onBackdropClick={backDropClickHandler}>
+                <div className={styles.popupWrapper}
+                     onClick={(e) => e.stopPropagation()}>
+                    <div className={styles.popup}>
+                        <div className={styles.popupTitle}>
+                            <Title>{popupTitle}</Title>
+                        </div>
 
-                    {children}
+                        {children}
+                    </div>
                 </div>
-            </div>
-        </Backdrop>
+            </Backdrop>
+        </PopupScroll>
     );
 };
 

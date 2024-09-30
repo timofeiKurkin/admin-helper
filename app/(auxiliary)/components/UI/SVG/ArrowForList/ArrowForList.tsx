@@ -2,7 +2,7 @@ import React, {FC} from 'react';
 import {blue_dark, grey} from "@/styles/colors";
 
 interface PropsType {
-    activeStatus: boolean;
+    activeStatus?: boolean;
     className: string;
 }
 

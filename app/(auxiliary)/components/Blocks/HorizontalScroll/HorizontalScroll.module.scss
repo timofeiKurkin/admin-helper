@@ -58,7 +58,9 @@
 			}
 
 			@media screen and ($desktop1440_1919),
-			screen and ($desktop1280_1439) {
+			screen and ($desktop1280_1439),
+			screen and ($pad992_1279),
+			screen and ($pad640_991) {
 				//padding: 0 0.63rem;
 				column-gap: 1.12rem;
 			}
@@ -91,11 +93,10 @@
 
 		.horizontalScrollWrapper {
 			position: relative;
-			background-color: $cold_white;
 			width: 100%;
 			height: 5px;
+			background-color: $cold_white;
 			border-radius: $border_radius;
-
 
 			.horizontalScroll {
 				position: absolute;
@@ -104,8 +105,7 @@
 				z-index: 1;
 
 				cursor: pointer;
-
-				height: 5px;
+				height: inherit;
 				background-color: $black;
 				border-radius: $border_radius;
 			}
@@ -115,10 +115,12 @@
 	.filesListAndScroll {
 		grid-template-rows: 1fr 17px;
 
+		@media screen and ($pad992_1279) {
+			grid-template-rows: 1fr 20px;
+		}
+
 		.filesList {
 			align-items: end;
 		}
 	}
-
-
 }

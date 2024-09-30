@@ -9,8 +9,11 @@
 
 	@media screen and ($pad992_1279) {
 		//align-items: center;
-		grid-template-rows: 12.5625rem 2px 16.625rem 7.1875rem;
-		row-gap: 1.56rem;
+		grid-template-rows: 11.9375rem 2px 16.625rem 7.1875rem;
+	}
+
+	@media screen and ($pad640_991) {
+		grid-template-rows: 8.6875rem 2px 5.5rem 6.4375rem;
 	}
 
 	grid-template-areas: "editor editor-controls"
@@ -20,6 +23,12 @@
 
 	.editorGrid {
 		grid-area: editor;
+
+		@media screen and ($pad992_1279),
+		screen and ($pad640_991) {
+			display: flex;
+			align-items: center;
+		}
 	}
 
 	.editorControlsWrapper {
@@ -29,8 +38,13 @@
 
 		@media screen and ($desktop1920),
 		screen and ($desktop1440_1919),
-		screen and ($desktop1280_1439) {
+		screen and ($desktop1280_1439),
+		screen and ($pad640_991){
 			row-gap: 1.25rem;
+		}
+
+		@media screen and ($pad640_991) {
+			flex-direction: column-reverse;
 		}
 
 		.resetSettings {
@@ -57,6 +71,12 @@
 
 		@media screen and ($pad992_1279) {
 			grid-template-columns: 1fr;
+			row-gap: 0.94rem;
+		}
+
+		@media screen and ($pad640_991) {
+			grid-template-columns: 1fr;
+			grid-template-rows: 2.75rem 2.75rem;
 			row-gap: 0.94rem;
 		}
 	}

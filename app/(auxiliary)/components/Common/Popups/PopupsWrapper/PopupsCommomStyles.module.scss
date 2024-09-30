@@ -15,8 +15,15 @@
 	}
 
 	@media screen and ($pad992_1279) {
-		grid-template-columns: 37.5rem 17.3125rem;
+		grid-template-columns: 37.5rem minmax(17.3125rem, 20rem);
+		row-gap: 1.56rem;
 		column-gap: 3.44rem;
+	}
+	
+	@media screen and ($pad640_991) {
+		grid-template-columns: 23.43756rem 13.4375rem;
+		row-gap: 1.25rem;
+		column-gap: 1.25rem;
 	}
 }
 

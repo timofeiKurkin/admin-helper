@@ -25,6 +25,11 @@
 		margin-top: 0;
 		margin-bottom: 0.94rem;
 	}
+
+	@media screen and ($pad640_991) {
+		margin-top: 0;
+		margin-bottom: 0.88rem;
+	}
 }
 
 .controlsWrapper {
@@ -35,5 +40,16 @@
 		display: flex;
 		flex-direction: column;
 		margin-bottom: 1.25rem;
+	}
+
+	@media screen and ($pad640_991) {
+		height: 0.625rem;
+		display: flex;
+		margin-bottom: 1.25rem;
+		position: relative;
+
+		&:last-child {
+			margin-bottom: 0;
+		}
 	}
 }

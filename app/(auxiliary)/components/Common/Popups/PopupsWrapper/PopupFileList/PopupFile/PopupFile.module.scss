@@ -7,6 +7,14 @@
 
 	display: grid;
 	grid-template-columns: min-content 4.25rem 1fr 1.125rem;
+	grid-template-rows: 1fr;
+
+	@media screen and ($pad640_991) {
+		grid-template-columns: min-content 4.0625rem 1.125rem;
+		padding: 0.44rem 0.94rem;
+		cursor: default;
+	}
+
 	column-gap: 12px;
 	justify-content: space-between;
 	align-items: center;
@@ -14,6 +22,29 @@
 	user-select: none;
 
 	position: relative;
+
+	.fileName {
+		width: 100%;
+		white-space: nowrap;
+		overflow: hidden;
+		display: flex;
+		position: relative;
+
+		@media screen and ($pad640_991) {
+			display: none;
+		}
+
+		&:before {
+			content: "";
+			position: absolute;
+			width: 30px;
+			height: 100%;
+			top: 0;
+			right: 0;
+
+			background: linear-gradient(90deg, rgba($white, 0) 0%, $white_1 75%)
+		}
+	}
 
 	.fileName, .fileIndex {
 		p {
@@ -55,5 +86,16 @@
 }
 
 .fileItemSelected {
-	background-color: rgba($blue_light, .2);
+	@media screen and ($desktop1920),
+	screen and ($desktop1440_1919),
+	screen and ($desktop1280_1439),
+	screen and ($pad992_1279) {
+		background-color: $cold_white;
+
+		.fileName {
+			&:before {
+				background: linear-gradient(90deg, rgba($white, 0) 0%, $cold_white 75%)
+			}
+		}
+	}
 }

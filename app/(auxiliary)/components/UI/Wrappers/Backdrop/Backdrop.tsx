@@ -10,12 +10,14 @@ const Backdrop: FC<PropsType> = ({
                                      children,
                                      onBackdropClick
                                  }) => {
+    const backDropHandler = () => {
+        if (onBackdropClick) {
+            onBackdropClick()
+        }
+    }
+
     return (
-        <div className={styles.backdropWrapper} onClick={(e) => {
-            if (onBackdropClick) {
-                onBackdropClick()
-            }
-        }}>
+        <div className={styles.backdropWrapper} onClick={backDropHandler}>
             <div className={styles.backdropBody}>
                 {children}
             </div>

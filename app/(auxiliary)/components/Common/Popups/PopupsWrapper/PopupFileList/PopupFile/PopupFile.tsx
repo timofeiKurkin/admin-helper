@@ -54,7 +54,7 @@ const PopupFile: FC<PropsType> = ({
             </div>
 
             <div className={styles.fileName}>
-                <Text>{trimLongTitle(file.name.split(".")[0], 16)}</Text>
+                <Text>{file.name}</Text>
             </div>
 
             <div className={styles.removeFile} onClick={(e) => removeFile(e, file.name)}>

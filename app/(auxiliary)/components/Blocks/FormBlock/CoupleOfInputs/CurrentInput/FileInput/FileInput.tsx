@@ -6,7 +6,7 @@ import FileList
     from "@/app/(auxiliary)/components/Blocks/FormBlock/CoupleOfInputs/CurrentInput/FileInput/FilesList/FileList";
 import Button from "@/app/(auxiliary)/components/UI/Button/Button";
 import DropZone from "@/app/(auxiliary)/components/Blocks/FormBlock/DropZone/DropZone";
-import PhotoEditor from "@/app/(auxiliary)/components/Blocks/Popups/PhotoEditorPopup/PhotoEditorPopup";
+import PhotoEditorPopup from "@/app/(auxiliary)/components/Blocks/Popups/PhotoEditorPopup/PhotoEditorPopup";
 import {PHOTO_KEY, PhotoAndVideoKeysTypes, VIDEO_KEY} from "@/app/(auxiliary)/types/AppTypes/InputHooksTypes";
 import {useAppDispatch, useAppSelector} from "@/app/(auxiliary)/libs/redux-toolkit/store/hooks";
 import {
@@ -20,6 +20,8 @@ import VideoPlayerPopup from "@/app/(auxiliary)/components/Blocks/Popups/VideoPl
 import {
     selectPopups
 } from "@/app/(auxiliary)/libs/redux-toolkit/store/slices/PopupSlice/PopupSlice";
+import HaveMediaFile
+    from "@/app/(auxiliary)/components/Blocks/FormBlock/CoupleOfInputs/CurrentInput/FileInput/HaveMediaFile/HaveMediaFile";
 
 
 interface PropsType {
@@ -29,23 +31,9 @@ interface PropsType {
 const FileInput: FC<PropsType> = ({input}) => {
     const dispatch = useAppDispatch()
     const userDevice = useAppSelector(selectUserDevice)
-    const rootPageContent = useAppSelector(selectRootPageContent)
-    const popupVisibility = useAppSelector(selectPopups)[input.type]
 
     const [haveMediaFile, setHaveMediaFile] =
         useState<boolean>(false)
-    const [dragDropZoneIsOpen, setDragDropZoneIsOpen] =
-        useState<boolean>(false)
-
-    const openDragDropZone = () => {
-        setDragDropZoneIsOpen((prevState) => !prevState);
-
-        if (!dragDropZoneIsOpen) {
-            document.body.style.overflow = "hidden"
-        } else {
-            document.body.style.overflow = "auto"
-        }
-    }
 
     const fileBlockHandler = () => {
         setHaveMediaFile((prevState) => !prevState)
@@ -63,18 +51,6 @@ const FileInput: FC<PropsType> = ({input}) => {
         }
     }
 
-    useEffect(() => {
-        if(popupVisibility) {
-            document.body.style.overflow = "hidden"
-        }
-
-        return () => {
-            document.body.style.overflow = "auto"
-        }
-    }, [
-        popupVisibility
-    ]);
-
     return (
         <div className={styles.fileInputWrapper}>
             <Toggle toggleStatus={haveMediaFile}
@@ -83,33 +59,11 @@ const FileInput: FC<PropsType> = ({input}) => {
             </Toggle>
 
             {haveMediaFile && (
-                <>
-                    <div className={styles.filesBlock}>
-                        <div className={styles.fileList}>
-                            <FileList placeholder={input.inputPlaceholder || ""}
-                                      type={input.type as PhotoAndVideoKeysTypes}/>
-                        </div>
-
-                        <div className={styles.addFiles}>
-                            <Button onClick={openDragDropZone}>{input.button}</Button>
-                        </div>
-                    </div>
-
-                    {(dragDropZoneIsOpen && rootPageContent) ? (
-                        <DropZone content={rootPageContent.contentOfUploadBlock}
-                                  inputType={input.type as PhotoAndVideoKeysTypes}
-                                  visibleDragDropZone={openDragDropZone}
-                        />
-                    ) : null}
-
-                    {popupVisibility && input.type === PHOTO_KEY && (
-                        <PhotoEditor/>
-                    )}
-
-                    {popupVisibility && input.type === VIDEO_KEY && (
-                        <VideoPlayerPopup/>
-                    )}
-                </>
+                <HaveMediaFile inputData={{
+                    type: input.type,
+                    button: input.button || "",
+                    placeholder: input.inputPlaceholder || ""
+                }}/>
             )}
         </div>
     );

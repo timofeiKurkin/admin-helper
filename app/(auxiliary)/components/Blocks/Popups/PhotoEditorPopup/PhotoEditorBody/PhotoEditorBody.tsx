@@ -258,22 +258,16 @@ const PhotoEditorBody: FC<PropsType> = ({
 
             <SeparatingLine className={styles.separatedLine}/>
 
-            <PopupFileList listOfPreviews={listOfPreviews}
-                           titleOfList={data.photoList.uploadedPhotos}
+            <PopupFileList titleOfList={data.photoList.uploadedPhotos}
+                           listOfPreviews={listOfPreviews}
                            func={{
                                switchToAnotherFile,
                                removeFile
-                           }}
-            />
+                           }}/>
 
             <div className={`${popupsCommonStyles.buttons} ${styles.photoEditorButtons}`}>
                 <SaveSettings data={data.buttons.save}
-                              saveSettings={saveSettingsHandler}
-
-                    // type={type}
-                    // settingsForSaving={temporaryPhotosSettings}
-                    // finallyOfFiles={listOfPreviews}
-                />
+                              saveSettings={saveSettingsHandler}/>
 
                 <ClosePopup data={data.buttons.close} type={type}/>
             </div>

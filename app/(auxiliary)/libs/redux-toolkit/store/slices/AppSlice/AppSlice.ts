@@ -20,7 +20,7 @@ const initialState: InitialStateType = {
         phoneAdaptive: false,
         padAdaptive: false,
         desktopAdaptive: false,
-        padAdaptive640_992: false
+        padAdaptive640_992: false,
     },
     // editorState: {
     //     currentFileIndex: 0,
