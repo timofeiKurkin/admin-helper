@@ -62,11 +62,9 @@ const Message: FC<PropsType> = ({inputData}) => {
         <div className={styles.messageWrapper}>
             {
                 !userCannotTalk && (
-                    <div className={styles.voiceWrapper}>
-                        <VoiceInput voicePlaceHolder={inputData.voiceMessage?.inputPlaceholder}
+                    <VoiceInput voicePlaceHolder={inputData.voiceMessage?.inputPlaceholder}
                                     setNewMessage={setNewMessageHandler}
                                     removeRecoder={removerRecorderHandler}/>
-                    </div>
                 )
             }
 

@@ -4,6 +4,7 @@ import AudioPlayer
     from "@/app/(auxiliary)/components/Blocks/FormBlock/CoupleOfInputs/CurrentInput/Message/VoiceInput/AudioPlayer";
 import Trash from "@/app/(auxiliary)/components/UI/SVG/Trash/Trash";
 import {red_dark} from "@/styles/colors";
+import styles from "./AudioPlayer.module.scss"
 
 interface PropsType {
     audioBlob: Blob;
@@ -15,12 +16,7 @@ const ReadyVoice: FC<PropsType> = ({
                                        removeCurrentRecord
                                    }) => {
     return (
-        <div style={{
-            display: "grid",
-            gridTemplateColumns: "3.3125rem 9.875rem 3.3125rem",
-            gridTemplateRows: "3.3125rem",
-            columnGap: "0.94rem",
-        }}>
+        <div className={styles.readyVoiceWrapper}>
             <AudioPlayer audioBlob={audioBlob}/>
 
             <Button image={{

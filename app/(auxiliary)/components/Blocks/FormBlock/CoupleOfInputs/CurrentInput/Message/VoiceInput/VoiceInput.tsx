@@ -12,6 +12,7 @@ import {
 } from "@/app/(auxiliary)/libs/redux-toolkit/store/slices/UserFormDataSlice/UserFormDataSlice";
 import {MESSAGE_KEY} from "@/app/(auxiliary)/types/AppTypes/InputHooksTypes";
 import {formattedTime} from "@/app/(auxiliary)/func/formattedTime";
+import styles from "./AudioPlayer.module.scss";
 
 interface PropsType {
     voicePlaceHolder?: string;
@@ -88,31 +89,30 @@ const VoiceInput: FC<PropsType> = ({
 
     const deleteCurrentRecord = () => {
         removeRecoder()
-        setRecordingIsDone(false);
+        setRecordingIsDone(false)
         setAudioBlob(null)
-        // setNewMessage({} as File, false)
     }
 
-    if (!audioBlob && !recordingIsDone) {
-        return (
-            <Button onClick={isRecording ? () => stopRecording() : () => startRecording()}
-                    style={{
-                        backgroundColor: isRecording ? blue_light : blue_dark
-                    }}
-                    image={{
-                        position: "left",
-                        children: <Microphone/>,
-                        visibleOnlyImage: false
-                    }}>
-                {isRecording ? "Говорите" : voicePlaceHolder}
-            </Button>
-        )
-    } else if (audioBlob && recordingIsDone) {
-        return (
-            <ReadyVoice audioBlob={audioBlob}
-                        removeCurrentRecord={deleteCurrentRecord}/>
-        )
-    }
+    return (
+        <div className={styles.voiceInputWrapper}>
+            {(audioBlob && recordingIsDone) ? (
+                <ReadyVoice audioBlob={audioBlob}
+                            removeCurrentRecord={deleteCurrentRecord}/>
+            ) : (
+                <Button onClick={isRecording ? () => stopRecording() : () => startRecording()}
+                        style={{
+                            backgroundColor: isRecording ? blue_light : blue_dark
+                        }}
+                        image={{
+                            position: "left",
+                            children: <Microphone/>,
+                            visibleOnlyImage: false
+                        }}>
+                    {isRecording ? "Говорите" : voicePlaceHolder}
+                </Button>
+            )}
+        </div>
+    )
 };
 
 export default VoiceInput;
