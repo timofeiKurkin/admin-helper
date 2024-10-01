@@ -20,7 +20,7 @@ import {
     scaleStickPoint,
     stickToClosestValue
 } from "@/app/(auxiliary)/func/editorHandlers";
-import {PhotoEditorSettingsType, PhotoSettingKeysType} from "@/app/(auxiliary)/types/PopupTypes/PopupTypes";
+import {CustomFile, PhotoEditorSettingsType, PhotoSettingKeysType} from "@/app/(auxiliary)/types/PopupTypes/PopupTypes";
 import {Crop} from "react-image-crop";
 import {
     changePreview,
@@ -70,8 +70,7 @@ const PhotoEditorBody: FC<PropsType> = ({
      * Файлы для превью фотографий для списка фото в редакторе и в форме
      */
     const [listOfPreviews, setListOfPreviews] =
-        useState<File[]>(() => formFileData.filesFinally)
-
+        useState<CustomFile[]>(() => formFileData.filesFinally.map((file, i) => Object.assign(file, {id: i})))
     //
 
     /**
@@ -194,7 +193,7 @@ const PhotoEditorBody: FC<PropsType> = ({
         setListOfPreviews((prevState) => {
             return prevState.map((file) => {
                 if (file.name === newFile.name) {
-                    return newFile
+                    return Object.assign(newFile, {id: file.id})
                 }
                 return file
             })

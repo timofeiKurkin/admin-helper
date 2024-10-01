@@ -12,6 +12,7 @@
     width: 100%;
     
     background-color: $blue_light;
+    user-select: none;
     
     @media screen and ($desktop1920) {
         padding: 0.94rem 0;

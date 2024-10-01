@@ -1,10 +1,12 @@
 import React, {FC, useEffect, useState} from 'react';
 import Text from "@/app/(auxiliary)/components/UI/TextTemplates/Text";
 import FilePreviewBlock from "@/app/(auxiliary)/components/Blocks/FilePreviewBlock/FilePreviewBlock";
-import {trimLongTitle} from "@/app/(auxiliary)/func/trimLongTitle";
 import Trash from "@/app/(auxiliary)/components/UI/SVG/Trash/Trash";
 import styles from "./PopupFile.module.scss";
 import {DivMouseEventHandler} from "@/app/(auxiliary)/types/AppTypes/AppTypes";
+import {useAppSelector} from "@/app/(auxiliary)/libs/redux-toolkit/store/hooks";
+import {selectUserDevice} from "@/app/(auxiliary)/libs/redux-toolkit/store/slices/AppSlice/AppSlice";
+import {CustomFile} from "@/app/(auxiliary)/types/PopupTypes/PopupTypes";
 
 
 interface PropsType {
@@ -23,10 +25,11 @@ const PopupFile: FC<PropsType> = ({
                                       currentFileName,
                                       func,
                                   }) => {
-
+    const padAdaptive = useAppSelector(selectUserDevice).padAdaptive640_992
     const [selectedItem, setSelectedItem] = useState<boolean>(file.name === currentFileName)
 
-    const chooseAnotherFile = (e: DivMouseEventHandler, fileName: string) => {
+    const chooseAnotherFile = (fileName: string) => {
+        if (padAdaptive) return
         func.switchToAnotherFile(fileName)
     }
 
@@ -42,30 +45,31 @@ const PopupFile: FC<PropsType> = ({
         file.name
     ]);
 
-    return (
-        <div className={`${styles.fileItem} ${selectedItem && styles.fileItemSelected}`}
-             onClick={(e) => chooseAnotherFile(e, file.name)}
-        >
-            <div className={styles.fileIndex}><Text>{++index}.</Text></div>
+    if (Object.keys(file).length) {
+        return (
+            <div className={`${styles.fileItem} ${selectedItem && styles.fileItemSelected}`}
+                 onClick={() => chooseAnotherFile(file.name)}>
+                <div className={styles.fileIndex}><Text>{++index}.</Text></div>
 
-            <div className={styles.photoPreview}>
-                <FilePreviewBlock url={URL.createObjectURL(file)}
-                                  alt={file.name}/>
-            </div>
+                <div className={styles.photoPreview}>
+                    <FilePreviewBlock url={URL.createObjectURL(file)}
+                                      alt={file.name}/>
+                </div>
 
-            <div className={styles.fileName}>
-                <Text>{file.name}</Text>
-            </div>
+                <div className={styles.fileName}>
+                    <Text>{file.name}</Text>
+                </div>
 
-            <div className={styles.removeFile} onClick={(e) => removeFile(e, file.name)}>
-                <Trash style={{
-                    fill: "black",
-                    width: 18,
-                    height: 18
-                }}/>
+                <div className={styles.removeFile} onClick={(e) => removeFile(e, file.name)}>
+                    <Trash style={{
+                        fill: "black",
+                        width: 18,
+                        height: 18
+                    }}/>
+                </div>
             </div>
-        </div>
-    )
+        )
+    }
 };
 
 export default PopupFile;

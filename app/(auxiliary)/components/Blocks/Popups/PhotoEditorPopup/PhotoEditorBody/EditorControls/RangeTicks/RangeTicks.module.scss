@@ -12,8 +12,10 @@
 }
 
 .padAdaptive {
-	p {
-		display: none;
+	@media screen and ($pad640_991) {
+		p {
+			display: none;
+		}
 	}
 }
 
