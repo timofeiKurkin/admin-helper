@@ -30,7 +30,7 @@ export const inputValidations: { [key: string]: ValidationsType } = {
     [NAME_KEY]: {
         isEmpty: true,
         maxLength: 16,
-        minLength: 5
+        minLength: 2
     },
     [COMPANY_KEY]: {
         isEmpty: true,

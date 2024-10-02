@@ -11,6 +11,9 @@ const nextConfig = {
     reactStrictMode: false,
     sassOptions: {
         includePaths: [path.join(__dirname, "styles")]
+    },
+    experimental: {
+        serverComponentsExternalPackages: ["grammy"]
     }
 };
 

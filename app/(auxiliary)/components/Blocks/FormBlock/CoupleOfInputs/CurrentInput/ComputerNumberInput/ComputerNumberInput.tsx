@@ -13,16 +13,18 @@ import {
 } from "@/app/(auxiliary)/components/Blocks/FormBlock/CoupleOfInputs/CurrentInput/inputHandleKeyDown";
 import {useAppDispatch} from "@/app/(auxiliary)/libs/redux-toolkit/store/hooks";
 import {changeTextData} from "@/app/(auxiliary)/libs/redux-toolkit/store/slices/UserFormDataSlice/UserFormDataSlice";
+import {NUMBER_PC_KEY} from "@/app/(auxiliary)/types/AppTypes/InputHooksTypes";
 
 interface PropsType {
-    currentInput: NumberPcInputType;
+    // currentInput: NumberPcInputType;
+    placeholder: string;
 }
 
 const ComputerNumberInput: FC<PropsType> = ({
-                                                currentInput
+                                                placeholder
                                             }) => {
     const dispatch = useAppDispatch()
-    const value = useInput("", currentInput.type, inputValidations[currentInput.type])
+    const value = useInput("", NUMBER_PC_KEY, inputValidations[NUMBER_PC_KEY])
 
     const numberPcHandler = (e: InputChangeEventHandler) => {
         e.target.value = e.target.value.replace(/\D/g, '')
@@ -41,30 +43,27 @@ const ComputerNumberInput: FC<PropsType> = ({
         e.target.value = computerNumber
 
         value.onChange(e)
-        dispatch(changeTextData({
-            key: currentInput.type,
-            data: {
-                validationStatus: value.inputValid,
-                value: value.value
-            }
-        }))
     }
 
     useEffect(() => {
         dispatch(changeTextData({
-            key: currentInput.type,
+            key: NUMBER_PC_KEY,
             data: {
                 validationStatus: value.inputValid,
                 value: value.value
             }
         }))
-    }, []);
+    }, [
+        dispatch,
+        value.inputValid,
+        value.value
+    ]);
 
     return (
         <div className={inputsStyles.numberPCInputWrapper}>
             <Input value={value.value}
-                   placeholder={currentInput.inputPlaceholder || ""}
-                   maxLength={inputValidations[currentInput.type].maxLength}
+                   placeholder={placeholder}
+                   maxLength={inputValidations[NUMBER_PC_KEY].maxLength}
                    tabIndex={1}
                    onBlur={value.onBlur}
                    onKeyDown={(e) => inputHandleKeyDown(e, value)}

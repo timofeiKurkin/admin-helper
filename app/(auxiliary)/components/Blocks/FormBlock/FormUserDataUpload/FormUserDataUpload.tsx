@@ -52,7 +52,9 @@ const FormUserDataUpload: FC<PropsType> = ({buttonText}) => {
     useEffect(() => {
         dispatch(setValidationFormStatus())
     }, [
-        dispatch
+        dispatch,
+        formTextData,
+        formFileData
     ]);
 
     const uploadUserData = async (userData: UserFormDataType) => {
@@ -62,20 +64,17 @@ const FormUserDataUpload: FC<PropsType> = ({buttonText}) => {
         ) {
             let formData = new FormData()
 
-            if (userData.text_data[MESSAGE_KEY]?.validationStatus) {
-                const currentMessage = userData.text_data[MESSAGE_KEY]?.value
-
-                if (currentMessage instanceof File) {
-                    formData.append(`${MESSAGE_KEY}_file`, currentMessage)
-                } else if (typeof currentMessage === "string") {
-                    formData.append(`${MESSAGE_KEY}_text`, currentMessage)
-                }
-                // delete userData.text_data[MESSAGE_KEY]
+            if (userData.text_data[MESSAGE_KEY].validationStatus) {
+                const message = userData.text_data[MESSAGE_KEY]?.value
+                formData.append(`${MESSAGE_KEY}_text`, message)
+            } else if (userData.file_data[MESSAGE_KEY].validationStatus) {
+                const voice = userData.file_data[MESSAGE_KEY].value
+                formData.append(`${MESSAGE_KEY}_file`, voice)
             }
 
             if (userData.text_data) {
                 (Object.keys(userData.text_data) as (DeviceKeyType | SavedInputsKeysTypes)[]).forEach((key) => {
-                    if (key !== "message" && userData.text_data && userData.text_data[key]) {
+                    if (key !== "message") {
                         if (userData.text_data[key].validationStatus) {
                             formData.append(key, userData.text_data[key]?.value)
                         }
@@ -84,9 +83,9 @@ const FormUserDataUpload: FC<PropsType> = ({buttonText}) => {
             }
 
             if (userData.file_data) {
-                (Object.keys(userData.file_data) as PhotoAndVideoKeysTypes[]).forEach((key) => {
-                    if (userData.file_data && userData.file_data[key]) {
-                        userData.file_data[key]?.files.forEach((file) => formData.append(key, file))
+                (Object.keys(userData.file_data) as (PhotoAndVideoKeysTypes | typeof MESSAGE_KEY)[]).forEach((key) => {
+                    if (key !== "message") {
+                        userData.file_data[key]?.filesFinally.forEach((file) => formData.append(key, file))
                     }
                 })
             }
@@ -102,6 +101,9 @@ const FormUserDataUpload: FC<PropsType> = ({buttonText}) => {
             console.log("response: ", response)
         }
     }
+
+    // console.log("validationFormStatus: ", validationFormStatus, permissionsOfForm.userAgreed)
+    // console.log("")
 
     return (
         <Button disabled={!validationFormStatus || !permissionsOfForm.userAgreed}

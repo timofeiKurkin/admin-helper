@@ -235,7 +235,7 @@ export const userFormDataSlice = createAppSlice({
         /**
          *
          */
-        setPermissionPolitic: create.reducer(
+        setAgreePolitics: create.reducer(
             (state) => {
                 state.permissions.userAgreed = !state.permissions.userAgreed
             }
@@ -271,7 +271,7 @@ export const {
     changeTextData,
     addFileData,
     deleteFile,
-    setPermissionPolitic,
+    setAgreePolitics,
     setUserCanTalk,
     setValidationFormStatus,
     addMessageData,

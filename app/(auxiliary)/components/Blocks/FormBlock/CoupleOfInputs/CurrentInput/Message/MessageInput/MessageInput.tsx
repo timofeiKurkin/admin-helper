@@ -1,4 +1,4 @@
-import React, {FC} from 'react';
+import React, {FC, useEffect} from 'react';
 import Textarea from "@/app/(auxiliary)/components/UI/Inputs/Textarea/Textarea";
 import useInput from "@/app/(auxiliary)/hooks/useInput";
 import {
@@ -25,8 +25,16 @@ const MessageInput: FC<PropsType> = ({
 
     const onChangeHandler = (e: TextareaChangeEventHandler) => {
         message.onChange(e)
-        setNewMessage(e.target.value, message.inputValid)
+        // setNewMessage(e.target.value, message.inputValid)
     }
+
+    useEffect(() => {
+        setNewMessage(message.value, message.inputValid)
+    }, [
+        setNewMessage,
+        message.inputValid,
+        message.value
+    ]);
 
     return (
         <div className={styles.messageWrapper}>

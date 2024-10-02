@@ -13,6 +13,7 @@ import {
 } from "@/app/(auxiliary)/components/Blocks/FormBlock/CoupleOfInputs/CurrentInput/inputHandleKeyDown";
 import {useAppDispatch} from "@/app/(auxiliary)/libs/redux-toolkit/store/hooks";
 import {changeTextData} from "@/app/(auxiliary)/libs/redux-toolkit/store/slices/UserFormDataSlice/UserFormDataSlice";
+import {PHONE_KEY} from "@/app/(auxiliary)/types/AppTypes/InputHooksTypes";
 
 
 interface PropsType {
@@ -22,7 +23,7 @@ interface PropsType {
 const PhoneInput: FC<PropsType> = ({currentInput}) => {
     // const {appState, setAppState} = useContext(AppContext)
     const dispatch = useAppDispatch()
-    const value = useInput("+7 ", currentInput.type, inputValidations[currentInput.type])
+    const value = useInput("+7 ", PHONE_KEY, inputValidations[currentInput.type])
 
     const phoneRegularExpression = (e: InputChangeEventHandler) => {
         e.target.value = e.target.value.replace(/\D/g, '')
@@ -44,25 +45,17 @@ const PhoneInput: FC<PropsType> = ({currentInput}) => {
         e.target.value = formattedValue
 
         value.onChange(e)
-        dispatch(changeTextData({
-            key: currentInput.type,
-            data: {
-                validationStatus: value.inputValid,
-                value: value.value
-            }
-        }))
     }
 
     useEffect(() => {
         dispatch(changeTextData({
-            key: currentInput.type,
+            key: PHONE_KEY,
             data: {
                 validationStatus: value.inputValid,
                 value: value.value
             }
         }))
-
-    }, []);
+    }, [dispatch, value.inputValid, value.value]);
 
     return (
         <div className={inputsStyles.phoneNumberInputWrapper}>

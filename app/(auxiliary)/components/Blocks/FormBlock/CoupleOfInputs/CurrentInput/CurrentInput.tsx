@@ -58,7 +58,7 @@ const CurrentInput: FC<PropsType> = ({currentInput}) => {
             )}
 
             {currentInput.type === NUMBER_PC_KEY && (
-                <ComputerNumberInput currentInput={currentInput}/>
+                <ComputerNumberInput placeholder={currentInput.inputPlaceholder!}/>
             )}
 
             {(currentInput.type === NAME_KEY || currentInput.type === DEVICE_KEY || currentInput.type === COMPANY_KEY) && (

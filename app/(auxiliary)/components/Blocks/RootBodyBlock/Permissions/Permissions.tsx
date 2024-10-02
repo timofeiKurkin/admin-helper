@@ -1,15 +1,16 @@
 "use client"
 
-import React, {FC, useContext} from 'react';
+import React, {FC} from 'react';
 import SmallText from "@/app/(auxiliary)/components/UI/TextTemplates/SmallText";
 import {PermissionsContentType} from "@/app/(auxiliary)/types/Data/Interface/RootPage/RootPageContentType";
 import Checkbox from "@/app/(auxiliary)/components/UI/SVG/Checkbox/Checkbox";
 import TextHighlighting from "@/app/(auxiliary)/components/UI/TextHighlighting/TextHighlighting";
 import styles from "./Permissions.module.scss"
-import {AppContext} from "@/app/(auxiliary)/components/Common/Provider/Provider";
 import {useAppDispatch, useAppSelector} from "@/app/(auxiliary)/libs/redux-toolkit/store/hooks";
 import {
-    selectPermissionsOfForm, setPermissionPolitic, setUserCanTalk
+    selectPermissionsOfForm,
+    setAgreePolitics,
+    setUserCanTalk
 } from "@/app/(auxiliary)/libs/redux-toolkit/store/slices/UserFormDataSlice/UserFormDataSlice";
 
 
@@ -28,7 +29,7 @@ const Permissions: FC<PropsType> = ({
     }
 
     const agreePermissionHandler = () => {
-        dispatch(setPermissionPolitic())
+        dispatch(setAgreePolitics())
     }
 
     return (
