@@ -57,6 +57,10 @@ const FormUserDataUpload: FC<PropsType> = ({buttonText}) => {
         formFileData
     ]);
 
+    console.log("text data: ", formTextData)
+    console.log("file data: ", formFileData)
+    console.log("validation form status", validationFormStatus)
+
     const uploadUserData = async (userData: UserFormDataType) => {
         if (
             userData &&
@@ -64,13 +68,13 @@ const FormUserDataUpload: FC<PropsType> = ({buttonText}) => {
         ) {
             let formData = new FormData()
 
-            if (userData.text_data[MESSAGE_KEY].validationStatus) {
-                const message = userData.text_data[MESSAGE_KEY]?.value
-                formData.append(`${MESSAGE_KEY}_text`, message)
-            } else if (userData.file_data[MESSAGE_KEY].validationStatus) {
-                const voice = userData.file_data[MESSAGE_KEY].value
-                formData.append(`${MESSAGE_KEY}_file`, voice)
-            }
+            // if (userData.text_data[MESSAGE_KEY].validationStatus) {
+            //     const message = userData.text_data[MESSAGE_KEY]?.value
+            //     formData.append(`${MESSAGE_KEY}_text`, message)
+            // } else if (userData.file_data[MESSAGE_KEY].validationStatus) {
+            //     const voice = userData.file_data[MESSAGE_KEY].value
+            //     formData.append(`${MESSAGE_KEY}_file`, voice)
+            // }
 
             if (userData.text_data) {
                 (Object.keys(userData.text_data) as (DeviceKeyType | SavedInputsKeysTypes)[]).forEach((key) => {
@@ -78,6 +82,8 @@ const FormUserDataUpload: FC<PropsType> = ({buttonText}) => {
                         if (userData.text_data[key].validationStatus) {
                             formData.append(key, userData.text_data[key]?.value)
                         }
+                    } else if (userData.text_data[MESSAGE_KEY].validationStatus) {
+                        formData.append(`${MESSAGE_KEY}_text`, userData.text_data[MESSAGE_KEY].value)
                     }
                 })
             }
@@ -86,6 +92,8 @@ const FormUserDataUpload: FC<PropsType> = ({buttonText}) => {
                 (Object.keys(userData.file_data) as (PhotoAndVideoKeysTypes | typeof MESSAGE_KEY)[]).forEach((key) => {
                     if (key !== "message") {
                         userData.file_data[key]?.filesFinally.forEach((file) => formData.append(key, file))
+                    } else if (userData.file_data[MESSAGE_KEY].validationStatus) {
+                        formData.append(`${MESSAGE_KEY}_file`, userData.file_data[MESSAGE_KEY].value)
                     }
                 })
             }

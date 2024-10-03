@@ -30,6 +30,10 @@ const MessageInput: FC<PropsType> = ({
 
     useEffect(() => {
         setNewMessage(message.value, message.inputValid)
+
+        return () => {
+            setNewMessage("", false)
+        }
     }, [
         setNewMessage,
         message.inputValid,

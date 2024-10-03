@@ -32,6 +32,7 @@ const Message: FC<PropsType> = ({inputData}) => {
         newMessage: File | string,
         validationStatus: boolean
     ) => {
+        console.log("set new message func")
         dispatch(addMessageData({
             validationStatus,
             value: newMessage

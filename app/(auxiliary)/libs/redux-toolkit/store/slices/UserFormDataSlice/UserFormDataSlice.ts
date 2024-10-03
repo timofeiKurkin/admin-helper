@@ -130,7 +130,7 @@ export const userFormDataSlice = createAppSlice({
                     value: payload.value,
                     validationStatus: payload.validationStatus
                 }
-            } else if (payload.value instanceof File || !Object.keys(payload.value).length) {
+            } else {
                 state.file_data[MESSAGE_KEY] = {
                     value: payload.value,
                     validationStatus: payload.validationStatus
@@ -253,9 +253,13 @@ export const userFormDataSlice = createAppSlice({
         setValidationFormStatus: create.reducer(
             (state) => {
                 const textDataKeys = Object.keys(state.text_data)
-                state.validationFormStatus = (textDataKeys as (TextInputsKeysTypes)[]).every((key) => (
-                    state.text_data[key]?.validationStatus
-                ))
+                state.validationFormStatus = (textDataKeys as (TextInputsKeysTypes)[]).every((key) => {
+                    if (key === "message") {
+                        return state.text_data[key].validationStatus || state.file_data[key].validationStatus
+                    } else {
+                        return state.text_data[key]?.validationStatus
+                    }
+                })
             }
         )
     }),

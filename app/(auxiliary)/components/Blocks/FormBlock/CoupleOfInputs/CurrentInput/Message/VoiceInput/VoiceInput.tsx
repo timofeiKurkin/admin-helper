@@ -1,6 +1,6 @@
 "use client"
 
-import React, {FC, useRef, useState} from "react";
+import React, {FC, useEffect, useRef, useState} from "react";
 import Button from "@/app/(auxiliary)/components/UI/Button/Button";
 import Microphone from "@/app/(auxiliary)/components/UI/SVG/Microphone/Microphone";
 import {blue_dark, blue_light} from "@/styles/colors";
@@ -67,11 +67,11 @@ const VoiceInput: FC<PropsType> = ({
                     [blob],
                     `voice-record-${formattedTime()}`,
                     {
-                        type: "audio/wav",
+                        type: "audio/ogg",
                         lastModified: Date.now()
                     }
                 )
-                setNewMessage(newAudioFile, !!blob)
+                setNewMessage(newAudioFile, true)
             }
         };
 
@@ -92,6 +92,12 @@ const VoiceInput: FC<PropsType> = ({
         setRecordingIsDone(false)
         setAudioBlob(null)
     }
+
+    useEffect(() => {
+        return () => {
+            setNewMessage(voiceMessage.value, false)
+        }
+    }, []);
 
     return (
         <div className={styles.voiceInputWrapper}>
