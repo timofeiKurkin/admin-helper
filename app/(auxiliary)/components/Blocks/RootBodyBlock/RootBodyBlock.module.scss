@@ -14,7 +14,7 @@
     //}
     
     @media screen and ($desktop1920) {
-        grid-template-columns: calc(44.1875rem + 6.44rem) min-content max-content; // Now, it's the best solution // Заранее установить ширину блока
+        grid-template-columns: calc(44.1875rem + 6.44rem) min-content min-content; // Now, it's the best solution // Заранее установить ширину блока
     }
     
     @media screen and ($desktop1440_1919) {

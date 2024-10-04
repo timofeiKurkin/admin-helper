@@ -102,3 +102,9 @@ export interface ProviderStateType {
     switchedMessageBlock?: boolean;
     editorState?: EditorStateType;
 }
+
+export interface ServerResponseType {
+    status: "success" | "error" | "";
+    sentToServer: boolean;
+    message: string;
+}

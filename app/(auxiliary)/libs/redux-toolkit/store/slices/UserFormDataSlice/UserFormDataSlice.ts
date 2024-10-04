@@ -1,5 +1,6 @@
 import {createAppSlice} from "@/app/(auxiliary)/libs/redux-toolkit/store/createAppSlice";
 import {
+    AllKeysTypesOfInputs,
     COMPANY_KEY,
     DEVICE_KEY,
     MESSAGE_KEY,
@@ -14,6 +15,7 @@ import {
 import {
     FormDataItemType,
     PermissionsOfFormStatesType,
+    ServerResponseType,
     UserFormDataType
 } from "@/app/(auxiliary)/types/AppTypes/Context";
 import {PayloadAction} from "@reduxjs/toolkit";
@@ -23,6 +25,8 @@ interface InitialStateType extends UserFormDataType {
     permissions: PermissionsOfFormStatesType;
     validationFormStatus: boolean;
     userMessageStatus: boolean;
+    serverResponse: ServerResponseType;
+    // resetForm:
 }
 
 const initialState: InitialStateType = {
@@ -78,6 +82,12 @@ const initialState: InitialStateType = {
     },
     validationFormStatus: false,
     userMessageStatus: false,
+    serverResponse: {
+        status: "",
+        sentToServer: false,
+        message: ""
+    },
+    // resetForm: false
 }
 
 interface DataActionType<K, T> {
@@ -268,14 +278,37 @@ export const userFormDataSlice = createAppSlice({
                     }
                 })
             }
-        )
+        ),
+
+        setServerResponse: create.reducer(
+            (state, action: PayloadAction<ServerResponseType>) => {
+                state.serverResponse = action.payload
+            }
+        ),
+
+
+        setFormToDefault: create.reducer(
+            (state) => {
+                state.file_data = initialState.file_data
+                state.permissions = initialState.permissions
+                state.text_data[DEVICE_KEY] = {
+                    value: "",
+                    validationStatus: false
+                }
+
+                if (!state.userMessageStatus) {
+                    state.text_data[MESSAGE_KEY] = initialState.text_data[MESSAGE_KEY]
+                }
+            }
+        ),
     }),
     selectors: {
         selectFormTextData: (state) => state.text_data,
         selectFormFileData: (state) => state.file_data,
         selectPermissionsOfForm: (state) => state.permissions,
         selectValidationFormStatus: (state) => state.validationFormStatus,
-        selectUserMessageStatus: (state) => state.userMessageStatus
+        selectUserMessageStatus: (state) => state.userMessageStatus,
+        selectServerResponse: (state) => state.serverResponse
     }
 })
 
@@ -290,7 +323,9 @@ export const {
     deleteMessageRecorder,
     switchUserMessageStatus,
 
-    changePreview
+    changePreview,
+    setServerResponse,
+    setFormToDefault
 } = userFormDataSlice.actions
 
 export const {
@@ -298,5 +333,6 @@ export const {
     selectFormFileData,
     selectPermissionsOfForm,
     selectValidationFormStatus,
-    selectUserMessageStatus
+    selectUserMessageStatus,
+    selectServerResponse
 } = userFormDataSlice.selectors

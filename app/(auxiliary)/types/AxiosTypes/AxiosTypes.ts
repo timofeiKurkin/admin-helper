@@ -5,3 +5,5 @@ export interface CSRFTokenResponseType {
 
 export type AxiosErrorType = {message: string, statusCode: number};
 export type UnknownError = {error: Error; message: string};
+
+export type ResponseFromServerType = {message: string}

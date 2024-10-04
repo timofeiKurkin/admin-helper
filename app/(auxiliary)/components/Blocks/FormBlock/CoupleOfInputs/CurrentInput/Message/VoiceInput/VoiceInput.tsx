@@ -93,17 +93,6 @@ const VoiceInput: FC<PropsType> = ({
         setAudioBlob(null)
     }
 
-    // useEffect(() => {
-    //     return () => {
-    //         setNewMessage(voiceMessage.value, false)
-    // //
-    //     }
-    // }, []);
-    console.log(voiceMessage.value instanceof File)
-    console.log({} as File instanceof File)
-    console.log(Object.keys(voiceMessage.value).length)
-    console.log(audioBlob, recordingIsDone)
-
     return (
         <div className={styles.voiceInputWrapper}>
             {(audioBlob && recordingIsDone) ? (

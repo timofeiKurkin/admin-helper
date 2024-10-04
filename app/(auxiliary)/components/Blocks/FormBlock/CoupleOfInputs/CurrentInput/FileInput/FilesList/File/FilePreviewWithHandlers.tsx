@@ -6,8 +6,7 @@ import FilePreview from "@/app/(auxiliary)/components/Blocks/FilePreviewBlock/Fi
 import {RemoveFileFuncType} from "@/app/(auxiliary)/types/PopupTypes/FuncTypes";
 
 interface PropsType {
-    file: File; // CustomFileType;
-    // file: FilePreviewType; // CustomFileType;
+    file: File;
     removeFile: RemoveFileFuncType;
     openFile: (fileName: string) => void;
 

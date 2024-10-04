@@ -15,11 +15,15 @@ import {useAppDispatch, useAppSelector} from "@/app/(auxiliary)/libs/redux-toolk
 import {
     selectFormFileData,
     selectFormTextData,
-    selectPermissionsOfForm, selectUserMessageStatus,
+    selectPermissionsOfForm,
+    selectUserMessageStatus,
     selectValidationFormStatus,
+    setFormToDefault,
+    setServerResponse,
     setValidationFormStatus
 } from "@/app/(auxiliary)/libs/redux-toolkit/store/slices/UserFormDataSlice/UserFormDataSlice";
-
+import {AxiosResponse} from "axios";
+import {ResponseFromServerType} from "@/app/(auxiliary)/types/AxiosTypes/AxiosTypes";
 
 // const validationHandler = (args: {
 //     appState: ProviderStateType
@@ -42,7 +46,7 @@ interface PropsType {
     buttonText: string;
 }
 
-const FormUserDataUpload: FC<PropsType> = ({buttonText}) => {
+const UploadForm: FC<PropsType> = ({buttonText}) => {
     const dispatch = useAppDispatch()
     const formTextData = useAppSelector(selectFormTextData)
     const formFileData = useAppSelector(selectFormFileData)
@@ -58,16 +62,14 @@ const FormUserDataUpload: FC<PropsType> = ({buttonText}) => {
         formFileData
     ]);
 
-    // console.log("text data: ", formTextData)
-    // console.log("file data: ", formFileData)
-    // console.log("validation form status", validationFormStatus)
-
     const uploadUserData = async (userData: UserFormDataType) => {
         if (
             userData &&
             (userData.text_data && userData.file_data)
         ) {
             let formData = new FormData()
+            formData.append("userCanTalk", String(permissionsOfForm.userCanTalk))
+            formData.append("userAgreed", String(permissionsOfForm.userAgreed))
 
             if (userData.text_data) {
                 (Object.keys(userData.text_data) as (DeviceKeyType | SavedInputsKeysTypes)[]).forEach((key) => {
@@ -93,8 +95,26 @@ const FormUserDataUpload: FC<PropsType> = ({buttonText}) => {
 
             const response =
                 await axiosRequestsHandler(HelpUserService.requestClassification(formData))
+
+            if ((response as AxiosResponse<ResponseFromServerType>).status === 200) {
+                const succeedResponse = (response as AxiosResponse<ResponseFromServerType>)
+                dispatch(setFormToDefault())
+                dispatch(setServerResponse({
+                    status: "success",
+                    sentToServer: true,
+                    message: succeedResponse.data.message
+                }))
+            } else {
+                dispatch(setServerResponse({
+                    status: "error",
+                    sentToServer: true,
+                    message: "Произошла ошибка при отправке формы!"
+                }))
+            }
         }
     }
+
+    console.log("text form data:", formTextData)
 
     return (
         <Button disabled={!validationFormStatus || !permissionsOfForm.userAgreed}
@@ -107,4 +127,4 @@ const FormUserDataUpload: FC<PropsType> = ({buttonText}) => {
     );
 };
 
-export default FormUserDataUpload;
+export default UploadForm;

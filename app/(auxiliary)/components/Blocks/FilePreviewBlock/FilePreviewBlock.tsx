@@ -1,6 +1,5 @@
-import React, {FC, memo} from 'react';
-import {ImageProps} from "next/image";
-import Image from "next/image";
+import React, {FC} from 'react';
+import Image, {ImageProps} from "next/image";
 
 interface PropsType {
     url: string;
@@ -8,7 +7,7 @@ interface PropsType {
     imageProps?: ImageProps;
 }
 
-const FilePreviewBlock: FC<PropsType> =  (props) => {
+const FilePreviewBlock: FC<PropsType> = (props) => {
     return (
         <Image {...props.imageProps}
                src={props.url}

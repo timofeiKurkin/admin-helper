@@ -25,7 +25,6 @@ const MessageInput: FC<PropsType> = ({
 
     const onChangeHandler = (e: TextareaChangeEventHandler) => {
         message.onChange(e)
-        // setNewMessage(e.target.value, message.inputValid)
     }
 
     useEffect(() => {

@@ -2,6 +2,7 @@ import {useState} from "react";
 import useValidation from "./useValidation";
 import useLocalStorage from "./useLocalStorage";
 import {
+    savedInputsData, SavedInputsKeysTypes,
     UseInputType,
     ValidationReturnDataType,
     ValidationsKeyType,
@@ -31,10 +32,16 @@ const UseInput = <E>(
         setDirty((prev) => (!prev))
     }
 
+    const resetValue = () => {
+        if(savedInputsData.includes(key as SavedInputsKeysTypes)) return
+        setValue("")
+    }
+
     return {
         value,
         onChange,
         onBlur,
+        resetValue,
         isDirty,
         ...formValid,
         key,

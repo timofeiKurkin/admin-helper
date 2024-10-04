@@ -1,5 +1,6 @@
 import {InputMediaPhoto, InputMediaVideo} from "grammy/types";
 import {Bot, InputFile, webhookCallback} from 'grammy'
+import {PermissionsOfFormStatesType} from "@/app/(auxiliary)/types/AppTypes/Context";
 
 export const dynamic = 'force-dynamic'
 
@@ -95,8 +96,10 @@ export const POST = async function (request: Request) {
         video: formData.getAll("video") as File[]
     }
 
-    // console.log("userInfo: ", userInfo)
-    // console.log("userProblemInfo: ", userProblemInfo)
+    const formPermissions: PermissionsOfFormStatesType = {
+        userCanTalk: Boolean(formData.get("userCanTalk")! as string),
+        userAgreed: Boolean(formData.get("userAgreed")! as string)
+    }
 
     const userMessage: string = userProblemInfo.message_file ? await recognizeVoiceRecorder(userProblemInfo.message_file) : userProblemInfo.message_text
 
@@ -104,14 +107,14 @@ export const POST = async function (request: Request) {
 Новая заявка о технической помощи
 
 Информация о пользователе:
-    *Имя пользователя:* ${userInfo.name}
-    *Номер телефона:* ${escapingCharacters(userInfo.phone_number)}
-    *Организация*: ${escapingCharacters(userInfo.company)}
-    *Номер компьютера в AnyDesk*: ${escapingCharacters(userInfo.number_pc)}
+    _Имя пользователя_: ${userInfo.name}
+    _Номер телефона_: ${escapingCharacters(userInfo.phone_number)} ${formPermissions.userCanTalk ? "\\(\\+15 мин\\)" :""}
+    _Организация_: ${escapingCharacters(userInfo.company)}
+    _Номер компьютера в AnyDesk_: ${escapingCharacters(userInfo.number_pc)}
     
 Информация о проблеме пользователя:
-    *Проблемное устройство*: ${userProblemInfo.device}
-    *Сообщение пользователя*: ${escapingCharacters(userMessage)}
+    _Проблемное устройство_: ${userProblemInfo.device}
+    _Сообщение пользователя_: ${escapingCharacters(userMessage)}
     `
 
     const res = await bot.api.sendMessage(
@@ -197,6 +200,6 @@ export const POST = async function (request: Request) {
     webhookCallback(bot, 'std/http')
 
     return Response.json({
-        message: "Ваша заявка была успешно отправлена и будет рассмотрена в ближайшее время, спасибо за доверие!"
+        message: "Заявка успешно отправлена и будет рассмотрена в ближайшее время. Спасибо за доверие!"
     })
 }

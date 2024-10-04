@@ -12,14 +12,18 @@ import {
 import Input from "@/app/(auxiliary)/components/UI/Inputs/Input/Input";
 import inputsStyles from "../InputsStyles.module.scss"
 import InputWithDataList from "@/app/(auxiliary)/components/UI/Inputs/InputWithDataList/InputWithDataList";
-import {useAppDispatch} from "@/app/(auxiliary)/libs/redux-toolkit/store/hooks";
-import {changeTextData} from "@/app/(auxiliary)/libs/redux-toolkit/store/slices/UserFormDataSlice/UserFormDataSlice";
+import {useAppDispatch, useAppSelector} from "@/app/(auxiliary)/libs/redux-toolkit/store/hooks";
+import {
+    changeTextData,
+    selectFormTextData, selectServerResponse
+} from "@/app/(auxiliary)/libs/redux-toolkit/store/slices/UserFormDataSlice/UserFormDataSlice";
 import {
     AllKeysTypesOfInputs,
     COMPANY_KEY,
-    DEVICE_KEY,
+    DEVICE_KEY, DeviceKeyType, NAME_KEY,
     TextInputsKeysTypes
 } from "@/app/(auxiliary)/types/AppTypes/InputHooksTypes";
+import {InputChangeEventHandler} from "@/app/(auxiliary)/types/AppTypes/AppTypes";
 
 
 const typeOfInputsClasses: { [key: string]: string } = {
@@ -36,6 +40,8 @@ interface PropsType {
 const TextInput: FC<PropsType> = ({
                                       currentInput
                                   }) => {
+    const serverResponse = useAppSelector(selectServerResponse).sentToServer
+
     const dispatch = useAppDispatch()
     const value =
         useInput("", currentInput.type as AllKeysTypesOfInputs, inputValidations[currentInput.type])
@@ -64,6 +70,14 @@ const TextInput: FC<PropsType> = ({
         value.value,
         value.inputValid,
         currentInput.type
+    ]);
+
+    useEffect(() => {
+        if(serverResponse) {
+            value.resetValue()
+        }
+    }, [
+        value
     ]);
 
     return (

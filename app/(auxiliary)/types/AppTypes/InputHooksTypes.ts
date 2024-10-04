@@ -60,6 +60,7 @@ export interface UseInputType<E> extends ValidationReturnDataType {
     value: string;
     onChange: (e: ChangeEventHandlerType<E>) => void;
     onBlur: () => void;
+    resetValue: () => void;
     isDirty: boolean;
     key: string;
 }

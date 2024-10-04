@@ -2,7 +2,6 @@ import React, {FC, useEffect} from 'react';
 import {InputChangeEventHandler} from "@/app/(auxiliary)/types/AppTypes/AppTypes";
 import inputsStyles
     from "@/app/(auxiliary)/components/Blocks/FormBlock/CoupleOfInputs/CurrentInput/InputsStyles.module.scss"
-import {NumberPcInputType} from "@/app/(auxiliary)/types/Data/Interface/RootPage/RootPageContentType";
 import useInput from "@/app/(auxiliary)/hooks/useInput";
 import {
     inputValidations

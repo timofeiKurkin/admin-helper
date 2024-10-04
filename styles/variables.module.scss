@@ -20,21 +20,41 @@ $desktop1440_1919: '(min-width: 1440px) and (max-width: 1919px)';
 $desktop1920: '(min-width: 1920px)';
 
 // Backgrounds
-$background: var(--background, radial-gradient(188.48% 111.8% at 100% 100%, #D0F0FF 0%, $white 80.36%));
+$background: radial-gradient(188.48% 111.8% at 100% 100%, #D0F0FF 0%, $white 80.36%);
 .background {
-    width: 100%;
-    height: 100%;
-    background: $background;
+	width: 100%;
+	height: 100%;
+	background: $background;
+	position: fixed;
+	top: 0;
+	left: 0;
+	z-index: -2;
+	transition: background 1s ease;
+
+	&:before {
+		content: '';
+		position: absolute;
+		top: 0;
+		left: 0;
+		width: 100%;
+		height: 100%;
+		background: radial-gradient(198.52% 111.8% at 100% 100%, #E8FFCF 0%, white 80.25%);
+		opacity: 0;
+		transition: opacity 1s ease;
+		z-index: -1;
+	}
 }
 
 $background_success: var(--background_success, radial-gradient(198.52% 111.8% at 100% 100%, #E8FFCF 0%, $white_1 80.25%), $white);
-.background_success {
-    background: $background_success;
+.background_success::before {
+	background: $background_success;
+	opacity: 1;
 }
 
 $background_error: var(--background_error, radial-gradient(197.36% 111.8% at 100% 100%, #FFD0D0 0%, $white_1 80%), $white);
-.background_error {
-    background: $background_error;
+.background_error::before {
+	background: $background_error;
+	opacity: 1;
 }
 
 // Borders

@@ -21,7 +21,6 @@ interface PropsType {
 }
 
 const PhoneInput: FC<PropsType> = ({currentInput}) => {
-    // const {appState, setAppState} = useContext(AppContext)
     const dispatch = useAppDispatch()
     const value = useInput("+7 ", PHONE_KEY, inputValidations[currentInput.type])
 

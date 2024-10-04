@@ -24,7 +24,6 @@ const Input: FC<InputPropsType<InputChangeEventHandler>> = ({
                                                             }) => {
 
     const spanRef = useRef<HTMLSpanElement>(null);
-    // const userDevice = useAppSelector(selectUserDevice)
 
     const inputRef = useRef<HTMLInputElement>(null);
     const [inputWidth, setInputWidth] = useState<number>(0)
@@ -52,8 +51,6 @@ const Input: FC<InputPropsType<InputChangeEventHandler>> = ({
                     const fullWidth = spanRef.current.offsetWidth + 52
                     inputRef.current.style.width = fullWidth + "px"
                     setInputWidth(fullWidth)
-
-                    // setInputWidth((prevState) => prevState > fullWidth ? prevState : fullWidth)
                 }
             }
         }
@@ -61,19 +58,7 @@ const Input: FC<InputPropsType<InputChangeEventHandler>> = ({
         dynamicWidth,
         value,
         placeholder,
-        // userDevice
     ]);
-
-
-    // const dynamicWithHandler = (newTextContent: string) => {
-    //     if (spanRef.current && inputRef.current) {
-    //         // spanRef.current.style = getComputedStyle(inputRef.current)
-    //         console.log("newTextContent", newTextContent)
-    //         spanRef.current.textContent = newTextContent || placeholder
-    //         inputRef.current.style.width = spanRef.current.offsetWidth + "px"
-    //         setInputWidth(spanRef.current.offsetWidth)
-    //     }
-    // }
 
     return (
         <div
