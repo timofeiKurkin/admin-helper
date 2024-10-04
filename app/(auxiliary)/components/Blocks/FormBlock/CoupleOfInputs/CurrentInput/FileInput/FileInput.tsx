@@ -1,25 +1,15 @@
-import React, {FC, useEffect, useState} from 'react';
+import React, {FC, useState} from 'react';
 import {PhotoAndVideoInputType} from "@/app/(auxiliary)/types/Data/Interface/RootPage/RootPageContentType";
 import styles from "./FileInput.module.scss";
 import Toggle from "@/app/(auxiliary)/components/Common/Switches/Toggle/Toggle";
-import FileList
-    from "@/app/(auxiliary)/components/Blocks/FormBlock/CoupleOfInputs/CurrentInput/FileInput/FilesList/FileList";
-import Button from "@/app/(auxiliary)/components/UI/Button/Button";
-import DropZone from "@/app/(auxiliary)/components/Blocks/FormBlock/DropZone/DropZone";
-import PhotoEditorPopup from "@/app/(auxiliary)/components/Blocks/Popups/PhotoEditorPopup/PhotoEditorPopup";
 import {PHOTO_KEY, PhotoAndVideoKeysTypes, VIDEO_KEY} from "@/app/(auxiliary)/types/AppTypes/InputHooksTypes";
 import {useAppDispatch, useAppSelector} from "@/app/(auxiliary)/libs/redux-toolkit/store/hooks";
 import {
-    selectRootPageContent,
     selectUserDevice,
     setOpenedPhotoBlock,
     setOpenedVideoBlock,
     setSwitchedMessageBlock
 } from "@/app/(auxiliary)/libs/redux-toolkit/store/slices/AppSlice/AppSlice";
-import VideoPlayerPopup from "@/app/(auxiliary)/components/Blocks/Popups/VideoPlayerPopup/VideoPlayerPopup";
-import {
-    selectPopups
-} from "@/app/(auxiliary)/libs/redux-toolkit/store/slices/PopupSlice/PopupSlice";
 import HaveMediaFile
     from "@/app/(auxiliary)/components/Blocks/FormBlock/CoupleOfInputs/CurrentInput/FileInput/HaveMediaFile/HaveMediaFile";
 
@@ -60,7 +50,7 @@ const FileInput: FC<PropsType> = ({input}) => {
 
             {haveMediaFile && (
                 <HaveMediaFile inputData={{
-                    type: input.type,
+                    type: input.type as PhotoAndVideoKeysTypes,
                     button: input.button || "",
                     placeholder: input.inputPlaceholder || ""
                 }}/>

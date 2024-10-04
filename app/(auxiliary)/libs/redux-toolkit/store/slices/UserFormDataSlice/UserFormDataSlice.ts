@@ -22,6 +22,7 @@ import {indexOfObject} from "@/app/(auxiliary)/func/handlers";
 interface InitialStateType extends UserFormDataType {
     permissions: PermissionsOfFormStatesType;
     validationFormStatus: boolean;
+    userMessageStatus: boolean;
 }
 
 const initialState: InitialStateType = {
@@ -75,7 +76,8 @@ const initialState: InitialStateType = {
         userCanTalk: false,
         userAgreed: false,
     },
-    validationFormStatus: false
+    validationFormStatus: false,
+    userMessageStatus: false,
 }
 
 interface DataActionType<K, T> {
@@ -231,6 +233,11 @@ export const userFormDataSlice = createAppSlice({
                 changePreview(action.payload.data, key)
             }
         }),
+        switchUserMessageStatus: create.reducer(
+            (state) => {
+                state.userMessageStatus = !state.userMessageStatus
+            }
+        ),
 
         /**
          *
@@ -267,7 +274,8 @@ export const userFormDataSlice = createAppSlice({
         selectFormTextData: (state) => state.text_data,
         selectFormFileData: (state) => state.file_data,
         selectPermissionsOfForm: (state) => state.permissions,
-        selectValidationFormStatus: (state) => state.validationFormStatus
+        selectValidationFormStatus: (state) => state.validationFormStatus,
+        selectUserMessageStatus: (state) => state.userMessageStatus
     }
 })
 
@@ -280,6 +288,7 @@ export const {
     setValidationFormStatus,
     addMessageData,
     deleteMessageRecorder,
+    switchUserMessageStatus,
 
     changePreview
 } = userFormDataSlice.actions
@@ -288,5 +297,6 @@ export const {
     selectFormTextData,
     selectFormFileData,
     selectPermissionsOfForm,
-    selectValidationFormStatus
+    selectValidationFormStatus,
+    selectUserMessageStatus
 } = userFormDataSlice.selectors

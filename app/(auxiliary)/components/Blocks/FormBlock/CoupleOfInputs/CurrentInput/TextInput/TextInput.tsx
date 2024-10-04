@@ -14,7 +14,12 @@ import inputsStyles from "../InputsStyles.module.scss"
 import InputWithDataList from "@/app/(auxiliary)/components/UI/Inputs/InputWithDataList/InputWithDataList";
 import {useAppDispatch} from "@/app/(auxiliary)/libs/redux-toolkit/store/hooks";
 import {changeTextData} from "@/app/(auxiliary)/libs/redux-toolkit/store/slices/UserFormDataSlice/UserFormDataSlice";
-import {COMPANY_KEY, DEVICE_KEY} from "@/app/(auxiliary)/types/AppTypes/InputHooksTypes";
+import {
+    AllKeysTypesOfInputs,
+    COMPANY_KEY,
+    DEVICE_KEY,
+    TextInputsKeysTypes
+} from "@/app/(auxiliary)/types/AppTypes/InputHooksTypes";
 
 
 const typeOfInputsClasses: { [key: string]: string } = {
@@ -33,7 +38,7 @@ const TextInput: FC<PropsType> = ({
                                   }) => {
     const dispatch = useAppDispatch()
     const value =
-        useInput("", currentInput.type, inputValidations[currentInput.type])
+        useInput("", currentInput.type as AllKeysTypesOfInputs, inputValidations[currentInput.type])
     const [currentHelpfulList, setCurrentHelpfulList] =
         useState<InputHelpfulItemType[]>([])
 
@@ -48,7 +53,7 @@ const TextInput: FC<PropsType> = ({
 
     useEffect(() => {
         dispatch(changeTextData({
-            key: currentInput.type,
+            key: currentInput.type as TextInputsKeysTypes,
             data: {
                 validationStatus: value.inputValid,
                 value: value.value

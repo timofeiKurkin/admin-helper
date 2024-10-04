@@ -17,7 +17,7 @@ import {
     selectOpenedFileName,
     selectVideoOrientations, setCurrentOpenedFileName
 } from "@/app/(auxiliary)/libs/redux-toolkit/store/slices/PopupSlice/PopupSlice";
-import {HORIZONTAL} from "@/app/(auxiliary)/types/PopupTypes/PopupTypes";
+import {CustomFile, HORIZONTAL} from "@/app/(auxiliary)/types/PopupTypes/PopupTypes";
 import {findElement} from "@/app/(auxiliary)/func/editorHandlers";
 
 
@@ -37,6 +37,9 @@ const VideoPlayerBody: FC<PropsType> = ({data, type}) => {
      * Callback для поиска файла или настройки файла по его названию. Используется в инициализации состояния и его обновления
      */
     const findCurrentFile = useCallback(findElement, [])
+
+    const [listOfPreviews, setListOfPreviews] =
+        useState<CustomFile[]>(() => formFileData.filesFinally.map((file, i) => Object.assign(file, {id: i})))
 
     const [videoURl, setVideoURl] = useState<string>(() => URL.createObjectURL(
             files.find((f) => findCurrentFile(f, openedFileName)) ||
@@ -102,7 +105,7 @@ const VideoPlayerBody: FC<PropsType> = ({data, type}) => {
             <div className={styles.nothing}></div>
 
             <PopupFileList titleOfList={data.photoList.uploadedPhotos}
-                           listOfPreviews={formFileData.filesFinally}
+                           listOfPreviews={listOfPreviews}
                            func={{
                                switchToAnotherFile,
                                removeFile

@@ -5,9 +5,10 @@ import {
     SavedInputsKeysTypes
 } from "@/app/(auxiliary)/types/AppTypes/InputHooksTypes";
 
-const UseLocalStorage = (key: AllKeysTypesOfInputs, initialValue: string | boolean | {}) => {
-    // const filtered
-
+const UseLocalStorage = (
+    key: AllKeysTypesOfInputs,
+    initialValue: string | boolean | {}
+) => {
     const getStorageValue = (key: SavedInputsKeysTypes, initialValue: string | number | {} | boolean) => {
         if (typeof window !== 'undefined') {
             const value: any = localStorage.getItem(key)
@@ -19,14 +20,14 @@ const UseLocalStorage = (key: AllKeysTypesOfInputs, initialValue: string | boole
     }
 
     const [value, setValue] = useState(() => {
-        if (savedInputsData.includes(key)) {
-            return getStorageValue(key, initialValue)
+        if (savedInputsData.includes(key as SavedInputsKeysTypes)) {
+            return getStorageValue(key as SavedInputsKeysTypes, initialValue)
         }
         return initialValue
     })
 
     useEffect(() => {
-        if (savedInputsData.includes(key)) {
+        if (savedInputsData.includes(key as SavedInputsKeysTypes)) {
             localStorage.setItem(key, JSON.stringify(value))
         }
     }, [key, value])

@@ -1,6 +1,6 @@
 "use client"
 
-import React, {FC, useEffect, useRef, useState} from "react";
+import React, {FC, useRef, useState} from "react";
 import Button from "@/app/(auxiliary)/components/UI/Button/Button";
 import Microphone from "@/app/(auxiliary)/components/UI/SVG/Microphone/Microphone";
 import {blue_dark, blue_light} from "@/styles/colors";
@@ -30,11 +30,11 @@ const VoiceInput: FC<PropsType> = ({
     const [isRecording, setIsRecording] =
         useState(false)
     const [recordingIsDone, setRecordingIsDone] =
-        useState<boolean>(voiceMessage.validationStatus)
+        useState<boolean>(voiceMessage.value instanceof File)
 
     const [audioBlob, setAudioBlob] =
         useState<Blob | null>(() => {
-            if (voiceMessage.validationStatus) {
+            if (voiceMessage.value instanceof File) {
                 return new Blob(
                     [voiceMessage.value],
                     {type: voiceMessage.value.type}
@@ -93,11 +93,16 @@ const VoiceInput: FC<PropsType> = ({
         setAudioBlob(null)
     }
 
-    useEffect(() => {
-        return () => {
-            setNewMessage(voiceMessage.value, false)
-        }
-    }, []);
+    // useEffect(() => {
+    //     return () => {
+    //         setNewMessage(voiceMessage.value, false)
+    // //
+    //     }
+    // }, []);
+    console.log(voiceMessage.value instanceof File)
+    console.log({} as File instanceof File)
+    console.log(Object.keys(voiceMessage.value).length)
+    console.log(audioBlob, recordingIsDone)
 
     return (
         <div className={styles.voiceInputWrapper}>

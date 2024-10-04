@@ -15,7 +15,7 @@ import {useAppDispatch, useAppSelector} from "@/app/(auxiliary)/libs/redux-toolk
 import {
     selectFormFileData,
     selectFormTextData,
-    selectPermissionsOfForm,
+    selectPermissionsOfForm, selectUserMessageStatus,
     selectValidationFormStatus,
     setValidationFormStatus
 } from "@/app/(auxiliary)/libs/redux-toolkit/store/slices/UserFormDataSlice/UserFormDataSlice";
@@ -48,6 +48,7 @@ const FormUserDataUpload: FC<PropsType> = ({buttonText}) => {
     const formFileData = useAppSelector(selectFormFileData)
     const permissionsOfForm = useAppSelector(selectPermissionsOfForm)
     const validationFormStatus = useAppSelector(selectValidationFormStatus)
+    const userMessageStatus = useAppSelector(selectUserMessageStatus)
 
     useEffect(() => {
         dispatch(setValidationFormStatus())
@@ -57,9 +58,9 @@ const FormUserDataUpload: FC<PropsType> = ({buttonText}) => {
         formFileData
     ]);
 
-    console.log("text data: ", formTextData)
-    console.log("file data: ", formFileData)
-    console.log("validation form status", validationFormStatus)
+    // console.log("text data: ", formTextData)
+    // console.log("file data: ", formFileData)
+    // console.log("validation form status", validationFormStatus)
 
     const uploadUserData = async (userData: UserFormDataType) => {
         if (
@@ -68,21 +69,13 @@ const FormUserDataUpload: FC<PropsType> = ({buttonText}) => {
         ) {
             let formData = new FormData()
 
-            // if (userData.text_data[MESSAGE_KEY].validationStatus) {
-            //     const message = userData.text_data[MESSAGE_KEY]?.value
-            //     formData.append(`${MESSAGE_KEY}_text`, message)
-            // } else if (userData.file_data[MESSAGE_KEY].validationStatus) {
-            //     const voice = userData.file_data[MESSAGE_KEY].value
-            //     formData.append(`${MESSAGE_KEY}_file`, voice)
-            // }
-
             if (userData.text_data) {
                 (Object.keys(userData.text_data) as (DeviceKeyType | SavedInputsKeysTypes)[]).forEach((key) => {
                     if (key !== "message") {
                         if (userData.text_data[key].validationStatus) {
                             formData.append(key, userData.text_data[key]?.value)
                         }
-                    } else if (userData.text_data[MESSAGE_KEY].validationStatus) {
+                    } else if (userMessageStatus) {
                         formData.append(`${MESSAGE_KEY}_text`, userData.text_data[MESSAGE_KEY].value)
                     }
                 })
@@ -92,26 +85,16 @@ const FormUserDataUpload: FC<PropsType> = ({buttonText}) => {
                 (Object.keys(userData.file_data) as (PhotoAndVideoKeysTypes | typeof MESSAGE_KEY)[]).forEach((key) => {
                     if (key !== "message") {
                         userData.file_data[key]?.filesFinally.forEach((file) => formData.append(key, file))
-                    } else if (userData.file_data[MESSAGE_KEY].validationStatus) {
+                    } else if (!userMessageStatus) {
                         formData.append(`${MESSAGE_KEY}_file`, userData.file_data[MESSAGE_KEY].value)
                     }
                 })
             }
 
-            // formData.forEach((value, key) => {
-            //     console.log("");
-            //     console.log("key: ", key);
-            //     console.log("value: ", value);
-            // });
-
             const response =
                 await axiosRequestsHandler(HelpUserService.requestClassification(formData))
-            console.log("response: ", response)
         }
     }
-
-    // console.log("validationFormStatus: ", validationFormStatus, permissionsOfForm.userAgreed)
-    // console.log("")
 
     return (
         <Button disabled={!validationFormStatus || !permissionsOfForm.userAgreed}

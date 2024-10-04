@@ -4,7 +4,7 @@ import {UseInputType} from "@/app/(auxiliary)/types/AppTypes/InputHooksTypes";
 
 export const inputHandleKeyDown = <
     E extends KeyBoardEventHandler<HTMLInputElement>,
-    T extends UseInputType
+    T extends UseInputType<HTMLInputElement>
 >(
     e: E,
     value: T

@@ -1,4 +1,4 @@
-import React, {FC, useEffect, useState} from 'react';
+import React, {FC, useCallback, useEffect, useState} from 'react';
 import Toggle from "@/app/(auxiliary)/components/Common/Switches/Toggle/Toggle";
 import {MessageInputType} from "@/app/(auxiliary)/types/Data/Interface/RootPage/RootPageContentType";
 import VoiceInput
@@ -15,7 +15,9 @@ import {
 } from "@/app/(auxiliary)/libs/redux-toolkit/store/slices/AppSlice/AppSlice";
 import {
     addMessageData,
-    deleteMessageRecorder
+    deleteMessageRecorder,
+    selectFormFileData,
+    selectFormTextData, selectUserMessageStatus, switchUserMessageStatus
 } from "@/app/(auxiliary)/libs/redux-toolkit/store/slices/UserFormDataSlice/UserFormDataSlice";
 
 interface PropsType {
@@ -23,21 +25,22 @@ interface PropsType {
 }
 
 const Message: FC<PropsType> = ({inputData}) => {
-    const [userCannotTalk, setUserCannotTalk] =
-        useState<boolean>(false)
-    const userDevice = useAppSelector(selectUserDevice)
-    const dispatch = useAppDispatch()
+    // const [userCannotTalk, setUserCannotTalk] =
+    //     useState<boolean>(false)
 
-    const setNewMessageHandler = (
+    const dispatch = useAppDispatch()
+    const userCannotTalk = useAppSelector(selectUserMessageStatus)
+    const userDevice = useAppSelector(selectUserDevice)
+
+    const setNewMessageHandler = useCallback((
         newMessage: File | string,
         validationStatus: boolean
     ) => {
-        console.log("set new message func")
         dispatch(addMessageData({
             validationStatus,
             value: newMessage
         }))
-    }
+    }, [dispatch])
 
     const removerRecorderHandler = () => {
         dispatch(deleteMessageRecorder())
@@ -56,7 +59,8 @@ const Message: FC<PropsType> = ({inputData}) => {
     ]);
 
     const switchTypeMessageHandler = () => {
-        setUserCannotTalk((prevState) => !prevState)
+        // setUserCannotTalk((prevState) => !prevState)
+        dispatch(switchUserMessageStatus())
     }
 
     return (
@@ -64,8 +68,8 @@ const Message: FC<PropsType> = ({inputData}) => {
             {
                 !userCannotTalk && (
                     <VoiceInput voicePlaceHolder={inputData.voiceMessage?.inputPlaceholder}
-                                    setNewMessage={setNewMessageHandler}
-                                    removeRecoder={removerRecorderHandler}/>
+                                setNewMessage={setNewMessageHandler}
+                                removeRecoder={removerRecorderHandler}/>
                 )
             }
 
