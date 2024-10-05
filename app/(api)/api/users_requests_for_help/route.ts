@@ -90,20 +90,19 @@ export const POST = async function (request: Request) {
         userAgreed: Boolean(formData.get("userAgreed")! as string)
     }
 
-    const userMessage: string = userProblemInfo.message_file ? await recognizeVoiceRecorder(userProblemInfo.message_file) : userProblemInfo.message_text
+    const userMessage = userProblemInfo.message_text ? `\n Сообщение пользователя: ${escapingCharacters(userProblemInfo.message_text)}` : ""
 
     const botMessage = `
 Новая заявка о технической помощи
 
 Информация о пользователе:
-    _Имя пользователя_: ${userInfo.name}
-    _Номер телефона_: ${escapingCharacters(userInfo.phone_number)} ${formPermissions.userCanTalk ? "\\(\\+15 мин\\)" : ""}
-    _Организация_: ${escapingCharacters(userInfo.company)}
-    _Номер компьютера в AnyDesk_: ${escapingCharacters(userInfo.number_pc)}
+    Имя пользователя: ${userInfo.name}
+    Номер телефона: ${escapingCharacters(userInfo.phone_number)} ${formPermissions.userCanTalk ? "\\(\\+15 мин\\)" : ""}
+    Организация: ${escapingCharacters(userInfo.company)}
+    Номер компьютера в AnyDesk: ${escapingCharacters(userInfo.number_pc)}
     
 Информация о проблеме пользователя:
-    _Проблемное устройство_: ${userProblemInfo.device}
-    _Сообщение пользователя_: ${escapingCharacters(userMessage)}
+    Проблемное устройство: ${userProblemInfo.device} ${userMessage}
     `
 
     const res = await bot.api.sendMessage(
@@ -115,6 +114,22 @@ export const POST = async function (request: Request) {
         }
     )
     const messageID = res.message_id
+
+    /**
+     * Отправка аудио
+     */
+    if (userProblemInfo.message_file) {
+        const audioName = userProblemInfo.message_file.name
+        const audioBuffer = await userProblemInfo.message_file.arrayBuffer()
+        const uint8Array = new Uint8Array(audioBuffer)
+
+        await bot.api.sendVoice(groupId, new InputFile(uint8Array, `${audioName}.ogg`), {
+            reply_parameters: {
+                message_id: messageID,
+                chat_id: groupId
+            }
+        })
+    }
 
     /**
      * Отправка фотографий, как одно сообщение
@@ -154,22 +169,6 @@ export const POST = async function (request: Request) {
         )
 
         await bot.api.sendMediaGroup(groupId, photoGroup, {
-            reply_parameters: {
-                message_id: messageID,
-                chat_id: groupId
-            }
-        })
-    }
-
-    /**
-     * Отправка аудио
-     */
-    if (userProblemInfo.message_file) {
-        const audioName = userProblemInfo.message_file.name
-        const audioBuffer = await userProblemInfo.message_file.arrayBuffer()
-        const uint8Array = new Uint8Array(audioBuffer)
-
-        await bot.api.sendVoice(groupId, new InputFile(uint8Array, `${audioName}.ogg`), {
             reply_parameters: {
                 message_id: messageID,
                 chat_id: groupId

@@ -26,18 +26,18 @@ const AudioPlayer: FC<PropsType> = ({audioBlob}) => {
     const gainRef = useRef<GainNode | null>(null) // Ref для подключения звука к файлу
     const animationFrameRef = useRef<number | null>(null)
 
-    const startTimeRef = useRef<number | null>(0)
+    const startTimeRef = useRef<number>(0)
     const stopTimeRef = useRef<number>(0)
 
     const progressBarRef =
         useRef<HTMLDivElement>(null) // Линия прогресса прослушивания голосового сообщения
 
     const roundNumber = (num: number) => {
-        return Number(num.toFixed(1))
+        return Number(num.toFixed(2))
     }
 
     /**
-     *
+     * Загрузка аудио дорожки и звука.
      */
     useEffect(() => {
         const fetchData = async () => {
@@ -66,24 +66,6 @@ const AudioPlayer: FC<PropsType> = ({audioBlob}) => {
         }
     }, []);
 
-    const createSourceRef = () => {
-        const audioContext = audioContextRef.current
-        const audioBuffer = audioBufferRef.current
-
-        if (audioContext?.state === "suspended") {
-            audioContext.resume().then()
-        }
-
-        if (audioContext && gainRef.current) {
-            sourceRef.current = audioContext.createBufferSource() // Создание нового аудио-источника
-            sourceRef.current.buffer = audioBuffer // Привязка буфера к созданному источнику
-            sourceRef.current.connect(gainRef.current) // Подключение громкости
-            gainRef.current.connect(audioContext.destination) // Подключение источника к контексту для воспроизведения через устройства
-
-            // return sourceRef
-        }
-    }
-
     /**
      * Функция, для воспроизведения голосового сообщения
      */
@@ -94,9 +76,6 @@ const AudioPlayer: FC<PropsType> = ({audioBlob}) => {
         if (audioContext?.state === "suspended") {
             audioContext.resume().then()
         }
-        // if (!sourceRef.current) {
-        //     createSourceRef()
-        // }
 
         if (audioContext && audioBuffer && gainRef.current) {
             sourceRef.current = audioContext.createBufferSource() // Создание нового аудио-источника
@@ -104,33 +83,21 @@ const AudioPlayer: FC<PropsType> = ({audioBlob}) => {
             sourceRef.current.connect(gainRef.current) // Подключение громкости
             gainRef.current.connect(audioContext.destination) // Подключение источника к контексту для воспроизведения через устройства
 
-
-            const startTime = roundNumber(audioContext.currentTime - stopTimeRef.current) // Время старта аудиозаписи после паузы
-            // console.log("start time: ", startTime)
-            // console.log("audio context time: ", audioContext.currentTime)
+            /**
+             * Время старта аудиозаписи. При первом прослушивании stopTimeRef.current = 0.
+             */
+            const startTime = roundNumber(audioContext.currentTime - stopTimeRef.current)
 
             sourceRef.current.start(0, stopTimeRef.current) // Запуск источника
-            setIsPlaying(true)
             startTimeRef.current = startTime // Сохранение времени старта
 
-            /**
-             * Событие, которое срабатывает:
-             * 1. Когда запись ставиться на паузу
-             * 2. Когда запись полностью воспроизведена
-             */
-            sourceRef.current.onended = () => {
-                if (animationFrameRef.current) {
-                    setIsPlaying(false)
-                    cancelAnimationFrame(animationFrameRef.current)
-                }
-            }
-
+            setIsPlaying(true)
             updateProgress(true) // Обновление прогресса полосы воспроизведения
         }
     }
 
     /**
-     * Функция, для остановки голосового сообщения
+     * Функция, которая ставит прослушивание голосового сообщения на паузу
      */
     const stopPlaying = () => {
         if (sourceRef.current && isPlaying) {
@@ -150,7 +117,7 @@ const AudioPlayer: FC<PropsType> = ({audioBlob}) => {
     }
 
     /**
-     * Функция для обновления линии прогресса
+     * Функция для обновления линии прогресса аудиодорожки
      * @param status
      */
     const updateProgress = (status?: boolean) => {
@@ -166,17 +133,45 @@ const AudioPlayer: FC<PropsType> = ({audioBlob}) => {
             const newProgress = roundNumber((currentTime / duration) * 100)
             setProgress(newProgress)
 
-            if (Math.floor(newProgress) === 100) {
-                stopTimeRef.current = 0
-                startTimeRef.current = 0
+            if (Math.floor(newProgress) >= 99) {
+                /**
+                 * Событие, которое срабатывает, когда запись полностью воспроизведена
+                 */
+                sourceRef.current.onended = () => {
+                    stopTimeRef.current = 0
+                    startTimeRef.current = 0
+                    setIsPlaying(false)
+
+                    if (animationFrameRef.current) {
+                        cancelAnimationFrame(animationFrameRef.current)
+                    }
+                }
             }
 
             animationFrameRef.current = requestAnimationFrame(() => updateProgress(true))
         }
     }
 
+    const createSourceRef = () => {
+        const audioContext = audioContextRef.current
+        const audioBuffer = audioBufferRef.current
+
+        if (audioContext?.state === "suspended") {
+            audioContext.resume().then()
+        }
+
+        if (audioContext && gainRef.current) {
+            sourceRef.current = audioContext.createBufferSource() // Создание нового аудио-источника
+            sourceRef.current.buffer = audioBuffer // Привязка буфера к созданному источнику
+            sourceRef.current.connect(gainRef.current) // Подключение громкости
+            gainRef.current.connect(audioContext.destination) // Подключение источника к контексту для воспроизведения через устройства
+
+            // return sourceRef
+        }
+    }
+
     /**
-     *
+     * Функция для изменения прогресса прослушивания, после нажатия на полосу аудиодорожки
      * @param event
      */
     const handleProgressClick = (
@@ -205,9 +200,9 @@ const AudioPlayer: FC<PropsType> = ({audioBlob}) => {
              */
             const newTime = roundNumber((newProgress / 100) * audioBufferRef.current?.duration)
 
-            if (!sourceRef.current) {
-                createSourceRef() // Создание sourceRef.current, чтобы код ниже сработал
-            }
+            // if (!sourceRef.current) {
+            //     createSourceRef() // Создание sourceRef.current, чтобы код ниже сработал
+            // }
 
             if (sourceRef.current) {
                 // setIsManualStop(true)
