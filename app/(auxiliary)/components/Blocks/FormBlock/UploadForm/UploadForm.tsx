@@ -114,8 +114,6 @@ const UploadForm: FC<PropsType> = ({buttonText}) => {
         }
     }
 
-    console.log("text form data:", formTextData)
-
     return (
         <Button disabled={!validationFormStatus || !permissionsOfForm.userAgreed}
                 onClick={() => uploadUserData({

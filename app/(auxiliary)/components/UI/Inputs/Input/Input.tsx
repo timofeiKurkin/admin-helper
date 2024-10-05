@@ -39,18 +39,22 @@ const Input: FC<InputPropsType<InputChangeEventHandler>> = ({
                 spanRef.current.style.letterSpacing = getComputedStyle(inputRef.current).letterSpacing
                 spanRef.current.style.borderWidth = getComputedStyle(inputRef.current).borderWidth
 
-                if (value && value.length >= placeholder.length / 1.4) {
+                spanRef.current.textContent = placeholder
+                const emptyWidth = spanRef.current.offsetWidth + 52
+
+                /**
+                 * Если input пустой
+                 */
+                if (!value) {
+                    inputRef.current.style.width = emptyWidth + "px"
+                    setInputWidth(emptyWidth)
+                } else {
                     spanRef.current.textContent = value
                     const fullWidth = spanRef.current.offsetWidth + 52
-                    inputRef.current.style.width = fullWidth + "px"
-                    setInputWidth(fullWidth)
-                }
-
-                if (!value && value.length <= placeholder.length / 1.4) {
-                    spanRef.current.textContent = placeholder
-                    const fullWidth = spanRef.current.offsetWidth + 52
-                    inputRef.current.style.width = fullWidth + "px"
-                    setInputWidth(fullWidth)
+                    if (fullWidth >= emptyWidth) {
+                        inputRef.current.style.width = fullWidth + "px"
+                        setInputWidth(fullWidth)
+                    }
                 }
             }
         }
@@ -59,6 +63,7 @@ const Input: FC<InputPropsType<InputChangeEventHandler>> = ({
         value,
         placeholder,
     ]);
+
 
     return (
         <div
