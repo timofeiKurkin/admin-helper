@@ -1,6 +1,6 @@
 "use client"
 
-import React, {FC, useRef, useState} from "react";
+import React, {FC, useEffect, useRef, useState} from "react";
 import Button from "@/app/(auxiliary)/components/UI/Button/Button";
 import Microphone from "@/app/(auxiliary)/components/UI/SVG/Microphone/Microphone";
 import {blue_dark, blue_light} from "@/styles/colors";
@@ -8,7 +8,7 @@ import ReadyVoice
     from "@/app/(auxiliary)/components/Blocks/FormBlock/CoupleOfInputs/CurrentInput/Message/VoiceInput/ReadyVoice";
 import {useAppSelector} from "@/app/(auxiliary)/libs/redux-toolkit/store/hooks";
 import {
-    selectFormFileData
+    selectFormFileData, selectServerResponse
 } from "@/app/(auxiliary)/libs/redux-toolkit/store/slices/UserFormDataSlice/UserFormDataSlice";
 import {MESSAGE_KEY} from "@/app/(auxiliary)/types/AppTypes/InputHooksTypes";
 import {formattedTime} from "@/app/(auxiliary)/func/formattedTime";
@@ -26,6 +26,7 @@ const VoiceInput: FC<PropsType> = ({
                                        removeRecoder
                                    }) => {
     const voiceMessage = useAppSelector(selectFormFileData)[MESSAGE_KEY]
+    const serverResponse = useAppSelector(selectServerResponse).sentToServer
 
     const [isRecording, setIsRecording] =
         useState(false)
@@ -92,6 +93,15 @@ const VoiceInput: FC<PropsType> = ({
         setRecordingIsDone(false)
         setAudioBlob(null)
     }
+
+    useEffect(() => {
+        if (serverResponse) {
+            setAudioBlob(null)
+            setRecordingIsDone(false)
+        }
+    }, [
+        serverResponse
+    ]);
 
     return (
         <div className={styles.voiceInputWrapper}>

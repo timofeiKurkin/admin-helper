@@ -2,6 +2,7 @@ import {useState} from "react";
 import useValidation from "./useValidation";
 import useLocalStorage from "./useLocalStorage";
 import {
+    MESSAGE_KEY,
     savedInputsData, SavedInputsKeysTypes,
     UseInputType,
     ValidationReturnDataType,
@@ -33,7 +34,7 @@ const UseInput = <E>(
     }
 
     const resetValue = () => {
-        if(savedInputsData.includes(key as SavedInputsKeysTypes)) return
+        if(!(key === MESSAGE_KEY) && savedInputsData.includes(key as SavedInputsKeysTypes)) return
         setValue("")
     }
 

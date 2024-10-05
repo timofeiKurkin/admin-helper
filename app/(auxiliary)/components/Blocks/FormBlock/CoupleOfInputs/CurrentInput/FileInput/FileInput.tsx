@@ -1,4 +1,4 @@
-import React, {FC, useState} from 'react';
+import React, {FC, useEffect, useState} from 'react';
 import {PhotoAndVideoInputType} from "@/app/(auxiliary)/types/Data/Interface/RootPage/RootPageContentType";
 import styles from "./FileInput.module.scss";
 import Toggle from "@/app/(auxiliary)/components/Common/Switches/Toggle/Toggle";
@@ -12,6 +12,9 @@ import {
 } from "@/app/(auxiliary)/libs/redux-toolkit/store/slices/AppSlice/AppSlice";
 import HaveMediaFile
     from "@/app/(auxiliary)/components/Blocks/FormBlock/CoupleOfInputs/CurrentInput/FileInput/HaveMediaFile/HaveMediaFile";
+import {
+    selectServerResponse
+} from "@/app/(auxiliary)/libs/redux-toolkit/store/slices/UserFormDataSlice/UserFormDataSlice";
 
 
 interface PropsType {
@@ -21,6 +24,7 @@ interface PropsType {
 const FileInput: FC<PropsType> = ({input}) => {
     const dispatch = useAppDispatch()
     const userDevice = useAppSelector(selectUserDevice)
+    const serverResponse = useAppSelector(selectServerResponse).sentToServer
 
     const [haveMediaFile, setHaveMediaFile] =
         useState<boolean>(false)
@@ -40,6 +44,12 @@ const FileInput: FC<PropsType> = ({input}) => {
             }
         }
     }
+
+    useEffect(() => {
+        if(serverResponse) {
+            setHaveMediaFile(false)
+        }
+    }, [serverResponse])
 
     return (
         <div className={styles.fileInputWrapper}>

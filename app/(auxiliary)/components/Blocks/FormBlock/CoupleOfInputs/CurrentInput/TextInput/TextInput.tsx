@@ -15,15 +15,14 @@ import InputWithDataList from "@/app/(auxiliary)/components/UI/Inputs/InputWithD
 import {useAppDispatch, useAppSelector} from "@/app/(auxiliary)/libs/redux-toolkit/store/hooks";
 import {
     changeTextData,
-    selectFormTextData, selectServerResponse
+    selectServerResponse
 } from "@/app/(auxiliary)/libs/redux-toolkit/store/slices/UserFormDataSlice/UserFormDataSlice";
 import {
     AllKeysTypesOfInputs,
     COMPANY_KEY,
-    DEVICE_KEY, DeviceKeyType, NAME_KEY,
+    DEVICE_KEY,
     TextInputsKeysTypes
 } from "@/app/(auxiliary)/types/AppTypes/InputHooksTypes";
-import {InputChangeEventHandler} from "@/app/(auxiliary)/types/AppTypes/AppTypes";
 
 
 const typeOfInputsClasses: { [key: string]: string } = {
@@ -40,22 +39,26 @@ interface PropsType {
 const TextInput: FC<PropsType> = ({
                                       currentInput
                                   }) => {
-    const serverResponse = useAppSelector(selectServerResponse).sentToServer
-
     const dispatch = useAppDispatch()
+    const serverResponse = useAppSelector(selectServerResponse).sentToServer
     const value =
         useInput("", currentInput.type as AllKeysTypesOfInputs, inputValidations[currentInput.type])
     const [currentHelpfulList, setCurrentHelpfulList] =
-        useState<InputHelpfulItemType[]>([])
+        useState<InputHelpfulItemType[]>(() => {
+            if (currentInput.type === DEVICE_KEY || currentInput.type === COMPANY_KEY) {
+                return (currentInput as CompanyInputType | DeviceInputType).helpfulList
+            }
+            return []
+        })
 
     const currentInputTypesClassName = typeOfInputsClasses[currentInput.type]
 
-    useEffect(() => {
-        if (currentInput.type === DEVICE_KEY || currentInput.type === COMPANY_KEY) {
-            const devicesList = (currentInput as CompanyInputType | DeviceInputType).helpfulList
-            setCurrentHelpfulList((prevState) => devicesList || prevState)
-        }
-    }, [currentInput]);
+    // useEffect(() => {
+    //     if (currentInput.type === DEVICE_KEY || currentInput.type === COMPANY_KEY) {
+    //         const devicesList = (currentInput as CompanyInputType | DeviceInputType).helpfulList
+    //         setCurrentHelpfulList((prevState) => devicesList || prevState)
+    //     }
+    // }, [currentInput]);
 
     useEffect(() => {
         dispatch(changeTextData({
@@ -73,10 +76,11 @@ const TextInput: FC<PropsType> = ({
     ]);
 
     useEffect(() => {
-        if(serverResponse) {
+        if (serverResponse) {
             value.resetValue()
         }
     }, [
+        serverResponse,
         value
     ]);
 

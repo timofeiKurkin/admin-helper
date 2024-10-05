@@ -15,7 +15,7 @@ import {
 } from "@/app/(auxiliary)/libs/redux-toolkit/store/slices/AppSlice/AppSlice";
 import {
     addMessageData,
-    deleteMessageRecorder,
+    deleteMessageRecorder, selectServerResponse,
     selectUserMessageStatus,
     switchUserMessageStatus
 } from "@/app/(auxiliary)/libs/redux-toolkit/store/slices/UserFormDataSlice/UserFormDataSlice";
@@ -25,10 +25,8 @@ interface PropsType {
 }
 
 const Message: FC<PropsType> = ({inputData}) => {
-    // const [userCannotTalk, setUserCannotTalk] =
-    //     useState<boolean>(false)
-
     const dispatch = useAppDispatch()
+    // const serverResponse = useAppSelector(selectServerResponse).sentToServer
     const userCannotTalk = useAppSelector(selectUserMessageStatus)
     const userDevice = useAppSelector(selectUserDevice)
 
@@ -59,9 +57,14 @@ const Message: FC<PropsType> = ({inputData}) => {
     ]);
 
     const switchTypeMessageHandler = () => {
-        // setUserCannotTalk((prevState) => !prevState)
         dispatch(switchUserMessageStatus())
     }
+
+    // useEffect(() => {
+    //     if(serverResponse) {
+    //
+    //     }
+    // }, []);
 
     return (
         <div className={styles.messageWrapper}>

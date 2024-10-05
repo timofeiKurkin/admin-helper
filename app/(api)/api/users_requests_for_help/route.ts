@@ -6,9 +6,6 @@ export const dynamic = 'force-dynamic'
 
 export const fetchCache = 'force-no-store'
 
-// import {Other} from "grammy/out/core/api";
-// import {Other} from "grammy/out/core/api";
-
 const token = process.env.BOT_TOKEN
 
 const groupId = process.env.GROUP_ID
@@ -17,14 +14,6 @@ if (!token) throw new Error('TELEGRAM_BOT_TOKEN environment variable not found.'
 if (!groupId) throw new Error('GROUP_ID environment variable not found')
 
 const bot = new Bot(token)
-// bot.on('message:text', async (ctx) => {
-//   await ctx.reply(ctx.message.text)
-// })
-
-// bot.on('my_chat_member', (ctx) => {
-//   const groupId = ctx.chat.id;
-//   console.log(`Bot added to group. Group ID: ${groupId}`);
-// });
 
 interface UserInfoType {
     name: string;
@@ -108,7 +97,7 @@ export const POST = async function (request: Request) {
 
 Информация о пользователе:
     _Имя пользователя_: ${userInfo.name}
-    _Номер телефона_: ${escapingCharacters(userInfo.phone_number)} ${formPermissions.userCanTalk ? "\\(\\+15 мин\\)" :""}
+    _Номер телефона_: ${escapingCharacters(userInfo.phone_number)} ${formPermissions.userCanTalk ? "\\(\\+15 мин\\)" : ""}
     _Организация_: ${escapingCharacters(userInfo.company)}
     _Номер компьютера в AnyDesk_: ${escapingCharacters(userInfo.number_pc)}
     
@@ -126,13 +115,6 @@ export const POST = async function (request: Request) {
         }
     )
     const messageID = res.message_id
-
-    // userProblemInfo.photo.forEach((file) => {
-    //     file.arrayBuffer().then((buff) => {
-    //         let newForm = new Uint8Array(buff)
-    //         bot.api.sendPhoto(groupId, new InputFile(newForm))
-    //     })
-    // })
 
     /**
      * Отправка фотографий, как одно сообщение
@@ -194,8 +176,6 @@ export const POST = async function (request: Request) {
             }
         })
     }
-
-    // await bot.api.sendMessage(groupId, "", {protect_content: true})
 
     webhookCallback(bot, 'std/http')
 

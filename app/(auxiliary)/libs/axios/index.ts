@@ -1,7 +1,7 @@
 import axios from "axios"
 
 export const API_URL_SERVER = "http://localhost:8000/"
-export const API_URL_CLIENT = "http://localhost:3030/"
+export const API_URL_CLIENT = process.env.CLIENT_HOST
 
 
 const $api = axios.create({

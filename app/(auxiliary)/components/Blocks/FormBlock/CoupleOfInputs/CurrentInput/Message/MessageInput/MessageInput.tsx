@@ -7,6 +7,10 @@ import {
 import styles from "../../InputsStyles.module.scss";
 import {MESSAGE_KEY} from "@/app/(auxiliary)/types/AppTypes/InputHooksTypes";
 import {TextareaChangeEventHandler} from "@/app/(auxiliary)/types/AppTypes/AppTypes";
+import {useAppSelector} from "@/app/(auxiliary)/libs/redux-toolkit/store/hooks";
+import {
+    selectServerResponse
+} from "@/app/(auxiliary)/libs/redux-toolkit/store/slices/UserFormDataSlice/UserFormDataSlice";
 
 
 interface PropsType {
@@ -20,6 +24,7 @@ const MessageInput: FC<PropsType> = ({
                                          type,
                                          setNewMessage
                                      }) => {
+    const serverResponse = useAppSelector(selectServerResponse).sentToServer
     const message =
         useInput<HTMLTextAreaElement>("", type, inputValidations[type]);
 
@@ -37,6 +42,15 @@ const MessageInput: FC<PropsType> = ({
         setNewMessage,
         message.inputValid,
         message.value
+    ]);
+
+    useEffect(() => {
+        if (serverResponse) {
+            message.resetValue()
+        }
+    }, [
+        serverResponse,
+        message
     ]);
 
     return (
