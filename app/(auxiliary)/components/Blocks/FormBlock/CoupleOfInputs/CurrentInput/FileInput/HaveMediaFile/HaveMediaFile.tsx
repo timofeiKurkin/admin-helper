@@ -1,15 +1,12 @@
-import React, {FC, useEffect, useState} from 'react';
+import React, {FC, useState} from 'react';
 import styles from "./HaveMediaFile.module.scss"
 import {PHOTO_KEY, PhotoAndVideoKeysTypes, VIDEO_KEY} from "@/app/(auxiliary)/types/AppTypes/InputHooksTypes";
 import Button from "@/app/(auxiliary)/components/UI/Button/Button";
 import PhotoEditorPopup from "@/app/(auxiliary)/components/Blocks/Popups/PhotoEditorPopup/PhotoEditorPopup";
 import VideoPlayerPopup from "@/app/(auxiliary)/components/Blocks/Popups/VideoPlayerPopup/VideoPlayerPopup";
-import {useAppDispatch, useAppSelector} from "@/app/(auxiliary)/libs/redux-toolkit/store/hooks";
+import {useAppSelector} from "@/app/(auxiliary)/libs/redux-toolkit/store/hooks";
 import {selectRootPageContent} from "@/app/(auxiliary)/libs/redux-toolkit/store/slices/AppSlice/AppSlice";
-import {
-    changePopupVisibility,
-    selectPopups
-} from "@/app/(auxiliary)/libs/redux-toolkit/store/slices/PopupSlice/PopupSlice";
+import {selectPopups} from "@/app/(auxiliary)/libs/redux-toolkit/store/slices/PopupSlice/PopupSlice";
 import DropZone from "@/app/(auxiliary)/components/Blocks/FormBlock/DropZone/DropZone";
 import FileList
     from "@/app/(auxiliary)/components/Blocks/FormBlock/CoupleOfInputs/CurrentInput/FileInput/FilesList/FileList";
@@ -23,7 +20,6 @@ interface PropsType {
 }
 
 const HaveMediaFile: FC<PropsType> = ({inputData}) => {
-    const dispatch = useAppDispatch()
     const rootPageContent = useAppSelector(selectRootPageContent)
     const popupVisibility = useAppSelector(selectPopups)[inputData.type]
 
@@ -34,15 +30,6 @@ const HaveMediaFile: FC<PropsType> = ({inputData}) => {
         setDragDropZoneIsOpen((prevState) => !prevState);
     }
 
-    useEffect(() => {
-        return () => {
-            dispatch(changePopupVisibility({type: inputData.type}))
-        }
-    }, [
-        dispatch,
-        inputData.type
-    ]);
-
     return (
         <>
             <div className={styles.filesBlock}>
@@ -50,9 +37,11 @@ const HaveMediaFile: FC<PropsType> = ({inputData}) => {
                     <FileList placeholder={inputData.placeholder}
                               type={inputData.type as PhotoAndVideoKeysTypes}/>
                 </div>
-                <div className={styles.addFiles}>
-                    <Button onClick={openDragDropZone}>{inputData.button}</Button>
-                </div>
+                {(inputData.type !== VIDEO_KEY) ? (
+                    <div className={styles.addFiles}>
+                        <Button onClick={openDragDropZone}>{inputData.button}</Button>
+                    </div>
+                ) : null}
             </div>
 
             {(dragDropZoneIsOpen && rootPageContent) ? (

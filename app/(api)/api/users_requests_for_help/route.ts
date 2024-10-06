@@ -110,7 +110,7 @@ export const POST = async function (request: Request) {
         botMessage,
         {
             parse_mode: "MarkdownV2",
-            protect_content: true
+            protect_content: false
         }
     )
     const messageID = res.message_id
@@ -126,8 +126,9 @@ export const POST = async function (request: Request) {
         await bot.api.sendAudio(groupId, new InputFile(uint8Array, `${audioName}.mp3`), {
             reply_parameters: {
                 message_id: messageID,
-                chat_id: groupId
-            }
+                chat_id: groupId,
+            },
+            protect_content: false
         })
     }
 
@@ -153,28 +154,46 @@ export const POST = async function (request: Request) {
 
     /**
      * Отправка видео, как одно сообщение
+     * Проблемы:
+     * - Отправка видео невозможна из-за конвертации в Uint8Array
+     * - Отправка тяжелых файлов ограничена API телеграмма
      */
-    if (userProblemInfo.video.length) {
-        const photoGroup: InputMediaVideo[] = await Promise.all(
-            userProblemInfo.video.map(async (video) => {
-                const bufferVideo = await video.arrayBuffer()
-                const uint8Array = new Uint8Array(bufferVideo)
-
-                return {
-                    type: "video",
-                    media: new InputFile(uint8Array, video.name),
-                    caption: `Video name: ${video.name}`
-                }
-            })
-        )
-
-        await bot.api.sendMediaGroup(groupId, photoGroup, {
-            reply_parameters: {
-                message_id: messageID,
-                chat_id: groupId
-            }
-        })
-    }
+    // if (userProblemInfo.video.length) {
+    //     // const photoGroup: InputMediaVideo[] = await Promise.all(
+    //     //     userProblemInfo.video.map(async (video) => {
+    //     //         const bufferVideo = await video.arrayBuffer()
+    //     //         const uint8Array = new Uint8Array(bufferVideo)
+    //     //
+    //     //         return {
+    //     //             type: "video",
+    //     //             media: new InputFile(uint8Array, video.name),
+    //     //             caption: `Video name: ${video.name}`,
+    //     //             supports_streaming: true,
+    //     //         } as InputMediaVideo
+    //     //     })
+    //     // )
+    //     //
+    //     // await bot.api.sendMediaGroup(groupId, photoGroup, {
+    //     //     reply_parameters: {
+    //     //         message_id: messageID,
+    //     //         chat_id: groupId
+    //     //     }
+    //     // })
+    //
+    //     // userProblemInfo.video.forEach((video) => {
+    //     //     video.arrayBuffer().then((bufferVideo) => {
+    //     //         const uint8Array = new Uint8Array(bufferVideo)
+    //     //
+    //     //         bot.api.sendDocument(groupId, new InputFile(uint8Array), {
+    //     //             caption: `Video name: ${video.name}`,
+    //     //             reply_parameters: {
+    //     //                 message_id: messageID,
+    //     //             }
+    //     //         })
+    //     //     })
+    //     //
+    //     // })
+    // }
 
     webhookCallback(bot, 'std/http')
 
