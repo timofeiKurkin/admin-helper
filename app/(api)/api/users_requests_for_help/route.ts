@@ -123,7 +123,7 @@ export const POST = async function (request: Request) {
         const audioBuffer = await userProblemInfo.message_file.arrayBuffer()
         const uint8Array = new Uint8Array(audioBuffer)
 
-        await bot.api.sendVoice(groupId, new InputFile(uint8Array, `${audioName}.ogg`), {
+        await bot.api.sendAudio(groupId, new InputFile(uint8Array, `${audioName}.mp3`), {
             reply_parameters: {
                 message_id: messageID,
                 chat_id: groupId
@@ -179,6 +179,6 @@ export const POST = async function (request: Request) {
     webhookCallback(bot, 'std/http')
 
     return Response.json({
-        message: "Заявка успешно отправлена и будет рассмотрена в ближайшее время. Спасибо за доверие!"
+        message: "Заявка успешно отправлена и будет рассмотрена в ближайшее время."
     })
 }

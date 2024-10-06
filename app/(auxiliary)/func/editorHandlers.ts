@@ -32,12 +32,14 @@ export const findElement = <T extends { name: string }>(file: T, name: string) =
  * Функция для сохранения соотношения пропорций у фотографий в редакторе. Т.к. размер фотографий разный, а размер редактора одинаковый, нужно учесть соотношение сторон. Т.е. пропорционально уменьшить или увеличить изображение, чтобы оно влезло в редактор
  * @param naturalWidth
  * @param naturalHeight
- * @param imgSize
+ * @param canvasWidth
+ * @param canvasHeight
  */
 export const getScaledSizesOfImage = (
     naturalWidth: number,
     naturalHeight: number,
-    imgSize: number
+    canvasWidth: number,
+    canvasHeight: number
 ) => {
     /**
      * Взять максимальную ширину или высоту для создания холста в виде квадрата
@@ -48,13 +50,14 @@ export const getScaledSizesOfImage = (
      * Т.к. изображение рисуется на квадрате, нужно узнать только одно значение коэффициента пропорции оригинального квадрата (squareSize*squareSize) и квадрата в редакторе (640*640 на экране 1920px)
      *
      */
-    const scale = imgSize / squareSize
+    const scaleX = canvasWidth / squareSize
+    const scaleY = canvasHeight / squareSize
 
     /**
      * Вычисление ширины и высоты изображения после его изменения пропорционально оригинальным размерам и размеру холста в редакторе
      */
-    const naturalWidthScaled = Math.floor(naturalWidth * scale)
-    const naturalHeightScaled = Math.floor(naturalHeight * scale)
+    const naturalWidthScaled = Math.floor(naturalWidth * scaleX)
+    const naturalHeightScaled = Math.floor(naturalHeight * scaleY)
 
     return {
         naturalWidthScaled, naturalHeightScaled

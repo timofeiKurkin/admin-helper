@@ -59,7 +59,7 @@ const VoiceInput: FC<PropsType> = ({
         }
 
         mediaRecorderRef.current.onstop = () => {
-            const blob = new Blob(audioChunksRef.current, {type: "audio/wav"})
+            const blob = new Blob(audioChunksRef.current, {type: "audio/mp3"})
 
             if (blob) {
                 setAudioBlob(blob)
@@ -68,7 +68,7 @@ const VoiceInput: FC<PropsType> = ({
                     [blob],
                     `voice-record-${formattedTime()}`,
                     {
-                        type: "audio/ogg",
+                        type: "audio/mp3",
                         lastModified: Date.now()
                     }
                 )

@@ -10,6 +10,15 @@ import {
     getRotateDimensions
 } from "@/app/(auxiliary)/components/Blocks/Popups/PhotoEditorPopup/PhotoEditorBody/canvasPreview";
 import {HORIZONTAL, PossibleCroppingBoundaryType, VERTICAL} from "@/app/(auxiliary)/types/PopupTypes/PopupTypes";
+import {useAppSelector} from "@/app/(auxiliary)/libs/redux-toolkit/store/hooks";
+import {selectUserDevice} from "@/app/(auxiliary)/libs/redux-toolkit/store/slices/AppSlice/AppSlice";
+
+type keys = ["desktopAdaptive", "padAdaptive", "padAdaptive640_992"]
+const editorAdaptiveSizes = {
+    desktopAdaptive: 640,
+    padAdaptive: 600,
+    padAdaptive640_992: 375
+}
 
 
 interface PropsType {
@@ -29,6 +38,8 @@ const Editor: FC<PropsType> = ({
                                    scale,
                                    rotate
                                }) => {
+    const userDevice = useAppSelector(selectUserDevice)
+    const editorSize = editorAdaptiveSizes[(Object.keys(userDevice) as keys).filter((key) => userDevice[key])[0]]
 
     const [imgSrc, setImgSrc] =
         useState<string>(URL.createObjectURL(photo))
@@ -109,6 +120,8 @@ const Editor: FC<PropsType> = ({
      * @param currentCrop
      */
     const onImageLoad = (e: React.SyntheticEvent<HTMLImageElement>, currentCrop: Crop) => {
+        setIsChanging(true)
+
         const {
             naturalWidth,
             width,
@@ -122,7 +135,8 @@ const Editor: FC<PropsType> = ({
         const {naturalWidthScaled, naturalHeightScaled} = getScaledSizesOfImage(
             naturalWidth,
             naturalHeight,
-            width
+            width,
+            height
         )
         const currentOrientation = determineOrientation(naturalWidth, naturalHeight)
         setImageOrientation(currentOrientation)
@@ -164,7 +178,6 @@ const Editor: FC<PropsType> = ({
     const changeCropHandler = useCallback((pixelCrop: PixelCrop) => {
         if (croppingBoundary) {
             setIsChanging(true)
-            // console.log("pixel crop of args changeCropHandler: ", pixelCrop)
 
             /**
              * Оригинальные размеры фото и его положение по осям.
@@ -177,6 +190,7 @@ const Editor: FC<PropsType> = ({
                 y,
                 orientation // Оригинальная ориентация изображения. В отличие от состояния imageOrientation не изменяется и является ориентиром
             } = croppingBoundary
+
             const {
                 width: cropWidth,
                 height: cropHeight,
@@ -242,6 +256,13 @@ const Editor: FC<PropsType> = ({
     useEffect(() => {
         return () => {
             URL.revokeObjectURL(imgSrc)
+            setCompletedCrop({
+                unit: "px",
+                width: 0,
+                height: 0,
+                x: 0, y: 0
+            })
+            setCroppingBoundary(undefined)
         }
     }, [imgSrc]);
 
@@ -249,7 +270,7 @@ const Editor: FC<PropsType> = ({
      * Эффект для обновления crop при повороте изображения.
      */
     useEffect(() => {
-        if (imgRef.current && croppingBoundary && (!completedCrop.width && !completedCrop.height)) {
+        if (imgRef.current) {
             const {
                 naturalWidth,
                 naturalHeight,
@@ -257,13 +278,14 @@ const Editor: FC<PropsType> = ({
                 height
             } = imgRef.current // Информация об изображении из компонента Image
 
-            if (naturalWidth && naturalHeight && width && height) {
+            if (rotate && naturalWidth && naturalHeight && width && height) {
                 setIsChanging(true) // Изменение статуса редактирования
 
+                const orientation = determineOrientation(naturalWidth, naturalHeight)
                 if ((rotate < 90 && rotate > -90) || (rotate === 180 || rotate === -180)) {
-                    setImageOrientation(croppingBoundary.orientation === HORIZONTAL ? HORIZONTAL : VERTICAL)
+                    setImageOrientation(orientation === HORIZONTAL ? HORIZONTAL : VERTICAL)
                 } else {
-                    setImageOrientation(croppingBoundary.orientation === VERTICAL ? HORIZONTAL : VERTICAL)
+                    setImageOrientation(orientation === VERTICAL ? HORIZONTAL : VERTICAL)
                 }
 
                 const {
@@ -274,7 +296,7 @@ const Editor: FC<PropsType> = ({
                 const {
                     naturalWidthScaled,
                     naturalHeightScaled
-                } = getScaledSizesOfImage(naturalRotatedWidth, naturalRotatedHeight, width)
+                } = getScaledSizesOfImage(naturalRotatedWidth, naturalRotatedHeight, width, height)
 
                 updateCropHandler(width, height, naturalWidthScaled, naturalHeightScaled)
             }
@@ -282,8 +304,6 @@ const Editor: FC<PropsType> = ({
     }, [
         rotate,
         updateCropHandler,
-        croppingBoundary,
-        completedCrop
     ]);
 
     useEffect(() => {
@@ -296,16 +316,13 @@ const Editor: FC<PropsType> = ({
     useDebounceEffect({
         fn: async () => {
             if (
-                // isChanging && // Статус изменение фотографии
                 completedCrop.width &&
                 completedCrop.height &&
                 imgRef.current &&
-                // previewCanvasRef.current && //
                 croppingBoundary
             ) {
                 await canvasPreview({
                     image: imgRef.current,
-                    // canvas: previewCanvasRef.current,
                     canvas: canvas,
                     crop: completedCrop,
                     scale,
@@ -338,15 +355,14 @@ const Editor: FC<PropsType> = ({
                                    onComplete={(c) => setCompletedCrop(c)}
                                    aspect={aspect}
                                    className={styles.reactCrop}
-                                   maxWidth={640}
+                                   maxWidth={editorSize}
                                    minWidth={100}
-                                   maxHeight={640}
+                                   maxHeight={editorSize}
                                    minHeight={100}
                         >
                             <Image ref={imgRef}
-                                // width={640}
-                                // height={640}
-                                   fill={true}
+                                   width={editorSize}
+                                   height={editorSize}
                                    src={imgSrc}
                                    style={{
                                        transform: `scale(${scale}) rotate(${rotate}deg)`,
@@ -357,41 +373,6 @@ const Editor: FC<PropsType> = ({
                             />
                         </ReactCrop>
                     )}
-
-                    {/*<div style={{*/}
-                    {/*    position: "absolute",*/}
-                    {/*    top: 100,*/}
-                    {/*    zIndex: 5,*/}
-                    {/*}}>*/}
-                    {/*    <a onClick={() => onDownloadCropClick({*/}
-                    {/*        imgRef,*/}
-                    {/*        previewCanvasRef,*/}
-                    {/*        completedCrop,*/}
-                    {/*        blobUrlRef,*/}
-                    {/*        hiddenAnchorRef,*/}
-                    {/*        rotate*/}
-                    {/*    })}>*/}
-                    {/*        download*/}
-                    {/*    </a>*/}
-                    {/*</div>*/}
-
-                    {/*<div style={{*/}
-                    {/*    position: "fixed",*/}
-                    {/*    bottom: 0,*/}
-                    {/*    left: 0,*/}
-                    {/*    visibility: "visible",*/}
-                    {/*    zIndex: 99*/}
-                    {/*}}>*/}
-                    {/*    <canvas ref={previewCanvasRef}*/}
-                    {/*            style={{*/}
-                    {/*                objectFit: 'contain',*/}
-                    {/*                width: completedCrop.width,*/}
-                    {/*                height: completedCrop.height*/}
-                    {/*            }}/>*/}
-                    {/*    /!*<a ref={hiddenAnchorRef}*!/*/}
-                    {/*    /!*   download*!/*/}
-                    {/*    /!*   href={"#hidden"}></a>*!/*/}
-                    {/*</div>*/}
                 </div>
             </div>
         </div>
