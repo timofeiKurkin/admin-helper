@@ -6,7 +6,7 @@ import {useAppSelector} from "@/app/(auxiliary)/libs/redux-toolkit/store/hooks";
 import {selectOpenedFileName} from "@/app/(auxiliary)/libs/redux-toolkit/store/slices/PopupSlice/PopupSlice";
 import {selectUserDevice} from "@/app/(auxiliary)/libs/redux-toolkit/store/slices/AppSlice/AppSlice";
 import ArrowForList from "@/app/(auxiliary)/components/UI/SVG/ArrowForList/ArrowForList";
-import {findFile} from "@/app/(auxiliary)/func/editorHandlers";
+import {findElement} from "@/app/(auxiliary)/func/editorHandlers";
 import {CustomFile} from "@/app/(auxiliary)/types/PopupTypes/PopupTypes";
 
 interface PropsType {
@@ -53,7 +53,7 @@ const PopupFileList: FC<PropsType> = ({
     // }
 
     const [currentSlide, setCurrentSlide] =
-        useState<CustomFile>(() => listOfPreviews.find((f) => findFile(f, currentFileName)) || listOfPreviews[0])
+        useState<CustomFile>(() => listOfPreviews.find((f) => findElement(f, currentFileName))!)
 
     const nextFileHandler = () => {
         if (currentSlide.id + 1 == listOfPreviews.length) return

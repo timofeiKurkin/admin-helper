@@ -3,13 +3,23 @@ import {Crop, PixelCrop, ReactCrop} from "react-image-crop";
 import Image from "next/image";
 import styles from "./Editor.module.scss";
 import 'react-image-crop/src/ReactCrop.scss';
-import {centerPositionOfAxes, determineOrientation, getScaledSizesOfImage} from "@/app/(auxiliary)/func/editorHandlers";
+import {
+    centerPositionOfAxes,
+    determineOrientation,
+    findElement,
+    getScaledSizesOfImage
+} from "@/app/(auxiliary)/func/editorHandlers";
 import {useDebounceEffect} from "@/app/(auxiliary)/hooks/useDebounceEffect";
 import {
     canvasPreview,
     getRotateDimensions
 } from "@/app/(auxiliary)/components/Blocks/Popups/PhotoEditorPopup/PhotoEditorBody/canvasPreview";
-import {HORIZONTAL, PossibleCroppingBoundaryType, VERTICAL} from "@/app/(auxiliary)/types/PopupTypes/PopupTypes";
+import {
+    HORIZONTAL,
+    ImageOrientationType,
+    PossibleCroppingBoundaryType,
+    VERTICAL
+} from "@/app/(auxiliary)/types/PopupTypes/PopupTypes";
 import {useAppSelector} from "@/app/(auxiliary)/libs/redux-toolkit/store/hooks";
 import {selectUserDevice} from "@/app/(auxiliary)/libs/redux-toolkit/store/slices/AppSlice/AppSlice";
 
@@ -23,7 +33,7 @@ const editorAdaptiveSizes = {
 
 interface PropsType {
     photo: File;
-    setCrop: (newCrop: Crop) => void;
+    setCrop: (newCrop: Crop, name: string) => void;
     updatePhoto: (newFile: File) => void;
     crop: Crop;
     scale: number;
@@ -51,7 +61,8 @@ const Editor: FC<PropsType> = ({
      * Состояние, хранящее информацию об оригинальном изображении
      */
     const [croppingBoundary, setCroppingBoundary] =
-        useState<PossibleCroppingBoundaryType>()
+        useState<PossibleCroppingBoundaryType[]>([])
+    const thereIsBoundary = useCallback((name: string) => croppingBoundary.find((item) => item.name === name), [croppingBoundary])
 
     /**
      * Статус для отслеживания изменения. Если происходит какое-либо изменения фото, то статус меняется на true, в обратном случае - на false.
@@ -70,12 +81,10 @@ const Editor: FC<PropsType> = ({
                 height: 0,
             }
         )
+
     const aspect = 0
-
     const imgRef = useRef<HTMLImageElement>(null)
-    // const previewCanvasRef = useRef<HTMLCanvasElement>(null)
     const canvas = document.createElement("canvas")
-
 
     /**
      * Функция для создания и обновления crop на время редактирования фотографии, а также редактирует финальный crop
@@ -102,14 +111,14 @@ const Editor: FC<PropsType> = ({
         setCrop({
             unit: "px",
             ...cropSettings
-        })
+        }, photo.name)
         setCompletedCrop({
             unit: "px",
             ...cropSettings
         })
 
         return {x, y}
-    }, [setCrop])
+    }, [setCrop, photo.name])
 
 
     /**
@@ -118,10 +127,9 @@ const Editor: FC<PropsType> = ({
      * Определяет пропорциональное соотношение сторон, чтобы корректно поместить фотографию в редактор
      * @param e
      * @param currentCrop
+     * @param photoName
      */
-    const onImageLoad = (e: React.SyntheticEvent<HTMLImageElement>, currentCrop: Crop) => {
-        setIsChanging(true)
-
+    const onImageLoad = (e: React.SyntheticEvent<HTMLImageElement>, currentCrop: Crop, photoName: string) => {
         const {
             naturalWidth,
             width,
@@ -142,7 +150,7 @@ const Editor: FC<PropsType> = ({
         setImageOrientation(currentOrientation)
 
         /**
-         * Условие, если изображение открывается впервые и не имеет своего crop.
+         * Условие, если изображение открывается впервые и не имеет своего crop. Нужно сохранить оригинальный crop и из него создать новый.
          */
         if (!currentCrop.x && !currentCrop.y && currentCrop.unit === "%") {
             const {x, y} = updateCropHandler(
@@ -152,32 +160,63 @@ const Editor: FC<PropsType> = ({
                 naturalHeightScaled
             ) // Создание и обновление crop и completedCrop
 
-            setCroppingBoundary({
+            setCroppingBoundary((prevState) => [...prevState, {
                 x, y,
                 width: naturalWidthScaled,
                 height: naturalHeightScaled,
-                orientation: currentOrientation
-            })
+                orientation: currentOrientation,
+                name: photoName
+            }])
         } else {
             const {x, y} = centerPositionOfAxes(width, height, naturalWidthScaled, naturalHeightScaled)
 
-            setCroppingBoundary({
-                x, y,
-                width: naturalWidthScaled,
-                height: naturalHeightScaled,
-                orientation: currentOrientation
+            const boundary = thereIsBoundary(photoName)
+            setCroppingBoundary((prevState) => {
+                if (!boundary) {
+                    return [...prevState, {
+                        x, y,
+                        width: naturalWidthScaled,
+                        height: naturalHeightScaled,
+                        orientation: currentOrientation,
+                        name: photoName
+                    }]
+                }
+
+                return prevState
             })
+
+            // prevState.map((item) => {
+            //                         if (findElement(item, photoName)) {
+            //                             return {
+            //                                 x, y,
+            //                                 width: naturalWidthScaled,
+            //                                 height: naturalHeightScaled,
+            //                                 orientation: currentOrientation,
+            //                                 name: photoName
+            //                             }
+            //                         }
+            //                         return item
+            //                     })
         }
     }
+
+    /**
+     * Функция для получения ориентации изображения.
+     * Во-первых, определяется оригинальная ориентация изображения. Во-вторых, определяется ориентация этого изображения в данный момент. Это необходимо, поскольку оригинальные изображения бывают вертикальные или горизонтальные
+     * @param orientation
+     */
+    const getCurrentOrientation = useCallback((orientation: ImageOrientationType) => {
+        return orientation === HORIZONTAL ? (imageOrientation === HORIZONTAL) : (imageOrientation === VERTICAL)
+    }, [imageOrientation])
 
     /**
      * Функция, срабатывающая при изменении crop. Принимает новый crop и устанавливает его в состояние.
      * Т.е. функция на прямую не редактирует фотографию.
      * @param pixelCrop - значения crop в пикселях
      */
-    const changeCropHandler = useCallback((pixelCrop: PixelCrop) => {
-        if (croppingBoundary) {
-            setIsChanging(true)
+    const changeCropHandler = useCallback((pixelCrop: PixelCrop, photoName: string) => {
+        const boundary = thereIsBoundary(photoName)
+        if (croppingBoundary.length && boundary) {
 
             /**
              * Оригинальные размеры фото и его положение по осям.
@@ -189,7 +228,7 @@ const Editor: FC<PropsType> = ({
                 x,
                 y,
                 orientation // Оригинальная ориентация изображения. В отличие от состояния imageOrientation не изменяется и является ориентиром
-            } = croppingBoundary
+            } = boundary
 
             const {
                 width: cropWidth,
@@ -198,7 +237,7 @@ const Editor: FC<PropsType> = ({
                 y: cropY
             } = pixelCrop // Текущие значения размера и положения рамки обрезки фото
 
-            const currentOrientation = orientation === HORIZONTAL ? (imageOrientation === HORIZONTAL) : (imageOrientation === VERTICAL)
+            const currentOrientation = getCurrentOrientation(orientation)
 
             const sizeBoundary = currentOrientation ? (
                 cropWidth <= width && cropHeight <= height
@@ -222,29 +261,27 @@ const Editor: FC<PropsType> = ({
             const couldChangeCrop = sizeBoundary && positionBoundary // Финальное условие, позволяющее изменить crop
 
             if (couldChangeCrop) {
-                setCrop(pixelCrop)
+                setCrop(pixelCrop, photo.name)
             } else {
+                /**
+                 * Создание эффекта "скольжения" по границе рамки за счет установки новых значений для каждой оси и сохранения предыдущих
+                 */
                 if (imageOrientation === HORIZONTAL) {
                     setCrop({
                         ...crop,
                         width: pixelCrop.width,
                         x: pixelCrop.x
-                    })
+                    }, photo.name)
                 } else {
                     setCrop({
                         ...crop,
                         height: pixelCrop.height,
                         y: pixelCrop.y
-                    })
-                } // Создание эффекта "скольжения" по границе рамки за счет установки новых значений для каждой оси и сохранения предыдущих
+                    }, photo.name)
+                }
             }
         }
-    }, [
-        croppingBoundary,
-        imageOrientation,
-        setCrop,
-        crop
-    ])
+    }, [crop, croppingBoundary.length, getCurrentOrientation, imageOrientation, photo.name, setCrop, thereIsBoundary])
 
     /**
      * Первый эффект для создания url фотографии и отображения ее в редакторе.
@@ -262,7 +299,6 @@ const Editor: FC<PropsType> = ({
                 height: 0,
                 x: 0, y: 0
             })
-            setCroppingBoundary(undefined)
         }
     }, [imgSrc]);
 
@@ -270,18 +306,18 @@ const Editor: FC<PropsType> = ({
      * Эффект для обновления crop при повороте изображения.
      */
     useEffect(() => {
-        if (imgRef.current) {
+        if (imgRef.current && rotate) {
+            console.log("rotate func")
             const {
-                naturalWidth,
-                naturalHeight,
+                naturalWidth, // 0
+                naturalHeight, // 0
                 width,
                 height
             } = imgRef.current // Информация об изображении из компонента Image
 
-            if (rotate && naturalWidth && naturalHeight && width && height) {
-                setIsChanging(true) // Изменение статуса редактирования
-
+            if (naturalWidth && naturalHeight && width && height) {
                 const orientation = determineOrientation(naturalWidth, naturalHeight)
+
                 if ((rotate < 90 && rotate > -90) || (rotate === 180 || rotate === -180)) {
                     setImageOrientation(orientation === HORIZONTAL ? HORIZONTAL : VERTICAL)
                 } else {
@@ -291,19 +327,71 @@ const Editor: FC<PropsType> = ({
                 const {
                     naturalRotatedWidth,
                     naturalRotatedHeight
-                } = getRotateDimensions(naturalWidth, naturalHeight, rotate)
+                } = getRotateDimensions(naturalWidth, naturalHeight, rotate) // 0, 0, num
 
                 const {
                     naturalWidthScaled,
                     naturalHeightScaled
-                } = getScaledSizesOfImage(naturalRotatedWidth, naturalRotatedHeight, width, height)
+                } = getScaledSizesOfImage(naturalRotatedWidth, naturalRotatedHeight, width, height) // 0, 0, num, num
 
-                updateCropHandler(width, height, naturalWidthScaled, naturalHeightScaled)
+                updateCropHandler(width, height, naturalWidthScaled, naturalHeightScaled) // num, num, NaN, NaN
             }
         }
     }, [
         rotate,
-        updateCropHandler,
+        updateCropHandler
+    ]);
+
+    /**
+     * Эффект, когда пользователь поворачивает изображение к 0 градусов. Это значение поворота совпадает с оригинальным, поэтому нужно отслеживать, что этот 0 после поворота, а не первой загрузки изображения.
+     */
+    useEffect(() => {
+        if (!rotate) {
+            console.log("zero rotate func")
+
+            const boundary = thereIsBoundary(photo.name)
+            console.log("boundary and name: ", boundary, photo.name)
+            if (boundary) {
+                console.log("there is boundary", boundary)
+                const {
+                    width,
+                    height,
+                    x, y, orientation
+                } = boundary
+
+                const rotateOrientation = orientation === HORIZONTAL ?
+                    crop.width <= width && crop.height > height :
+                    crop.width > width && crop.height <= height
+                console.log("rotateOrientation: ", rotateOrientation)
+
+                /**
+                 * Условие, что после поворота изображения на 0 градусов, настройки и превью возвращаются к изначальным значениям.
+                 */
+                if (rotateOrientation) {
+                    const resetCrop: Crop & PixelCrop = {
+                        x,
+                        y,
+                        width,
+                        height,
+                        unit: "px"
+                    }
+                    setCompletedCrop(resetCrop)
+                    setCrop(resetCrop, photo.name)
+                    updatePhoto(photo)
+                    setImageOrientation(orientation)
+                }
+            }
+        }
+
+    }, [
+        crop.height,
+        crop.width,
+        photo,
+        rotate,
+        setCrop,
+        thereIsBoundary,
+        croppingBoundary,
+        updatePhoto
     ]);
 
     useEffect(() => {
@@ -315,19 +403,21 @@ const Editor: FC<PropsType> = ({
      */
     useDebounceEffect({
         fn: async () => {
+            const boundary = thereIsBoundary(photo.name)
             if (
                 completedCrop.width &&
                 completedCrop.height &&
                 imgRef.current &&
-                croppingBoundary
+                boundary
             ) {
+                const {orientation} = boundary
                 await canvasPreview({
                     image: imgRef.current,
                     canvas: canvas,
                     crop: completedCrop,
                     scale,
                     rotate,
-                    imageOrientation: croppingBoundary.orientation
+                    imageOrientation: orientation
                 }).then((file) => {
                     if (file && isChanging) {
                         setIsChanging(false)
@@ -345,13 +435,40 @@ const Editor: FC<PropsType> = ({
         ]
     })
 
+    useEffect(() => {
+        const boundary = thereIsBoundary(photo.name)
+        if (boundary) {
+            const {
+                width,
+                height,
+                x, y, orientation
+            } = boundary
+
+            setIsChanging(() => {
+                return x !== crop.x ||
+                    y !== crop.y ||
+                    width !== crop.width ||
+                    height !== crop.height ||
+                    orientation !== imageOrientation;
+            })
+        }
+    }, [
+        crop.height,
+        crop.width,
+        crop.x,
+        crop.y,
+        imageOrientation,
+        photo.name,
+        thereIsBoundary
+    ]);
+
     return (
         <div className={styles.editorBody}>
             <div className={styles.editorBackground}>
                 <div className={styles.editorWrapper}>
                     {imgSrc && (
                         <ReactCrop crop={crop}
-                                   onChange={changeCropHandler}
+                                   onChange={(e) => changeCropHandler(e, photo.name)}
                                    onComplete={(c) => setCompletedCrop(c)}
                                    aspect={aspect}
                                    className={styles.reactCrop}
@@ -368,7 +485,7 @@ const Editor: FC<PropsType> = ({
                                        transform: `scale(${scale}) rotate(${rotate}deg)`,
                                        objectFit: "contain"
                                    }}
-                                   onLoad={(e) => onImageLoad(e, crop)}
+                                   onLoad={(e) => onImageLoad(e, crop, photo.name)}
                                    alt={photo.name}
                             />
                         </ReactCrop>

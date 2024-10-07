@@ -13,13 +13,7 @@ import {
     selectPhotoListSettings,
     setCurrentOpenedFileName
 } from "@/app/(auxiliary)/libs/redux-toolkit/store/slices/PopupSlice/PopupSlice";
-import {
-    findElement,
-    getDefaultPhotoSettings,
-    scalePoints,
-    scaleStickPoint,
-    stickToClosestValue
-} from "@/app/(auxiliary)/func/editorHandlers";
+import {findElement, scalePoints, scaleStickPoint, stickToClosestValue} from "@/app/(auxiliary)/func/editorHandlers";
 import {CustomFile, PhotoEditorSettingsType, PhotoSettingKeysType} from "@/app/(auxiliary)/types/PopupTypes/PopupTypes";
 import {Crop} from "react-image-crop";
 import {
@@ -85,7 +79,7 @@ const PhotoEditorBody: FC<PropsType> = ({
      */
     const [photo, setPhoto] =
         useState<File>(() => (
-            formFileData.files.find((f) => findCurrentFile(f, fileName)) || {} as File
+            formFileData.files.find((f) => findCurrentFile(f, fileName))!
         ))
 
     /**
@@ -94,7 +88,7 @@ const PhotoEditorBody: FC<PropsType> = ({
      */
     const [currentPhotoSettings, setCurrentPhotoSettings] =
         useState<PhotoEditorSettingsType>(
-            () => temporaryPhotosSettings.find((f) => findCurrentFile(f, fileName)) || getDefaultPhotoSettings(fileName)
+            () => temporaryPhotosSettings.find((f) => findCurrentFile(f, fileName))!
         )
 
     const updatePhotoSettings = useCallback(<T extends string | number | Crop>(key: PhotoSettingKeysType, newValue: T) => {
@@ -104,7 +98,9 @@ const PhotoEditorBody: FC<PropsType> = ({
         }))
     }, [])
 
-    const updateCrop = useCallback((newCrop: Crop) => updatePhotoSettings("crop", newCrop), [updatePhotoSettings])
+    const updateCrop = useCallback((newCrop: Crop, name: string) => {
+        if (name === fileName) updatePhotoSettings("crop", newCrop)
+    }, [updatePhotoSettings, fileName])
 
     /**
      *
@@ -126,13 +122,15 @@ const PhotoEditorBody: FC<PropsType> = ({
      * Сбросить настройки увеличения и поворота у выбранной фотографии
      */
     const resetSettingsHandler = () => {
-        setCurrentPhotoSettings((prevState) => ({...prevState, scale: 1, rotate: 0}))
+        setCurrentPhotoSettings((prevState) => ({
+            ...prevState,
+            scale: 1,
+            rotate: 0,
+        }))
     }
 
     const getAnotherSettings = useCallback((anotherFileName: string) => {
-        return temporaryPhotosSettings
-                .find((f) => findCurrentFile(f, anotherFileName)) ||
-            getDefaultPhotoSettings(anotherFileName)
+        return temporaryPhotosSettings.find((setting) => findCurrentFile(setting, anotherFileName))!
     }, [
         findCurrentFile,
         temporaryPhotosSettings
@@ -143,22 +141,11 @@ const PhotoEditorBody: FC<PropsType> = ({
      * @param anotherFileName
      */
     const switchToAnotherFile = (anotherFileName: string) => {
-        const prevFileName = currentPhotoSettings.name
-
-        if (prevFileName === anotherFileName) return
-        dispatch(setCurrentOpenedFileName({fileName: anotherFileName}))
+        if (fileName === anotherFileName && photo.name === anotherFileName) return
 
         setTemporaryPhotosSettings((prevState) => {
             return prevState.map((settings) => {
-                if (settings.name === prevFileName) {
-                    return {
-                        ...settings,
-                        scale: currentPhotoSettings.scale,
-                        rotate: currentPhotoSettings.rotate,
-                        crop: currentPhotoSettings.crop
-                    }
-                }
-
+                if (settings.name === fileName) return currentPhotoSettings
                 return settings
             })
         })
@@ -166,6 +153,7 @@ const PhotoEditorBody: FC<PropsType> = ({
         setPhoto(formFileData.files.find((f) => findCurrentFile(f, anotherFileName)) || {} as File)
         const anotherSetting = getAnotherSettings(anotherFileName)
         setCurrentPhotoSettings(anotherSetting)
+        dispatch(setCurrentOpenedFileName({fileName: anotherFileName}))
     }
 
     /**
@@ -189,7 +177,7 @@ const PhotoEditorBody: FC<PropsType> = ({
         }
     }
 
-    const updatePhotoPreview = (newFile: File) => {
+    const updatePhotoPreview = useCallback((newFile: File) => {
         setListOfPreviews((prevState) => {
             return prevState.map((file) => {
                 if (file.name === newFile.name) {
@@ -198,10 +186,9 @@ const PhotoEditorBody: FC<PropsType> = ({
                 return file
             })
         })
-    }
+    }, [])
 
     const saveSettingsHandler = () => {
-
         /**
          * Изменение preview у всего списка фотографий
          */
@@ -214,24 +201,25 @@ const PhotoEditorBody: FC<PropsType> = ({
          * Сохранение всех настроек для каждого фото
          */
         const listOfSettings = temporaryPhotosSettings.map((setting) => {
-            if (setting.name === currentPhotoSettings.name) {
-                return currentPhotoSettings
-            }
+            if (setting.name === currentPhotoSettings.name) return currentPhotoSettings
             return setting
         })
         dispatch(changePhotoSettings(listOfSettings))
         dispatch(changePopupVisibility({type}))
+        dispatch(setCurrentOpenedFileName({fileName: ""}))
     }
 
     return (
         <div className={`${popupsCommonStyles.popupBody} ${styles.photoEditorBody}`}>
             <div className={styles.editorGrid}>
-                <Editor scale={currentPhotoSettings.scale}
-                        rotate={currentPhotoSettings.rotate}
-                        setCrop={updateCrop}
-                        updatePhoto={updatePhotoPreview}
-                        crop={currentPhotoSettings.crop}
-                        photo={photo}/>
+                {fileName === photo.name ? (
+                    <Editor scale={currentPhotoSettings.scale}
+                            rotate={currentPhotoSettings.rotate}
+                            setCrop={updateCrop}
+                            updatePhoto={updatePhotoPreview}
+                            crop={currentPhotoSettings.crop}
+                            photo={photo}/>
+                ) : null}
             </div>
 
             <div className={styles.editorControlsWrapper}>

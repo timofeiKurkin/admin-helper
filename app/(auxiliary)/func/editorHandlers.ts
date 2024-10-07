@@ -28,6 +28,7 @@ export const arrayDifference = <T extends {name: string}>(oldArr: T[], newArr: T
 
 export const findElement = <T extends { name: string }>(file: T, name: string) => file.name === name
 
+
 /**
  * Функция для сохранения соотношения пропорций у фотографий в редакторе. Т.к. размер фотографий разный, а размер редактора одинаковый, нужно учесть соотношение сторон. Т.е. пропорционально уменьшить или увеличить изображение, чтобы оно влезло в редактор
  * @param naturalWidth
@@ -283,8 +284,4 @@ export const stickToClosestValue = (value: number, stickPoints: number[], stickS
 
 export const getDefaultPhotoSettings = (fileName: string): PhotoEditorSettingsType => {
     return {...defaultPhotoSettings, name: fileName}
-}
-
-export const findFile = <T extends { name: string }>(file: T, fileName: string) => {
-    return file.name === fileName
 }
