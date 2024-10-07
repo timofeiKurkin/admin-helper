@@ -118,7 +118,10 @@ const Editor: FC<PropsType> = ({
         })
 
         return {x, y}
-    }, [setCrop, photo.name])
+    }, [
+        setCrop,
+        photo.name
+    ])
 
 
     /**
@@ -281,7 +284,15 @@ const Editor: FC<PropsType> = ({
                 }
             }
         }
-    }, [crop, croppingBoundary.length, getCurrentOrientation, imageOrientation, photo.name, setCrop, thereIsBoundary])
+    }, [
+        crop,
+        croppingBoundary.length,
+        getCurrentOrientation,
+        imageOrientation,
+        photo.name,
+        setCrop,
+        thereIsBoundary
+    ])
 
     /**
      * Первый эффект для создания url фотографии и отображения ее в редакторе.
@@ -307,7 +318,6 @@ const Editor: FC<PropsType> = ({
      */
     useEffect(() => {
         if (imgRef.current && rotate) {
-            console.log("rotate func")
             const {
                 naturalWidth, // 0
                 naturalHeight, // 0
@@ -347,12 +357,8 @@ const Editor: FC<PropsType> = ({
      */
     useEffect(() => {
         if (!rotate) {
-            console.log("zero rotate func")
-
             const boundary = thereIsBoundary(photo.name)
-            console.log("boundary and name: ", boundary, photo.name)
             if (boundary) {
-                console.log("there is boundary", boundary)
                 const {
                     width,
                     height,
@@ -362,7 +368,6 @@ const Editor: FC<PropsType> = ({
                 const rotateOrientation = orientation === HORIZONTAL ?
                     crop.width <= width && crop.height > height :
                     crop.width > width && crop.height <= height
-                console.log("rotateOrientation: ", rotateOrientation)
 
                 /**
                  * Условие, что после поворота изображения на 0 градусов, настройки и превью возвращаются к изначальным значениям.

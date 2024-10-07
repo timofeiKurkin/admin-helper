@@ -51,6 +51,9 @@ const VoiceInput: FC<PropsType> = ({
     const startRecording = async () => {
         setIsRecording(true)
         audioChunksRef.current = []
+        /**
+         * Доступ к микрофону пользователя
+         */
         const stream = await navigator.mediaDevices.getUserMedia({audio: true})
         mediaRecorderRef.current = new MediaRecorder(stream)
 
@@ -74,6 +77,11 @@ const VoiceInput: FC<PropsType> = ({
                 )
                 setNewMessage(newAudioFile, true)
             }
+
+            /**
+             * Отключение всех дорожек и, соответственно, использование микрофона
+             */
+            stream.getTracks().forEach(track => track.stop());
         };
 
         mediaRecorderRef.current.start();

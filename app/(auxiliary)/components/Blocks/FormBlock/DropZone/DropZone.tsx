@@ -255,6 +255,7 @@ const DropZone: FC<PropsType> = ({
         createPhotoPreviews,
         dispatch,
         inputType,
+        userDevice.phoneAdaptive,
         visibleDragDropZone
     ])
 
