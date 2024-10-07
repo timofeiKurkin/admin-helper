@@ -4,6 +4,8 @@ import DeleteFile from "@/app/(auxiliary)/components/UI/SVG/DeleteFile/DeleteFil
 import ChangePhoto from "@/app/(auxiliary)/components/UI/SVG/ChangePhoto/ChangePhoto";
 import FilePreview from "@/app/(auxiliary)/components/Blocks/FilePreviewBlock/FilePreviewBlock";
 import {RemoveFileFuncType} from "@/app/(auxiliary)/types/PopupTypes/FuncTypes";
+import {useAppSelector} from "@/app/(auxiliary)/libs/redux-toolkit/store/hooks";
+import {selectUserDevice} from "@/app/(auxiliary)/libs/redux-toolkit/store/slices/AppSlice/AppSlice";
 
 interface PropsType {
     file: File;
@@ -18,7 +20,7 @@ const FilePreviewWithHandlers: FC<PropsType> = ({
                                                     removeFile,
                                                     openFile
                                                 }) => {
-
+    const userDevice = useAppSelector(selectUserDevice)
     const [visibleHover, setVisibleHover] = useState<boolean>(false)
 
     const handleHover = (hoverStatus: boolean) => {
@@ -35,7 +37,7 @@ const FilePreviewWithHandlers: FC<PropsType> = ({
              onMouseEnter={() => handleHover(true)}
              onMouseLeave={() => handleHover(false)}>
 
-            {visibleHover ? (
+            {(visibleHover || userDevice.phoneAdaptive) ? (
                 <div className={styles.fileCover}
                      onClick={() => openFile(file.name)}>
                     <div className={styles.fileRemove}
@@ -43,7 +45,7 @@ const FilePreviewWithHandlers: FC<PropsType> = ({
                         <DeleteFile/>
                     </div>
 
-                    <ChangePhoto/>
+                    {!userDevice.phoneAdaptive ? <ChangePhoto/> : null}
                 </div>
             ) : null}
 

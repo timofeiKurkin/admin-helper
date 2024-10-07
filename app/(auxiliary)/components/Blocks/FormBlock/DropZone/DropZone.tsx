@@ -25,6 +25,7 @@ import {defaultPhotoSettings} from "@/app/(auxiliary)/types/PopupTypes/PopupType
 import {acceptSettings} from "@/app/(auxiliary)/components/Blocks/FormBlock/DropZone/possibleFileExtensions";
 import {determineOrientation} from "@/app/(auxiliary)/func/editorHandlers";
 import PopupScroll from "@/app/(auxiliary)/components/Common/Popups/PopupsWrapper/PopupScroll/PopupScroll";
+import {selectUserDevice} from "@/app/(auxiliary)/libs/redux-toolkit/store/slices/AppSlice/AppSlice";
 
 
 interface PropsType {
@@ -40,6 +41,7 @@ const DropZone: FC<PropsType> = ({
                                  }) => {
     const dispatch = useAppDispatch()
     const formFileData = useAppSelector(selectFormFileData)[inputType]
+    const userDevice = useAppSelector(selectUserDevice)
 
     const [uploadingFilesStatus, setUploadingFilesStatus] =
         useState<boolean>(false)
@@ -140,9 +142,6 @@ const DropZone: FC<PropsType> = ({
                         value: filteredFiles
                     }
                 }))
-                dispatch(setCurrentOpenedFileName({
-                    fileName: userFiles[0].name
-                }))
 
                 filteredFiles.forEach((file) => {
                     dispatch(changePhotoSettings({
@@ -162,7 +161,13 @@ const DropZone: FC<PropsType> = ({
                 }
 
                 visibleDragDropZone()
-                dispatch(changePopupVisibility({type: inputType}))
+
+                if (!userDevice.phoneAdaptive) {
+                    dispatch(changePopupVisibility({type: inputType}))
+                    dispatch(setCurrentOpenedFileName({
+                        fileName: userFiles[0].name
+                    }))
+                }
             }
         }
 
@@ -173,6 +178,7 @@ const DropZone: FC<PropsType> = ({
         formFileData.filesFinally,
 
         visibleDragDropZone,
+        userDevice.phoneAdaptive,
 
         createPhotoPreviews,
         createVideoPreviews
@@ -223,13 +229,16 @@ const DropZone: FC<PropsType> = ({
                             ...defaultPhotoSettings,
                             name: newFile.name
                         }))
-                        dispatch(setCurrentOpenedFileName({
-                            fileName: newFile.name
-                        }))
+
                         createPhotoPreviews([newFile])
 
                         visibleDragDropZone()
-                        dispatch(changePopupVisibility({type: PHOTO_KEY}))
+                        if (!userDevice.phoneAdaptive) {
+                            dispatch(setCurrentOpenedFileName({
+                                fileName: newFile.name
+                            }))
+                            dispatch(changePopupVisibility({type: PHOTO_KEY}))
+                        }
                     }
                 } catch (e) {
                     console.error("Error with paste a clipboard: ", e)

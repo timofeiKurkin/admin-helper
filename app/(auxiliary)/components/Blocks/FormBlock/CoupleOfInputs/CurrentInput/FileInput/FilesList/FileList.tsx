@@ -15,6 +15,7 @@ import commonStyles from "@/app/(auxiliary)/components/Blocks/HorizontalScroll/H
 import FilePreviewWithHandlers
     from "@/app/(auxiliary)/components/Blocks/FormBlock/CoupleOfInputs/CurrentInput/FileInput/FilesList/File/FilePreviewWithHandlers";
 import ButtonText from "@/app/(auxiliary)/components/UI/TextTemplates/ButtonText";
+import {selectUserDevice} from "@/app/(auxiliary)/libs/redux-toolkit/store/slices/AppSlice/AppSlice";
 
 interface PropsType {
     placeholder: string;
@@ -27,6 +28,7 @@ const FileList: FC<PropsType> = ({
                                  }) => {
     const dispatch = useAppDispatch()
     const formFileData = useAppSelector(selectFormFileData)[type]
+    const userDevice = useAppSelector(selectUserDevice)
 
     const removeFile = (
         fileName: string,
@@ -40,8 +42,10 @@ const FileList: FC<PropsType> = ({
     }
 
     const openFile = (fileName: string) => {
-        dispatch(setCurrentOpenedFileName({fileName}))
-        dispatch(changePopupVisibility({type}))
+        if (!userDevice.phoneAdaptive) {
+            dispatch(setCurrentOpenedFileName({fileName}))
+            dispatch(changePopupVisibility({type}))
+        }
     }
 
     if (formFileData.files.length) {
