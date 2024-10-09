@@ -8,6 +8,7 @@ interface InitialStateType {
     blocksMoving: BlocksMovingType;
     // editorState: EditorStateType;
     rootPageContent: RootPageContentType;
+    // microphoneStatus: P
 }
 
 const initialState: InitialStateType = {
@@ -27,6 +28,7 @@ const initialState: InitialStateType = {
     //     currentFileName: ""
     // },
     rootPageContent: {} as RootPageContentType,
+    // microphoneStatus:
 }
 
 export const appSlice = createAppSlice({

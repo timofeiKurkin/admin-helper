@@ -20,8 +20,6 @@ import {determineOrientation} from "@/app/(auxiliary)/func/editorHandlers";
 import {selectUserDevice} from "@/app/(auxiliary)/libs/redux-toolkit/store/slices/AppSlice/AppSlice";
 import MobileDropZone from "@/app/(auxiliary)/components/Blocks/FormBlock/DropZone/MobileDropZone/MobileDropZone";
 import DesktopDropZone from "@/app/(auxiliary)/components/Blocks/FormBlock/DropZone/DesktopDropZone/DesktopDropZone";
-import {Simulate} from "react-dom/test-utils";
-import drag = Simulate.drag;
 
 
 interface PropsType {

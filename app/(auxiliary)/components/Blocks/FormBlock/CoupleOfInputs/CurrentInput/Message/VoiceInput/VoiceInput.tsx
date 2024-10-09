@@ -13,6 +13,8 @@ import {
 import {MESSAGE_KEY} from "@/app/(auxiliary)/types/AppTypes/InputHooksTypes";
 import {formattedTime} from "@/app/(auxiliary)/func/formattedTime";
 import styles from "./AudioPlayer.module.scss";
+import AllowToUseMicrophone
+    from "@/app/(auxiliary)/components/Blocks/FormBlock/CoupleOfInputs/CurrentInput/Message/VoiceInput/AllowToUseMicrophone";
 
 interface PropsType {
     voicePlaceHolder?: string;
@@ -32,6 +34,7 @@ const VoiceInput: FC<PropsType> = ({
         useState(false)
     const [recordingIsDone, setRecordingIsDone] =
         useState<boolean>(voiceMessage.value instanceof File)
+    const [microphonePermission, setMicrophonePermission] = useState<PermissionState>()
 
     const [audioBlob, setAudioBlob] =
         useState<Blob | null>(() => {
@@ -49,12 +52,12 @@ const VoiceInput: FC<PropsType> = ({
     const audioChunksRef = useRef<Blob[]>([])
 
     const startRecording = async () => {
-        setIsRecording(true)
+        setIsRecording((prevState) => !prevState)
         audioChunksRef.current = []
         /**
          * Доступ к микрофону пользователя
          */
-        const stream = await navigator.mediaDevices.getUserMedia({audio: true})
+        const stream = await navigator.mediaDevices.getUserMedia({audio: true, video: false})
         mediaRecorderRef.current = new MediaRecorder(stream)
 
         mediaRecorderRef.current.ondataavailable = (event) => {
@@ -111,25 +114,49 @@ const VoiceInput: FC<PropsType> = ({
         serverResponse
     ]);
 
+    useEffect(() => {
+        navigator.permissions.query({name: "microphone" as PermissionName}).then((permissions) => {
+            // The permissions.state can be 'granted', 'denied', or 'prompt'
+            // You can control the permission to use user's microphone
+            setMicrophonePermission(permissions.state)
+
+            permissions.onchange = (ev) => {
+                console.log("new perm?:", permissions.state)
+                console.log("ev of the arg:", ev)
+                setMicrophonePermission(permissions.state)
+            }
+        })
+    }, []);
+
+    console.log("microphonePermission: ", microphonePermission)
+
     return (
-        <div className={styles.voiceInputWrapper}>
-            {(audioBlob && recordingIsDone) ? (
-                <ReadyVoice audioBlob={audioBlob}
-                            removeCurrentRecord={deleteCurrentRecord}/>
-            ) : (
-                <Button onClick={isRecording ? () => stopRecording() : () => startRecording()}
-                        style={{
-                            backgroundColor: isRecording ? blue_light : blue_dark
-                        }}
-                        image={{
-                            position: "left",
-                            children: <Microphone/>,
-                            visibleOnlyImage: false
-                        }}>
-                    {isRecording ? "Говорите" : voicePlaceHolder}
-                </Button>
-            )}
-        </div>
+        <>
+            <div className={styles.voiceInputWrapper}>
+                {(audioBlob && recordingIsDone) ? (
+                    <ReadyVoice audioBlob={audioBlob}
+                                removeCurrentRecord={deleteCurrentRecord}/>
+                ) : (
+                    <Button onClick={isRecording ? () => stopRecording() : () => startRecording()}
+                            style={{
+                                backgroundColor: isRecording ? blue_light : blue_dark
+                            }}
+                            image={{
+                                position: "left",
+                                children: <Microphone/>,
+                                visibleOnlyImage: false
+                            }}>
+                        {isRecording ? "Говорите" : voicePlaceHolder}
+                    </Button>
+                )}
+            </div>
+
+            {isRecording && microphonePermission === "prompt" ? (
+                <AllowToUseMicrophone isRecording={isRecording}
+                                  microphonePermission={microphonePermission}
+                                  stopRecording={stopRecording}/>
+            ) : null}
+        </>
     )
 };
 
