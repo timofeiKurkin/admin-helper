@@ -38,6 +38,13 @@ const ComputerNumberInput: FC<PropsType> = ({
         if (e.target.value.length >= 6) {
             computerNumber += "-" + e.target.value.slice(6, 9);
         }
+        if (e.target.value.length > 9) {
+            computerNumber += " " + e.target.value.slice(9, 10)
+        }
+        if (e.target.value.length > 9) {
+            const regularTen = new RegExp(/(\d)(\d{3})(\d{3})(\d{3})/)
+            computerNumber = e.target.value.replace(regularTen, "$1 $2-$3-$4")
+        }
 
         e.target.value = computerNumber
 
@@ -64,6 +71,7 @@ const ComputerNumberInput: FC<PropsType> = ({
                    placeholder={placeholder}
                    maxLength={inputValidations[NUMBER_PC_KEY].maxLength}
                    tabIndex={1}
+                   type={"tel"}
                    onBlur={value.onBlur}
                    onKeyDown={(e) => inputHandleKeyDown(e, value)}
                    onChange={numberPcHandler}

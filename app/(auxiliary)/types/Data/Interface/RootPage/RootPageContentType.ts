@@ -92,8 +92,8 @@ export interface InputHelpfulItemType {
 
 // Upload File Type
 export interface ContentOfUploadBlockType extends Button {
-    uploadPhoto: string;
-    uploadVideo: string;
+    photo: string;
+    video: string;
     isDragContent: string;
     image: {
         static: string;

@@ -4,8 +4,6 @@ import {InputChangeEventHandler} from "@/app/(auxiliary)/types/AppTypes/AppTypes
 import borderStyles from "./InputBorder.module.scss";
 import inputStyles from "./Input.module.scss";
 import fontStyles from "@/styles/fonts.module.scss";
-// import {useAppSelector} from "@/app/(auxiliary)/libs/redux-toolkit/store/hooks";
-// import {selectUserDevice} from "@/app/(auxiliary)/libs/redux-toolkit/store/slices/AppSlice/AppSlice";
 
 
 const Input: FC<InputPropsType<InputChangeEventHandler>> = ({

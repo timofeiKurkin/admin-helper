@@ -11,6 +11,13 @@
 	left: 0;
 	z-index: 4;
 
+	@media screen and ($phone375_639) {
+		width: 0;
+		height: 0;
+		display: none;
+		z-index: -99;
+	}
+
 	.dropZoneContentWrapper {
 		position: absolute;
 		width: inherit;
@@ -49,9 +56,9 @@
 		}
 	}
 
-	.createVideoPreview {
-		position: absolute;
-		z-index: -99;
-		display: none;
-	}
+	//.createVideoPreview {
+	//	position: absolute;
+	//	z-index: -99;
+	//	display: none;
+	//}
 }

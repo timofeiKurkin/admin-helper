@@ -44,7 +44,7 @@ export const inputValidations: { [key: string]: ValidationsType } = {
     },
     [NUMBER_PC_KEY]: {
         isEmpty: true,
-        maxLength: 11,
+        maxLength: 13,
         minLength: 11
     },
 }

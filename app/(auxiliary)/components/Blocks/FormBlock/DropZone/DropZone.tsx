@@ -1,13 +1,7 @@
-import React, {FC, useCallback, useEffect, useRef, useState} from "react";
+import React, {FC, useCallback, useEffect} from "react";
 import {FileListType} from "@/app/(auxiliary)/types/DropZoneTypes/DropZoneTypes";
 import {FileError, useDropzone} from "react-dropzone";
 import {PHOTO_KEY, PhotoAndVideoKeysTypes, VIDEO_KEY} from "@/app/(auxiliary)/types/AppTypes/InputHooksTypes";
-import styles from "./DropZone.module.scss"
-import Button from "@/app/(auxiliary)/components/UI/Button/Button";
-import {ContentOfUploadBlockType} from "@/app/(auxiliary)/types/Data/Interface/RootPage/RootPageContentType";
-import {white_1} from "@/styles/colors";
-import Title from "@/app/(auxiliary)/components/UI/TextTemplates/Title";
-import UploadFile from "@/app/(auxiliary)/components/UI/SVG/UploadFile/UploadFile";
 import {formattedTime} from "@/app/(auxiliary)/func/formattedTime";
 import {useAppDispatch, useAppSelector} from "@/app/(auxiliary)/libs/redux-toolkit/store/hooks";
 import {
@@ -24,30 +18,25 @@ import {
 import {defaultPhotoSettings} from "@/app/(auxiliary)/types/PopupTypes/PopupTypes";
 import {acceptSettings} from "@/app/(auxiliary)/components/Blocks/FormBlock/DropZone/possibleFileExtensions";
 import {determineOrientation} from "@/app/(auxiliary)/func/editorHandlers";
-import PopupScroll from "@/app/(auxiliary)/components/Common/Popups/PopupsWrapper/PopupScroll/PopupScroll";
 import {selectUserDevice} from "@/app/(auxiliary)/libs/redux-toolkit/store/slices/AppSlice/AppSlice";
+import MobileDropZone from "@/app/(auxiliary)/components/Blocks/FormBlock/DropZone/MobileDropZone/MobileDropZone";
+import DesktopDropZone from "@/app/(auxiliary)/components/Blocks/FormBlock/DropZone/DesktopDropZone/DesktopDropZone";
 
 
 interface PropsType {
-    content: ContentOfUploadBlockType;
     inputType: PhotoAndVideoKeysTypes;
     visibleDragDropZone: () => void;
+    dragDropZoneIsOpen: boolean;
 }
 
 const DropZone: FC<PropsType> = ({
-                                     content,
                                      inputType,
                                      visibleDragDropZone,
+                                     dragDropZoneIsOpen
                                  }) => {
     const dispatch = useAppDispatch()
     const formFileData = useAppSelector(selectFormFileData)[inputType]
     const userDevice = useAppSelector(selectUserDevice)
-
-    const [uploadingFilesStatus, setUploadingFilesStatus] =
-        useState<boolean>(false)
-
-    const videoRef = useRef<HTMLVideoElement>(null)
-    const canvasRef = useRef<HTMLCanvasElement>(null)
 
     const createPhotoPreviews = useCallback((newFiles: File[]) => {
         newFiles.forEach((file) => {
@@ -198,118 +187,29 @@ const DropZone: FC<PropsType> = ({
         // fileRejections,
         getRootProps,
         getInputProps,
-        isDragActive
+        isDragActive,
+        inputRef
     } = useDropzone({
         validator: fileValidator,
         onDrop,
         accept: acceptSettings[inputType],
-        maxFiles: 10,
-        disabled: uploadingFilesStatus
+        maxFiles: 8,
     })
 
     useEffect(() => {
-        if (inputType === PHOTO_KEY) {
-            const handleKeyDown = async () => {
-                try {
-                    const data = await navigator.clipboard.read()
-
-                    if (data[0].types.includes("image/png")) {
-                        const blobOutput = await data[0].getType("image/png")
-                        const pastedImageName = `pasted-image-${formattedTime()}`
-                        const newFile = new File([blobOutput], pastedImageName)
-
-                        dispatch(addFileData({
-                            key: inputType,
-                            data: {
-                                validationStatus: true,
-                                value: [newFile] // If state is of files
-                            }
-                        }))
-                        dispatch(changePhotoSettings({
-                            ...defaultPhotoSettings,
-                            name: newFile.name
-                        }))
-
-                        createPhotoPreviews([newFile])
-
-                        visibleDragDropZone()
-                        if (!userDevice.phoneAdaptive) {
-                            dispatch(setCurrentOpenedFileName({
-                                fileName: newFile.name
-                            }))
-                            dispatch(changePopupVisibility({type: PHOTO_KEY}))
-                        }
-                    }
-                } catch (e) {
-                    console.error("Error with paste a clipboard: ", e)
-                }
-            }
-
-            window.addEventListener("paste", handleKeyDown)
-
-            return () => {
-                window.removeEventListener("paste", handleKeyDown)
-            }
+        if (inputRef.current) {
+            inputRef.current.click()
         }
-    }, [
-        createPhotoPreviews,
-        dispatch,
-        inputType,
-        userDevice.phoneAdaptive,
-        visibleDragDropZone
-    ])
+    }, [dragDropZoneIsOpen, inputRef]);
 
-    return (
-        <PopupScroll>
-            <div className={styles.dropZoneWrapper}>
-
-                <div className={styles.createVideoPreview}>
-                    <video ref={videoRef}></video>
-                    <canvas ref={canvasRef}></canvas>
-                </div>
-
-                <div {...getRootProps({
-                    style: {
-                        width: "inherit",
-                        height: "inherit",
-                        userSelect: "none",
-                        cursor: uploadingFilesStatus ? "default" : "pointer"
-                    }
-                })}>
-                    <input {...getInputProps({})}
-                           className={styles.dropInput}/>
-
-                    <div className={styles.dropZoneContentWrapper}>
-                        <div className={styles.dropZoneContent}>
-                            <UploadFile animationStatus={isDragActive}/>
-
-                            {
-                                isDragActive ? (
-                                    <div className={styles.dropZoneText}>
-                                        <Title>{content.isDragContent}</Title>
-                                    </div>
-                                ) : (
-                                    <>
-                                        <div className={styles.dropZoneText}>
-                                            <Title>{inputType === "photo" ? content.uploadPhoto : content.uploadVideo}</Title>
-                                        </div>
-
-                                        <div className={styles.closeDropZone}
-                                             onClick={(e) => e.stopPropagation()}>
-                                            <Button onClick={visibleDragDropZone}
-                                                    style={{
-                                                        backgroundColor: white_1
-                                                    }}>{content.button}</Button>
-                                        </div>
-                                    </>
-                                )
-                            }
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </PopupScroll>
-    );
+    if (userDevice.phoneAdaptive) {
+        return <MobileDropZone getInputProps={getInputProps}/>
+    } else {
+        return <DesktopDropZone inputProps={{getInputProps, getRootProps}}
+                                type={inputType}
+                                isDragActive={isDragActive}
+                                visibleDragDropZone={visibleDragDropZone}/>
+    }
 };
 
 export default DropZone;
