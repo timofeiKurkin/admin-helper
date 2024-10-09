@@ -22,8 +22,8 @@ $desktop1920: '(min-width: 1920px)';
 // Backgrounds
 $background: radial-gradient(188.48% 111.8% at 100% 100%, #D0F0FF 0%, $white 80.36%);
 .background {
-	width: 100%;
-	height: 100%;
+	width: 100dvw;
+	height: 100dvh;
 	background: $background;
 	position: fixed;
 	top: 0;

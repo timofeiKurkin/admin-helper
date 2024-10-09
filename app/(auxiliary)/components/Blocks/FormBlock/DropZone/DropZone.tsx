@@ -2,7 +2,6 @@ import React, {FC, useCallback, useEffect} from "react";
 import {FileListType} from "@/app/(auxiliary)/types/DropZoneTypes/DropZoneTypes";
 import {FileError, useDropzone} from "react-dropzone";
 import {PHOTO_KEY, PhotoAndVideoKeysTypes, VIDEO_KEY} from "@/app/(auxiliary)/types/AppTypes/InputHooksTypes";
-import {formattedTime} from "@/app/(auxiliary)/func/formattedTime";
 import {useAppDispatch, useAppSelector} from "@/app/(auxiliary)/libs/redux-toolkit/store/hooks";
 import {
     addFileData,
@@ -21,6 +20,8 @@ import {determineOrientation} from "@/app/(auxiliary)/func/editorHandlers";
 import {selectUserDevice} from "@/app/(auxiliary)/libs/redux-toolkit/store/slices/AppSlice/AppSlice";
 import MobileDropZone from "@/app/(auxiliary)/components/Blocks/FormBlock/DropZone/MobileDropZone/MobileDropZone";
 import DesktopDropZone from "@/app/(auxiliary)/components/Blocks/FormBlock/DropZone/DesktopDropZone/DesktopDropZone";
+import {Simulate} from "react-dom/test-utils";
+import drag = Simulate.drag;
 
 
 interface PropsType {
@@ -39,12 +40,10 @@ const DropZone: FC<PropsType> = ({
     const userDevice = useAppSelector(selectUserDevice)
 
     const createPhotoPreviews = useCallback((newFiles: File[]) => {
-        newFiles.forEach((file) => {
-            dispatch(changePreview({
-                key: inputType,
-                data: file
-            }))
-        })
+        dispatch(changePreview({
+            key: inputType,
+            data: newFiles
+        }))
     }, [
         dispatch,
         inputType
@@ -120,8 +119,7 @@ const DropZone: FC<PropsType> = ({
 
     const onDrop = useCallback((userFiles: FileListType) => {
         if (inputType) {
-            const filteredFiles =
-                userFiles.filter((file) => !formFileData.files.includes(file))
+            const filteredFiles = userFiles.filter((file) => !formFileData.files.includes(file))
 
             if (filteredFiles.length) {
                 dispatch(addFileData({
@@ -159,7 +157,6 @@ const DropZone: FC<PropsType> = ({
                 }
             }
         }
-
     }, [
         dispatch,
         inputType,
@@ -176,7 +173,7 @@ const DropZone: FC<PropsType> = ({
     const fileValidator = (
         file: File
     ): FileError | FileError[] | null | any => {
-        if (formFileData.files.filter((f) => f.name === file.name).length) {
+        if (formFileData.files.filter((prevFile) => prevFile.name === file.name).length) {
             return {}
         }
 
@@ -184,7 +181,6 @@ const DropZone: FC<PropsType> = ({
     }
 
     const {
-        // fileRejections,
         getRootProps,
         getInputProps,
         isDragActive,
@@ -193,22 +189,19 @@ const DropZone: FC<PropsType> = ({
         validator: fileValidator,
         onDrop,
         accept: acceptSettings[inputType],
-        maxFiles: 8,
+        maxFiles: 8
     })
 
-    useEffect(() => {
-        if (inputRef.current) {
-            inputRef.current.click()
-        }
-    }, [dragDropZoneIsOpen, inputRef]);
-
     if (userDevice.phoneAdaptive) {
-        return <MobileDropZone getInputProps={getInputProps}/>
+        return <MobileDropZone getInputProps={getInputProps}
+                               dragDropZoneIsOpen={dragDropZoneIsOpen}
+                               inputRef={inputRef}/>
     } else {
         return <DesktopDropZone inputProps={{getInputProps, getRootProps}}
                                 type={inputType}
                                 isDragActive={isDragActive}
-                                visibleDragDropZone={visibleDragDropZone}/>
+                                visibleDragDropZone={visibleDragDropZone}
+                                createPhotoPreviews={createPhotoPreviews}/>
     }
 };
 

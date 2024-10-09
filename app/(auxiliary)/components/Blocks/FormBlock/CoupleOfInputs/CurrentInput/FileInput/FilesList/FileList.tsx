@@ -71,7 +71,6 @@ const FileList: FC<PropsType> = ({
                     </div>
                 </div>
             </div>
-
         )
     }
 };
