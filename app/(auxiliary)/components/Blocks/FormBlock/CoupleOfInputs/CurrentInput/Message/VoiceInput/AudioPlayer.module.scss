@@ -51,3 +51,15 @@
 		width: 14.75rem;
 	}
 }
+
+.recordingButton {
+	border: 2px solid $blue_light;
+	background-color: $white;
+
+	path {
+		fill: $black;
+	}
+	p {
+		color: $black
+	}
+}

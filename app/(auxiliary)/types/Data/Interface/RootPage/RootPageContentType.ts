@@ -77,6 +77,7 @@ export type AllTypesOfInputs = (DeviceInputType & MessageInputType | PhotoAndVid
 // Data for inputs
 export interface MessageType {
     inputPlaceholder: string;
+    recordingPlaceholder?: string
 }
 
 export interface Button {

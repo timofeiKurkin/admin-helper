@@ -3,27 +3,29 @@
 import React, {FC, useEffect, useRef, useState} from "react";
 import Button from "@/app/(auxiliary)/components/UI/Button/Button";
 import Microphone from "@/app/(auxiliary)/components/UI/SVG/Microphone/Microphone";
-import {blue_dark, blue_light} from "@/styles/colors";
 import ReadyVoice
     from "@/app/(auxiliary)/components/Blocks/FormBlock/CoupleOfInputs/CurrentInput/Message/VoiceInput/ReadyVoice";
 import {useAppSelector} from "@/app/(auxiliary)/libs/redux-toolkit/store/hooks";
 import {
-    selectFormFileData, selectServerResponse
+    selectFormFileData,
+    selectServerResponse
 } from "@/app/(auxiliary)/libs/redux-toolkit/store/slices/UserFormDataSlice/UserFormDataSlice";
 import {MESSAGE_KEY} from "@/app/(auxiliary)/types/AppTypes/InputHooksTypes";
 import {formattedTime} from "@/app/(auxiliary)/func/formattedTime";
 import styles from "./AudioPlayer.module.scss";
 import AllowToUseMicrophone
     from "@/app/(auxiliary)/components/Blocks/FormBlock/CoupleOfInputs/CurrentInput/Message/VoiceInput/AllowToUseMicrophone";
+import {MessageType} from "@/app/(auxiliary)/types/Data/Interface/RootPage/RootPageContentType";
+import {blue_light, white} from "@/styles/colors";
 
 interface PropsType {
-    voicePlaceHolder?: string;
+    voicePlaceholder?: MessageType;
     setNewMessage: (newMessage: File, validationStatus: boolean) => void;
     removeRecoder: () => void;
 }
 
 const VoiceInput: FC<PropsType> = ({
-                                       voicePlaceHolder,
+                                       voicePlaceholder,
                                        setNewMessage,
                                        removeRecoder
                                    }) => {
@@ -35,6 +37,7 @@ const VoiceInput: FC<PropsType> = ({
     const [recordingIsDone, setRecordingIsDone] =
         useState<boolean>(voiceMessage.value instanceof File)
     const [microphonePermission, setMicrophonePermission] = useState<PermissionState>()
+    const [noMicrophone, setNoMicrophone] = useState<boolean>(false)
 
     const [audioBlob, setAudioBlob] =
         useState<Blob | null>(() => {
@@ -50,14 +53,63 @@ const VoiceInput: FC<PropsType> = ({
 
     const mediaRecorderRef = useRef<MediaRecorder | null>(null)
     const audioChunksRef = useRef<Blob[]>([])
+    const recordingButtonRef = useRef<HTMLButtonElement | null>(null)
 
     const startRecording = async () => {
+        if (noMicrophone) return
+
         setIsRecording((prevState) => !prevState)
         audioChunksRef.current = []
         /**
          * Доступ к микрофону пользователя
          */
-        const stream = await navigator.mediaDevices.getUserMedia({audio: true, video: false})
+        const stream = await navigator.mediaDevices.getUserMedia({
+            audio: true,
+            video: false
+        })
+
+        /**
+         * Реализация реагирования кнопки записи голосового сообщения на громкость звука
+         * Создание аудио контекста и анализа аудио в реальном времени
+         */
+        const audioContext = new AudioContext()
+        const source = audioContext.createMediaStreamSource(stream)
+        const analyser = audioContext.createAnalyser() // Получение звука в реальном времени
+        let recordingStatus = true
+
+        /**
+         * Определяет сглаживание данных частотного диапазона между вызовами метода getByteFrequencyData(). Значение ближе к 1 даст плавный переход, а к 0 - резкий.
+         */
+        analyser.smoothingTimeConstant = .3
+        /**
+         * Параметр задает размер Fast Fourier Transform (FFT), который используется для анализа частотной составляющей сигнала. Большее значение даст более точное значение о частотах.
+         */
+        analyser.fftSize = 1024
+        const dataArray = new Uint8Array(analyser.frequencyBinCount)
+        source.connect(analyser)
+        // source.disconnect()
+
+        const analyzeVolume = () => {
+            analyser.getByteFrequencyData(dataArray)
+
+            const sum = dataArray.reduce((a, b) => a + b, 0)
+            const averageVolume = sum / dataArray.length // Средний уровень громкости
+
+            // Изменяем фон кнопки в зависимости от громкости (пример с градиентом)
+            const intensity = Math.min(Math.max(averageVolume / 255, 0), 1) // Интенсивность от 0 до 1
+            const gradientPosition = 100 - (intensity * 100) // Процент градиента
+
+            if (recordingButtonRef.current) {
+                // recordingButtonRef.current.style.transform = `scale(${newScale})`
+                recordingButtonRef.current.style.background = `radial-gradient(circle, rgba(38,167,227,1) 0%, rgba(255,255,255, 1) ${gradientPosition}%)`
+            }
+
+            if (recordingStatus) {
+                requestAnimationFrame(analyzeVolume)
+            }
+        }
+        requestAnimationFrame(analyzeVolume)
+
         mediaRecorderRef.current = new MediaRecorder(stream)
 
         mediaRecorderRef.current.ondataavailable = (event) => {
@@ -85,6 +137,8 @@ const VoiceInput: FC<PropsType> = ({
              * Отключение всех дорожек и, соответственно, использование микрофона
              */
             stream.getTracks().forEach(track => track.stop());
+            recordingStatus = false
+            audioContext.close()
         };
 
         mediaRecorderRef.current.start();
@@ -115,20 +169,29 @@ const VoiceInput: FC<PropsType> = ({
     ]);
 
     useEffect(() => {
-        navigator.permissions.query({name: "microphone" as PermissionName}).then((permissions) => {
-            // The permissions.state can be 'granted', 'denied', or 'prompt'
-            // You can control the permission to use user's microphone
-            setMicrophonePermission(permissions.state)
+        /**
+         * Проверка, что в устройстве есть микрофон и доступ к нему
+         */
+        if (!(navigator.mediaDevices && navigator.mediaDevices.getUserMedia)) {
+            setNoMicrophone((prevState) => !prevState)
+        }
 
-            permissions.onchange = (ev) => {
-                console.log("new perm?:", permissions.state)
-                console.log("ev of the arg:", ev)
+        if (navigator.permissions) {
+            navigator.permissions.query({name: "microphone" as PermissionName}).then((permissions) => {
+                // The permissions.state can be 'granted', 'denied', or 'prompt'
+                // You can control the permission to use user's microphone
                 setMicrophonePermission(permissions.state)
-            }
-        })
-    }, []);
 
-    console.log("microphonePermission: ", microphonePermission)
+                permissions.onchange = () => {
+                    setMicrophonePermission(permissions.state)
+                }
+            }).catch(() => {
+                console.warn("Microphone permission query is not supported in this browser.")
+            })
+        } else {
+            console.warn("Permissions API is not available in this browser")
+        }
+    }, []);
 
     return (
         <>
@@ -138,23 +201,23 @@ const VoiceInput: FC<PropsType> = ({
                                 removeCurrentRecord={deleteCurrentRecord}/>
                 ) : (
                     <Button onClick={isRecording ? () => stopRecording() : () => startRecording()}
-                            style={{
-                                backgroundColor: isRecording ? blue_light : blue_dark
-                            }}
+                            buttonRef={recordingButtonRef}
+                            className={isRecording ? styles.recordingButton : ""}
+                        // style={}
                             image={{
                                 position: "left",
                                 children: <Microphone/>,
                                 visibleOnlyImage: false
                             }}>
-                        {isRecording ? "Говорите" : voicePlaceHolder}
+                        {isRecording ? voicePlaceholder?.recordingPlaceholder : voicePlaceholder?.inputPlaceholder}
                     </Button>
                 )}
             </div>
 
             {isRecording && microphonePermission === "prompt" ? (
                 <AllowToUseMicrophone isRecording={isRecording}
-                                  microphonePermission={microphonePermission}
-                                  stopRecording={stopRecording}/>
+                                      microphonePermission={microphonePermission}
+                                      stopRecording={stopRecording}/>
             ) : null}
         </>
     )

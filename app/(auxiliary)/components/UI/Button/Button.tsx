@@ -15,6 +15,8 @@ interface PropsType {
         visibleOnlyImage: boolean;
         children: React.ReactNode;
     }
+    buttonRef?: React.RefObject<HTMLButtonElement>;
+    className?: string;
 }
 
 const Button: FC<PropsType> = ({
@@ -24,11 +26,14 @@ const Button: FC<PropsType> = ({
                                    tabIndex,
                                    onClick,
                                    style,
-                                   image = {}
+                                   image = {},
+                                   buttonRef,
+                                   className
                                }) => {
     return (
         <button type={type}
-                className={styles.button}
+                ref={buttonRef}
+                className={`${styles.button} ${className}`}
                 style={{
                     flexDirection: image?.position === "left" ? "row-reverse" : "row",
                     columnGap: image && !image.visibleOnlyImage ? "0.75rem" : 0,
