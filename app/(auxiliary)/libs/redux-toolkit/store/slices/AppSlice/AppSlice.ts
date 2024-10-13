@@ -2,6 +2,7 @@ import {createAppSlice} from "@/app/(auxiliary)/libs/redux-toolkit/store/createA
 import {RootPageContentType} from "@/app/(auxiliary)/types/Data/Interface/RootPage/RootPageContentType";
 import {PayloadAction} from "@reduxjs/toolkit";
 import {BlocksMovingType, UserDeviceStateType} from "@/app/(auxiliary)/types/AppTypes/Context";
+import { DeleteNotificationType, NotificationListType, SetNotificationType } from "@/app/(auxiliary)/types/AppTypes/Notification";
 
 interface InitialStateType {
     userDevice: UserDeviceStateType;
@@ -9,6 +10,7 @@ interface InitialStateType {
     // editorState: EditorStateType;
     rootPageContent: RootPageContentType;
     // microphoneStatus: P
+    notificationList: NotificationListType;
 }
 
 const initialState: InitialStateType = {
@@ -28,6 +30,7 @@ const initialState: InitialStateType = {
     //     currentFileName: ""
     // },
     rootPageContent: {} as RootPageContentType,
+    notificationList: []
     // microphoneStatus:
 }
 
@@ -104,12 +107,37 @@ export const appSlice = createAppSlice({
             ) => {
                 state.blocksMoving.switchedMessageBlock = action.payload
             }
+        ),
+
+        setNewNotification: create.reducer(
+            (state, action: PayloadAction<SetNotificationType>) => {
+                const existingNotification = state.notificationList.findIndex((notice) => notice.message === action.payload.message)
+                
+                if(existingNotification !== -1) {
+                    state.notificationList[existingNotification] = {
+                        ...state.notificationList[existingNotification],
+                        timeout: state.notificationList[existingNotification].timeout + 10000
+                    }
+                } else {
+                    state.notificationList.push({
+                        id: crypto.randomUUID(),
+                        message: action.payload.message,
+                        timeout: 5000
+                    })
+                }
+            }
+        ),
+        deleteNotification: create.reducer(
+            (state, action: PayloadAction<DeleteNotificationType>) => {
+                state.notificationList = state.notificationList.filter((notice) => notice.id !== action.payload.id)
+            }
         )
     }),
     selectors: {
-        selectRootPageContent: (sel) => sel.rootPageContent,
-        selectUserDevice: (sel) => sel.userDevice,
-        selectBlocksMoving: (sel) => sel.blocksMoving,
+        selectRootPageContent: (state) => state.rootPageContent,
+        selectUserDevice: (state) => state.userDevice,
+        selectBlocksMoving: (state) => state.blocksMoving,
+        selectNotificationList: (state) => state.notificationList
     }
 })
 
@@ -118,11 +146,14 @@ export const {
     setUserDevice,
     setOpenedPhotoBlock,
     setOpenedVideoBlock,
-    setSwitchedMessageBlock
+    setSwitchedMessageBlock,
+    setNewNotification,
+    deleteNotification
 } = appSlice.actions
 
 export const {
     selectRootPageContent,
     selectUserDevice,
     selectBlocksMoving,
+    selectNotificationList
 } = appSlice.selectors

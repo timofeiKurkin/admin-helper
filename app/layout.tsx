@@ -8,6 +8,7 @@ import Background from "@/app/(auxiliary)/components/UI/Background/Background";
 import AppWrapper from "@/app/(auxiliary)/components/Common/AppWrapper/AppWrapper";
 import AppProvider from "@/app/(auxiliary)/libs/redux-toolkit/AppProvider";
 import ResetForm from "@/app/(auxiliary)/components/Blocks/RootBodyBlock/ResetForm/ResetForm";
+import NotificationBlock from "./(auxiliary)/components/Blocks/NotificationBlock/NotificationBlock";
 
 
 export const metadata: Metadata = {
@@ -32,6 +33,7 @@ export default function RootLayout({children}: Readonly<ChildrenType>) {
                                     {children}
                                 </main>
                             </div>
+                            <NotificationBlock/>
                         </div>
                     </ResetForm>
                 </AppWrapper>

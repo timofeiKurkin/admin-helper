@@ -65,7 +65,7 @@ const Message: FC<PropsType> = ({inputData}) => {
                 !userCannotTalk && (
                     <VoiceInput voicePlaceholder={inputData.voiceMessage}
                                 setNewMessage={setNewMessageHandler}
-                                removeRecoder={removerRecorderHandler}/>
+                                removeRecorder={removerRecorderHandler}/>
                 )
             }
 

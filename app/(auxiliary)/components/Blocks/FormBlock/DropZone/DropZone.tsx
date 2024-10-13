@@ -17,7 +17,7 @@ import {
 import {defaultPhotoSettings} from "@/app/(auxiliary)/types/PopupTypes/PopupTypes";
 import {acceptSettings} from "@/app/(auxiliary)/components/Blocks/FormBlock/DropZone/possibleFileExtensions";
 import {determineOrientation} from "@/app/(auxiliary)/func/editorHandlers";
-import {selectUserDevice} from "@/app/(auxiliary)/libs/redux-toolkit/store/slices/AppSlice/AppSlice";
+import {selectUserDevice, setNewNotification} from "@/app/(auxiliary)/libs/redux-toolkit/store/slices/AppSlice/AppSlice";
 import MobileDropZone from "@/app/(auxiliary)/components/Blocks/FormBlock/DropZone/MobileDropZone/MobileDropZone";
 import DesktopDropZone from "@/app/(auxiliary)/components/Blocks/FormBlock/DropZone/DesktopDropZone/DesktopDropZone";
 
@@ -145,6 +145,7 @@ const DropZone: FC<PropsType> = ({
                     createPhotoPreviews(newFiles)
                 }
 
+                dispatch(setNewNotification({message: "Файлы были успешно загружены!"}))
                 visibleDragDropZone()
 
                 if (!userDevice.phoneAdaptive) {

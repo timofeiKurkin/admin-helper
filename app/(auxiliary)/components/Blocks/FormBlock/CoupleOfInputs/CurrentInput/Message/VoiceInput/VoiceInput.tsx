@@ -16,18 +16,17 @@ import styles from "./AudioPlayer.module.scss";
 import AllowToUseMicrophone
     from "@/app/(auxiliary)/components/Blocks/FormBlock/CoupleOfInputs/CurrentInput/Message/VoiceInput/AllowToUseMicrophone";
 import {MessageType} from "@/app/(auxiliary)/types/Data/Interface/RootPage/RootPageContentType";
-import {blue_light, white} from "@/styles/colors";
 
 interface PropsType {
     voicePlaceholder?: MessageType;
     setNewMessage: (newMessage: File, validationStatus: boolean) => void;
-    removeRecoder: () => void;
+    removeRecorder: () => void;
 }
 
 const VoiceInput: FC<PropsType> = ({
                                        voicePlaceholder,
                                        setNewMessage,
-                                       removeRecoder
+                                       removeRecorder
                                    }) => {
     const voiceMessage = useAppSelector(selectFormFileData)[MESSAGE_KEY]
     const serverResponse = useAppSelector(selectServerResponse).sentToServer
@@ -126,7 +125,7 @@ const VoiceInput: FC<PropsType> = ({
                     [blob],
                     `voice-record-${formattedTime()}`,
                     {
-                        type: "audio/mp3",
+                        type: "audio/wav",
                         lastModified: Date.now()
                     }
                 )
@@ -154,7 +153,7 @@ const VoiceInput: FC<PropsType> = ({
     }
 
     const deleteCurrentRecord = () => {
-        removeRecoder()
+        removeRecorder()
         setRecordingIsDone(false)
         setAudioBlob(null)
     }

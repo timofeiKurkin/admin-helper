@@ -3,9 +3,9 @@ import {$api} from "@/app/(auxiliary)/libs/axios";
 
 
 export default class HelpUserService {
-    static rootPage = "api/"
+    static rootPage = "help_request/"
 
     static async requestClassification(data: FormData): Promise<AxiosResponse<any>> {
-        return $api.post<any>(`${this.rootPage}users_requests_for_help`, data)
+        return $api.post<any>(`${this.rootPage}create_request/`, data)
     }
 }

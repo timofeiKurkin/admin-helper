@@ -1,6 +1,7 @@
 @import "@/styles/variables.module.scss";
 
 .titleAndBodyWrapper {
+    position: relative;
     display: grid;
     
     @media screen and ($desktop1920) {

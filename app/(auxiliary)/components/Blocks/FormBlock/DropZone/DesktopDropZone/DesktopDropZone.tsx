@@ -6,7 +6,7 @@ import Title from "@/app/(auxiliary)/components/UI/TextTemplates/Title";
 import Button from "@/app/(auxiliary)/components/UI/Button/Button";
 import {white_1} from "@/styles/colors";
 import {useAppDispatch, useAppSelector} from "@/app/(auxiliary)/libs/redux-toolkit/store/hooks";
-import {selectRootPageContent} from "@/app/(auxiliary)/libs/redux-toolkit/store/slices/AppSlice/AppSlice";
+import {selectRootPageContent, setNewNotification} from "@/app/(auxiliary)/libs/redux-toolkit/store/slices/AppSlice/AppSlice";
 import {PHOTO_KEY, PhotoAndVideoKeysTypes} from "@/app/(auxiliary)/types/AppTypes/InputHooksTypes";
 import {GetInputPropsType, GetRootPropsType} from "@/app/(auxiliary)/types/DropZoneTypes/DropZoneTypes";
 import {formattedTime} from "@/app/(auxiliary)/func/formattedTime";
@@ -71,6 +71,7 @@ const DesktopDropZone: FC<PropsType> = ({
                             fileName: newFile.name
                         }))
                         dispatch(changePopupVisibility({type: PHOTO_KEY}))
+                        dispatch(setNewNotification({message: "Файлы были успешно загружены!"}))
                     }
                 } catch (e) {
                     console.error("Error with paste a clipboard: ", e)
