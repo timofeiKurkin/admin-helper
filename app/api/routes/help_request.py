@@ -1,13 +1,13 @@
 import os
-from typing import Annotated, List, Optional
+from typing import Annotated
 from uuid import uuid4
 
 import ffmpeg
 from fastapi import APIRouter, Form, HTTPException, UploadFile
 from pydantic import BaseModel
-from telegram import Bot, InputFile, ReplyParameters
+from telegram import Bot, InputFile, InputMediaPhoto, ReplyParameters
 
-from app.core.config import settings
+from app.core.config import BASE_DIR, TEMPORARY_FOLDER, settings
 
 router = APIRouter()
 bot = Bot(settings.BOT_TOKEN)
@@ -67,7 +67,9 @@ class FormData(BaseModel):
 
 @router.post("/create_request")
 async def create_help_request(user_request: Annotated[FormData, Form()]):
-    temporary_folder = ""
+    if not os.path.exists(TEMPORARY_FOLDER):
+        os.makedirs(TEMPORARY_FOLDER)
+
     user_message = (
         f"\nСообщение пользователя: {user_request.message_text}"
         if user_request.message_text
@@ -85,13 +87,15 @@ async def create_help_request(user_request: Annotated[FormData, Form()]):
         + f"Проблемное устройство: {user_request.device} {user_message}"
     )
 
-    message = await bot.send_message(settings.GROUP_ID, text_message, parse_mode="HTML")
+    message = await bot.send_message(
+        settings.GROUP_ID, text_message, parse_mode="HTML", connect_timeout=100
+    )
     message_id = message.message_id
 
     if message_id:
         if not user_message and user_request.message_file:
-            input_filename = f"{uuid4()}.mp3"
-            output_filename = f"{uuid4()}.ogg"
+            input_filename = os.path.join(TEMPORARY_FOLDER, f"{uuid4()}.mp3")
+            output_filename = os.path.join(TEMPORARY_FOLDER, f"{uuid4()}.ogg")
 
             with open(input_filename, "wb") as f:
                 f.write(await user_request.message_file.read())
@@ -108,22 +112,37 @@ async def create_help_request(user_request: Annotated[FormData, Form()]):
                 os.remove(input_filename)
 
             with open(output_filename, "rb") as f:
-                data = f.read()
+                audio = f.read()
 
             await bot.send_voice(
                 chat_id=settings.GROUP_ID,
-                voice=InputFile(obj=data, filename=output_filename),
+                voice=InputFile(obj=audio, filename=output_filename),
                 reply_parameters=ReplyParameters(
                     message_id=message_id, chat_id=settings.GROUP_ID
                 ),
+                connect_timeout=100,
             )
+            os.remove(output_filename)
 
         if user_request.photo:
-            print("there're photos")
+            photos = [
+                InputMediaPhoto(
+                    media=await photo.read(),
+                    filename=photo.filename,
+                    caption=f"Фотография пользователя {photo.filename}",
+                )
+                for photo in user_request.photo
+            ]
+            await bot.send_media_group(
+                chat_id=settings.GROUP_ID,
+                media=photos,
+                reply_parameters=ReplyParameters(
+                    message_id=message_id, chat_id=settings.GROUP_ID
+                ),
+                connect_timeout=100,
+            )
 
         if user_request.video:
             print("there're videos")
 
-    os.remove(output_filename)
     return {"message_id": message_id}
-    # You can return a dict, list, singular values as str, int, etc.

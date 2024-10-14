@@ -1,5 +1,7 @@
-import secrets
-import warnings
+# import secrets
+# import warnings
+import os
+from pathlib import Path
 from typing import Annotated, Any, Literal
 
 from pydantic import AnyUrl, BeforeValidator, HttpUrl, computed_field
@@ -38,10 +40,10 @@ class Settings(BaseSettings):
 
     PROJECT_NAME: str
     SENTRY_DSN: HttpUrl | None = None
-    
+
     BOT_TOKEN: str
     GROUP_ID: str
-    
+
     # POSTGRES_SERVER: str
     # POSTGRES_PORT: int = 5432
     # POSTGRES_USER: str
@@ -60,5 +62,9 @@ class Settings(BaseSettings):
     #         path=self.POSTGRES_DB,
     #     )
 
+
+BASE_DIR: str = Path(__file__).resolve().parent.parent
+TEMPORARY_FOLDER: str = os.path.join(BASE_DIR, "api", "routes", "temporary_files")
+USER_REQUESTS: str = os.path.join(BASE_DIR, "api", "routes", "user_requests")
 
 settings = Settings()
