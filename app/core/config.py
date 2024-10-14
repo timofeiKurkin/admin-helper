@@ -2,7 +2,7 @@ import secrets
 import warnings
 from typing import Annotated, Any, Literal
 
-from pydantic import AnyUrl, BeforeValidator, HttpUrl, PostgresDsn, computed_field
+from pydantic import AnyUrl, BeforeValidator, HttpUrl, computed_field
 from pydantic_core import MultiHostUrl
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
@@ -38,6 +38,10 @@ class Settings(BaseSettings):
 
     PROJECT_NAME: str
     SENTRY_DSN: HttpUrl | None = None
+    
+    BOT_TOKEN: str
+    GROUP_ID: str
+    
     # POSTGRES_SERVER: str
     # POSTGRES_PORT: int = 5432
     # POSTGRES_USER: str
