@@ -1,9 +1,11 @@
+import io
 import os
-from typing import Annotated
+from typing import Annotated, BinaryIO
 from uuid import uuid4
 
 import ffmpeg
 from fastapi import APIRouter, Form, HTTPException, UploadFile
+from PIL import Image
 from pydantic import BaseModel
 from telegram import Bot, InputFile, InputMediaPhoto, ReplyParameters
 
@@ -63,6 +65,27 @@ class FormData(BaseModel):
     company: str
     phone_number: str
     number_pc: str
+
+
+def compress_image(
+    *,
+    file: BinaryIO,
+    filename: str,
+    quality: int = 85,
+) -> InputMediaPhoto:
+    image = Image.open(file)
+    if image.mode in ("RGBA", "P"):
+        image = image.convert("RGB")
+
+    buffer = io.BytesIO()
+    image.save(buffer, format="JPEG", optimize=True, quality=quality)
+    buffer.seek(0)
+
+    return InputMediaPhoto(
+        media=buffer,
+        filename=filename,
+        caption=f"Фотография пользователя {filename}",
+    )
 
 
 @router.post("/create_request")
@@ -125,15 +148,15 @@ async def create_help_request(user_request: Annotated[FormData, Form()]):
             os.remove(output_filename)
 
         if user_request.photo:
-            photos = [
-                InputMediaPhoto(
-                    media=await photo.read(),
-                    filename=photo.filename,
-                    caption=f"Фотография пользователя {photo.filename}",
+            photos = []
+
+            for photo in user_request.photo:
+                compressed_image = compress_image(
+                    file=photo.file, filename=photo.filename, quality=85
                 )
-                for photo in user_request.photo
-            ]
-            await bot.send_media_group(
+                photos.append(compressed_image)
+
+            response = await bot.send_media_group(
                 chat_id=settings.GROUP_ID,
                 media=photos,
                 reply_parameters=ReplyParameters(
@@ -141,6 +164,7 @@ async def create_help_request(user_request: Annotated[FormData, Form()]):
                 ),
                 connect_timeout=100,
             )
+            print(f"{response=}")
 
         if user_request.video:
             print("there're videos")

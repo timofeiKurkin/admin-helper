@@ -4,7 +4,7 @@ import os
 from pathlib import Path
 from typing import Annotated, Any, Literal
 
-from pydantic import AnyUrl, BeforeValidator, HttpUrl, computed_field
+from pydantic import AnyUrl, BeforeValidator, HttpUrl, PostgresDsn, computed_field
 from pydantic_core import MultiHostUrl
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
@@ -44,23 +44,26 @@ class Settings(BaseSettings):
     BOT_TOKEN: str
     GROUP_ID: str
 
-    # POSTGRES_SERVER: str
-    # POSTGRES_PORT: int = 5432
-    # POSTGRES_USER: str
-    # POSTGRES_PASSWORD: str = ""
-    # POSTGRES_DB: str = ""
+    POSTGRES_SERVER: str
+    POSTGRES_PORT: int = 5432
+    POSTGRES_USER: str
+    POSTGRES_PASSWORD: str = ""
+    POSTGRES_DB: str = ""
 
-    # @computed_field  # type: ignore[prop-decorator]
-    # @property
-    # def SQLALCHEMY_DATABASE_URI(self) -> PostgresDsn:
-    #     return MultiHostUrl.build(
-    #         scheme="postgresql+psycopg",
-    #         username=self.POSTGRES_USER,
-    #         password=self.POSTGRES_PASSWORD,
-    #         host=self.POSTGRES_SERVER,
-    #         port=self.POSTGRES_PORT,
-    #         path=self.POSTGRES_DB,
-    #     )
+    @computed_field  # type: ignore[prop-decorator]
+    @property
+    def SQLALCHEMY_DATABASE_URI(self) -> PostgresDsn:
+        return MultiHostUrl.build(
+            scheme="postgresql",
+            username=self.POSTGRES_USER,
+            password=self.POSTGRES_PASSWORD,
+            host=self.POSTGRES_SERVER,
+            port=self.POSTGRES_PORT,
+            path=self.POSTGRES_DB,
+        )
+
+    # FIRST_SUPERUSER: str
+    # FIRST_SUPERUSER_PASSWORD: str
 
 
 BASE_DIR: str = Path(__file__).resolve().parent.parent

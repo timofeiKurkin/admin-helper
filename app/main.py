@@ -1,5 +1,5 @@
 # import asyncio
-# from contextlib import asynccontextmanager
+from contextlib import asynccontextmanager
 
 import sentry_sdk
 
@@ -10,6 +10,7 @@ from starlette.middleware.cors import CORSMiddleware
 
 from app.api.main import api_router
 from app.core.config import settings
+from app.core.db import create_db_and_tables
 
 # from app.telegram_bot.bot import main as telegram_main
 
@@ -22,17 +23,18 @@ if settings.SENTRY_DSN and settings.ENVIRONMENT != "local":
     sentry_sdk.init(dsn=str(settings.SENTRY_DSN), enable_tracing=True)
 
 
-# @asynccontextmanager
-# async def lifespan(app: FastAPI):
-#     await telegram_main()
-#     yield
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    # await telegram_main()
+    create_db_and_tables()
+    yield
 
 
 app = FastAPI(
     title=settings.PROJECT_NAME,
     openapi_url=f"{settings.API_V1_STR}/openapi.json",
     generate_unique_id_function=custom_generate_unique_id,
-    # lifespan=lifespan,
+    lifespan=lifespan,
 )
 
 if settings.all_cors_origins:
