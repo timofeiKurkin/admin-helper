@@ -4,3 +4,4 @@ venv
 app/api/routes/temporary_files
 app/api/routes/user_requests
 .vscode
+alembic

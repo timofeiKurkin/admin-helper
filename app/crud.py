@@ -3,15 +3,56 @@ from typing import Any
 
 from sqlmodel import Session, select
 
-from app.models import RequestForHelp, User, UserBase
+from app.models import (
+    RequestForHelp,
+    RequestForHelpCreate,
+    RequestForHelpUpdate,
+    User,
+    UserCreate,
+)
 
 
-def create_user(*, session: Session, user_create: UserBase) -> User:
+def create_user(*, session: Session, user_create: UserCreate) -> User:
     new_user = User.model_validate(user_create)
-    return
+    session.add(new_user)
+    session.commit()
+    session.refresh(new_user)
+    return new_user
+
+
+def get_user_by_phone(*, session: Session, phone: str):
+    statement = select(User).where(User.phone == phone)
+    session_user = session.exec(statement=statement).first()
+    return session_user
+
+
+def user_exists(*, session: Session, phone: str) -> User | None:
+    db_user = get_user_by_phone(
+        session=session,
+    )
+    if not db_user:
+        return None
+    return db_user
 
 
 def create_request_for_help(
-    *, session: Session, request_in: Any, owner_id: uuid.UUID
+    *, session: Session, request_in: RequestForHelpCreate, user_id: uuid.UUID
 ) -> RequestForHelp:
-    pass
+    new_request_for_help = RequestForHelp.model_validate(
+        request_in, update={"user_id": user_id}
+    )
+    session.add(new_request_for_help)
+    session.commit()
+    session.refresh(new_request_for_help)
+    return new_request_for_help
+
+
+def update_request_for_help(
+    *, session: Session, db_request: RequestForHelp, request_in: RequestForHelpUpdate
+) -> RequestForHelp:
+    request_data = request_in.model_dump(exclude_unset=True)
+    db_request.sqlmodel_update(request_data)
+    session.add(db_request)
+    session.commit()
+    session.refresh(db_request)
+    return db_request

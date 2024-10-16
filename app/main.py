@@ -2,12 +2,12 @@
 from contextlib import asynccontextmanager
 
 import sentry_sdk
-
-# import uvicorn
 from fastapi import FastAPI
 from fastapi.routing import APIRoute
 from starlette.middleware.cors import CORSMiddleware
 
+from alembic import command
+from alembic.config import Config
 from app.api.main import api_router
 from app.core.config import settings
 from app.core.db import create_db_and_tables
@@ -27,7 +27,9 @@ if settings.SENTRY_DSN and settings.ENVIRONMENT != "local":
 async def lifespan(app: FastAPI):
     # await telegram_main()
     create_db_and_tables()
-    yield
+    alembic_cfg = Config("alembic.ini")
+    command.upgrade(alembic_cfg, "head")
+    yield  # Приложение продолжит работу после миграций
 
 
 app = FastAPI(
