@@ -56,3 +56,9 @@ def update_request_for_help(
     session.commit()
     session.refresh(db_request)
     return db_request
+
+
+def get_last_request_index(*, session: Session) -> int:
+    statement = select(RequestForHelp).order_by(RequestForHelp.id.desc()).limit(1)
+    last_request = session.exec(statement=statement).first()
+    return last_request.id if last_request else 1

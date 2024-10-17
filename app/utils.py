@@ -1,7 +1,9 @@
 import io
 from typing import BinaryIO
-from telegram import InputMediaPhoto
+
 from PIL import Image
+from telegram import InputMediaPhoto
+
 
 def compress_image(
     *,
@@ -22,3 +24,7 @@ def compress_image(
         filename=filename,
         caption=f"Фотография пользователя {filename}",
     )
+
+
+def save_image(*, image, path: str):
+    pass

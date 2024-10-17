@@ -2,6 +2,6 @@ __pycache__
 venv
 .env
 app/api/routes/temporary_files
-app/api/routes/user_requests
+app/user_requests_for_help
 .vscode
 alembic

@@ -68,6 +68,6 @@ class Settings(BaseSettings):
 
 BASE_DIR: str = Path(__file__).resolve().parent.parent
 TEMPORARY_FOLDER: str = os.path.join(BASE_DIR, "api", "routes", "temporary_files")
-USER_REQUESTS: str = os.path.join(BASE_DIR, "api", "routes", "user_requests")
+USER_REQUESTS_FOLDER: str = os.path.join(BASE_DIR, "user_requests_for_help")
 
 settings = Settings()

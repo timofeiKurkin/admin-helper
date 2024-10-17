@@ -1,3 +1,4 @@
+import uuid
 from typing import List, Optional
 
 from fastapi import UploadFile
@@ -19,34 +20,54 @@ class UserCreate(UserBase):
 class User(UserBase, table=True):
     __tablename__ = "users"
 
-    id: int = Field(default=None, primary_key=True)
-    is_superuser: bool = False
+    id: uuid.UUID = Field(default_factory=uuid.uuid4, primary_key=True)
+    # id: int = Field(default=None, primary_key=True)
+    # user_id: uuid.UUID = Field(default_factory=uuid.uuid4, primary_key=True)
+    # is_superuser: bool = False
 
     # Определяем связь один ко многим
     requests: List["RequestForHelp"] = Relationship(
-        back_populates="user", cascade_delete=True
+        back_populates="owner",
+        cascade_delete=True,
     )
 
 
+class MediaFile(SQLModel):
+    id: int
+    file_path: str
+    file_id: int
+
+
+# Base type of the request
 class RequestForHelpBase(SQLModel):
-    device: str  # = Field(default=None, max_length=18)
+    device: str = Field(default=None, max_length=18)
+    message: str = Field(default="", max_length=100)
+    photos: List[MediaFile] = Field(default_factory=list, sa_column=Column(JSON))
+    videos: List[MediaFile] = Field(default_factory=list, sa_column=Column(JSON))
+    is_completed: bool = False
 
 
+# Request for help type in data base
 class RequestForHelp(RequestForHelpBase, table=True):
     __tablename__ = "requests"
 
     id: Optional[int] = Field(default=None, primary_key=True)
-    message: str = Field(default="", max_length=100)
-    photos: List[str] = Field(default_factory=list, sa_column=Column(JSON))
-    videos: List[str] = Field(default_factory=list, sa_column=Column(JSON))
-    is_completed: bool = False
 
     # Определяем обратную связь
-    user: User = Relationship(back_populates="requests")
-    user_id: int = Field(foreign_key="users.id")
+    owner: User = Relationship(back_populates="requests")
+    owner_id: uuid.UUID = Field(
+        foreign_key="users.id", nullable=False, ondelete="CASCADE"
+    )
 
 
-class RequestForHelpData(RequestForHelpBase):
+# Создание новой заявки
+class RequestForHelpCreate(RequestForHelpBase):
+    pass
+
+
+# Тип данных от клиентской части (Form Data)
+class RequestForHelpData(SQLModel):
+    device: str
     message_file: UploadFile | None = None
     message_text: str | None = None
     photo: list[UploadFile] | None = None
@@ -58,13 +79,10 @@ class RequestForHelpData(RequestForHelpBase):
     number_pc: str
 
 
-class RequestForHelpUpdate(RequestForHelpBase):
+# Обновление статуса заявки
+class RequestForHelpUpdate(SQLModel):
     is_completed: bool = True
 
 
-class RequestForHelpCreate(RequestForHelpBase):
-    pass
-
-
 class RequestForHelpPublic(RequestForHelpBase):
-    pass
+    id: Optional[int] = Field(default=None, primary_key=True)
