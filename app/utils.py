@@ -1,8 +1,9 @@
 import io
 from typing import BinaryIO
 
+from fastapi import HTTPException
 from PIL import Image
-from telegram import InputMediaPhoto
+from telegram import InputFile, InputMediaPhoto
 
 
 def compress_image(
@@ -22,9 +23,15 @@ def compress_image(
     return InputMediaPhoto(
         media=buffer,
         filename=filename,
-        caption=f"Фотография пользователя {filename}",
+        caption=filename,
     )
 
 
-def save_image(*, image, path: str):
-    pass
+def save_image(*, image: InputFile, path: str):
+    try:
+        pil_image = Image.open(io.BytesIO(image.input_file_content))
+        pil_image.save(f"{path}.jpeg", format="JPEG", optimize=True, quality=100)
+        print(f"Image saved successfully at {path}")
+
+    except Exception as e:
+        raise HTTPException(status_code=501, detail=f"Error saving image: {e}")

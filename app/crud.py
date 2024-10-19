@@ -36,10 +36,10 @@ def user_exists(*, session: Session, phone: str) -> User | None:
 
 
 def create_request_for_help(
-    *, session: Session, request_in: RequestForHelpCreate, user_id: uuid.UUID
+    *, session: Session, request_in: RequestForHelpCreate, owner_id: uuid.UUID
 ) -> RequestForHelp:
     new_request_for_help = RequestForHelp.model_validate(
-        request_in, update={"user_id": user_id}
+        request_in, update={"owner_id": owner_id}
     )
     session.add(new_request_for_help)
     session.commit()
