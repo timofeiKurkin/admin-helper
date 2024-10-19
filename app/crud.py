@@ -1,6 +1,7 @@
 import uuid
 from typing import Any
 
+from fastapi.encoders import jsonable_encoder
 from sqlmodel import Session, select
 
 from app.models import (
@@ -35,19 +36,27 @@ def user_exists(*, session: Session, phone: str) -> User | None:
     return db_user
 
 
+def delete_user(*, session: Session, phone: str):
+    pass
+
+
 def create_request_for_help(
     *, session: Session, request_in: RequestForHelpCreate, owner_id: uuid.UUID
 ) -> RequestForHelp:
-    new_request_for_help = RequestForHelp.model_validate(
-        request_in, update={"owner_id": owner_id}
-    )
+    # new_request_for_help = RequestForHelp.model_validate(
+    #     request_in,
+    #     update={"owner_id": owner_id},
+    # )
+
+    new_request_for_help = RequestForHelp(**request_in.to_dict(), owner_id=owner_id)
+
     session.add(new_request_for_help)
     session.commit()
     session.refresh(new_request_for_help)
     return new_request_for_help
 
 
-def update_request_for_help(
+def update_status_of_request(
     *, session: Session, db_request: RequestForHelp, request_in: RequestForHelpUpdate
 ) -> RequestForHelp:
     request_data = request_in.model_dump(exclude_unset=True)
@@ -56,6 +65,14 @@ def update_request_for_help(
     session.commit()
     session.refresh(db_request)
     return db_request
+
+
+def get_users_requests(*, session: Session, phone: str):
+    pass
+
+
+def delete_users_request(*, session: Session, phone: str):
+    pass
 
 
 def get_last_request_index(*, session: Session) -> int:

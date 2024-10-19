@@ -4,16 +4,21 @@ from uuid import uuid4
 
 import ffmpeg
 from fastapi import APIRouter, File, Form, HTTPException, UploadFile
-from telegram import Bot, InputFile, ReplyParameters
+from telegram import (
+    Bot,
+    InlineKeyboardButton,
+    InlineKeyboardMarkup,
+    InputFile,
+    ReplyParameters,
+)
 
 from app import crud, utils
 from app.api.deps import SessionDep
 from app.core.config import TEMPORARY_FOLDER, USER_REQUESTS_FOLDER, settings
 from app.models import (
     MediaFile,
-    RequestForHelp,
-    RequestForHelpBase,
     RequestForHelpCreate,
+    RequestForHelpPublic,
     UserBase,
     UserCreate,
 )
@@ -38,7 +43,9 @@ async def get_video(video_id: str):
     pass
 
 
-@router.post("/create_request")
+@router.post(
+    "/create_request", response_model=RequestForHelpPublic
+)  # response_model=RequestForHelpPublic
 async def create_help_request(
     session: SessionDep,
     device: Annotated[str, Form()],
@@ -87,7 +94,7 @@ async def create_help_request(
         last_index = request_index if request_index == 1 else request_index + 1
 
         user_message = (
-            f"\nСообщение пользователя: {message_text}" if message_text else ""
+            f"\n    Сообщение пользователя: {message_text}" if message_text else ""
         )
         telegram_text_message = telegram_utils.get_finally_message(
             last_index=last_index,
@@ -119,8 +126,9 @@ async def create_help_request(
             # Voice message sending to the telegram
             if not user_message and message_file:
                 input_voice = os.path.join(TEMPORARY_FOLDER, f"{uuid4()}.mp3")
-                output_voice = f"{uuid4()}.ogg"
-                output_voice_path = os.path.join(request_folder, output_voice)
+                output_voice = str(uuid4())
+                output_voice_file = f"{output_voice}.ogg"
+                output_voice_path = os.path.join(request_folder, output_voice_file)
 
                 # Save .mp3 file in the temporary folder
                 with open(input_voice, "wb") as f:
@@ -129,7 +137,10 @@ async def create_help_request(
                 # Save .mp3 file to .ogg file with current codec for telegram
                 try:
                     ffmpeg.input(input_voice).output(
-                        output_voice_path, codec="libopus", bitrate="64k"
+                        output_voice_path,
+                        codec="libopus",
+                        bitrate="64k",
+                        loglevel="quiet",
                     ).run()
                 except ffmpeg.Error as e:
                     raise HTTPException(
@@ -152,7 +163,7 @@ async def create_help_request(
                 )
 
                 voice_media_file = MediaFile(
-                    id=0, file_path=output_voice, file_id=response.voice.file_id
+                    id=0, file_path=output_voice_file, file_id=response.voice.file_id
                 )  # response.voice.file_id - Identifier for this file, which can be used to download or reuse the file
 
             # Photos sending to the telegram
@@ -161,7 +172,7 @@ async def create_help_request(
 
                 for photo_item in photo:
                     photo_name = str(uuid4())
-                    photo_path = os.path.join(request_folder, photo_name)
+                    photo_path = os.path.join(request_folder, f"{photo_name}.jpeg")
 
                     # Compress photo
                     compressed_image = utils.compress_image(
@@ -188,9 +199,9 @@ async def create_help_request(
                     photos_media_file.append(
                         MediaFile(
                             id=index,
-                            file_path=item.caption,
+                            file_path=f"{item.caption}.jpeg",
                             file_id=item.photo[-1].file_id,
-                        ).to_dict()
+                        )
                     )
         else:
             raise HTTPException(
@@ -201,15 +212,43 @@ async def create_help_request(
         new_request_for_help = RequestForHelpCreate(
             device=device,
             message_text=message_text or "",
-            message_file=voice_media_file.to_dict(),
+            message_file=voice_media_file,
             photos=photos_media_file,
             videos=videos_media_file,
         )
-        crud.create_request_for_help(
+        new_request = crud.create_request_for_help(
             session=session, request_in=new_request_for_help, owner_id=user_candidate.id
         )
 
-        return {"message": "ok"}
+        keyboard = [
+            [
+                InlineKeyboardButton(
+                    text=f'Поменять статус заявки #{new_request.id} на "Выполнено"',
+                    callback_data=f"request:{new_request.id}",
+                    url="https://google.com",
+                )
+            ]
+        ]
+        reply_markup = InlineKeyboardMarkup(inline_keyboard=keyboard)
+        await bot.send_message(
+            settings.GROUP_ID,
+            "Изменить статус выполнения заявки:",
+            parse_mode="HTML",
+            connect_timeout=100,
+            reply_parameters=ReplyParameters(
+                message_id=message_id, chat_id=settings.GROUP_ID
+            ),
+            reply_markup=reply_markup,
+        )
+
+        # return RequestForHelpPublic.model_validate(new_request)
+        response_data = RequestForHelpPublic.model_validate(
+            new_request,
+            update={
+                "message": "Заявка успешно отправлена и будет рассмотрена в ближайшее время."
+            },
+        )
+        return response_data
     except Exception as e:
         print(e)
         raise HTTPException(status_code=500, detail=f"There's an error: {e}")

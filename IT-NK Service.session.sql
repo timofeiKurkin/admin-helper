@@ -1,1 +1,4 @@
-DELETE FROM users;
+-- DELETE FROM users;
+-- DELETE FROM requests;
+-- TRUNCATE TABLE requests;
+-- TRUNCATE TABLE users;

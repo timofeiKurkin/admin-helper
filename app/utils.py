@@ -30,7 +30,7 @@ def compress_image(
 def save_image(*, image: InputFile, path: str):
     try:
         pil_image = Image.open(io.BytesIO(image.input_file_content))
-        pil_image.save(f"{path}.jpeg", format="JPEG", optimize=True, quality=100)
+        pil_image.save(path, format="JPEG", optimize=True, quality=100)
         print(f"Image saved successfully at {path}")
 
     except Exception as e:

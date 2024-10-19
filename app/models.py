@@ -1,5 +1,5 @@
 import uuid
-from typing import List, Optional
+from typing import Any, Dict, List, Optional
 
 from fastapi import UploadFile
 from pydantic import BaseModel
@@ -8,7 +8,7 @@ from sqlmodel import Column, Field, Relationship, SQLModel
 
 
 class UserBase(SQLModel):
-    phone: str = Field(default="", max_length=20)
+    phone: str = Field(default="", max_length=20, index=True)
     company: str = Field(default="", max_length=50)
     is_superuser: bool = False
     name: str = Field(default="", max_length=16)
@@ -38,6 +38,17 @@ class MediaFile(SQLModel):
     file_path: str
     file_id: str
 
+    def to_dict(self) -> dict:
+        return {
+            "id": self.id,
+            "file_path": self.file_path,
+            "file_id": self.file_id,
+        }
+
+    @staticmethod
+    def from_dict(data: dict) -> "MediaFile":
+        return MediaFile(**data)
+
 
 # Base type of the request
 class RequestForHelpBase(SQLModel):
@@ -51,6 +62,14 @@ class RequestForHelpBase(SQLModel):
     videos: List[MediaFile] = Field(default_factory=list, sa_column=Column(JSON))
     is_completed: bool = False
 
+    def to_dict(self):
+        return {
+            **self.model_dump(),
+            "message_file": self.message_file.to_dict(),
+            "photos": [photo.to_dict() for photo in self.photos],
+            "photos": [video.to_dict() for video in self.videos],
+        }
+
 
 # Request for help type in data base
 class RequestForHelp(RequestForHelpBase, table=True):
@@ -61,7 +80,7 @@ class RequestForHelp(RequestForHelpBase, table=True):
     # Определяем обратную связь
     owner: User = Relationship(back_populates="requests")
     owner_id: uuid.UUID = Field(
-        foreign_key="users.id", nullable=False, ondelete="CASCADE"
+        foreign_key="users.id", nullable=False, ondelete="CASCADE", index=True
     )
 
 
@@ -90,3 +109,4 @@ class RequestForHelpUpdate(SQLModel):
 
 class RequestForHelpPublic(SQLModel):
     id: Optional[int] = Field(default=None, primary_key=True)
+    message: str = Field(default=None)

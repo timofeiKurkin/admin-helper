@@ -9,7 +9,7 @@ def get_finally_message(
     user_message: str,
 ):
     return (
-        f"Новая заявка о технической помощи - №{last_index}\n\n"
+        f"Новая заявка о технической помощи - <b>#{last_index}</b>\n\n"
         + "Информация о пользователе:\n"
         + f"    Имя пользователя: {name}\n"
         + f"    Номер телефона: {phone}\n"
