@@ -48,12 +48,6 @@ const FormPart: FC<PropsType> = ({
                     <div className={styles.send}>
                         <UploadForm buttonText={permissionsContent.button}/>
                     </div>
-
-                    {serverResponse.sentToServer ? (
-                        <div className={styles.serverResponse}>
-                            <Text>{serverResponse.message}</Text>
-                        </div>
-                    ) : null}
                 </div>
             ) : null}
         </div>

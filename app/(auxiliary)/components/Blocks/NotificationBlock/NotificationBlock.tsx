@@ -5,6 +5,7 @@ import { deleteNotification, selectNotificationList } from '@/app/(auxiliary)/li
 import React, { useEffect } from 'react'
 import Text from '../../UI/TextTemplates/Text'
 import styles from "./NotificationBlock.module.scss";
+import NotificationItem from './NotificationItem/NotificationItem'
 
 const NotificationBlock = () => {
     const dispatch = useAppDispatch()
@@ -13,7 +14,7 @@ const NotificationBlock = () => {
     useEffect(() => {
         notificationList.forEach((notice) => {
             const timer = setTimeout(() => {
-                dispatch(deleteNotification({id: notice.id}))
+                dispatch(deleteNotification({ id: notice.id }))
             }, notice.timeout)
 
             return () => clearTimeout(timer)
@@ -24,15 +25,15 @@ const NotificationBlock = () => {
     ])
 
     const removeNotificationClick = (id: string) => {
-        dispatch(deleteNotification({id}))
+        dispatch(deleteNotification({ id }))
     }
 
     return (
         <div className={styles.notificationBlock}>
             {notificationList.map((notice) => (
-                <div key={`key=${notice.id}`} className={styles.notification} onClick={() => removeNotificationClick(notice.id)}>
-                    <Text>{notice.message}</Text>
-                </div>
+                <NotificationItem
+                    notice={notice}
+                    removeNotificationClick={removeNotificationClick} />
             ))}
         </div>
     )

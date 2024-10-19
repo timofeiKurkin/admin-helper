@@ -20,6 +20,7 @@ import {determineOrientation} from "@/app/(auxiliary)/func/editorHandlers";
 import {selectUserDevice, setNewNotification} from "@/app/(auxiliary)/libs/redux-toolkit/store/slices/AppSlice/AppSlice";
 import MobileDropZone from "@/app/(auxiliary)/components/Blocks/FormBlock/DropZone/MobileDropZone/MobileDropZone";
 import DesktopDropZone from "@/app/(auxiliary)/components/Blocks/FormBlock/DropZone/DesktopDropZone/DesktopDropZone";
+import { SetNotificationType } from "@/app/(auxiliary)/types/AppTypes/Notification";
 
 
 interface PropsType {
@@ -145,7 +146,7 @@ const DropZone: FC<PropsType> = ({
                     createPhotoPreviews(newFiles)
                 }
 
-                dispatch(setNewNotification({message: "Файлы были успешно загружены!"}))
+                dispatch(setNewNotification({message: "Файлы успешно добавлены!", type: "success"}))
                 visibleDragDropZone()
 
                 if (!userDevice.phoneAdaptive) {
@@ -172,8 +173,13 @@ const DropZone: FC<PropsType> = ({
     const fileValidator = (
         file: File
     ): FileError | FileError[] | null | any => {
-        if (formFileData.files.filter((prevFile) => prevFile.name === file.name).length) {
-            return {}
+        const repeatedElement = formFileData.files.findIndex((prevFile) => prevFile.name === file.name)
+
+        if (repeatedElement !== -1) {
+            return {
+                code: "file-exists",
+                message: `Файл ${file.name} уже добавлен!`
+            }
         }
 
         return null
@@ -183,13 +189,23 @@ const DropZone: FC<PropsType> = ({
         getRootProps,
         getInputProps,
         isDragActive,
-        inputRef
+        inputRef,
+        fileRejections
     } = useDropzone({
         validator: fileValidator,
         onDrop,
         accept: acceptSettings[inputType],
-        maxFiles: 8
+        maxFiles: 5, maxSize: 5242880
     })
+
+    useEffect(() => {
+        fileRejections.forEach((item) => {
+            item.errors.forEach((error) => {
+                dispatch(setNewNotification({message: error.message, type: "error"}))
+            })
+        })
+    }, [fileRejections])
+    
 
     if (userDevice.phoneAdaptive) {
         return <MobileDropZone getInputProps={getInputProps}

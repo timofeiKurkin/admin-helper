@@ -6,19 +6,20 @@
 
     overflow: hidden;
     position: absolute;
-    bottom: 200px;
+    top: 170px;
     right: 20px;
     z-index: 99;
 
     display: flex;
+    flex-direction: column;
     row-gap: 15px;
 
     .notification {
         padding: 12px 18px;
         border-radius: $border_radius;
-        border: $success_input_border;
         background-color: $white;
         user-select: none;
+        max-width: 336px;
 
         // position: absolute;
         // top: 0;
@@ -26,5 +27,17 @@
         // @keyframes first {
         //     transform: translateX(20px);
         // }
+    }
+
+    .notificationSuccess {
+        border: $success_input_border;
+    }
+
+    .notificationWarning {
+        border: $warning_input_border;
+    }
+
+    .notificationError {
+        border: $error_input_border;
     }
 }

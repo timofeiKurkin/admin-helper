@@ -1,6 +1,7 @@
 export type NotificationListType = NotificationType[]
 
 export interface SetNotificationType {
+    type: "success" | "error" | "warning";
     message: string;
 }
 
@@ -9,5 +10,5 @@ export interface DeleteNotificationType {
 }
 
 export interface NotificationType extends SetNotificationType, DeleteNotificationType {
-    timeout: number
+    timeout: number;
 }

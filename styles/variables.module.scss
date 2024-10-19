@@ -3,6 +3,7 @@ $green_dark: #5BA809;
 $blue_dark: #00608C;
 $blue_light: #0088C7;
 $red_dark: #BF2121;
+$yellow: #F3C623;
 
 $black: #151515;
 $grey: #8A9BB3;
@@ -63,6 +64,7 @@ $blue_input_border: 2px solid $blue_dark;
 $black_input_border_inactive: 2px solid rgba($black, 0.5);
 $grey_input_border: 2px solid $grey;
 $error_input_border: 2px solid $red_dark;
+$warning_input_border: 2px solid $yellow;
 $success_input_border: 2px solid $green_dark;
 $checkbox_border: 1px solid $blue_dark;
 $border_radius: 0.9375rem;

@@ -6,7 +6,7 @@ export const PHOTO_KEY = "photo"
 export const VIDEO_KEY = "video"
 
 export const NAME_KEY = "name"
-export const PHONE_KEY = "phone_number"
+export const PHONE_KEY = "phone"
 export const COMPANY_KEY = "company"
 export const NUMBER_PC_KEY = "number_pc"
 

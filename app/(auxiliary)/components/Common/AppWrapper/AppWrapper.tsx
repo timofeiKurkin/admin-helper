@@ -35,7 +35,7 @@ const AppWrapper: FC<ChildrenType> = ({
         width
     ])
 
-    return (children);
+    return children;
 };
 
 export default AppWrapper;

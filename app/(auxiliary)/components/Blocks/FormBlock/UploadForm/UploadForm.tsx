@@ -24,6 +24,7 @@ import {
 } from "@/app/(auxiliary)/libs/redux-toolkit/store/slices/UserFormDataSlice/UserFormDataSlice";
 import {AxiosResponse} from "axios";
 import {ResponseFromServerType} from "@/app/(auxiliary)/types/AxiosTypes/AxiosTypes";
+import { setNewNotification } from '@/app/(auxiliary)/libs/redux-toolkit/store/slices/AppSlice/AppSlice';
 
 // const validationHandler = (args: {
 //     appState: ProviderStateType
@@ -99,6 +100,10 @@ const UploadForm: FC<PropsType> = ({buttonText}) => {
             if ((response as AxiosResponse<ResponseFromServerType>).status === 200) {
                 const succeedResponse = (response as AxiosResponse<ResponseFromServerType>)
                 dispatch(setFormToDefault())
+                dispatch(setNewNotification({
+                    message: succeedResponse.data.message,
+                    type: "success"
+                }))
                 dispatch(setServerResponse({
                     status: "success",
                     sentToServer: true,
