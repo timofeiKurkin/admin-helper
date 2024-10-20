@@ -23,7 +23,7 @@ const ResetForm: FC<PropsType> = ({children}) => {
                     sentToServer: false,
                     message: ""
                 }))
-            }, 10000)
+            }, 7500)
         }
     }, [
         dispatch,

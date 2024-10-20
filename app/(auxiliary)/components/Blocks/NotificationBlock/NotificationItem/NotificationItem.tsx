@@ -2,6 +2,7 @@ import React, { FC } from 'react'
 import Text from '../../../UI/TextTemplates/Text';
 import styles from "../NotificationBlock.module.scss";
 import { NotificationType } from '@/app/(auxiliary)/types/AppTypes/Notification';
+import parse from "html-react-parser"
 
 interface PropsType {
     notice: NotificationType;
@@ -18,10 +19,9 @@ const NotificationItem: FC<PropsType> = ({
     notice,
     removeNotificationClick
 }) => {
-    
     return (
         <div className={`${styles.notification} ${borderStatuses[notice.type]}`} onClick={() => removeNotificationClick(notice.id)}>
-            <Text>{notice.message}</Text>
+            <Text>{parse(notice.message)}</Text>
         </div>
     )
 }

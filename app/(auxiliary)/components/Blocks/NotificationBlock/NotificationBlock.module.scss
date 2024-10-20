@@ -6,8 +6,8 @@
 
     overflow: hidden;
     position: absolute;
-    top: 170px;
-    right: 20px;
+    bottom: 80px;
+    right: 40px;
     z-index: 99;
 
     display: flex;
@@ -15,11 +15,11 @@
     row-gap: 15px;
 
     .notification {
-        padding: 12px 18px;
+        padding: 14px 18px;
         border-radius: $border_radius;
         background-color: $white;
         user-select: none;
-        max-width: 336px;
+        max-width: 406px;
 
         // position: absolute;
         // top: 0;
