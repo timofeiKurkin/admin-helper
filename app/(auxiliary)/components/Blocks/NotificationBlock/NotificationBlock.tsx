@@ -31,7 +31,7 @@ const NotificationBlock = () => {
     return (
         <div className={styles.notificationBlock}>
             {notificationList.map((notice) => (
-                <NotificationItem
+                <NotificationItem key={`key=${notice.id}`}
                     notice={notice}
                     removeNotificationClick={removeNotificationClick} />
             ))}

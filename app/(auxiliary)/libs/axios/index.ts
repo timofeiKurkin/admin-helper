@@ -1,11 +1,11 @@
 import axios from "axios"
 
-export const API_URL_SERVER = "http://localhost:8000/api/v1/"
-export const API_URL_CLIENT = process.env.CLIENT_HOST
+// export const API_URL_SERVER = "http://localhost:8000/api/v1/"
+export const API_URL_HOST = "https://it-nk-api.serveo.net/api/v1/"
 
 
 const $api = axios.create({
-    baseURL: API_URL_SERVER,
+    baseURL: API_URL_HOST,
     withCredentials: true
 })
 

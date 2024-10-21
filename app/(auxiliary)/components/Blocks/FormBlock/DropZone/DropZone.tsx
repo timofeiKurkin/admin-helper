@@ -204,7 +204,7 @@ const DropZone: FC<PropsType> = ({
                 dispatch(setNewNotification({message: error.message, type: "error"}))
             })
         })
-    }, [fileRejections])
+    }, [fileRejections, dispatch])
     
 
     if (userDevice.phoneAdaptive) {

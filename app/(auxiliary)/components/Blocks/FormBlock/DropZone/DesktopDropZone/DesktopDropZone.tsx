@@ -71,7 +71,7 @@ const DesktopDropZone: FC<PropsType> = ({
                             fileName: newFile.name
                         }))
                         dispatch(changePopupVisibility({type: PHOTO_KEY}))
-                        dispatch(setNewNotification({message: "Файлы были успешно загружены!"}))
+                        dispatch(setNewNotification({type: "success", message:"Файлы были успешно загружены!"}))
                     }
                 } catch (e) {
                     console.error("Error with paste a clipboard: ", e)
