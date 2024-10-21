@@ -245,7 +245,7 @@ async def create_help_request(
         response_data = RequestForHelpPublic.model_validate(
             new_request,
             update={
-                "message": "Заявка успешно отправлена и будет рассмотрена в ближайшее время."
+                "message": f"Ваша заявка <b>#{new_request.id}</b> успешно создана и будет рассмотрена в ближайшее время.<br/>Вы можете посмотреть её в <b>ваших заявках</b>."
             },
         )
         return response_data

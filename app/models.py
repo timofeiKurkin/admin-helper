@@ -1,4 +1,5 @@
 import uuid
+from datetime import datetime
 from typing import Any, Dict, List, Optional
 
 from fastapi import UploadFile
@@ -82,6 +83,9 @@ class RequestForHelp(RequestForHelpBase, table=True):
     owner_id: uuid.UUID = Field(
         foreign_key="users.id", nullable=False, ondelete="CASCADE", index=True
     )
+
+    # created_at: datetime = Field(default_factory=datetime.now)
+    # expires_at: datetime = Field(nullable=False)
 
 
 # Создание новой заявки
