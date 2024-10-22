@@ -44,6 +44,8 @@ class Settings(BaseSettings):
 
     BOT_TOKEN: str
     GROUP_ID: str
+    TELEGRAM_API_ID: str
+    TELEGRAM_API_HASH: str
 
     POSTGRES_SERVER: str
     POSTGRES_PORT: int

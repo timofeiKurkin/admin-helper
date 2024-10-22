@@ -9,6 +9,8 @@ from telegram import (
     InlineKeyboardButton,
     InlineKeyboardMarkup,
     InputFile,
+    InputMediaPhoto,
+    InputMediaVideo,
     ReplyParameters,
 )
 
@@ -25,7 +27,10 @@ from app.models import (
 from app.telegram_bot import utils as telegram_utils
 
 router = APIRouter()
-bot = Bot(settings.BOT_TOKEN)
+bot = Bot(
+    token=settings.BOT_TOKEN,
+    base_url="http://localhost:8081/bot",
+)
 
 
 @router.get("/")
@@ -68,7 +73,7 @@ async def create_help_request(
         user_candidate = crud.get_user_by_phone(
             session=session, phone=formatted_db_phone
         )
-        user_folder = ""
+        user_folder = ""  # Folder where are saving each request and its files
 
         # Create new user, if doesn't exist
         if not user_candidate:
@@ -96,6 +101,7 @@ async def create_help_request(
         user_message = (
             f"\n    Сообщение пользователя: {message_text}" if message_text else ""
         )
+
         telegram_text_message = telegram_utils.get_finally_message(
             last_index=last_index,
             name=name,
@@ -110,7 +116,7 @@ async def create_help_request(
             settings.GROUP_ID,
             telegram_text_message,
             parse_mode="HTML",
-            connect_timeout=100,
+            # time=100,
         )
         message_id = message.message_id
 
@@ -119,7 +125,9 @@ async def create_help_request(
         videos_media_file = []
 
         if message_id:
+            # Folder for current request where are saving requests files
             request_folder = os.path.join(user_folder, f"request_{last_index}")
+            # Create if doesn't exist
             if not os.path.exists(request_folder):
                 os.makedirs(request_folder)
 
@@ -134,7 +142,7 @@ async def create_help_request(
                 with open(input_voice, "wb") as f:
                     f.write(await message_file.read())
 
-                # Save .mp3 file to .ogg file with current codec for telegram
+                # Read audio that was uploaded and save .mp3 file to .ogg file with current codec for telegram
                 try:
                     ffmpeg.input(input_voice).output(
                         output_voice_path,
@@ -168,7 +176,7 @@ async def create_help_request(
 
             # Photos sending to the telegram
             if photo:
-                photos_compressed = []
+                photos_compressed: InputMediaPhoto = []
 
                 for photo_item in photo:
                     photo_name = str(uuid4())
@@ -203,6 +211,55 @@ async def create_help_request(
                             file_id=item.photo[-1].file_id,
                         )
                     )
+
+            if video:
+                video_compressed = []
+
+                for video_item in video:
+                    # video_compressed.append(
+                    #     InputMediaVideo(
+                    #         media=await video_item.read(),
+                    #         caption=video_item.filename,
+                    #         filename=video_item.filename,
+                    #     )
+                    # )
+                    video_name = str(uuid4())
+
+                    input_temporary = os.path.join(
+                        TEMPORARY_FOLDER, f"{video_name}.mp4"
+                    )
+                    output_videos_path = os.path.join(
+                        request_folder, f"{video_name}.mp4"
+                    )
+
+                    with open(input_temporary, "wb") as f:
+                        f.write(await video_item.read())
+                    utils.compress_and_save_video(
+                        input_file=input_temporary, output_file=output_videos_path
+                    )
+
+                    compressed_size = os.path.getsize(output_videos_path)
+                    original_size = os.path.getsize(input_temporary)
+                    compression_ratio = round(
+                        (1 - (compressed_size / original_size)) * 100, 2
+                    )
+
+                    print(
+                        f"{compressed_size=}",
+                        f"{original_size=}",
+                        f"{compression_ratio=}",
+                    )
+
+                # await bot.send_media_group(
+                #     chat_id=settings.GROUP_ID,
+                #     media=video_compressed,
+                #     reply_parameters=ReplyParameters(
+                #         message_id=message_id, chat_id=settings.GROUP_ID
+                #     ),
+                #     read_timeout=100,
+                #     connect_timeout=100,
+                #     pool_timeout=100,
+                # )
         else:
             raise HTTPException(
                 status_code=504, detail="Failed to send client's message to Telegram"
@@ -251,5 +308,9 @@ async def create_help_request(
         return response_data
     except Exception as e:
         print(e)
+
+        # if os.path.exists(request_folder):
+        #     os.remove(request_folder)
+
         raise HTTPException(status_code=500, detail=f"There's an error: {e}")
     # except Err

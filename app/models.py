@@ -43,7 +43,7 @@ class MediaFile(SQLModel):
         return {
             "id": self.id,
             "file_path": self.file_path,
-            "file_id": self.file_id,
+            "file_id": self.file_id,  # Change on photo_size
         }
 
     @staticmethod
