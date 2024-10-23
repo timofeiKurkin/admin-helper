@@ -34,7 +34,7 @@ const Input: FC<InputPropsType<InputChangeEventHandler>> = ({
     }
 
     useEffect(() => {
-        setClient((prevState) => (!prevState))
+        setClient((prevState) => prevState || !prevState)
     }, [])
 
     useEffect(() => {

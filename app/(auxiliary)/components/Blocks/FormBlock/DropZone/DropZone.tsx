@@ -1,6 +1,6 @@
 import React, {FC, useCallback, useEffect} from "react";
 import {FileListType} from "@/app/(auxiliary)/types/DropZoneTypes/DropZoneTypes";
-import {FileError, useDropzone} from "react-dropzone";
+import {ErrorCode, FileError, useDropzone} from "react-dropzone";
 import {PHOTO_KEY, PhotoAndVideoKeysTypes, VIDEO_KEY} from "@/app/(auxiliary)/types/AppTypes/InputHooksTypes";
 import {useAppDispatch, useAppSelector} from "@/app/(auxiliary)/libs/redux-toolkit/store/hooks";
 import {
@@ -15,23 +15,22 @@ import {
     setCurrentOpenedFileName
 } from "@/app/(auxiliary)/libs/redux-toolkit/store/slices/PopupSlice/PopupSlice";
 import {defaultPhotoSettings} from "@/app/(auxiliary)/types/PopupTypes/PopupTypes";
-import {acceptSettings, maxFiles} from "@/app/(auxiliary)/components/Blocks/FormBlock/DropZone/possibleFileExtensions";
+import {acceptSettings, maxFiles, maxSize} from "@/app/(auxiliary)/components/Blocks/FormBlock/DropZone/possibleFileExtensions";
 import {determineOrientation} from "@/app/(auxiliary)/func/editorHandlers";
 import {selectUserDevice, setNewNotification} from "@/app/(auxiliary)/libs/redux-toolkit/store/slices/AppSlice/AppSlice";
 import MobileDropZone from "@/app/(auxiliary)/components/Blocks/FormBlock/DropZone/MobileDropZone/MobileDropZone";
 import DesktopDropZone from "@/app/(auxiliary)/components/Blocks/FormBlock/DropZone/DesktopDropZone/DesktopDropZone";
-import { SetNotificationType } from "@/app/(auxiliary)/types/AppTypes/Notification";
 
 
 interface PropsType {
     inputType: PhotoAndVideoKeysTypes;
-    visibleDragDropZone: () => void;
+    openDragDropZone: () => void;
     dragDropZoneIsOpen: boolean;
 }
 
 const DropZone: FC<PropsType> = ({
                                      inputType,
-                                     visibleDragDropZone,
+                                     openDragDropZone,
                                      dragDropZoneIsOpen
                                  }) => {
     const dispatch = useAppDispatch()
@@ -148,7 +147,7 @@ const DropZone: FC<PropsType> = ({
                 }
 
                 dispatch(setNewNotification({message: "Файлы успешно добавлены!", type: "success"}))
-                visibleDragDropZone()
+                openDragDropZone()
 
                 if (!userDevice.phoneAdaptive) {
                     dispatch(changePopupVisibility({type: inputType}))
@@ -164,7 +163,7 @@ const DropZone: FC<PropsType> = ({
         formFileData.files,
         formFileData.filesFinally,
 
-        visibleDragDropZone,
+        openDragDropZone,
         userDevice.phoneAdaptive,
 
         createPhotoPreviews,
@@ -196,13 +195,24 @@ const DropZone: FC<PropsType> = ({
         validator: fileValidator,
         onDrop,
         accept: acceptSettings[inputType],
-        maxFiles: maxFiles[inputType], maxSize: 209715200
+        maxFiles: maxFiles[inputType], 
+        maxSize: maxSize[inputType]
     })
 
     useEffect(() => {
         fileRejections.forEach((item) => {
             item.errors.forEach((error) => {
-                dispatch(setNewNotification({message: error.message, type: "error"}))
+                if (Object.values(ErrorCode).includes(error.code as ErrorCode)) {
+                    if(error.code === "too-many-files") {
+                        const type = `${inputType === PHOTO_KEY ? "фотографий" : "видео"}`
+                        dispatch(setNewNotification({message: `Вы не можете загрузить больше <b>${maxFiles[inputType]}</b> ${type}`, type: "error"}))
+                    } else if (error.code === "file-too-large") {
+                        const type = `${inputType === PHOTO_KEY ? "фотографии" : "видео"}`
+                        dispatch(setNewNotification({message: `Размер ${type} не должен превышать <b>${maxSize[inputType]}МБ</b>`, type: "error"}))
+                    }
+                } else {
+                    dispatch(setNewNotification({message: error.message, type: "error"}))
+                }
             })
         })
     }, [fileRejections, dispatch])
@@ -216,7 +226,7 @@ const DropZone: FC<PropsType> = ({
         return <DesktopDropZone inputProps={{getInputProps, getRootProps}}
                                 type={inputType}
                                 isDragActive={isDragActive}
-                                visibleDragDropZone={visibleDragDropZone}
+                                openDragDropZone={openDragDropZone}
                                 createPhotoPreviews={createPhotoPreviews}/>
     }
 };

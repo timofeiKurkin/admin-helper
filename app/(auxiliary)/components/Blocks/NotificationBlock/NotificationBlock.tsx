@@ -6,6 +6,7 @@ import React, { useEffect } from 'react'
 import Text from '../../UI/TextTemplates/Text'
 import styles from "./NotificationBlock.module.scss";
 import NotificationItem from './NotificationItem/NotificationItem'
+import { NotificationType } from '@/app/(auxiliary)/types/AppTypes/Notification'
 
 const NotificationBlock = () => {
     const dispatch = useAppDispatch()
@@ -26,6 +27,14 @@ const NotificationBlock = () => {
 
     const removeNotificationClick = (id: string) => {
         dispatch(deleteNotification({ id }))
+    }
+
+    const exampleNotification: NotificationType = {
+        id: "asdsd", 
+        type: "success", 
+        timeout: 30000, 
+        // message: "Ваша заявка <b>#123</b> успешно создана и будет рассмотрена в ближайшее время.<br/>Вы можете посмотреть её в <b>ваших заявках</b>."
+        message: "Файлы успешно добавлены!"
     }
 
     return (

@@ -5,22 +5,47 @@
     // height: 100%;
 
     overflow: hidden;
-    position: absolute;
-    bottom: 80px;
-    right: 40px;
-    z-index: 99;
 
     display: flex;
     flex-direction: column;
     row-gap: 15px;
 
+    @media screen and ($desktop1920), 
+    screen and ($desktop1440_1919), 
+    screen and ($desktop1280_1439) {
+        position: absolute;
+        bottom: 80px;
+        right: 40px;
+        z-index: 99;
+    }
+
+    @media screen and ($phone375_639) {
+        position: fixed;
+        top: 40px;
+        right: 0;
+        z-index: 99;
+        // width: 100%;
+        align-items: center;
+        padding: 0 15px;
+    }
+
     .notification {
-        padding: 14px 18px;
         border-radius: $border_radius;
         background-color: $white;
         user-select: none;
-        max-width: 406px;
 
+        @media screen and ($desktop1920), 
+        screen and ($desktop1440_1919), 
+        screen and ($desktop1280_1439) {
+            max-width: 406px;
+            padding: 14px 18px;
+        }
+
+        @media screen and ($phone375_639) {
+            width: auto;
+            padding: 12px 16px;
+        }
+        
         // position: absolute;
         // top: 0;
         // left: 0;

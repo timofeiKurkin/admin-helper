@@ -24,7 +24,7 @@ interface PropsType {
     }
     isDragActive: boolean;
     type: PhotoAndVideoKeysTypes;
-    visibleDragDropZone: () => void;
+    openDragDropZone: () => void;
     createPhotoPreviews: (newFiles: File[]) => void
 }
 
@@ -32,7 +32,7 @@ const DesktopDropZone: FC<PropsType> = ({
                                             inputProps,
                                             isDragActive,
                                             type,
-                                            visibleDragDropZone,
+                                            openDragDropZone,
                                             createPhotoPreviews
                                         }) => {
     const dispatch = useAppDispatch()
@@ -66,7 +66,7 @@ const DesktopDropZone: FC<PropsType> = ({
 
                         createPhotoPreviews([newFile])
 
-                        visibleDragDropZone()
+                        openDragDropZone()
                         dispatch(setCurrentOpenedFileName({
                             fileName: newFile.name
                         }))
@@ -88,7 +88,7 @@ const DesktopDropZone: FC<PropsType> = ({
         createPhotoPreviews,
         dispatch,
         type,
-        visibleDragDropZone
+        openDragDropZone
     ])
 
     if(Object.keys(content).length !== 0) {
@@ -123,7 +123,7 @@ const DesktopDropZone: FC<PropsType> = ({
     
                                             <div className={styles.closeDropZone}
                                                  onClick={(e) => e.stopPropagation()}>
-                                                <Button onClick={visibleDragDropZone}
+                                                <Button onClick={openDragDropZone}
                                                         style={{
                                                             backgroundColor: white_1
                                                         }}>{content.button}</Button>

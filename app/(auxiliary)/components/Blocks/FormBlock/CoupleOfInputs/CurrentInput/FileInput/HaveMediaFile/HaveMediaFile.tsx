@@ -9,6 +9,7 @@ import { selectPopups } from "@/app/(auxiliary)/libs/redux-toolkit/store/slices/
 import DropZone from "@/app/(auxiliary)/components/Blocks/FormBlock/DropZone/DropZone";
 import FileList
     from "@/app/(auxiliary)/components/Blocks/FormBlock/CoupleOfInputs/CurrentInput/FileInput/FilesList/FileList";
+import { selectUserDevice } from '@/app/(auxiliary)/libs/redux-toolkit/store/slices/AppSlice/AppSlice';
 
 interface PropsType {
     inputData: {
@@ -19,12 +20,13 @@ interface PropsType {
 }
 
 const HaveMediaFile: FC<PropsType> = ({ inputData }) => {
+    const { phoneAdaptive } = useAppSelector(selectUserDevice)
     const popupVisibility = useAppSelector(selectPopups)[inputData.type]
     const [dragDropZoneIsOpen, setDragDropZoneIsOpen] =
-        useState<boolean>(false)
+        useState<boolean>()
 
     const openDragDropZone = () => {
-        setDragDropZoneIsOpen((prevState) => !prevState);
+        setDragDropZoneIsOpen((prevState) => (!prevState));
     }
 
     return (
@@ -39,11 +41,19 @@ const HaveMediaFile: FC<PropsType> = ({ inputData }) => {
                 </div>
             </div>
 
-            {dragDropZoneIsOpen ? (
-                <DropZone inputType={inputData.type as PhotoAndVideoKeysTypes}
-                    visibleDragDropZone={openDragDropZone}
-                    dragDropZoneIsOpen={dragDropZoneIsOpen} />
-            ) : null}
+            {phoneAdaptive ? (
+                dragDropZoneIsOpen !== undefined ? (
+                    <DropZone inputType={inputData.type as PhotoAndVideoKeysTypes}
+                        openDragDropZone={openDragDropZone}
+                        dragDropZoneIsOpen={dragDropZoneIsOpen} />
+                ) : null
+            ) : (
+                dragDropZoneIsOpen ? (
+                    <DropZone inputType={inputData.type as PhotoAndVideoKeysTypes}
+                        openDragDropZone={openDragDropZone}
+                        dragDropZoneIsOpen={dragDropZoneIsOpen} />
+                ) : null
+            )}
 
             {popupVisibility && inputData.type === PHOTO_KEY && (
                 <PhotoEditorPopup />
