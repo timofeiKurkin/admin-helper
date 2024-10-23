@@ -1,4 +1,4 @@
-import React, {FC, useEffect, useState} from 'react';
+import React, { FC, Suspense, useEffect, useState } from 'react';
 import {
     CompanyInputType,
     DeviceInputType,
@@ -12,7 +12,7 @@ import {
 import Input from "@/app/(auxiliary)/components/UI/Inputs/Input/Input";
 import inputsStyles from "../InputsStyles.module.scss"
 import InputWithDataList from "@/app/(auxiliary)/components/UI/Inputs/InputWithDataList/InputWithDataList";
-import {useAppDispatch, useAppSelector} from "@/app/(auxiliary)/libs/redux-toolkit/store/hooks";
+import { useAppDispatch, useAppSelector } from "@/app/(auxiliary)/libs/redux-toolkit/store/hooks";
 import {
     changeTextData,
     selectServerResponse
@@ -37,8 +37,8 @@ interface PropsType {
 }
 
 const TextInput: FC<PropsType> = ({
-                                      currentInput
-                                  }) => {
+    currentInput
+}) => {
     const dispatch = useAppDispatch()
     const serverResponse = useAppSelector(selectServerResponse).sentToServer
     const value =
@@ -84,27 +84,25 @@ const TextInput: FC<PropsType> = ({
         value
     ]);
 
-    return (
-        <>
-            <InputWithDataList value={value.value}
-                               dataList={currentHelpfulList.length ? {
-                                   list: currentHelpfulList,
-                                   listType: currentInput.type
-                               } : undefined}
-                               inputIsDirty={value.isDirty}>
-                <div className={currentInputTypesClassName}>
-                    <Input value={value.value}
-                           placeholder={currentInput.inputPlaceholder || ""}
-                           maxLength={inputValidations[currentInput.type].maxLength}
-                           tabIndex={currentInput.id}
-                           onBlur={value.onBlur}
-                           onChange={value.onChange}
-                           inputIsDirty={value.isDirty}/>
+    return Object.keys(value).length ? (
+        <InputWithDataList value={value.value}
+            dataList={currentHelpfulList.length ? {
+                list: currentHelpfulList,
+                listType: currentInput.type
+            } : undefined}
+            inputIsDirty={value.isDirty}>
+            <div className={currentInputTypesClassName}>
+                <Input value={value.value}
+                    placeholder={currentInput.inputPlaceholder || ""}
+                    maxLength={inputValidations[currentInput.type].maxLength}
+                    tabIndex={currentInput.id}
+                    onBlur={value.onBlur}
+                    onChange={value.onChange}
+                    inputIsDirty={value.isDirty} />
 
-                </div>
-            </InputWithDataList>
-        </>
-    )
+            </div>
+        </InputWithDataList>
+    ) : null
 };
 
 export default TextInput;

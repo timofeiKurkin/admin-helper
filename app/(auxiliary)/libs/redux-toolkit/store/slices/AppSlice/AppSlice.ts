@@ -122,7 +122,7 @@ export const appSlice = createAppSlice({
                     state.notificationList.push({
                         id: crypto.randomUUID(),
                         message: action.payload.message,
-                        timeout: 5000,
+                        timeout: action.payload.timeout || 5000,
                         type: action.payload.type
                     })
                 }

@@ -1,21 +1,22 @@
 "use client"
 
-import React, {FC, useEffect, useRef, useState} from "react";
+// import {File} from "@web-stb/file"
+import React, { FC, useEffect, useRef, useState } from "react";
 import Button from "@/app/(auxiliary)/components/UI/Button/Button";
 import Microphone from "@/app/(auxiliary)/components/UI/SVG/Microphone/Microphone";
 import ReadyVoice
     from "@/app/(auxiliary)/components/Blocks/FormBlock/CoupleOfInputs/CurrentInput/Message/VoiceInput/ReadyVoice";
-import {useAppSelector} from "@/app/(auxiliary)/libs/redux-toolkit/store/hooks";
+import { useAppSelector } from "@/app/(auxiliary)/libs/redux-toolkit/store/hooks";
 import {
     selectFormFileData,
     selectServerResponse
 } from "@/app/(auxiliary)/libs/redux-toolkit/store/slices/UserFormDataSlice/UserFormDataSlice";
-import {MESSAGE_KEY} from "@/app/(auxiliary)/types/AppTypes/InputHooksTypes";
-import {formattedTime} from "@/app/(auxiliary)/func/formattedTime";
+import { MESSAGE_KEY } from "@/app/(auxiliary)/types/AppTypes/InputHooksTypes";
+import { formattedTime } from "@/app/(auxiliary)/func/formattedTime";
 import styles from "./AudioPlayer.module.scss";
 import AllowToUseMicrophone
     from "@/app/(auxiliary)/components/Blocks/FormBlock/CoupleOfInputs/CurrentInput/Message/VoiceInput/AllowToUseMicrophone";
-import {MessageType} from "@/app/(auxiliary)/types/Data/Interface/RootPage/RootPageContentType";
+import { MessageType } from "@/app/(auxiliary)/types/Data/Interface/RootPage/RootPageContentType";
 
 interface PropsType {
     voicePlaceholder?: MessageType;
@@ -24,31 +25,28 @@ interface PropsType {
 }
 
 const VoiceInput: FC<PropsType> = ({
-                                       voicePlaceholder,
-                                       setNewMessage,
-                                       removeRecorder
-                                   }) => {
+    voicePlaceholder,
+    setNewMessage,
+    removeRecorder
+}) => {
     const voiceMessage = useAppSelector(selectFormFileData)[MESSAGE_KEY]
     const serverResponse = useAppSelector(selectServerResponse).sentToServer
 
-    const [isRecording, setIsRecording] =
-        useState(false)
-    const [recordingIsDone, setRecordingIsDone] =
-        useState<boolean>(voiceMessage.value instanceof File)
+    const [isRecording, setIsRecording] = useState(false)
+    const [recordingIsDone, setRecordingIsDone] = useState<boolean>(voiceMessage.value instanceof File)
     const [microphonePermission, setMicrophonePermission] = useState<PermissionState>()
     const [noMicrophone, setNoMicrophone] = useState<boolean>(false)
 
-    const [audioBlob, setAudioBlob] =
-        useState<Blob | null>(() => {
-            if (voiceMessage.value instanceof File) {
-                return new Blob(
-                    [voiceMessage.value],
-                    {type: voiceMessage.value.type}
-                )
-            }
+    const [audioBlob, setAudioBlob] = useState<Blob | null>(() => {
+        if (voiceMessage.value instanceof File) {
+            return new Blob(
+                [voiceMessage.value],
+                { type: voiceMessage.value.type }
+            )
+        }
 
-            return null
-        })
+        return null
+    })
 
     const mediaRecorderRef = useRef<MediaRecorder | null>(null)
     const audioChunksRef = useRef<Blob[]>([])
@@ -116,7 +114,7 @@ const VoiceInput: FC<PropsType> = ({
         }
 
         mediaRecorderRef.current.onstop = () => {
-            const blob = new Blob(audioChunksRef.current, {type: "audio/mp3"})
+            const blob = new Blob(audioChunksRef.current, { type: "audio/mp3" })
 
             if (blob) {
                 setAudioBlob(blob)
@@ -176,7 +174,7 @@ const VoiceInput: FC<PropsType> = ({
         }
 
         if (navigator.permissions) {
-            navigator.permissions.query({name: "microphone" as PermissionName}).then((permissions) => {
+            navigator.permissions.query({ name: "microphone" as PermissionName }).then((permissions) => {
                 // The permissions.state can be 'granted', 'denied', or 'prompt'
                 // You can control the permission to use user's microphone
                 setMicrophonePermission(permissions.state)
@@ -197,17 +195,17 @@ const VoiceInput: FC<PropsType> = ({
             <div className={styles.voiceInputWrapper}>
                 {(audioBlob && recordingIsDone) ? (
                     <ReadyVoice audioBlob={audioBlob}
-                                removeCurrentRecord={deleteCurrentRecord}/>
+                        removeCurrentRecord={deleteCurrentRecord} />
                 ) : (
                     <Button onClick={isRecording ? () => stopRecording() : () => startRecording()}
-                            buttonRef={recordingButtonRef}
-                            className={isRecording ? styles.recordingButton : ""}
+                        buttonRef={recordingButtonRef}
+                        className={isRecording ? styles.recordingButton : ""}
                         // style={}
-                            image={{
-                                position: "left",
-                                children: <Microphone/>,
-                                visibleOnlyImage: false
-                            }}>
+                        image={{
+                            position: "left",
+                            children: <Microphone />,
+                            visibleOnlyImage: false
+                        }}>
                         {isRecording ? voicePlaceholder?.recordingPlaceholder : voicePlaceholder?.inputPlaceholder}
                     </Button>
                 )}
@@ -215,8 +213,8 @@ const VoiceInput: FC<PropsType> = ({
 
             {isRecording && microphonePermission === "prompt" ? (
                 <AllowToUseMicrophone isRecording={isRecording}
-                                      microphonePermission={microphonePermission}
-                                      stopRecording={stopRecording}/>
+                    microphonePermission={microphonePermission}
+                    stopRecording={stopRecording} />
             ) : null}
         </>
     )

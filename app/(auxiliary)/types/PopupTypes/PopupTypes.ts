@@ -41,9 +41,7 @@ export interface RangeTicksProps {
     pickTick: (value: number) => void
 }
 
-export interface CustomFile extends File {
-    id: number;
-}
+export type CustomFile = File & { id: number; }
 
 export const defaultCropSettings: Crop = {
     unit: "%",

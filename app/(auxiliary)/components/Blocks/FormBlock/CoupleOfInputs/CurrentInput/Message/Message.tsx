@@ -1,3 +1,5 @@
+"use client"
+
 import React, {FC, useCallback, useEffect} from 'react';
 import Toggle from "@/app/(auxiliary)/components/Common/Switches/Toggle/Toggle";
 import {MessageInputType} from "@/app/(auxiliary)/types/Data/Interface/RootPage/RootPageContentType";

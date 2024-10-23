@@ -9,11 +9,6 @@ import FormBlock from "@/app/(auxiliary)/components/Blocks/FormBlock/FormBlock";
 import styles from "./FormPart.module.scss";
 import Permissions from "@/app/(auxiliary)/components/Blocks/RootBodyBlock/Permissions/Permissions";
 import UploadForm from "@/app/(auxiliary)/components/Blocks/FormBlock/UploadForm/UploadForm";
-import {useAppSelector} from "@/app/(auxiliary)/libs/redux-toolkit/store/hooks";
-import {
-    selectServerResponse
-} from "@/app/(auxiliary)/libs/redux-toolkit/store/slices/UserFormDataSlice/UserFormDataSlice";
-import Text from "@/app/(auxiliary)/components/UI/TextTemplates/Text";
 
 
 interface PropsType {
@@ -28,7 +23,6 @@ const FormPart: FC<PropsType> = ({
                                      inputsContent,
                                      permissionsContent
                                  }) => {
-    const serverResponse = useAppSelector(selectServerResponse)
 
     return (
         <div className={styles.formPartWrapper}>

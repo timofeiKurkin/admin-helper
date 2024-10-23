@@ -1,6 +1,6 @@
 import React, {FC, useCallback, useState} from 'react';
 import styles from "./PhotoEditorBody.module.scss";
-import popupsCommonStyles from "@/app/(auxiliary)/components/Common/Popups/PopupsWrapper/PopupsCommomStyles.module.scss"
+import popupsCommonStyles from "@/app/(auxiliary)/components/Common/Popups/PopupsWrapper/PopupsCommonStyles.module.scss"
 import SeparatingLine from "@/app/(auxiliary)/components/UI/SeparatingLine/SeparatingLine";
 import {PhotoEditorDataType} from "@/app/(auxiliary)/types/Data/Interface/PhotoEditor/PhotoEditorDataType";
 import {blue_light} from "@/styles/colors";

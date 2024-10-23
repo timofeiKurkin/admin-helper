@@ -9,7 +9,7 @@ import {
 import VideoPlayer
     from "@/app/(auxiliary)/components/Blocks/Popups/VideoPlayerPopup/VideoPlayerBody/VideoPlayer/VideoPlayer";
 import styles from "./VideoPlayerBody.module.scss"
-import popupsCommonStyles from "@/app/(auxiliary)/components/Common/Popups/PopupsWrapper/PopupsCommomStyles.module.scss"
+import popupsCommonStyles from "@/app/(auxiliary)/components/Common/Popups/PopupsWrapper/PopupsCommonStyles.module.scss"
 import PopupFileList from "@/app/(auxiliary)/components/Common/Popups/PopupsWrapper/PopupFileList/PopupFileList";
 import Button from "@/app/(auxiliary)/components/UI/Button/Button";
 import {
@@ -28,18 +28,16 @@ interface PropsType {
 
 const VideoPlayerBody: FC<PropsType> = ({data, type}) => {
     const dispatch = useAppDispatch()
-    const formFileData = useAppSelector(selectFormFileData)[type]
+    const {files, filesFinally} = useAppSelector(selectFormFileData)[type]
     const openedFileName = useAppSelector(selectOpenedFileName)
     const videoOrientations = useAppSelector(selectVideoOrientations).find((orient) => orient.name === openedFileName) || {orientation: HORIZONTAL}
-    const files = formFileData.files
 
     /**
      * Callback для поиска файла или настройки файла по его названию. Используется в инициализации состояния и его обновления
      */
     const findCurrentFile = useCallback(findElement, [])
 
-    const [listOfPreviews, setListOfPreviews] =
-        useState<CustomFile[]>(() => formFileData.filesFinally.map((file, i) => Object.assign(file, {id: i})))
+    // const [listOfPreviews, setListOfPreviews] = useState<CustomFile[]>([])
 
     const [videoURl, setVideoURl] = useState<string>(() => URL.createObjectURL(
             files.find((f) => findCurrentFile(f, openedFileName)) ||
@@ -91,6 +89,10 @@ const VideoPlayerBody: FC<PropsType> = ({data, type}) => {
     ]);
 
     useEffect(() => {
+        // setListOfPreviews(files.map((file, i) => Object.assign(file, {id: i})))
+    })
+
+    useEffect(() => {
         return () => {
             if (videoURl) {
                 URL.revokeObjectURL(videoURl)
@@ -105,7 +107,7 @@ const VideoPlayerBody: FC<PropsType> = ({data, type}) => {
             <div className={styles.nothing}></div>
 
             <PopupFileList titleOfList={data.photoList.uploadedPhotos}
-                           listOfPreviews={listOfPreviews}
+                           listOfPreviews={filesFinally as CustomFile[]}
                            func={{
                                switchToAnotherFile,
                                removeFile

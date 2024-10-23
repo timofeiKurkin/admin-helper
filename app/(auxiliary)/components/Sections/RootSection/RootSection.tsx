@@ -15,7 +15,6 @@ import {
 export default function RootSection() {
     const dispatch = useAppDispatch()
     const rootPageData: RootPageContentType = RootPageData
-    const rootPageContent = useAppSelector(selectRootPageContent)
 
     useEffect(() => {
         dispatch(setRootPageContent(rootPageData))
@@ -24,13 +23,10 @@ export default function RootSection() {
         rootPageData
     ])
 
-    if (Object.keys(rootPageContent).length) {
-        return (
-            <TitleAndBodyWrapper>
-                <MainTitleBlock>{rootPageData.title}</MainTitleBlock>
-
-                <RootBodyBlock/>
-            </TitleAndBodyWrapper>
-        )
-    }
+    return (
+        <TitleAndBodyWrapper>
+            <MainTitleBlock>{rootPageData.title}</MainTitleBlock>
+            <RootBodyBlock rootPageContent={rootPageData}/>
+        </TitleAndBodyWrapper>
+    )
 }

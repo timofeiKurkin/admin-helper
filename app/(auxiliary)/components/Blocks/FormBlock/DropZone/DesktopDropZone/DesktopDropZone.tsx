@@ -91,51 +91,53 @@ const DesktopDropZone: FC<PropsType> = ({
         visibleDragDropZone
     ])
 
-    return (
-        <PopupScroll>
-            <div className={styles.dropZoneWrapper}>
-                <div {...inputProps.getRootProps({
-                    style: {
-                        width: "inherit",
-                        height: "inherit",
-                        userSelect: "none",
-                        // cursor: uploadingFilesStatus ? "default" : "pointer"
-                    }
-                })}>
-                    <input {...inputProps.getInputProps({})}
-                           className={styles.dropInput}/>
-
-                    <div className={styles.dropZoneContentWrapper}>
-                        <div className={styles.dropZoneContent}>
-                            <UploadFile animationStatus={isDragActive}/>
-
-                            {
-                                isDragActive ? (
-                                    <div className={styles.dropZoneText}>
-                                        <Title>{content.isDragContent}</Title>
-                                    </div>
-                                ) : (
-                                    <>
+    if(Object.keys(content).length !== 0) {
+        return (
+            <PopupScroll>
+                <div className={styles.dropZoneWrapper}>
+                    <div {...inputProps.getRootProps({
+                        style: {
+                            width: "inherit",
+                            height: "inherit",
+                            userSelect: "none",
+                            // cursor: uploadingFilesStatus ? "default" : "pointer"
+                        }
+                    })}>
+                        <input {...inputProps.getInputProps({})}
+                               className={styles.dropInput}/>
+    
+                        <div className={styles.dropZoneContentWrapper}>
+                            <div className={styles.dropZoneContent}>
+                                <UploadFile animationStatus={isDragActive}/>
+    
+                                {
+                                    isDragActive ? (
                                         <div className={styles.dropZoneText}>
-                                            <Title>{content[type]}</Title>
+                                            <Title>{content.isDragContent}</Title>
                                         </div>
-
-                                        <div className={styles.closeDropZone}
-                                             onClick={(e) => e.stopPropagation()}>
-                                            <Button onClick={visibleDragDropZone}
-                                                    style={{
-                                                        backgroundColor: white_1
-                                                    }}>{content.button}</Button>
-                                        </div>
-                                    </>
-                                )
-                            }
+                                    ) : (
+                                        <>
+                                            <div className={styles.dropZoneText}>
+                                                <Title>{content[type]}</Title>
+                                            </div>
+    
+                                            <div className={styles.closeDropZone}
+                                                 onClick={(e) => e.stopPropagation()}>
+                                                <Button onClick={visibleDragDropZone}
+                                                        style={{
+                                                            backgroundColor: white_1
+                                                        }}>{content.button}</Button>
+                                            </div>
+                                        </>
+                                    )
+                                }
+                            </div>
                         </div>
                     </div>
                 </div>
-            </div>
-        </PopupScroll>
-    );
+            </PopupScroll>
+        );
+    }
 };
 
 export default DesktopDropZone;

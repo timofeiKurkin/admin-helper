@@ -15,7 +15,7 @@ import {
     setCurrentOpenedFileName
 } from "@/app/(auxiliary)/libs/redux-toolkit/store/slices/PopupSlice/PopupSlice";
 import {defaultPhotoSettings} from "@/app/(auxiliary)/types/PopupTypes/PopupTypes";
-import {acceptSettings} from "@/app/(auxiliary)/components/Blocks/FormBlock/DropZone/possibleFileExtensions";
+import {acceptSettings, maxFiles} from "@/app/(auxiliary)/components/Blocks/FormBlock/DropZone/possibleFileExtensions";
 import {determineOrientation} from "@/app/(auxiliary)/func/editorHandlers";
 import {selectUserDevice, setNewNotification} from "@/app/(auxiliary)/libs/redux-toolkit/store/slices/AppSlice/AppSlice";
 import MobileDropZone from "@/app/(auxiliary)/components/Blocks/FormBlock/DropZone/MobileDropZone/MobileDropZone";
@@ -49,7 +49,7 @@ const DropZone: FC<PropsType> = ({
     ])
 
     const createVideoPreviews = useCallback((newFiles: File[]) => {
-        newFiles.forEach((file) => {
+        newFiles.forEach((file, index) => {
             const videoElement = document.createElement("video")
             const canvas = document.createElement("canvas")
 
@@ -78,11 +78,12 @@ const DropZone: FC<PropsType> = ({
 
                 canvas.toBlob((blob) => {
                     if (blob) {
-                        const newFile = new File([blob], file.name, {
+                        const newFile = Object.assign(new File([blob], file.name, {
                             type: "image/png",
                             lastModified: Date.now()
-                        })
-
+                        }), {id: index})
+                        
+                        // Previews save in filedata.filesFinally array
                         dispatch(changePreview({
                             key: inputType,
                             data: newFile
@@ -195,7 +196,7 @@ const DropZone: FC<PropsType> = ({
         validator: fileValidator,
         onDrop,
         accept: acceptSettings[inputType],
-        maxFiles: 5, maxSize: 5242880
+        maxFiles: maxFiles[inputType], maxSize: 209715200
     })
 
     useEffect(() => {

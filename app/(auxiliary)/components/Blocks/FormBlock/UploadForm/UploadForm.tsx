@@ -6,7 +6,8 @@ import {
     DeviceKeyType,
     MESSAGE_KEY,
     PhotoAndVideoKeysTypes,
-    SavedInputsKeysTypes
+    SavedInputsKeysTypes,
+    VIDEO_KEY
 } from "@/app/(auxiliary)/types/AppTypes/InputHooksTypes";
 import {UserFormDataType} from "@/app/(auxiliary)/types/AppTypes/Context";
 import {axiosRequestsHandler} from "@/app/(auxiliary)/func/axiosRequestsHandler";
@@ -87,7 +88,11 @@ const UploadForm: FC<PropsType> = ({buttonText}) => {
             if (userData.file_data) {
                 (Object.keys(userData.file_data) as (PhotoAndVideoKeysTypes | typeof MESSAGE_KEY)[]).forEach((key) => {
                     if (key !== "message") {
-                        userData.file_data[key]?.filesFinally.forEach((file) => formData.append(key, file))
+                        if (key === VIDEO_KEY) {
+                            userData.file_data[key]?.files.forEach((file) => formData.append(key, file))
+                        } else {
+                            userData.file_data[key]?.filesFinally.forEach((file) => formData.append(key, file))
+                        }
                     } else if (!userMessageStatus) {
                         formData.append(`${MESSAGE_KEY}_file`, userData.file_data[MESSAGE_KEY].value)
                     }
@@ -102,7 +107,8 @@ const UploadForm: FC<PropsType> = ({buttonText}) => {
                 dispatch(setFormToDefault())
                 dispatch(setNewNotification({
                     message: succeedResponse.data.message,
-                    type: "success"
+                    type: "success",
+                    timeout: 10000
                 }))
                 dispatch(setServerResponse({
                     status: "success",
@@ -110,10 +116,16 @@ const UploadForm: FC<PropsType> = ({buttonText}) => {
                     message: succeedResponse.data.message
                 }))
             } else {
+                const message = "Произошла ошибка при отправке формы! Обновите страницу и попробуйте еще раз!"
                 dispatch(setServerResponse({
                     status: "error",
                     sentToServer: true,
-                    message: "Произошла ошибка при отправке формы!"
+                    message
+                }))
+                dispatch(setNewNotification({
+                    message,
+                    type: "error",
+                    timeout: 10000
                 }))
             }
         }
