@@ -30,7 +30,28 @@ def compress_image(
     )
 
 
-def compress_and_save_video(*, input_file: str, output_file: str) -> InputMediaVideo:
+def convert_and_save_audio(*, input_voice: str, output_voice: str) -> bytes:
+    # Read audio that was uploaded and save .mp3 file to .ogg file with current codec for telegram
+    try:
+        ffmpeg.input(input_voice).output(
+            output_voice,
+            codec="libopus",
+            bitrate="64k",
+            loglevel="quiet",
+        ).run()
+    except ffmpeg.Error as e:
+        raise HTTPException(status_code=500, detail=f"Conversion failed: {e.stderr}")
+    finally:
+        os.remove(input_voice)  # Delete temporary file
+
+    # Open new .ogg audio file
+    with open(output_voice, "rb") as f:
+        audio = f.read()
+
+    return audio
+
+
+def compress_and_save_video(*, input_file: str, output_file: str) -> bytes:
     try:
         ffmpeg.input(input_file).output(
             output_file, vcodec="libx264", crf=28, loglevel="quiet"
@@ -38,8 +59,12 @@ def compress_and_save_video(*, input_file: str, output_file: str) -> InputMediaV
     except ffmpeg.Error as e:
         raise HTTPException(status_code=500, detail=f"Error compressing video: {e}")
     finally:
-        pass
-        # os.remove(input_file)
+        os.remove(input_file)
+
+    with open(output_file, "rb") as f:
+        video = f.read()
+
+    return video
     # buffer = io.BytesIO()
 
 

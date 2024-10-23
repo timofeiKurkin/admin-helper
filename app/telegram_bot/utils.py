@@ -6,8 +6,10 @@ def get_finally_message(
     company: str,
     number_pc: int,
     device: str,
-    user_message: str,
+    message_text: str,
 ):
+    user_message = f"\n    Сообщение пользователя: {message_text}" if message_text else ""
+    
     return (
         f"Новая заявка о технической помощи - <b>#{last_index}</b>\n\n"
         + "Информация о пользователе:\n"

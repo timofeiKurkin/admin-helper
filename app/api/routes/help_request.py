@@ -1,4 +1,5 @@
 import os
+import shutil
 from typing import Annotated, List, Optional
 from uuid import uuid4
 
@@ -13,6 +14,7 @@ from telegram import (
     InputMediaVideo,
     ReplyParameters,
 )
+from telegram.request import HTTPXRequest
 
 from app import crud, utils
 from app.api.deps import SessionDep
@@ -30,7 +32,15 @@ router = APIRouter()
 bot = Bot(
     token=settings.BOT_TOKEN,
     base_url="http://localhost:8081/bot",
+    request=HTTPXRequest(
+        connection_pool_size=100,
+        read_timeout=180,
+        write_timeout=180,
+        connect_timeout=60,
+        pool_timeout=120,
+    ),
 )
+telegram_timeout_time = 120
 
 
 @router.get("/")
@@ -69,6 +79,11 @@ async def create_help_request(
         if not os.path.exists(USER_REQUESTS_FOLDER):
             os.makedirs(USER_REQUESTS_FOLDER)
 
+        message_id = 0
+        audio_message_id = 0
+        photo_message_ids = []
+        video_message_ids = []
+
         formatted_db_phone = "".join(filter(str.isdigit, phone))[1:]
         user_candidate = crud.get_user_by_phone(
             session=session, phone=formatted_db_phone
@@ -95,12 +110,13 @@ async def create_help_request(
             )
 
         # Define the last index of the requests in Data Base
-        request_index = crud.get_last_request_index(session=session)
-        last_index = request_index if request_index == 1 else request_index + 1
-
-        user_message = (
-            f"\n    Сообщение пользователя: {message_text}" if message_text else ""
+        new_request = crud.create_request_for_help(
+            session=session,
+            request_in=RequestForHelpCreate(device=""),
+            owner_id=user_candidate.id,
         )
+        # request_index = crud.get_last_request_index(session=session)
+        last_index = new_request.id
 
         telegram_text_message = telegram_utils.get_finally_message(
             last_index=last_index,
@@ -109,14 +125,13 @@ async def create_help_request(
             company=company,
             number_pc=number_pc,
             device=device,
-            user_message=user_message,
+            message_text=message_text,
         )
 
         message = await bot.send_message(
             settings.GROUP_ID,
             telegram_text_message,
             parse_mode="HTML",
-            # time=100,
         )
         message_id = message.message_id
 
@@ -124,51 +139,35 @@ async def create_help_request(
         photos_media_file = []
         videos_media_file = []
 
-        if message_id:
+        if message_file or photo or video:
             # Folder for current request where are saving requests files
             request_folder = os.path.join(user_folder, f"request_{last_index}")
             # Create if doesn't exist
             if not os.path.exists(request_folder):
                 os.makedirs(request_folder)
 
+        if message:
             # Voice message sending to the telegram
-            if not user_message and message_file:
-                input_voice = os.path.join(TEMPORARY_FOLDER, f"{uuid4()}.mp3")
-                output_voice = str(uuid4())
-                output_voice_file = f"{output_voice}.ogg"
-                output_voice_path = os.path.join(request_folder, output_voice_file)
+            if message_file:
+                audio_name = str(uuid4())
+                input_voice = os.path.join(TEMPORARY_FOLDER, f"{audio_name}.mp3")
 
                 # Save .mp3 file in the temporary folder
                 with open(input_voice, "wb") as f:
                     f.write(await message_file.read())
 
-                # Read audio that was uploaded and save .mp3 file to .ogg file with current codec for telegram
-                try:
-                    ffmpeg.input(input_voice).output(
-                        output_voice_path,
-                        codec="libopus",
-                        bitrate="64k",
-                        loglevel="quiet",
-                    ).run()
-                except ffmpeg.Error as e:
-                    raise HTTPException(
-                        status_code=500, detail=f"Conversion failed: {e.stderr}"
-                    )
-                finally:
-                    os.remove(input_voice)  # Delete temporary file
+                output_voice_file = f"{audio_name}.ogg"
+                output_voice = os.path.join(request_folder, output_voice_file)
 
-                # Open new .ogg audio file
-                with open(output_voice_path, "rb") as f:
-                    audio = f.read()
-
-                response = await bot.send_voice(
-                    chat_id=settings.GROUP_ID,
-                    voice=InputFile(obj=audio, filename=output_voice),
-                    reply_parameters=ReplyParameters(
-                        message_id=message_id, chat_id=settings.GROUP_ID
-                    ),
-                    connect_timeout=100,
+                converted_audio = utils.convert_and_save_audio(
+                    input_voice=input_voice, output_voice=output_voice
                 )
+
+                response = await message.reply_voice(
+                    voice=InputFile(obj=converted_audio, filename=audio_name),
+                    connect_timeout=telegram_timeout_time,
+                )
+                audio_message_id = response.message_id
 
                 voice_media_file = MediaFile(
                     id=0, file_path=output_voice_file, file_id=response.voice.file_id
@@ -194,16 +193,14 @@ async def create_help_request(
                     )
                     photos_compressed.append(compressed_image)
 
-                photo_response = await bot.send_media_group(
-                    chat_id=settings.GROUP_ID,
+                photo_response = await message.reply_media_group(
                     media=photos_compressed,
-                    reply_parameters=ReplyParameters(
-                        message_id=message_id, chat_id=settings.GROUP_ID
-                    ),
-                    connect_timeout=100,
+                    connect_timeout=telegram_timeout_time,
                 )
+                photo_message_ids = []
 
                 for index, item in enumerate(photo_response):
+                    photo_message_ids.append(item.message_id)
                     photos_media_file.append(
                         MediaFile(
                             id=index,
@@ -215,51 +212,47 @@ async def create_help_request(
             if video:
                 video_compressed = []
 
-                for video_item in video:
-                    # video_compressed.append(
-                    #     InputMediaVideo(
-                    #         media=await video_item.read(),
-                    #         caption=video_item.filename,
-                    #         filename=video_item.filename,
-                    #     )
-                    # )
+                for index, video_item in enumerate(video):
                     video_name = str(uuid4())
+                    video_file = f"{video_name}.mp4"
 
-                    input_temporary = os.path.join(
-                        TEMPORARY_FOLDER, f"{video_name}.mp4"
-                    )
-                    output_videos_path = os.path.join(
-                        request_folder, f"{video_name}.mp4"
-                    )
+                    input_temporary = os.path.join(TEMPORARY_FOLDER, video_file)
+                    output_video_path = os.path.join(request_folder, video_file)
 
+                    # Create temporary video file
                     with open(input_temporary, "wb") as f:
                         f.write(await video_item.read())
-                    utils.compress_and_save_video(
-                        input_file=input_temporary, output_file=output_videos_path
+
+                    compressed_video = utils.compress_and_save_video(
+                        input_file=input_temporary, output_file=output_video_path
                     )
 
-                    compressed_size = os.path.getsize(output_videos_path)
-                    original_size = os.path.getsize(input_temporary)
-                    compression_ratio = round(
-                        (1 - (compressed_size / original_size)) * 100, 2
+                    video_compressed.append(
+                        InputMediaVideo(
+                            media=compressed_video,
+                            caption=video_name,
+                            filename=video_file,
+                        )
                     )
 
-                    print(
-                        f"{compressed_size=}",
-                        f"{original_size=}",
-                        f"{compression_ratio=}",
+                video_response = await message.reply_media_group(
+                    media=video_compressed,
+                    read_timeout=telegram_timeout_time,
+                    connect_timeout=telegram_timeout_time,
+                    pool_timeout=300,
+                )
+                video_message_ids = []
+
+                for index, item in enumerate(video_response):
+                    video_message_ids.append(item.message_id)
+                    videos_media_file.append(
+                        MediaFile(
+                            id=index,
+                            file_path=video_file,
+                            file_id=item.video.file_id,
+                        )
                     )
 
-                # await bot.send_media_group(
-                #     chat_id=settings.GROUP_ID,
-                #     media=video_compressed,
-                #     reply_parameters=ReplyParameters(
-                #         message_id=message_id, chat_id=settings.GROUP_ID
-                #     ),
-                #     read_timeout=100,
-                #     connect_timeout=100,
-                #     pool_timeout=100,
-                # )
         else:
             raise HTTPException(
                 status_code=504, detail="Failed to send client's message to Telegram"
@@ -273,9 +266,14 @@ async def create_help_request(
             photos=photos_media_file,
             videos=videos_media_file,
         )
-        new_request = crud.create_request_for_help(
-            session=session, request_in=new_request_for_help, owner_id=user_candidate.id
+        crud.update_request_for_help(
+            session=session,
+            db_request=new_request,
+            request_in=new_request_for_help,
         )
+        # new_request = crud.create_request_for_help(
+        #     session=session, request_in=new_request_for_help, owner_id=user_candidate.id
+        # )
 
         keyboard = [
             [
@@ -306,11 +304,21 @@ async def create_help_request(
             },
         )
         return response_data
-    except Exception as e:
-        print(e)
 
-        # if os.path.exists(request_folder):
-        #     os.remove(request_folder)
+    except Exception as e:
+        if new_request:
+            crud.delete_user_request(session=session, db_request=new_request)
+
+        if os.path.exists(request_folder):
+            shutil.rmtree(request_folder)
+
+        if message_id:
+            message_ids = [message_id]
+            for id in [audio_message_id, *photo_message_ids, *video_message_ids]:
+                if id:
+                    message_ids.append(id)
+            await bot.delete_messages(
+                chat_id=settings.GROUP_ID, message_ids=message_ids
+            )
 
         raise HTTPException(status_code=500, detail=f"There's an error: {e}")
-    # except Err

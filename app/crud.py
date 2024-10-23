@@ -56,9 +56,20 @@ def create_request_for_help(
     return new_request_for_help
 
 
-def update_status_of_request(
+# def update_status_of_request(
+#     *, session: Session, db_request: RequestForHelp, request_in: RequestForHelpUpdate
+# ) -> RequestForHelp:
+#     request_data = request_in.model_dump(exclude_unset=True)
+#     db_request.sqlmodel_update(request_data)
+#     session.add(db_request)
+#     session.commit()
+#     session.refresh(db_request)
+#     return db_request
+
+
+def update_request_for_help(
     *, session: Session, db_request: RequestForHelp, request_in: RequestForHelpUpdate
-) -> RequestForHelp:
+):
     request_data = request_in.model_dump(exclude_unset=True)
     db_request.sqlmodel_update(request_data)
     session.add(db_request)
@@ -69,6 +80,11 @@ def update_status_of_request(
 
 def get_users_requests(*, session: Session, phone: str):
     pass
+
+
+def delete_user_request(*, session: Session, db_request: RequestForHelp):
+    session.delete(db_request)
+    session.commit()
 
 
 def delete_users_request(*, session: Session, phone: str):

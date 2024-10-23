@@ -56,7 +56,7 @@ class RequestForHelpBase(SQLModel):
     device: str = Field(default=None, max_length=18)
     message_text: str = Field(default="", max_length=100)
     message_file: MediaFile = Field(
-        default_factory=lambda: MediaFile(id=0, file_path="", file_id=0),
+        default_factory=lambda: MediaFile(id=0, file_path="", file_id=""),
         sa_column=Column(JSON),
     )
     photos: List[MediaFile] = Field(default_factory=list, sa_column=Column(JSON))
@@ -107,8 +107,9 @@ class RequestForHelpCreate(RequestForHelpBase):
 
 
 # Обновление статуса заявки
-class RequestForHelpUpdate(SQLModel):
-    is_completed: bool = True
+class RequestForHelpUpdate(RequestForHelpBase):
+    pass
+    # is_completed: bool = True
 
 
 class RequestForHelpPublic(SQLModel):
