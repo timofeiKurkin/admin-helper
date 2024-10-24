@@ -21,6 +21,7 @@ import PhoneInput
 import TextHighlighting from "@/app/(auxiliary)/components/UI/TextHighlighting/TextHighlighting";
 import ComputerNumberInput
     from "@/app/(auxiliary)/components/Blocks/FormBlock/CoupleOfInputs/CurrentInput/ComputerNumberInput/ComputerNumberInput";
+import InputSkeleton from '@/app/(auxiliary)/components/UI/Inputs/InputSkeleton/InputSkeleton';
 
 
 // const typeOfInputsClasses: { [key: string]: string } = {

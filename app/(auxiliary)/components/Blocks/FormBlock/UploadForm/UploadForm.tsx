@@ -1,6 +1,6 @@
 "use client"
 
-import React, {FC, useEffect} from 'react';
+import React, {FC, useEffect, useState} from 'react';
 import Button from "@/app/(auxiliary)/components/UI/Button/Button";
 import {
     DeviceKeyType,
@@ -57,6 +57,8 @@ const UploadForm: FC<PropsType> = ({buttonText}) => {
     
     const userMessageStatus = useAppSelector(selectUserMessageStatus)
 
+    const [sendingRequest, setSendingRequest] = useState<boolean>(false)
+
     useEffect(() => {
         dispatch(setValidationFormStatus())
     }, [
@@ -70,6 +72,7 @@ const UploadForm: FC<PropsType> = ({buttonText}) => {
             userData &&
             (userData.text_data && userData.file_data)
         ) {
+            setSendingRequest((prevState) => !prevState)
             let formData = new FormData()
             formData.append("userCanTalk", String(permissionsOfForm.userCanTalk))
             formData.append("userAgreed", String(permissionsOfForm.userAgreed))
@@ -133,7 +136,7 @@ const UploadForm: FC<PropsType> = ({buttonText}) => {
     }
 
     return (
-        <Button disabled={!validationFormStatus || !permissionsOfForm.userAgreed}
+        <Button disabled={(!validationFormStatus || !permissionsOfForm.userAgreed) && !sendingRequest}
                 onClick={() => uploadUserData({
                     text_data: formTextData,
                     file_data: formFileData

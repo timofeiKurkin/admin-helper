@@ -1,6 +1,6 @@
 "use client"
 
-import React, {FC, useEffect, useRef, useState} from 'react';
+import React, {FC, useEffect, useLayoutEffect, useRef, useState} from 'react';
 import {InputPropsType} from "@/app/(auxiliary)/types/FormTypes/InputTypes/InputPropsType";
 import {InputChangeEventHandler} from "@/app/(auxiliary)/types/AppTypes/AppTypes";
 import borderStyles from "./InputBorder.module.scss";
@@ -27,15 +27,15 @@ const Input: FC<InputPropsType<InputChangeEventHandler>> = ({
 
     const inputRef = useRef<HTMLInputElement>(null);
     const [inputWidth, setInputWidth] = useState<number>(0)
-    const [client, setClient] = useState<boolean>(false)
+    // const [client, setClient] = useState<boolean>(false)
 
     const changeInputHandler = (e: InputChangeEventHandler) => {
         onChange(e)
     }
 
-    useEffect(() => {
-        setClient((prevState) => prevState || !prevState)
-    }, [])
+    // useLayoutEffect(() => {
+    //     setClient((prevState) => prevState || !prevState)
+    // }, [])
 
     useEffect(() => {
         if (dynamicWidth) {
@@ -67,13 +67,11 @@ const Input: FC<InputPropsType<InputChangeEventHandler>> = ({
         dynamicWidth,
         value,
         placeholder,
-        client
+        // client
     ]);
 
-
-    return client ? (
-        <div
-            className={inputStyles.inputWrapper}>
+    return (
+        <div className={inputStyles.inputWrapper}>
             <div className={inputStyles.inputBox}>
                 <input
                     className={`${fontStyles.buttonText} ${inputStyles.inputStyle} ${(inputIsDirty || value.length) ? inputStyles.inputActive : inputStyles.inputInactive}`}
@@ -116,7 +114,10 @@ const Input: FC<InputPropsType<InputChangeEventHandler>> = ({
                 <span className={borderStyles.inputBorder}></span>
             </div>
         </div>
-    ) : null;
+    )
+
+    // return client ? (
+    // ) : null;
 };
 
 export default Input;

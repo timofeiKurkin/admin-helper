@@ -13,11 +13,21 @@ import {
 import {useAppDispatch} from "@/app/(auxiliary)/libs/redux-toolkit/store/hooks";
 import {changeTextData} from "@/app/(auxiliary)/libs/redux-toolkit/store/slices/UserFormDataSlice/UserFormDataSlice";
 import {NUMBER_PC_KEY} from "@/app/(auxiliary)/types/AppTypes/InputHooksTypes";
+import dynamic from 'next/dynamic';
+import InputSkeleton from '@/app/(auxiliary)/components/UI/Inputs/InputSkeleton/InputSkeleton';
 
 interface PropsType {
     // currentInput: NumberPcInputType;
     placeholder: string;
 }
+
+const LazyInput = dynamic(
+    () => import("@/app/(auxiliary)/components/UI/Inputs/Input/Input"), 
+    {
+        ssr: false,
+        loading: () => <InputSkeleton />
+    }
+)
 
 const ComputerNumberInput: FC<PropsType> = ({
                                                 placeholder
@@ -67,7 +77,7 @@ const ComputerNumberInput: FC<PropsType> = ({
 
     return (
         <div className={inputsStyles.numberPCInputWrapper}>
-            <Input value={value.value}
+            <LazyInput value={value.value}
                    placeholder={placeholder}
                    maxLength={inputValidations[NUMBER_PC_KEY].maxLength}
                    tabIndex={1}

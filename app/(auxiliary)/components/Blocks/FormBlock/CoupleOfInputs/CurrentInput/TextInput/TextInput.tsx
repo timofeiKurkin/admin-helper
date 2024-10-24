@@ -23,6 +23,8 @@ import {
     DEVICE_KEY,
     TextInputsKeysTypes
 } from "@/app/(auxiliary)/types/AppTypes/InputHooksTypes";
+import dynamic from 'next/dynamic';
+import InputSkeleton from '@/app/(auxiliary)/components/UI/Inputs/InputSkeleton/InputSkeleton';
 
 
 const typeOfInputsClasses: { [key: string]: string } = {
@@ -35,6 +37,14 @@ const typeOfInputsClasses: { [key: string]: string } = {
 interface PropsType {
     currentInput: DeviceInputType | CompanyInputType | NameInputType;
 }
+
+const LazyInput = dynamic(
+    () => import("@/app/(auxiliary)/components/UI/Inputs/Input/Input"),
+    {
+        ssr: false,
+        loading: () => <InputSkeleton />
+    }
+)
 
 const TextInput: FC<PropsType> = ({
     currentInput
@@ -92,14 +102,13 @@ const TextInput: FC<PropsType> = ({
             } : undefined}
             inputIsDirty={value.isDirty}>
             <div className={currentInputTypesClassName}>
-                <Input value={value.value}
+                <LazyInput value={value.value}
                     placeholder={currentInput.inputPlaceholder || ""}
                     maxLength={inputValidations[currentInput.type].maxLength}
                     tabIndex={currentInput.id}
                     onBlur={value.onBlur}
                     onChange={value.onChange}
                     inputIsDirty={value.isDirty} />
-
             </div>
         </InputWithDataList>
     ) : null
