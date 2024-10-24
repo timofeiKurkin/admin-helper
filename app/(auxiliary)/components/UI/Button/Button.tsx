@@ -3,6 +3,13 @@ import styles from "./Button.module.scss";
 import ButtonText from "@/app/(auxiliary)/components/UI/TextTemplates/ButtonText";
 
 
+interface ImageProps {
+    position?: "right" | "left";
+    visibleOnlyImage: boolean;
+    children: React.ReactNode;
+}
+
+
 interface PropsType {
     children?: React.ReactNode | string;
     type?: 'button' | 'submit' | 'reset';
@@ -10,13 +17,10 @@ interface PropsType {
     tabIndex?: number;
     onClick?: () => void;
     style?: CSSProperties;
-    image?: {
-        position?: "right" | "left";
-        visibleOnlyImage: boolean;
-        children: React.ReactNode;
-    }
+    image?: ImageProps
     buttonRef?: React.RefObject<HTMLButtonElement>;
     className?: string;
+    loadingAnimation?: boolean;
 }
 
 const Button: FC<PropsType> = ({
@@ -26,17 +30,22 @@ const Button: FC<PropsType> = ({
                                    tabIndex,
                                    onClick,
                                    style,
-                                   image = {},
+                                   image = {} as ImageProps,
                                    buttonRef,
-                                   className
+                                   className,
+                                   loadingAnimation = false
                                }) => {
+    const imageStyles: CSSProperties = Object.keys(image).length ? {
+        flexDirection: image.position === "left" ? "row-reverse" : "row",
+        columnGap: !image.visibleOnlyImage ? "0.75rem" : 0,
+    } : {} as CSSProperties
+
     return (
         <button type={type}
                 ref={buttonRef}
-                className={`${styles.button} ${className}`}
+                className={`${styles.button} ${className} ${loadingAnimation && styles.loadingAnimation}`}
                 style={{
-                    flexDirection: image?.position === "left" ? "row-reverse" : "row",
-                    columnGap: image && !image.visibleOnlyImage ? "0.75rem" : 0,
+                    ...imageStyles,
                     ...style
                 }}
                 onPointerDownCapture={(e) => e.stopPropagation()}

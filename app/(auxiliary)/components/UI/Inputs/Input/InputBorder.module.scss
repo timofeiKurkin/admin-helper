@@ -38,6 +38,7 @@
 
 .inputBorder,
 .inputBorderAnimation {
+    z-index: 2;
     border: $black_input_border;
 }
 
@@ -63,9 +64,11 @@
 }
 
 .inputError {
+    z-index: 3;
     border: $error_input_border;
 }
 
 .inputConfirm {
+    z-index: 4;
     border: $success_input_border;
 }

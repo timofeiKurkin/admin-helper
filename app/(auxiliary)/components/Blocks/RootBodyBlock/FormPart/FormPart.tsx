@@ -1,4 +1,4 @@
-import React, {FC, useEffect} from 'react';
+import React, { FC, useEffect } from 'react';
 import {
     FormPartType,
     PermissionsContentType
@@ -9,6 +9,9 @@ import FormBlock from "@/app/(auxiliary)/components/Blocks/FormBlock/FormBlock";
 import styles from "./FormPart.module.scss";
 import Permissions from "@/app/(auxiliary)/components/Blocks/RootBodyBlock/Permissions/Permissions";
 import UploadForm from "@/app/(auxiliary)/components/Blocks/FormBlock/UploadForm/UploadForm";
+import { useAppSelector } from '@/app/(auxiliary)/libs/redux-toolkit/store/hooks';
+import { selectDisableFormInputs } from '@/app/(auxiliary)/libs/redux-toolkit/store/slices/AppSlice/AppSlice';
+import { MouseEventHandler } from '@/app/(auxiliary)/types/AppTypes/AppTypes';
 
 
 interface PropsType {
@@ -20,27 +23,28 @@ interface PropsType {
 }
 
 const FormPart: FC<PropsType> = ({
-                                     inputsContent,
-                                     permissionsContent
-                                 }) => {
+    inputsContent,
+    permissionsContent
+}) => {
+    const disableFormInputs = useAppSelector(selectDisableFormInputs)
 
     return (
-        <div className={styles.formPartWrapper}>
+        <div className={styles.formPartWrapper} style={{pointerEvents: disableFormInputs ? "none" : "auto"}}>
             <FormBlockWrapper>
                 <TitleBlock>{inputsContent.title}</TitleBlock>
 
                 <FormBlock inputContent={inputsContent.inputs}
-                           formPartNumber={inputsContent.formPartNumber}/>
+                    formPartNumber={inputsContent.formPartNumber} />
             </FormBlockWrapper>
 
             {(inputsContent.formPartNumber && permissionsContent) ? (
                 <div className={styles.permissionsAndSend}>
                     <div className={styles.permissions}>
-                        <Permissions permissionsContent={permissionsContent.permissions}/>
+                        <Permissions permissionsContent={permissionsContent.permissions} />
                     </div>
 
                     <div className={styles.send}>
-                        <UploadForm buttonText={permissionsContent.button}/>
+                        <UploadForm buttonText={permissionsContent.button} />
                     </div>
                 </div>
             ) : null}

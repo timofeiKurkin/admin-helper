@@ -1,28 +1,31 @@
 "use client"
 
-import React, {FC, useEffect, useLayoutEffect, useRef, useState} from 'react';
-import {InputPropsType} from "@/app/(auxiliary)/types/FormTypes/InputTypes/InputPropsType";
-import {InputChangeEventHandler} from "@/app/(auxiliary)/types/AppTypes/AppTypes";
+import React, { FC, useEffect, useLayoutEffect, useRef, useState } from 'react';
+import { InputPropsType } from "@/app/(auxiliary)/types/FormTypes/InputTypes/InputPropsType";
+import { InputChangeEventHandler } from "@/app/(auxiliary)/types/AppTypes/AppTypes";
 import borderStyles from "./InputBorder.module.scss";
 import inputStyles from "./Input.module.scss";
 import fontStyles from "@/styles/fonts.module.scss";
+import { useAppSelector } from '@/app/(auxiliary)/libs/redux-toolkit/store/hooks';
+import { selectDisableFormInputs } from '@/app/(auxiliary)/libs/redux-toolkit/store/slices/AppSlice/AppSlice';
+import InputBorder from './InputBorder';
 
 
 const Input: FC<InputPropsType<InputChangeEventHandler>> = ({
-                                                                value,
-                                                                placeholder,
-                                                                type = "text",
-                                                                disabled = false,
-                                                                maxLength,
-                                                                tabIndex,
-                                                                dynamicWidth,
-                                                                onKeyDown = () => {
-                                                                },
-                                                                onBlur,
-                                                                onChange,
-                                                                inputIsDirty
-                                                            }) => {
-
+    value,
+    placeholder,
+    type = "text",
+    disabled = false,
+    maxLength,
+    tabIndex,
+    dynamicWidth,
+    onKeyDown = () => {
+    },
+    onBlur,
+    onChange,
+    inputIsDirty
+}) => {
+    const disableFormInputs = useAppSelector(selectDisableFormInputs)
     const spanRef = useRef<HTMLSpanElement>(null);
 
     const inputRef = useRef<HTMLInputElement>(null);
@@ -82,7 +85,7 @@ const Input: FC<InputPropsType<InputChangeEventHandler>> = ({
 
                     ref={inputRef}
                     maxLength={maxLength}
-                    disabled={disabled}
+                    disabled={disableFormInputs || disabled}
                     tabIndex={tabIndex}
 
                     onChange={(e: InputChangeEventHandler) => changeInputHandler(e)}
@@ -93,25 +96,21 @@ const Input: FC<InputPropsType<InputChangeEventHandler>> = ({
 
                 {dynamicWidth && (
                     <span ref={spanRef} className={fontStyles.buttonText}
-                          style={{
-                              visibility: "hidden",
-                              position: "absolute",
-                              whiteSpace: "pre",
-                              top: 0,
-                              left: 0
-                          }}></span>
+                        style={{
+                            visibility: "hidden",
+                            position: "absolute",
+                            whiteSpace: "pre",
+                            top: 0,
+                            left: 0
+                        }}></span>
                 )}
             </div>
 
             <div className={inputStyles.borderBox}
-                 style={dynamicWidth ? {
-                     width: inputWidth ? `${inputWidth}px` : "auto"
-                 } : undefined}
-            >
-                {!(inputIsDirty || value.length) && (
-                    <span className={borderStyles.inactiveInputState}></span>
-                )}
-                <span className={borderStyles.inputBorder}></span>
+                style={dynamicWidth ? {
+                    width: inputWidth ? `${inputWidth}px` : "auto"
+                } : undefined}>
+                <InputBorder valueLength={value.length} inputIsDirty={!!inputIsDirty} />
             </div>
         </div>
     )

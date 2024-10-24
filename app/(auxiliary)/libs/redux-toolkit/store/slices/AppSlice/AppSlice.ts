@@ -11,6 +11,7 @@ interface InitialStateType {
     rootPageContent: RootPageContentType;
     // microphoneStatus: P
     notificationList: NotificationListType;
+    disableFormInputs: boolean
 }
 
 const initialState: InitialStateType = {
@@ -30,7 +31,8 @@ const initialState: InitialStateType = {
     //     currentFileName: ""
     // },
     rootPageContent: {} as RootPageContentType,
-    notificationList: []
+    notificationList: [],
+    disableFormInputs: false
     // microphoneStatus:
 }
 
@@ -108,6 +110,9 @@ export const appSlice = createAppSlice({
                 state.blocksMoving.switchedMessageBlock = action.payload
             }
         ),
+        setDisableFormInputs: create.reducer((state) => {
+            state.disableFormInputs = !state.disableFormInputs
+        }),
 
         setNewNotification: create.reducer(
             (state, action: PayloadAction<SetNotificationType>) => {
@@ -138,7 +143,8 @@ export const appSlice = createAppSlice({
         selectRootPageContent: (state) => state.rootPageContent,
         selectUserDevice: (state) => state.userDevice,
         selectBlocksMoving: (state) => state.blocksMoving,
-        selectNotificationList: (state) => state.notificationList
+        selectNotificationList: (state) => state.notificationList,
+        selectDisableFormInputs: (state) => state.disableFormInputs
     }
 })
 
@@ -149,12 +155,14 @@ export const {
     setOpenedVideoBlock,
     setSwitchedMessageBlock,
     setNewNotification,
-    deleteNotification
+    deleteNotification,
+    setDisableFormInputs
 } = appSlice.actions
 
 export const {
     selectRootPageContent,
     selectUserDevice,
     selectBlocksMoving,
-    selectNotificationList
+    selectNotificationList,
+    selectDisableFormInputs
 } = appSlice.selectors

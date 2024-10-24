@@ -16,7 +16,7 @@ const RootBodyBlock: FC<PropsType> = ({ rootPageContent }) => {
     const blocksMoving = useAppSelector(selectBlocksMoving)
 
     return (
-        <div
+        <form
             className={`${styles.bodyBlockGrid} ${(blocksMoving.openedPhotoBlock || blocksMoving.openedVideoBlock) && styles.openedFileBlock}`}>
             <FormPart inputsContent={rootPageContent.formContent.formPartOne} />
 
@@ -25,9 +25,9 @@ const RootBodyBlock: FC<PropsType> = ({ rootPageContent }) => {
             <FormPart inputsContent={rootPageContent.formContent.formPartTwo}
                 permissionsContent={{
                     permissions: rootPageContent.permissionsContent,
-                    button: rootPageContent.button || "",
+                    button: rootPageContent.button!,
                 }} />
-        </div>
+        </form>
     );
 };
 
