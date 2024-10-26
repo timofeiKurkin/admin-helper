@@ -75,3 +75,13 @@ def save_image(*, image: InputFile, path: str):
 
     except Exception as e:
         raise HTTPException(status_code=501, detail=f"Error saving image: {e}")
+
+
+def create_request_folder(*, user_folder: str, last_index: int) -> str:
+    # Folder for current request where are saving requests files
+    request_folder = os.path.join(user_folder, f"request_{last_index}")
+    # Create if doesn't exist
+    if not os.path.exists(request_folder):
+        os.makedirs(request_folder)
+
+    return request_folder

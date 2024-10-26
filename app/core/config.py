@@ -1,6 +1,6 @@
-# import secrets
 # import warnings
 import os
+import secrets
 from pathlib import Path
 from typing import Annotated, Any, Literal
 
@@ -53,6 +53,8 @@ class Settings(BaseSettings):
     POSTGRES_PASSWORD: str
     POSTGRES_DB: str
 
+    PUBLIC_TIME_FORMAT: str = r"%d.%m.%Y %H:%M"
+
     @computed_field  # type: ignore[prop-decorator]
     @property
     def SQLALCHEMY_DATABASE_URI(self) -> PostgresDsn:
@@ -64,6 +66,11 @@ class Settings(BaseSettings):
             port=self.POSTGRES_PORT,
             path=self.POSTGRES_DB,
         )
+
+    TOKEN_SECRET_KEY: str = secrets.token_urlsafe(32)
+    ACCESS_TOKEN_LIFETIME_MINUTES: int = 30
+    REFRESH_TOKEN_LIFETIME_DAYS: int = 30
+    MAX_COUNT_OF_TOKENS: int = 3
 
     # FIRST_SUPERUSER: str
     # FIRST_SUPERUSER_PASSWORD: str

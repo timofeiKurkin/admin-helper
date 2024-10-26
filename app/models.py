@@ -7,31 +7,7 @@ from pydantic import BaseModel
 from sqlalchemy.types import JSON
 from sqlmodel import Column, Field, Relationship, SQLModel
 
-
-class UserBase(SQLModel):
-    phone: str = Field(default="", max_length=20, index=True)
-    company: str = Field(default="", max_length=50)
-    is_superuser: bool = False
-    name: str = Field(default="", max_length=16)
-
-
-class UserCreate(UserBase):
-    pass
-
-
-class User(UserBase, table=True):
-    __tablename__ = "users"
-
-    id: uuid.UUID = Field(default_factory=uuid.uuid4, primary_key=True)
-    # id: int = Field(default=None, primary_key=True)
-    # user_id: uuid.UUID = Field(default_factory=uuid.uuid4, primary_key=True)
-    # is_superuser: bool = False
-
-    # Определяем связь один ко многим
-    requests: List["RequestForHelp"] = Relationship(
-        back_populates="owner",
-        cascade_delete=True,
-    )
+from app.core.config import settings
 
 
 class MediaFile(SQLModel):
@@ -49,6 +25,31 @@ class MediaFile(SQLModel):
     @staticmethod
     def from_dict(data: dict) -> "MediaFile":
         return MediaFile(**data)
+
+
+class UserBase(SQLModel):
+    phone: str = Field(default="", max_length=20, index=True)
+    company: str = Field(default="", max_length=50)
+    is_superuser: bool = False
+    name: str = Field(default="", max_length=16)
+
+
+class UserCreate(UserBase):
+    pass
+
+
+class User(UserBase, table=True):
+    __tablename__ = "users"
+
+    id: uuid.UUID = Field(default_factory=uuid.uuid4, primary_key=True)
+    # is_superuser: bool = False
+
+    # Определяем связь один ко многим
+    requests: List["RequestForHelp"] = Relationship(
+        back_populates="owner",
+        cascade_delete=True,
+    )
+    created_at: datetime = Field(default_factory=datetime.now)
 
 
 # Base type of the request
@@ -80,11 +81,9 @@ class RequestForHelp(RequestForHelpBase, table=True):
 
     # Определяем обратную связь
     owner: User = Relationship(back_populates="requests")
-    owner_id: uuid.UUID = Field(
-        foreign_key="users.id", nullable=False, ondelete="CASCADE", index=True
-    )
+    owner_id: uuid.UUID = Field(foreign_key="users.id", nullable=False, index=True)
 
-    # created_at: datetime = Field(default_factory=datetime.now)
+    created_at: datetime = Field(default_factory=datetime.now)
     # expires_at: datetime = Field(nullable=False)
 
 
@@ -93,25 +92,63 @@ class RequestForHelpCreate(RequestForHelpBase):
     pass
 
 
-# # Тип данных от клиентской части (Form Data)
-# class RequestForHelpData(SQLModel):
-#     device: str
-#     message_text: str | None = None
-#     # message_file: UploadFile | None = None
-#     # photo: list[UploadFile] | None = None
-#     # video: list[UploadFile] | None = None
-#     name: str
-#     company: str
-#     phone: str
-#     number_pc: str
-
-
 # Обновление статуса заявки
 class RequestForHelpUpdate(RequestForHelpBase):
     pass
     # is_completed: bool = True
 
 
+class ChangeRequestStatus(BaseModel):
+    request_id: uuid.UUID
+    user_id: uuid.UUID
+
+
 class RequestForHelpPublic(SQLModel):
     id: Optional[int] = Field(default=None, primary_key=True)
+    created_at: str = Field(
+        default=datetime.now().strftime(settings.PUBLIC_TIME_FORMAT)
+    )
     message: str = Field(default=None)
+
+    def to_dict(self):
+        return {**self.model_dump()}
+
+
+class AccessToken(SQLModel):
+    phone: str = Field(default="", max_length=20, index=True)
+    owner_id: uuid.UUID = Field(
+        foreign_key="users.id", nullable=False, ondelete="CASCADE", index=True
+    )
+    created_at: datetime = Field(default_factory=datetime.now)
+
+
+# Token models
+# class TokenBase(SQLModel):
+#     device_id: uuid.UUID = Field(default_factory=uuid.uuid4, unique=True)
+#     refresh_token: str = Field(unique=True)
+#     expires_at: datetime = Field(nullable=False)
+
+
+# class Token(TokenBase, table=True):
+#     __tablename__ = "tokens"
+
+#     id: int = Field(default=None, primary_key=True)
+#     created_at: datetime = Field(default_factory=datetime.now)
+
+#     owner: User = Relationship(back_populates="tokens")
+#     owner_id: uuid.UUID = Field(
+#         foreign_key="users.id", nullable=False, ondelete="CASCADE", index=True
+#     )
+
+
+# class TokenUpdate(TokenBase):
+#     pass
+
+
+# class TokenPublic(TokenBase):
+#     access_token: str = Field(unique=True)
+
+
+# class UserToken(SQLModel):
+#     device: uuid.UUID = Field(default_factory=uuid.uuid4)
+#     phone: str = Field(default="", max_length=20, index=True)
