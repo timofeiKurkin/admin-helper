@@ -1,4 +1,5 @@
 import uuid
+from typing import Sequence
 
 from sqlmodel import Session, select
 
@@ -58,8 +59,10 @@ def update_request_for_help(
     return db_request
 
 
-def get_users_requests(*, session: Session, phone: str):
-    pass
+def get_user_requests(*, session: Session, owner_id: str) -> Sequence[RequestForHelp]:
+    statement = select(RequestForHelp).where(RequestForHelp.owner_id == owner_id)
+    user_requests = session.exec(statement=statement).all()
+    return user_requests or []
 
 
 def delete_user_request(*, session: Session, db_request: RequestForHelp):
@@ -67,7 +70,7 @@ def delete_user_request(*, session: Session, db_request: RequestForHelp):
     session.commit()
 
 
-def delete_users_request(*, session: Session, phone: str):
+def delete_user_requests(*, session: Session, phone: str):
     pass
 
 

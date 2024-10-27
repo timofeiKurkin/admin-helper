@@ -1,7 +1,5 @@
 import logging
 import os
-import shutil
-from datetime import datetime, timedelta
 from typing import Annotated, Any, List, Optional
 from uuid import uuid4
 
@@ -21,7 +19,7 @@ from telegram.request import HTTPXRequest
 
 from app import crud, utils
 from app.api.deps import SessionDep
-from app.auth.token import create_just_token
+from app.auth import token as JWTToken
 from app.core.config import TEMPORARY_FOLDER, USER_REQUESTS_FOLDER, settings
 from app.models import (
     ChangeRequestStatus,
@@ -53,27 +51,67 @@ async def root():
     return {"message": "Hello, this is a help request router"}
 
 
-@router.get("/image/{image_id}")
-async def get_image(image_id: str):
-    pass
+# @router.get("/image/{image_id}")
+# async def get_image(image_id: str):
+#     pass
 
 
-@router.get("/video/{video_id}")
-async def get_video(video_id: str):
-    pass
+# @router.get("/video/{video_id}")
+# async def get_video(video_id: str):
+#     pass
 
 
-@router.get("/help_request?{request_id}", response_model=RequestForHelpPublic)
+@router.get(
+    "/get_user_requests",
+    response_model=List[RequestForHelpPublic],
+)
+async def get_user_requests(*, preview: bool, request: Request, session: SessionDep):
+    user_token = request.cookies.get("token")
+
+    if not user_token:
+        raise HTTPException(status_code=403, detail="Authorization cookie not found")
+
+    user_payload = JWTToken.decode_token(token=user_token)
+    user_phone: str = user_payload["phone"]
+    user_id: str = user_payload["owner_id"]
+
+    candidate = crud.get_user_by_phone(session=session, phone=user_phone)
+    if not candidate:
+        raise HTTPException(status_code=404, detail="User not found")
+    if str(candidate.id) != user_id:
+        raise HTTPException(status_code=403, detail="Data of the token doesn't match")
+
+    user_requests = crud.get_user_requests(session=session, owner_id=user_id)
+    user_public_requests = [
+        RequestForHelpPublic.model_validate(
+            user_request,
+            update={
+                "created_at": user_request.created_at.strftime(
+                    settings.PUBLIC_TIME_FORMAT
+                )
+            },
+        )
+        for user_request in user_requests
+    ]
+
+    if preview:
+        return user_public_requests[:8]
+        # TODO: if count of requests less or equal to 8, add status in response object to show client he can't get more requests
+    else:
+        return user_public_requests
+
+
+@router.get("/get_help_request", response_model=RequestForHelpPublic)
 def get_help_request(request_id: int, request: Request):
     pass
 
 
-@router.get("/help_request/show/{request_id}", response_class=HTMLResponse)
+@router.get("/admin/show_request", response_class=HTMLResponse)
 async def show_request(request_id: str):
     pass
 
 
-@router.post("/help_request/change_request_status")
+@router.post("/admin/change_request_status")
 async def change_request_status(update_request: ChangeRequestStatus):
     button_message_id: int = 0
     keyboard = [
@@ -363,22 +401,27 @@ async def create_help_request(
         request_public = RequestForHelpPublic.model_validate(
             new_request,
             update={
-                "message": f"Ваша заявка <b>#{new_request.id}</b> успешно создана и будет рассмотрена в ближайшее время.<br/>Вы можете посмотреть её в <b>ваших заявках</b>.",
                 "created_at": new_request.created_at.strftime(
                     settings.PUBLIC_TIME_FORMAT
                 ),
             },
         )
 
-        response = JSONResponse(content={**request_public.to_dict()}, status_code=200)
-        new_access_token = create_just_token(user=user_candidate)
+        response = JSONResponse(
+            content={
+                "message": f"Ваша заявка <b>#{new_request.id}</b> успешно создана и будет рассмотрена в ближайшее время.<br/>Вы можете посмотреть её в <b>ваших заявках</b>.",
+                "new_request": {**request_public.to_dict()},
+            },
+            status_code=200,
+        )
+        new_access_token = JWTToken.create_just_token(user=user_candidate)
         response.set_cookie(
             key="token",
             value=new_access_token,
             secure=True,
             httponly=True,
             path="/",
-            expires=datetime.now() + timedelta(days=30),
+            max_age=60 * 60 * 24 * 30,
         )
 
         return response
@@ -398,5 +441,5 @@ async def create_help_request(
         #     await bot.delete_messages(
         #         chat_id=settings.GROUP_ID, message_ids=message_ids
         #     )
-
-        raise HTTPException(status_code=500, detail=f"There's an error: {e}")
+        logging.error(e)
+        raise HTTPException(status_code=504, detail=f"There's an error: {e}")

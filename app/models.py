@@ -62,7 +62,7 @@ class RequestForHelpBase(SQLModel):
     )
     photos: List[MediaFile] = Field(default_factory=list, sa_column=Column(JSON))
     videos: List[MediaFile] = Field(default_factory=list, sa_column=Column(JSON))
-    is_completed: bool = False
+    is_completed: bool = Field(default=False)
 
     def to_dict(self):
         return {
@@ -108,7 +108,7 @@ class RequestForHelpPublic(SQLModel):
     created_at: str = Field(
         default=datetime.now().strftime(settings.PUBLIC_TIME_FORMAT)
     )
-    message: str = Field(default=None)
+    is_completed: bool = Field(default=False)
 
     def to_dict(self):
         return {**self.model_dump()}

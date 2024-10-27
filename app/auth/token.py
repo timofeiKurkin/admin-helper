@@ -1,9 +1,11 @@
 from datetime import datetime
 
 import jwt
+from fastapi import HTTPException
+from jwt import PyJWTError
 
 from app.core.config import settings
-from app.models import AccessToken, User
+from app.models import User
 
 ALGORITHM = "HS256"
 ACCESS_TOKEN_LIFETIME_MINUTES = settings.ACCESS_TOKEN_LIFETIME_MINUTES
@@ -52,4 +54,7 @@ def create_just_token(*, user: User) -> str:
 
 
 def decode_token(token: str) -> dict:
-    return jwt.decode(jwt=token, key=TOKEN_SECRET_KEY, algorithms=ALGORITHM)
+    try:
+        return jwt.decode(jwt=token, key=TOKEN_SECRET_KEY, algorithms=ALGORITHM)
+    except PyJWTError as e:
+        raise HTTPException(status_code=400, detail=str("Cannot decode token"))
