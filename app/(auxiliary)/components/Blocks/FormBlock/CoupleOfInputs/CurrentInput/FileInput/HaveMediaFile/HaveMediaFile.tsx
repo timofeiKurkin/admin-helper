@@ -1,6 +1,6 @@
 import React, { FC, useState } from 'react';
 import styles from "./HaveMediaFile.module.scss"
-import { PHOTO_KEY, PhotoAndVideoKeysTypes, VIDEO_KEY } from "@/app/(auxiliary)/types/AppTypes/InputHooksTypes";
+import { PHOTO_KEY, PhotoAndVideoKeysType, VIDEO_KEY } from "@/app/(auxiliary)/types/AppTypes/InputHooksTypes";
 import Button from "@/app/(auxiliary)/components/UI/Button/Button";
 import PhotoEditorPopup from "@/app/(auxiliary)/components/Blocks/Popups/PhotoEditorPopup/PhotoEditorPopup";
 import VideoPlayerPopup from "@/app/(auxiliary)/components/Blocks/Popups/VideoPlayerPopup/VideoPlayerPopup";
@@ -13,7 +13,7 @@ import { selectUserDevice } from '@/app/(auxiliary)/libs/redux-toolkit/store/sli
 
 interface PropsType {
     inputData: {
-        type: PhotoAndVideoKeysTypes;
+        type: PhotoAndVideoKeysType;
         placeholder: string;
         button: string;
     }
@@ -34,7 +34,7 @@ const HaveMediaFile: FC<PropsType> = ({ inputData }) => {
             <div className={styles.filesBlock}>
                 <div className={styles.fileList}>
                     <FileList placeholder={inputData.placeholder}
-                        type={inputData.type as PhotoAndVideoKeysTypes} />
+                        type={inputData.type as PhotoAndVideoKeysType} />
                 </div>
                 <div className={styles.addFiles}>
                     <Button onClick={openDragDropZone}>{inputData.button}</Button>
@@ -43,13 +43,13 @@ const HaveMediaFile: FC<PropsType> = ({ inputData }) => {
 
             {phoneAdaptive ? (
                 dragDropZoneIsOpen !== undefined ? (
-                    <DropZone inputType={inputData.type as PhotoAndVideoKeysTypes}
+                    <DropZone inputType={inputData.type as PhotoAndVideoKeysType}
                         openDragDropZone={openDragDropZone}
                         dragDropZoneIsOpen={dragDropZoneIsOpen} />
                 ) : null
             ) : (
                 dragDropZoneIsOpen ? (
-                    <DropZone inputType={inputData.type as PhotoAndVideoKeysTypes}
+                    <DropZone inputType={inputData.type as PhotoAndVideoKeysType}
                         openDragDropZone={openDragDropZone}
                         dragDropZoneIsOpen={dragDropZoneIsOpen} />
                 ) : null

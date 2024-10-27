@@ -7,7 +7,7 @@ import Button from "@/app/(auxiliary)/components/UI/Button/Button";
 import {white_1} from "@/styles/colors";
 import {useAppDispatch, useAppSelector} from "@/app/(auxiliary)/libs/redux-toolkit/store/hooks";
 import {selectRootPageContent, setNewNotification} from "@/app/(auxiliary)/libs/redux-toolkit/store/slices/AppSlice/AppSlice";
-import {PHOTO_KEY, PhotoAndVideoKeysTypes} from "@/app/(auxiliary)/types/AppTypes/InputHooksTypes";
+import {PHOTO_KEY, PhotoAndVideoKeysType} from "@/app/(auxiliary)/types/AppTypes/InputHooksTypes";
 import {GetInputPropsType, GetRootPropsType} from "@/app/(auxiliary)/types/DropZoneTypes/DropZoneTypes";
 import {formattedTime} from "@/app/(auxiliary)/func/formattedTime";
 import {addFileData} from "@/app/(auxiliary)/libs/redux-toolkit/store/slices/UserFormDataSlice/UserFormDataSlice";
@@ -23,7 +23,7 @@ interface PropsType {
         getInputProps: GetInputPropsType;
     }
     isDragActive: boolean;
-    type: PhotoAndVideoKeysTypes;
+    type: PhotoAndVideoKeysType;
     openDragDropZone: () => void;
     createPhotoPreviews: (newFiles: File[]) => void
 }

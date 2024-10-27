@@ -18,10 +18,10 @@ import {
     selectServerResponse
 } from "@/app/(auxiliary)/libs/redux-toolkit/store/slices/UserFormDataSlice/UserFormDataSlice";
 import {
-    AllKeysTypesOfInputs,
+    AllKeysOfInputsType,
     COMPANY_KEY,
     DEVICE_KEY,
-    TextInputsKeysTypes
+    TextInputsKeysType
 } from "@/app/(auxiliary)/types/AppTypes/InputHooksTypes";
 import dynamic from 'next/dynamic';
 import InputSkeleton from '@/app/(auxiliary)/components/UI/Inputs/InputSkeleton/InputSkeleton';
@@ -52,7 +52,7 @@ const TextInput: FC<PropsType> = ({
     const dispatch = useAppDispatch()
     const serverResponse = useAppSelector(selectServerResponse).sentToServer
     const value =
-        useInput("", currentInput.type as AllKeysTypesOfInputs, inputValidations[currentInput.type])
+        useInput("", currentInput.type as AllKeysOfInputsType, inputValidations[currentInput.type])
     const [currentHelpfulList, setCurrentHelpfulList] =
         useState<InputHelpfulItemType[]>(() => {
             if (currentInput.type === DEVICE_KEY || currentInput.type === COMPANY_KEY) {
@@ -72,7 +72,7 @@ const TextInput: FC<PropsType> = ({
 
     useEffect(() => {
         dispatch(changeTextData({
-            key: currentInput.type as TextInputsKeysTypes,
+            key: currentInput.type as TextInputsKeysType,
             data: {
                 validationStatus: value.inputValid,
                 value: value.value

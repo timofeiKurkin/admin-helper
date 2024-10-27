@@ -6,8 +6,8 @@ import {
     NAME_KEY,
     NUMBER_PC_KEY,
     PHONE_KEY,
-    PhotoAndVideoKeysTypes,
-    AllKeysTypesOfInputs
+    PhotoAndVideoKeysType,
+    AllKeysOfInputsType
 } from "@/app/(auxiliary)/types/AppTypes/InputHooksTypes";
 
 export interface RootPageContentType extends Button {
@@ -15,6 +15,7 @@ export interface RootPageContentType extends Button {
     formContent: FormContentType;
     contentOfUploadBlock: ContentOfUploadBlockType;
     permissionsContent: PermissionsContentType;
+    userRequests: UserRequestsType;
 }
 
 export interface FormContentType {
@@ -31,7 +32,7 @@ export interface FormPartType {
 // Inputs
 export interface InputType {
     id: number;
-    type: AllKeysTypesOfInputs | string; // TODO: REMOVE STRING TYPE
+    type: AllKeysOfInputsType | string; // TODO: REMOVE STRING TYPE
     inputTitle: string;
     inputPlaceholder?: string;
     toggleText?: string;
@@ -102,9 +103,29 @@ export interface ContentOfUploadBlockType extends Button {
     }
 }
 
-// Permissions
+
+// Permission Data
 export interface PermissionsContentType {
     ICanAnswer: string;
     personalDataPreparation: string;
     preparationLinkToPolicy: string;
+}
+
+
+// User Requests Data
+export interface UserRequestsType {
+    button: string;
+    modalData: ModalDataType;
+}
+
+export interface ModalDataType {
+    title: string;
+    tableData: TableDataType;
+    getMoreRequests: string;
+}
+
+export interface TableDataType {
+    number: string;
+    creationTime: string;
+    status: string;
 }

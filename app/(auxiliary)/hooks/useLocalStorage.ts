@@ -1,15 +1,15 @@
 import {useEffect, useState} from "react";
 import {
-    AllKeysTypesOfInputs,
+    AllKeysOfInputsType,
     savedInputsData,
-    SavedInputsKeysTypes
+    SavedInputsKeysType
 } from "@/app/(auxiliary)/types/AppTypes/InputHooksTypes";
 
 const UseLocalStorage = (
-    key: AllKeysTypesOfInputs,
+    key: AllKeysOfInputsType,
     initialValue: string | boolean | {}
 ) => {
-    const getStorageValue = (key: SavedInputsKeysTypes, initialValue: string | number | {} | boolean) => {
+    const getStorageValue = (key: SavedInputsKeysType, initialValue: string | number | {} | boolean) => {
         if (typeof window !== 'undefined') {
             const value: any = localStorage.getItem(key)
             const parse = JSON.parse(value)
@@ -20,14 +20,14 @@ const UseLocalStorage = (
     }
 
     const [value, setValue] = useState(() => {
-        if (savedInputsData.includes(key as SavedInputsKeysTypes)) {
-            return getStorageValue(key as SavedInputsKeysTypes, initialValue)
+        if (savedInputsData.includes(key as SavedInputsKeysType)) {
+            return getStorageValue(key as SavedInputsKeysType, initialValue)
         }
         return initialValue
     })
 
     useEffect(() => {
-        if (savedInputsData.includes(key as SavedInputsKeysTypes)) {
+        if (savedInputsData.includes(key as SavedInputsKeysType)) {
             localStorage.setItem(key, JSON.stringify(value))
         }
     }, [key, value])

@@ -49,7 +49,7 @@ const TextHighlighting: FC<PropsType> = ({
                                     currentPhrase
                                 )}
                             </span>,
-                            " ",
+                            filteredWords.length > wordIndexes[1] ? " " : "",
                             filteredWords.slice(wordIndexes[1]).join(" ")
                         ]
                     }

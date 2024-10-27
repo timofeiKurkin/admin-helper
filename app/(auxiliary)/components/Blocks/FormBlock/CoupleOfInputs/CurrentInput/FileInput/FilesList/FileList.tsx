@@ -1,5 +1,5 @@
 import React, {FC} from 'react';
-import {PhotoAndVideoKeysTypes} from "@/app/(auxiliary)/types/AppTypes/InputHooksTypes";
+import {PhotoAndVideoKeysType} from "@/app/(auxiliary)/types/AppTypes/InputHooksTypes";
 import {useAppDispatch, useAppSelector} from "@/app/(auxiliary)/libs/redux-toolkit/store/hooks";
 import {
     deleteFile,
@@ -19,7 +19,7 @@ import {selectUserDevice} from "@/app/(auxiliary)/libs/redux-toolkit/store/slice
 
 interface PropsType {
     placeholder: string;
-    type: PhotoAndVideoKeysTypes;
+    type: PhotoAndVideoKeysType;
 }
 
 const FileList: FC<PropsType> = ({

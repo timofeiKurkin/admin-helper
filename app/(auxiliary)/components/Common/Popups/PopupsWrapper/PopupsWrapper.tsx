@@ -4,14 +4,14 @@ import {changePopupVisibility} from "@/app/(auxiliary)/libs/redux-toolkit/store/
 import Backdrop from "@/app/(auxiliary)/components/UI/Wrappers/Backdrop/Backdrop";
 import styles from "./PopupsWrapper.module.scss"
 import Title from "@/app/(auxiliary)/components/UI/TextTemplates/Title";
-import {PhotoAndVideoKeysTypes} from "@/app/(auxiliary)/types/AppTypes/InputHooksTypes";
+import {PhotoAndVideoKeysType} from "@/app/(auxiliary)/types/AppTypes/InputHooksTypes";
 import PopupScroll from "@/app/(auxiliary)/components/Common/Popups/PopupsWrapper/PopupScroll/PopupScroll";
 
 
 interface PropsType {
     popupTitle: string;
     children: React.ReactNode;
-    type: PhotoAndVideoKeysTypes;
+    type: PhotoAndVideoKeysType;
 }
 
 const PopupsWrapper: FC<PropsType> = ({

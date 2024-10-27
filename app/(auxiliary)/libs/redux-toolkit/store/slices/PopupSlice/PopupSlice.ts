@@ -3,7 +3,7 @@ import {PayloadAction} from "@reduxjs/toolkit";
 import {WritableDraft} from "immer";
 import {PhotoEditorSettingsType, VideoOrientationType} from "@/app/(auxiliary)/types/PopupTypes/PopupTypes";
 import {indexOfObject} from "@/app/(auxiliary)/func/handlers";
-import {PHOTO_KEY, PhotoAndVideoKeysTypes, VIDEO_KEY} from "@/app/(auxiliary)/types/AppTypes/InputHooksTypes";
+import {PHOTO_KEY, PhotoAndVideoKeysType, VIDEO_KEY} from "@/app/(auxiliary)/types/AppTypes/InputHooksTypes";
 
 
 interface InitialState {
@@ -65,7 +65,7 @@ export const popupSlice = createAppSlice({
          * Изменение состояния открытия и закрытия фоторедактора или видео плеера, в зависимости от переданного типа
          */
         changePopupVisibility: create.reducer(
-            (state, action: PayloadAction<{ type: PhotoAndVideoKeysTypes }>) => {
+            (state, action: PayloadAction<{ type: PhotoAndVideoKeysType }>) => {
                 state.openedPopup[action.payload.type] = !state.openedPopup[action.payload.type]
             }
         ),

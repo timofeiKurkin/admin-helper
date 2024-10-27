@@ -11,6 +11,7 @@ import {
     selectRootPageContent,
     setRootPageContent
 } from "@/app/(auxiliary)/libs/redux-toolkit/store/slices/AppSlice/AppSlice";
+import UserRequestsBlock from '../../Blocks/UserRequestsBlock/UserRequestsBlock';
 
 export default function RootSection() {
     const dispatch = useAppDispatch()
@@ -26,6 +27,7 @@ export default function RootSection() {
     return (
         <TitleAndBodyWrapper>
             <MainTitleBlock>{rootPageData.title}</MainTitleBlock>
+            <UserRequestsBlock/>
             <RootBodyBlock rootPageContent={rootPageData}/>
         </TitleAndBodyWrapper>
     )

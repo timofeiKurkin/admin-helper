@@ -5,6 +5,9 @@
     display: grid;
     
     @media screen and ($desktop1920) {
+        grid-template-areas: "main-title user-requests-block" "root-body-block root-body-block";
+        grid-template-columns: 1fr 11.3125rem;
+        grid-template-rows: min-content 1fr;
         row-gap: 3.13rem;
     }
     

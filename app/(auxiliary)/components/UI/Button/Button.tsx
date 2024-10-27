@@ -1,13 +1,7 @@
 import React, {CSSProperties, FC} from 'react';
 import styles from "./Button.module.scss";
 import ButtonText from "@/app/(auxiliary)/components/UI/TextTemplates/ButtonText";
-
-
-interface ImageProps {
-    position?: "right" | "left";
-    visibleOnlyImage: boolean;
-    children: React.ReactNode;
-}
+import { ButtonImageProps } from '@/app/(auxiliary)/types/AppTypes/AppTypes';
 
 
 interface PropsType {
@@ -17,7 +11,7 @@ interface PropsType {
     tabIndex?: number;
     onClick?: () => void;
     style?: CSSProperties;
-    image?: ImageProps
+    image?: ButtonImageProps
     buttonRef?: React.RefObject<HTMLButtonElement>;
     className?: string;
     loadingAnimation?: boolean;
@@ -30,7 +24,7 @@ const Button: FC<PropsType> = ({
                                    tabIndex,
                                    onClick,
                                    style,
-                                   image = {} as ImageProps,
+                                   image = {} as ButtonImageProps,
                                    buttonRef,
                                    className,
                                    loadingAnimation = false

@@ -5,8 +5,8 @@ import Button from "@/app/(auxiliary)/components/UI/Button/Button";
 import {
     DeviceKeyType,
     MESSAGE_KEY,
-    PhotoAndVideoKeysTypes,
-    SavedInputsKeysTypes,
+    PhotoAndVideoKeysType,
+    SavedInputsKeysType,
     VIDEO_KEY
 } from "@/app/(auxiliary)/types/AppTypes/InputHooksTypes";
 import { UserFormDataType } from "@/app/(auxiliary)/types/AppTypes/Context";
@@ -81,7 +81,7 @@ const UploadForm: FC<PropsType> = ({ buttonText }) => {
                 formData.append("userAgreed", String(permissionsOfForm.userAgreed))
 
                 if (userData.text_data) {
-                    (Object.keys(userData.text_data) as (DeviceKeyType | SavedInputsKeysTypes)[]).forEach((key) => {
+                    (Object.keys(userData.text_data) as (DeviceKeyType | SavedInputsKeysType)[]).forEach((key) => {
                         if (key !== "message") {
                             if (userData.text_data[key].validationStatus) {
                                 formData.append(key, userData.text_data[key]?.value)
@@ -93,7 +93,7 @@ const UploadForm: FC<PropsType> = ({ buttonText }) => {
                 }
 
                 if (userData.file_data) {
-                    (Object.keys(userData.file_data) as (PhotoAndVideoKeysTypes | typeof MESSAGE_KEY)[]).forEach((key) => {
+                    (Object.keys(userData.file_data) as (PhotoAndVideoKeysType | typeof MESSAGE_KEY)[]).forEach((key) => {
                         if (key !== "message") {
                             if (key === VIDEO_KEY) {
                                 userData.file_data[key]?.files.forEach((file) => formData.append(key, file))

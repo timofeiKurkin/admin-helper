@@ -8,7 +8,7 @@ import {
     NUMBER_PC_KEY,
     PHONE_KEY,
     PHOTO_KEY,
-    PhotoAndVideoKeysTypes,
+    PhotoAndVideoKeysType,
     VIDEO_KEY,
 } from "@/app/(auxiliary)/types/AppTypes/InputHooksTypes";
 
@@ -28,7 +28,7 @@ export interface AppContextType {
 // }
 
 export interface FileListStateType {
-    type: PhotoAndVideoKeysTypes;
+    type: PhotoAndVideoKeysType;
     filesNames: string[]; // Список имен файлов, доступных для открытия
     files: File[]; // Список исходных файлов, которые загрузил пользователь
     filesFinally: File[]; // Список файлов, прошедших изменения пользователя в фоторедакторе

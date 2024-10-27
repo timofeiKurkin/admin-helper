@@ -1,4 +1,4 @@
-import {ChangeEventHandlerType} from "@/app/(auxiliary)/types/AppTypes/AppTypes";
+import { ChangeEventHandlerType } from "@/app/(auxiliary)/types/AppTypes/AppTypes";
 
 export const DEVICE_KEY = "device"
 export const MESSAGE_KEY = "message"
@@ -18,29 +18,38 @@ export interface ValidationsType {
 }
 
 export interface ValidationsKeyType {
-    key: AllKeysTypesOfInputs;
+    key: AllKeysOfInputsType;
 }
 
-export type AllKeysTypesOfInputs = DeviceKeyType | PhotoAndVideoKeysTypes | SavedInputsKeysTypes;
-
-export type PhotoAndVideoKeysTypes = typeof PHOTO_KEY | typeof VIDEO_KEY;
+export type PhotoAndVideoKeysType = typeof PHOTO_KEY | typeof VIDEO_KEY;
 
 export type DeviceKeyType = typeof DEVICE_KEY;
 
-export type SavedInputsKeysTypes = typeof NAME_KEY
-    | typeof COMPANY_KEY
-    | typeof NUMBER_PC_KEY
-    | typeof PHONE_KEY
-    | typeof MESSAGE_KEY;
+export type SavedInputsKeysType = typeof NAME_KEY
+| typeof COMPANY_KEY
+| typeof NUMBER_PC_KEY
+| typeof PHONE_KEY
+| typeof MESSAGE_KEY;
 
-export type TextInputsKeysTypes = SavedInputsKeysTypes | DeviceKeyType
+export type TextInputsKeysType = SavedInputsKeysType | DeviceKeyType
 
-export const savedInputsData: SavedInputsKeysTypes[] = [
+export type AllKeysOfInputsType = PhotoAndVideoKeysType | TextInputsKeysType;
+
+export const savedInputsData: SavedInputsKeysType[] = [
     MESSAGE_KEY,
     NAME_KEY,
     PHONE_KEY,
     COMPANY_KEY,
     NUMBER_PC_KEY,
+]
+
+export const requiredFields: (TextInputsKeysType)[] = [
+    MESSAGE_KEY,
+    NAME_KEY,
+    PHONE_KEY,
+    COMPANY_KEY,
+    NUMBER_PC_KEY,
+    DEVICE_KEY
 ]
 
 // export const photoAndVideoInputsData: PhotoAndVideoKeysTypes[] = [PHOTO_KEY, VIDEO_KEY]

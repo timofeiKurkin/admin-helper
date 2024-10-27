@@ -1,0 +1,14 @@
+@import "@/styles/variables.module.scss";
+
+.userRequestsWrapper {
+    grid-area: user-requests-block;
+
+    .userRequestsButton {
+        background-color: $white;
+        border: 1px solid $black;
+        
+        &>p {
+            color: $black;
+        }
+    }
+}

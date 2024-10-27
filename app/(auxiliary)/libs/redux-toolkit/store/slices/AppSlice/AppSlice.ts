@@ -1,8 +1,10 @@
+import {v4 as uuidv4} from "uuid";
 import {createAppSlice} from "@/app/(auxiliary)/libs/redux-toolkit/store/createAppSlice";
 import {RootPageContentType} from "@/app/(auxiliary)/types/Data/Interface/RootPage/RootPageContentType";
 import {PayloadAction} from "@reduxjs/toolkit";
 import {BlocksMovingType, UserDeviceStateType} from "@/app/(auxiliary)/types/AppTypes/Context";
 import { DeleteNotificationType, NotificationListType, SetNotificationType } from "@/app/(auxiliary)/types/AppTypes/Notification";
+
 
 interface InitialStateType {
     userDevice: UserDeviceStateType;
@@ -125,7 +127,7 @@ export const appSlice = createAppSlice({
                     }
                 } else {
                     state.notificationList.push({
-                        id: crypto.randomUUID(),
+                        id: uuidv4(),
                         message: action.payload.message,
                         timeout: action.payload.timeout || 7000,
                         type: action.payload.type

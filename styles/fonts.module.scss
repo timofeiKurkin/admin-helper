@@ -14,6 +14,7 @@
     font-style: normal;
     letter-spacing: $letter_spacing;
     font-weight: 700;
+    grid-area: main-title;
 
     @media screen and ($desktop1920) {
         font-size: 2.75rem;

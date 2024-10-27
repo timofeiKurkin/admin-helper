@@ -1,7 +1,7 @@
 import React, { FC, useCallback, useEffect } from "react";
 import { FileListType } from "@/app/(auxiliary)/types/DropZoneTypes/DropZoneTypes";
 import { ErrorCode, FileError, useDropzone } from "react-dropzone";
-import { PHOTO_KEY, PhotoAndVideoKeysTypes, VIDEO_KEY } from "@/app/(auxiliary)/types/AppTypes/InputHooksTypes";
+import { PHOTO_KEY, PhotoAndVideoKeysType, VIDEO_KEY } from "@/app/(auxiliary)/types/AppTypes/InputHooksTypes";
 import { useAppDispatch, useAppSelector } from "@/app/(auxiliary)/libs/redux-toolkit/store/hooks";
 import {
     addFileData,
@@ -23,7 +23,7 @@ import DesktopDropZone from "@/app/(auxiliary)/components/Blocks/FormBlock/DropZ
 
 
 interface PropsType {
-    inputType: PhotoAndVideoKeysTypes;
+    inputType: PhotoAndVideoKeysType;
     openDragDropZone: () => void;
     dragDropZoneIsOpen: boolean;
 }

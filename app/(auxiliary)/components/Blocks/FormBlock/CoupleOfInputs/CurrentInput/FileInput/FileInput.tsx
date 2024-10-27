@@ -2,7 +2,7 @@ import React, {FC, useEffect, useState} from 'react';
 import {PhotoAndVideoInputType} from "@/app/(auxiliary)/types/Data/Interface/RootPage/RootPageContentType";
 import styles from "./FileInput.module.scss";
 import Toggle from "@/app/(auxiliary)/components/Common/Switches/Toggle/Toggle";
-import {PHOTO_KEY, PhotoAndVideoKeysTypes, VIDEO_KEY} from "@/app/(auxiliary)/types/AppTypes/InputHooksTypes";
+import {PHOTO_KEY, PhotoAndVideoKeysType, VIDEO_KEY} from "@/app/(auxiliary)/types/AppTypes/InputHooksTypes";
 import {useAppDispatch, useAppSelector} from "@/app/(auxiliary)/libs/redux-toolkit/store/hooks";
 import {
     selectUserDevice,
@@ -60,7 +60,7 @@ const FileInput: FC<PropsType> = ({input}) => {
 
             {haveMediaFile && (
                 <HaveMediaFile inputData={{
-                    type: input.type as PhotoAndVideoKeysTypes,
+                    type: input.type as PhotoAndVideoKeysType,
                     button: input.button || "",
                     placeholder: input.inputPlaceholder || ""
                 }}/>

@@ -1,6 +1,6 @@
 import {createAppSlice} from "@/app/(auxiliary)/libs/redux-toolkit/store/createAppSlice";
 import {
-    AllKeysTypesOfInputs,
+    AllKeysOfInputsType,
     COMPANY_KEY,
     DEVICE_KEY,
     MESSAGE_KEY,
@@ -8,8 +8,8 @@ import {
     NUMBER_PC_KEY,
     PHONE_KEY,
     PHOTO_KEY,
-    PhotoAndVideoKeysTypes,
-    TextInputsKeysTypes,
+    PhotoAndVideoKeysType,
+    TextInputsKeysType,
     VIDEO_KEY
 } from "@/app/(auxiliary)/types/AppTypes/InputHooksTypes";
 import {
@@ -95,7 +95,7 @@ interface DataActionType<K, T> {
     data: T
 }
 
-type ChangePreviewActionType = DataActionType<PhotoAndVideoKeysTypes, File | File[]>
+type ChangePreviewActionType = DataActionType<PhotoAndVideoKeysType, File | File[]>
 
 interface DeleteFileAction {
     name: string;
@@ -125,7 +125,7 @@ export const userFormDataSlice = createAppSlice({
         changeTextData: create.reducer(
             (
                 state,
-                action: PayloadAction<DataActionType<TextInputsKeysTypes, FormDataItemType<string>>>
+                action: PayloadAction<DataActionType<TextInputsKeysType, FormDataItemType<string>>>
             ) => {
                 state.text_data[action.payload.key] = action.payload.data
             }
@@ -165,7 +165,7 @@ export const userFormDataSlice = createAppSlice({
         addFileData: create.reducer(
             (
                 state,
-                action: PayloadAction<DataActionType<PhotoAndVideoKeysTypes, FormDataItemType<File[]>>> // CustomFileType[]
+                action: PayloadAction<DataActionType<PhotoAndVideoKeysType, FormDataItemType<File[]>>> // CustomFileType[]
             ) => {
                 const key = action.payload.key
                 const newFile = action.payload.data.value
@@ -182,7 +182,7 @@ export const userFormDataSlice = createAppSlice({
         deleteFile: create.reducer(
             (
                 state,
-                action: PayloadAction<DataActionType<PhotoAndVideoKeysTypes, DeleteFileAction>>
+                action: PayloadAction<DataActionType<PhotoAndVideoKeysType, DeleteFileAction>>
             ) => {
                 const key = action.payload.key
 
@@ -225,7 +225,7 @@ export const userFormDataSlice = createAppSlice({
         ) => {
             const key = action.payload.key
 
-            const changePreview = (newFile: File, key: PhotoAndVideoKeysTypes) => {
+            const changePreview = (newFile: File, key: PhotoAndVideoKeysType) => {
                 const previewIndex = indexOfObject(state.file_data[key].filesFinally, newFile)
 
                 if (previewIndex !== -1) {
@@ -270,7 +270,7 @@ export const userFormDataSlice = createAppSlice({
         setValidationFormStatus: create.reducer(
             (state) => {
                 const textDataKeys = Object.keys(state.text_data)
-                state.validationFormStatus = (textDataKeys as (TextInputsKeysTypes)[]).every((key) => {
+                state.validationFormStatus = (textDataKeys as (TextInputsKeysType)[]).every((key) => {
                     if (key === "message") {
                         return state.text_data[key].validationStatus || state.file_data[key].validationStatus
                     } else {

@@ -69,7 +69,7 @@
                     "type": "video",
                     "inputTitle": "Добавить видео с проблемой",
                     "toggleText": "У меня есть видео проблемы",
-                    "inputPlaceholder": "Загрузка видео временно не доступна",
+                    "inputPlaceholder": "Вы не добавили ни одного видео",
                     "button": "Добавить"
                 }
             ]
@@ -93,7 +93,7 @@
                 {
                     "id": 2,
                     "type": "company",
-                    "inputTitle": "В какой организации Вы находитесь?",
+                    "inputTitle": "Организация",
                     "inputPlaceholder": "Организация",
                     "helpfulList": [
                         {
@@ -152,5 +152,17 @@
         "personalDataPreparation": "Даю согласие на обработку персональных данных",
         "preparationLinkToPolicy": "https://it-nk.ru/policy/"
     },
-    "button": "Отправить"
+    "button": "Отправить",
+    "userRequests": {
+        "button": "Ваши заявки",
+        "modalData": {
+            "title": "Список ваших заявок",
+            "tableData": {
+                "number": "Номер",
+                "creationTime": "Время создания",
+                "status": "Статус"
+            },
+            "getMoreRequests": "Загрузить больше"
+        }
+    }
 }
