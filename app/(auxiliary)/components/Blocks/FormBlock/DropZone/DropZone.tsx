@@ -1,5 +1,5 @@
 import React, { FC, useCallback, useEffect } from "react";
-import { FileListType } from "@/app/(auxiliary)/types/DropZoneTypes/DropZoneTypes";
+import { FileListType } from "@/app/(auxiliary)/types/FormTypes/DropZoneTypes/DropZoneTypes";
 import { ErrorCode, FileError, useDropzone } from "react-dropzone";
 import { PHOTO_KEY, PhotoAndVideoKeysType, VIDEO_KEY } from "@/app/(auxiliary)/types/AppTypes/InputHooksTypes";
 import { useAppDispatch, useAppSelector } from "@/app/(auxiliary)/libs/redux-toolkit/store/hooks";
@@ -14,7 +14,7 @@ import {
     changeVideoOrientation,
     setCurrentOpenedFileName
 } from "@/app/(auxiliary)/libs/redux-toolkit/store/slices/PopupSlice/PopupSlice";
-import { defaultPhotoSettings } from "@/app/(auxiliary)/types/PopupTypes/PopupTypes";
+import { defaultPhotoSettings } from "@/app/(auxiliary)/types/FormTypes/PopupTypes/PopupTypes";
 import { acceptSettings, maxFiles, maxSize } from "@/app/(auxiliary)/components/Blocks/FormBlock/DropZone/possibleFileExtensions";
 import { determineOrientation } from "@/app/(auxiliary)/func/editorHandlers";
 import { selectUserDevice, setNewNotification } from "@/app/(auxiliary)/libs/redux-toolkit/store/slices/AppSlice/AppSlice";

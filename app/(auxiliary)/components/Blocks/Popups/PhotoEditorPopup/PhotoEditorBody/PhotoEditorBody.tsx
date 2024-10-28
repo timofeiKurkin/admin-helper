@@ -1,11 +1,11 @@
-import React, {FC, useCallback, useState} from 'react';
+import React, { FC, useCallback, useState } from 'react';
 import styles from "./PhotoEditorBody.module.scss";
 import popupsCommonStyles from "@/app/(auxiliary)/components/Common/Popups/PopupsWrapper/PopupsCommonStyles.module.scss"
 import SeparatingLine from "@/app/(auxiliary)/components/UI/SeparatingLine/SeparatingLine";
-import {PhotoEditorDataType} from "@/app/(auxiliary)/types/Data/Interface/PhotoEditor/PhotoEditorDataType";
-import {blue_light} from "@/styles/colors";
+import { PhotoEditorDataType } from "@/app/(auxiliary)/types/Data/Interface/PhotoEditor/PhotoEditorDataType";
+import { blue_light } from "@/styles/colors";
 import Text from "@/app/(auxiliary)/components/UI/TextTemplates/Text";
-import {useAppDispatch, useAppSelector} from "@/app/(auxiliary)/libs/redux-toolkit/store/hooks";
+import { useAppDispatch, useAppSelector } from "@/app/(auxiliary)/libs/redux-toolkit/store/hooks";
 import {
     changePhotoSettings,
     changePopupVisibility,
@@ -13,15 +13,15 @@ import {
     selectPhotoListSettings,
     setCurrentOpenedFileName
 } from "@/app/(auxiliary)/libs/redux-toolkit/store/slices/PopupSlice/PopupSlice";
-import {findElement, scalePoints, scaleStickPoint, stickToClosestValue} from "@/app/(auxiliary)/func/editorHandlers";
-import {CustomFile, PhotoEditorSettingsType, PhotoSettingKeysType} from "@/app/(auxiliary)/types/PopupTypes/PopupTypes";
-import {Crop} from "react-image-crop";
+import { findElement, scalePoints, scaleStickPoint, stickToClosestValue } from "@/app/(auxiliary)/func/editorHandlers";
+import { CustomFile, PhotoEditorSettingsType, PhotoSettingKeysType } from "@/app/(auxiliary)/types/FormTypes/PopupTypes/PopupTypes";
+import { Crop } from "react-image-crop";
 import {
     changePreview,
     deleteFile,
     selectFormFileData
 } from "@/app/(auxiliary)/libs/redux-toolkit/store/slices/UserFormDataSlice/UserFormDataSlice";
-import {PHOTO_KEY} from "@/app/(auxiliary)/types/AppTypes/InputHooksTypes";
+import { PHOTO_KEY } from "@/app/(auxiliary)/types/AppTypes/InputHooksTypes";
 import Editor from "@/app/(auxiliary)/components/Blocks/Popups/PhotoEditorPopup/PhotoEditorBody/Editor/Editor";
 import PopupFileList from "@/app/(auxiliary)/components/Common/Popups/PopupsWrapper/PopupFileList/PopupFileList";
 import SaveSettings
@@ -38,9 +38,9 @@ interface PropsType {
 }
 
 const PhotoEditorBody: FC<PropsType> = ({
-                                            data,
-                                            type
-                                        }) => {
+    data,
+    type
+}) => {
     const dispatch = useAppDispatch()
     const formFileData = useAppSelector(selectFormFileData)[type]
 
@@ -64,7 +64,7 @@ const PhotoEditorBody: FC<PropsType> = ({
      * Файлы для превью фотографий для списка фото в редакторе и в форме
      */
     const [listOfPreviews, setListOfPreviews] =
-        useState<CustomFile[]>(() => formFileData.filesFinally.map((file, i) => Object.assign(file, {id: i})))
+        useState<CustomFile[]>(() => formFileData.filesFinally.map((file, i) => Object.assign(file, { id: i })))
     //
 
     /**
@@ -153,7 +153,7 @@ const PhotoEditorBody: FC<PropsType> = ({
         setPhoto(formFileData.files.find((f) => findCurrentFile(f, anotherFileName)) || {} as File)
         const anotherSetting = getAnotherSettings(anotherFileName)
         setCurrentPhotoSettings(anotherSetting)
-        dispatch(setCurrentOpenedFileName({fileName: anotherFileName}))
+        dispatch(setCurrentOpenedFileName({ fileName: anotherFileName }))
     }
 
     /**
@@ -163,7 +163,7 @@ const PhotoEditorBody: FC<PropsType> = ({
     const removeFile = (removedFileName: string) => {
         const prevFileName = currentPhotoSettings.name
 
-        dispatch(deleteFile({key: type, data: {name: removedFileName}}))
+        dispatch(deleteFile({ key: type, data: { name: removedFileName } }))
 
         setListOfPreviews((prevState) => prevState.filter((preview) => preview.name !== removedFileName))
         setTemporaryPhotosSettings((prevState) => prevState.filter((setting) => setting.name !== removedFileName))
@@ -172,8 +172,8 @@ const PhotoEditorBody: FC<PropsType> = ({
             const anotherFile = formFileData.filesNames.filter((name) => name !== removedFileName)[0]
             switchToAnotherFile(anotherFile)
         } else if (listOfPreviews.length <= 1) {
-            dispatch(changePopupVisibility({type}))
-            dispatch(setCurrentOpenedFileName({fileName: ''}))
+            dispatch(changePopupVisibility({ type }))
+            dispatch(setCurrentOpenedFileName({ fileName: '' }))
         }
     }
 
@@ -181,7 +181,7 @@ const PhotoEditorBody: FC<PropsType> = ({
         setListOfPreviews((prevState) => {
             return prevState.map((file) => {
                 if (file.name === newFile.name) {
-                    return Object.assign(newFile, {id: file.id})
+                    return Object.assign(newFile, { id: file.id })
                 }
                 return file
             })
@@ -205,8 +205,8 @@ const PhotoEditorBody: FC<PropsType> = ({
             return setting
         })
         dispatch(changePhotoSettings(listOfSettings))
-        dispatch(changePopupVisibility({type}))
-        dispatch(setCurrentOpenedFileName({fileName: ""}))
+        dispatch(changePopupVisibility({ type }))
+        dispatch(setCurrentOpenedFileName({ fileName: "" }))
     }
 
     return (
@@ -214,11 +214,11 @@ const PhotoEditorBody: FC<PropsType> = ({
             <div className={styles.editorGrid}>
                 {fileName === photo.name ? (
                     <Editor scale={currentPhotoSettings.scale}
-                            rotate={currentPhotoSettings.rotate}
-                            setCrop={updateCrop}
-                            updatePhoto={updatePhotoPreview}
-                            crop={currentPhotoSettings.crop}
-                            photo={photo}/>
+                        rotate={currentPhotoSettings.rotate}
+                        setCrop={updateCrop}
+                        updatePhoto={updatePhotoPreview}
+                        crop={currentPhotoSettings.crop}
+                        photo={photo} />
                 ) : null}
             </div>
 
@@ -233,30 +233,30 @@ const PhotoEditorBody: FC<PropsType> = ({
                         value: currentPhotoSettings.rotate,
                         data: data.editor.rotate,
                         updateFunc: rotateImageHandler
-                    }}/>
+                    }} />
 
                 <div className={styles.resetSettings}
-                     onClick={() => resetSettingsHandler()}>
-                    <Text style={{color: blue_light}}>
+                    onClick={() => resetSettingsHandler()}>
+                    <Text style={{ color: blue_light }}>
                         {data.editor.resetSettings}
                     </Text>
                 </div>
             </div>
 
-            <SeparatingLine className={styles.separatedLine}/>
+            <SeparatingLine className={styles.separatedLine} />
 
             <PopupFileList titleOfList={data.photoList.uploadedPhotos}
-                           listOfPreviews={listOfPreviews}
-                           func={{
-                               switchToAnotherFile,
-                               removeFile
-                           }}/>
+                listOfPreviews={listOfPreviews}
+                func={{
+                    switchToAnotherFile,
+                    removeFile
+                }} />
 
             <div className={`${popupsCommonStyles.buttons} ${styles.photoEditorButtons}`}>
                 <SaveSettings data={data.buttons.save}
-                              saveSettings={saveSettingsHandler}/>
+                    saveSettings={saveSettingsHandler} />
 
-                <ClosePopup data={data.buttons.close} type={type}/>
+                <ClosePopup data={data.buttons.close} type={type} />
             </div>
         </div>
     );

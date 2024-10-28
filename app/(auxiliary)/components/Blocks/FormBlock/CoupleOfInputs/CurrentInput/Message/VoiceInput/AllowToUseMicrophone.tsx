@@ -1,6 +1,6 @@
 import React, {FC, useEffect, useState} from 'react';
 import styles from "./AllowToUseMicrophone.module.scss"
-import PopupScroll from "@/app/(auxiliary)/components/Common/Popups/PopupsWrapper/PopupScroll/PopupScroll";
+import PopupScroll from "@/app/(auxiliary)/components/Common/Popups/PopupsWrapper/PopupDisableScroll/PopupDisableScroll";
 import Title from "@/app/(auxiliary)/components/UI/TextTemplates/Title";
 
 interface PropsType {

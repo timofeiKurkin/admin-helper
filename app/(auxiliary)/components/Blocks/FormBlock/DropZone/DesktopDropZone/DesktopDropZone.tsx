@@ -1,21 +1,21 @@
-import React, {FC, useEffect} from 'react';
-import PopupScroll from "@/app/(auxiliary)/components/Common/Popups/PopupsWrapper/PopupScroll/PopupScroll";
+import React, { FC, useEffect } from 'react';
+import PopupScroll from "@/app/(auxiliary)/components/Common/Popups/PopupsWrapper/PopupDisableScroll/PopupDisableScroll";
 import styles from "@/app/(auxiliary)/components/Blocks/FormBlock/DropZone/DropZone.module.scss";
 import UploadFile from "@/app/(auxiliary)/components/UI/SVG/UploadFile/UploadFile";
 import Title from "@/app/(auxiliary)/components/UI/TextTemplates/Title";
 import Button from "@/app/(auxiliary)/components/UI/Button/Button";
-import {white_1} from "@/styles/colors";
-import {useAppDispatch, useAppSelector} from "@/app/(auxiliary)/libs/redux-toolkit/store/hooks";
-import {selectRootPageContent, setNewNotification} from "@/app/(auxiliary)/libs/redux-toolkit/store/slices/AppSlice/AppSlice";
-import {PHOTO_KEY, PhotoAndVideoKeysType} from "@/app/(auxiliary)/types/AppTypes/InputHooksTypes";
-import {GetInputPropsType, GetRootPropsType} from "@/app/(auxiliary)/types/DropZoneTypes/DropZoneTypes";
-import {formattedTime} from "@/app/(auxiliary)/func/formattedTime";
-import {addFileData} from "@/app/(auxiliary)/libs/redux-toolkit/store/slices/UserFormDataSlice/UserFormDataSlice";
+import { white_1 } from "@/styles/colors";
+import { useAppDispatch, useAppSelector } from "@/app/(auxiliary)/libs/redux-toolkit/store/hooks";
+import { selectRootPageContent, setNewNotification } from "@/app/(auxiliary)/libs/redux-toolkit/store/slices/AppSlice/AppSlice";
+import { PHOTO_KEY, PhotoAndVideoKeysType } from "@/app/(auxiliary)/types/AppTypes/InputHooksTypes";
+import { GetInputPropsType, GetRootPropsType } from "@/app/(auxiliary)/types/FormTypes/DropZoneTypes/DropZoneTypes";
+import { formattedTime } from "@/app/(auxiliary)/func/formattedTime";
+import { addFileData } from "@/app/(auxiliary)/libs/redux-toolkit/store/slices/UserFormDataSlice/UserFormDataSlice";
 import {
     changePhotoSettings, changePopupVisibility,
     setCurrentOpenedFileName
 } from "@/app/(auxiliary)/libs/redux-toolkit/store/slices/PopupSlice/PopupSlice";
-import {defaultPhotoSettings} from "@/app/(auxiliary)/types/PopupTypes/PopupTypes";
+import { defaultPhotoSettings } from "@/app/(auxiliary)/types/FormTypes/PopupTypes/PopupTypes";
 
 interface PropsType {
     inputProps: {
@@ -29,12 +29,12 @@ interface PropsType {
 }
 
 const DesktopDropZone: FC<PropsType> = ({
-                                            inputProps,
-                                            isDragActive,
-                                            type,
-                                            openDragDropZone,
-                                            createPhotoPreviews
-                                        }) => {
+    inputProps,
+    isDragActive,
+    type,
+    openDragDropZone,
+    createPhotoPreviews
+}) => {
     const dispatch = useAppDispatch()
     const content = useAppSelector(selectRootPageContent).contentOfUploadBlock
 
@@ -70,8 +70,8 @@ const DesktopDropZone: FC<PropsType> = ({
                         dispatch(setCurrentOpenedFileName({
                             fileName: newFile.name
                         }))
-                        dispatch(changePopupVisibility({type: PHOTO_KEY}))
-                        dispatch(setNewNotification({type: "success", message:"Файлы были успешно загружены!"}))
+                        dispatch(changePopupVisibility({ type: PHOTO_KEY }))
+                        dispatch(setNewNotification({ type: "success", message: "Файлы были успешно загружены!" }))
                     }
                 } catch (e) {
                     console.error("Error with paste a clipboard: ", e)
@@ -91,7 +91,7 @@ const DesktopDropZone: FC<PropsType> = ({
         openDragDropZone
     ])
 
-    if(Object.keys(content).length !== 0) {
+    if (Object.keys(content).length !== 0) {
         return (
             <PopupScroll>
                 <div className={styles.dropZoneWrapper}>
@@ -104,12 +104,12 @@ const DesktopDropZone: FC<PropsType> = ({
                         }
                     })}>
                         <input {...inputProps.getInputProps({})}
-                               className={styles.dropInput}/>
-    
+                            className={styles.dropInput} />
+
                         <div className={styles.dropZoneContentWrapper}>
                             <div className={styles.dropZoneContent}>
-                                <UploadFile animationStatus={isDragActive}/>
-    
+                                <UploadFile animationStatus={isDragActive} />
+
                                 {
                                     isDragActive ? (
                                         <div className={styles.dropZoneText}>
@@ -120,13 +120,13 @@ const DesktopDropZone: FC<PropsType> = ({
                                             <div className={styles.dropZoneText}>
                                                 <Title>{content[type]}</Title>
                                             </div>
-    
+
                                             <div className={styles.closeDropZone}
-                                                 onClick={(e) => e.stopPropagation()}>
+                                                onClick={(e) => e.stopPropagation()}>
                                                 <Button onClick={openDragDropZone}
-                                                        style={{
-                                                            backgroundColor: white_1
-                                                        }}>{content.button}</Button>
+                                                    style={{
+                                                        backgroundColor: white_1
+                                                    }}>{content.button}</Button>
                                             </div>
                                         </>
                                     )

@@ -1,12 +1,12 @@
-import React, {FC, useEffect, useState} from 'react';
+import React, { FC, useEffect, useState } from 'react';
 import Text from "@/app/(auxiliary)/components/UI/TextTemplates/Text";
 import FilePreviewBlock from "@/app/(auxiliary)/components/Blocks/FilePreviewBlock/FilePreviewBlock";
 import Trash from "@/app/(auxiliary)/components/UI/SVG/Trash/Trash";
 import styles from "./PopupFile.module.scss";
-import {DivMouseEventHandler} from "@/app/(auxiliary)/types/AppTypes/AppTypes";
-import {useAppSelector} from "@/app/(auxiliary)/libs/redux-toolkit/store/hooks";
-import {selectUserDevice} from "@/app/(auxiliary)/libs/redux-toolkit/store/slices/AppSlice/AppSlice";
-import {CustomFile} from "@/app/(auxiliary)/types/PopupTypes/PopupTypes";
+import { DivMouseEventHandler } from "@/app/(auxiliary)/types/AppTypes/AppTypes";
+import { useAppSelector } from "@/app/(auxiliary)/libs/redux-toolkit/store/hooks";
+import { selectUserDevice } from "@/app/(auxiliary)/libs/redux-toolkit/store/slices/AppSlice/AppSlice";
+import { CustomFile } from "@/app/(auxiliary)/types/FormTypes/PopupTypes/PopupTypes";
 
 
 interface PropsType {
@@ -20,11 +20,11 @@ interface PropsType {
 }
 
 const PopupFile: FC<PropsType> = ({
-                                      index,
-                                      file,
-                                      currentFileName,
-                                      func,
-                                  }) => {
+    index,
+    file,
+    currentFileName,
+    func,
+}) => {
     const padAdaptive = useAppSelector(selectUserDevice).padAdaptive640_992
     const [selectedItem, setSelectedItem] = useState<boolean>(file.name === currentFileName)
 
@@ -48,12 +48,12 @@ const PopupFile: FC<PropsType> = ({
     if (Object.keys(file).length) {
         return (
             <div className={`${styles.fileItem} ${selectedItem && styles.fileItemSelected}`}
-                 onClick={() => chooseAnotherFile(file.name)}>
+                onClick={() => chooseAnotherFile(file.name)}>
                 <div className={styles.fileIndex}><Text>{++index}.</Text></div>
 
                 <div className={styles.photoPreview}>
                     <FilePreviewBlock url={URL.createObjectURL(file)}
-                                      alt={file.name}/>
+                        alt={file.name} />
                 </div>
 
                 <div className={styles.fileName}>
@@ -65,7 +65,7 @@ const PopupFile: FC<PropsType> = ({
                         fill: "black",
                         width: 18,
                         height: 18
-                    }}/>
+                    }} />
                 </div>
             </div>
         )

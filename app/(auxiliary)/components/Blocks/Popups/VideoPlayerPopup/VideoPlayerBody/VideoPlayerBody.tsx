@@ -1,7 +1,7 @@
-import React, {FC, useCallback, useEffect, useState} from 'react';
-import {VideoPlayerDataType} from "@/app/(auxiliary)/types/Data/Interface/PhotoEditor/PhotoEditorDataType";
-import {VIDEO_KEY} from "@/app/(auxiliary)/types/AppTypes/InputHooksTypes";
-import {useAppDispatch, useAppSelector} from "@/app/(auxiliary)/libs/redux-toolkit/store/hooks";
+import React, { FC, useCallback, useEffect, useState } from 'react';
+import { VideoPlayerDataType } from "@/app/(auxiliary)/types/Data/Interface/PhotoEditor/PhotoEditorDataType";
+import { VIDEO_KEY } from "@/app/(auxiliary)/types/AppTypes/InputHooksTypes";
+import { useAppDispatch, useAppSelector } from "@/app/(auxiliary)/libs/redux-toolkit/store/hooks";
 import {
     deleteFile,
     selectFormFileData
@@ -17,8 +17,8 @@ import {
     selectOpenedFileName,
     selectVideoOrientations, setCurrentOpenedFileName
 } from "@/app/(auxiliary)/libs/redux-toolkit/store/slices/PopupSlice/PopupSlice";
-import {CustomFile, HORIZONTAL} from "@/app/(auxiliary)/types/PopupTypes/PopupTypes";
-import {findElement} from "@/app/(auxiliary)/func/editorHandlers";
+import { CustomFile, HORIZONTAL } from "@/app/(auxiliary)/types/FormTypes/PopupTypes/PopupTypes";
+import { findElement } from "@/app/(auxiliary)/func/editorHandlers";
 
 
 interface PropsType {
@@ -26,11 +26,11 @@ interface PropsType {
     type: typeof VIDEO_KEY;
 }
 
-const VideoPlayerBody: FC<PropsType> = ({data, type}) => {
+const VideoPlayerBody: FC<PropsType> = ({ data, type }) => {
     const dispatch = useAppDispatch()
-    const {files, filesFinally} = useAppSelector(selectFormFileData)[type]
+    const { files, filesFinally } = useAppSelector(selectFormFileData)[type]
     const openedFileName = useAppSelector(selectOpenedFileName)
-    const videoOrientations = useAppSelector(selectVideoOrientations).find((orient) => orient.name === openedFileName) || {orientation: HORIZONTAL}
+    const videoOrientations = useAppSelector(selectVideoOrientations).find((orient) => orient.name === openedFileName) || { orientation: HORIZONTAL }
 
     /**
      * Callback для поиска файла или настройки файла по его названию. Используется в инициализации состояния и его обновления
@@ -40,9 +40,9 @@ const VideoPlayerBody: FC<PropsType> = ({data, type}) => {
     // const [listOfPreviews, setListOfPreviews] = useState<CustomFile[]>([])
 
     const [videoURl, setVideoURl] = useState<string>(() => URL.createObjectURL(
-            files.find((f) => findCurrentFile(f, openedFileName)) ||
-            files[0]
-        )
+        files.find((f) => findCurrentFile(f, openedFileName)) ||
+        files[0]
+    )
     )
 
     const switchToAnotherFile = (fileName: string) => {
@@ -50,23 +50,23 @@ const VideoPlayerBody: FC<PropsType> = ({data, type}) => {
             files.find((f) => findCurrentFile(f, fileName)) ||
             files[0]
         ))
-        dispatch(setCurrentOpenedFileName({fileName}))
+        dispatch(setCurrentOpenedFileName({ fileName }))
     }
 
     const closeVideoPlayer = () => {
-        dispatch(changePopupVisibility({type}))
+        dispatch(changePopupVisibility({ type }))
     }
 
     const removeFile = (removedName: string) => {
         if (files.length <= 1) {
-            dispatch(changePopupVisibility({type}))
+            dispatch(changePopupVisibility({ type }))
         } else {
             const anotherFile = files.filter((f) => f.name !== removedName)[0].name
             setVideoURl(URL.createObjectURL(
                 files.find((f) => findCurrentFile(f, anotherFile)) ||
                 files[0]
             ))
-            dispatch(setCurrentOpenedFileName({fileName: anotherFile}))
+            dispatch(setCurrentOpenedFileName({ fileName: anotherFile }))
         }
 
         dispatch(deleteFile({
@@ -102,16 +102,16 @@ const VideoPlayerBody: FC<PropsType> = ({data, type}) => {
 
     return (
         <div className={`${popupsCommonStyles.popupBody} ${styles.videoPlayerBody}`}>
-            <VideoPlayer video={videoURl} orientation={videoOrientations.orientation}/>
+            <VideoPlayer video={videoURl} orientation={videoOrientations.orientation} />
 
             <div className={styles.nothing}></div>
 
             <PopupFileList titleOfList={data.photoList.uploadedPhotos}
-                           listOfPreviews={filesFinally as CustomFile[]}
-                           func={{
-                               switchToAnotherFile,
-                               removeFile
-                           }}/>
+                listOfPreviews={filesFinally as CustomFile[]}
+                func={{
+                    switchToAnotherFile,
+                    removeFile
+                }} />
 
             <div className={`${styles.closeButton} ${popupsCommonStyles.buttons}`}>
                 <Button onClick={closeVideoPlayer}>

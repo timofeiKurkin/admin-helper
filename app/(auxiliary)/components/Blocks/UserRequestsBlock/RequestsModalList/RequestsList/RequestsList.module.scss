@@ -1,0 +1,18 @@
+@import  "@/styles/variables.module.scss";
+
+
+.requestsListWrapper {
+
+    .separatedLine {
+        margin: 10px 0 25px 0;
+    }
+}
+
+.headTableRequestsList {
+    display: grid;
+    
+    @media screen and ($desktop1920) {
+        grid-template-columns: 8rem 14.4375rem 8.1875rem;
+        padding: 0 25px;
+    }
+}

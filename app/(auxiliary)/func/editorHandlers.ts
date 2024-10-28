@@ -1,11 +1,11 @@
-import React, {MutableRefObject, RefObject} from "react";
-import {centerCrop, convertToPixelCrop, makeAspectCrop, PixelCrop} from "react-image-crop";
+import React, { MutableRefObject, RefObject } from "react";
+import { centerCrop, convertToPixelCrop, makeAspectCrop, PixelCrop } from "react-image-crop";
 import {
     defaultPhotoSettings,
     HORIZONTAL,
     PhotoEditorSettingsType,
     VERTICAL
-} from "@/app/(auxiliary)/types/PopupTypes/PopupTypes";
+} from "@/app/(auxiliary)/types/FormTypes/PopupTypes/PopupTypes";
 import {
     getRotateDimensions
 } from "@/app/(auxiliary)/components/Blocks/Popups/PhotoEditorPopup/PhotoEditorBody/canvasPreview";
@@ -21,7 +21,7 @@ export const determineOrientation = (width: number, height: number) => {
     return width >= height ? HORIZONTAL : VERTICAL
 }
 
-export const arrayDifference = <T extends {name: string}>(oldArr: T[], newArr: T[]) => {
+export const arrayDifference = <T extends { name: string }>(oldArr: T[], newArr: T[]) => {
     const setNewArr = new Set(newArr.map(item => item.name))
     return oldArr.filter(item => !setNewArr.has(item.name))
 }
@@ -114,13 +114,13 @@ interface OnDownloadCropClickArgs {
  * @param rotate
  */
 export const onDownloadCropClick = async ({
-                                              imgRef,
-                                              previewCanvasRef,
-                                              completedCrop,
-                                              blobUrlRef,
-                                              hiddenAnchorRef,
-                                              rotate
-                                          }: OnDownloadCropClickArgs) => {
+    imgRef,
+    previewCanvasRef,
+    completedCrop,
+    blobUrlRef,
+    hiddenAnchorRef,
+    rotate
+}: OnDownloadCropClickArgs) => {
     const image = imgRef.current
     const previewCanvas = previewCanvasRef.current
 
@@ -132,7 +132,7 @@ export const onDownloadCropClick = async ({
     // size. If you want to size according to what they
     // are looking at on screen, remove scaleX + scaleY
 
-    const {naturalRotatedWidth, naturalRotatedHeight} =
+    const { naturalRotatedWidth, naturalRotatedHeight } =
         getRotateDimensions(image.naturalWidth, image.naturalHeight, rotate)
 
     const scaleX = image.naturalWidth / image.width
@@ -179,10 +179,10 @@ export const onDownloadCropClick = async ({
 }
 
 const onSelectFile = ({
-                          e,
-                          setCrop,
-                          setImgSrc
-                      }: {
+    e,
+    setCrop,
+    setImgSrc
+}: {
     e: React.ChangeEvent<HTMLInputElement>;
     setCrop: (value: number | undefined) => void
     setImgSrc: (value: string) => void
@@ -208,12 +208,12 @@ const onSelectFile = ({
  * @param setCompletedCrop
  */
 function handleToggleAspectClick({
-                                     aspect,
-                                     setAspect,
-                                     imgRef,
-                                     setCrop,
-                                     setCompletedCrop
-                                 }: {
+    aspect,
+    setAspect,
+    imgRef,
+    setCrop,
+    setCompletedCrop
+}: {
     aspect: any;
     setAspect: any;
     imgRef: any;
@@ -226,7 +226,7 @@ function handleToggleAspectClick({
         setAspect(16 / 9)
 
         if (imgRef.current) {
-            const {width, height} = imgRef.current
+            const { width, height } = imgRef.current
             const newCrop = centerAspectCrop(width, height, 16 / 9)
             setCrop(newCrop)
             // Updates the preview
@@ -283,5 +283,5 @@ export const stickToClosestValue = (value: number, stickPoints: number[], stickS
 
 
 export const getDefaultPhotoSettings = (fileName: string): PhotoEditorSettingsType => {
-    return {...defaultPhotoSettings, name: fileName}
+    return { ...defaultPhotoSettings, name: fileName }
 }

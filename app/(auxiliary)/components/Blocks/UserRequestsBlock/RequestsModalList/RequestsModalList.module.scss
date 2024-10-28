@@ -1,0 +1,28 @@
+@import "@/styles/variables.module.scss";
+
+.requestsModalListWrapper {
+    position: absolute;
+
+    height: 100%;
+    width: 38.75rem;
+    background-color: $white_1;
+
+    @media screen and ($desktop1920) {
+        top: 0;
+        right: 0;
+    }
+
+    .requestsModalListBody {
+        display: flex;
+        flex-direction: column;
+        row-gap: 30px;
+        padding: 40px;
+
+        .requestsModalTitle {
+            display: flex;
+            justify-content: space-between;
+        }
+
+        
+    }
+}

@@ -1,11 +1,11 @@
-import React, {FC, useState} from 'react';
+import React, { FC, useState } from 'react';
 import styles from "./File.module.scss";
 import DeleteFile from "@/app/(auxiliary)/components/UI/SVG/DeleteFile/DeleteFile";
 import ChangePhoto from "@/app/(auxiliary)/components/UI/SVG/ChangePhoto/ChangePhoto";
 import FilePreview from "@/app/(auxiliary)/components/Blocks/FilePreviewBlock/FilePreviewBlock";
-import {RemoveFileFuncType} from "@/app/(auxiliary)/types/PopupTypes/FuncTypes";
-import {useAppSelector} from "@/app/(auxiliary)/libs/redux-toolkit/store/hooks";
-import {selectUserDevice} from "@/app/(auxiliary)/libs/redux-toolkit/store/slices/AppSlice/AppSlice";
+import { RemoveFileFuncType } from "@/app/(auxiliary)/types/FormTypes/PopupTypes/FuncTypes";
+import { useAppSelector } from "@/app/(auxiliary)/libs/redux-toolkit/store/hooks";
+import { selectUserDevice } from "@/app/(auxiliary)/libs/redux-toolkit/store/slices/AppSlice/AppSlice";
 
 interface PropsType {
     file: File;
@@ -16,10 +16,10 @@ interface PropsType {
 
 
 const FilePreviewWithHandlers: FC<PropsType> = ({
-                                                    file,
-                                                    removeFile,
-                                                    openFile
-                                                }) => {
+    file,
+    removeFile,
+    openFile
+}) => {
     const userDevice = useAppSelector(selectUserDevice)
     const [visibleHover, setVisibleHover] = useState<boolean>(false)
 
@@ -34,23 +34,23 @@ const FilePreviewWithHandlers: FC<PropsType> = ({
 
     return (
         <div className={styles.filePreviewWrapper}
-             onMouseEnter={() => handleHover(true)}
-             onMouseLeave={() => handleHover(false)}>
+            onMouseEnter={() => handleHover(true)}
+            onMouseLeave={() => handleHover(false)}>
 
             {(visibleHover || userDevice.phoneAdaptive) ? (
                 <div className={styles.fileCover}
-                     onClick={() => openFile(file.name)}>
+                    onClick={() => openFile(file.name)}>
                     <div className={styles.fileRemove}
-                         onClick={(e) => handleRemove(e)}>
-                        <DeleteFile/>
+                        onClick={(e) => handleRemove(e)}>
+                        <DeleteFile />
                     </div>
 
-                    {!userDevice.phoneAdaptive ? <ChangePhoto/> : null}
+                    {!userDevice.phoneAdaptive ? <ChangePhoto /> : null}
                 </div>
             ) : null}
 
             <FilePreview url={URL.createObjectURL(file)}
-                         alt={file.name}/>
+                alt={file.name} />
         </div>
     );
 }

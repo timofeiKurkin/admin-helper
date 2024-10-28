@@ -1,13 +1,13 @@
-import React, {FC, useState} from 'react';
+import React, { FC, useState } from 'react';
 import styles from "./PopupFileList.module.scss";
 import Text from "@/app/(auxiliary)/components/UI/TextTemplates/Text";
 import PopupFile from "@/app/(auxiliary)/components/Common/Popups/PopupsWrapper/PopupFileList/PopupFile/PopupFile";
-import {useAppSelector} from "@/app/(auxiliary)/libs/redux-toolkit/store/hooks";
-import {selectOpenedFileName} from "@/app/(auxiliary)/libs/redux-toolkit/store/slices/PopupSlice/PopupSlice";
-import {selectUserDevice} from "@/app/(auxiliary)/libs/redux-toolkit/store/slices/AppSlice/AppSlice";
+import { useAppSelector } from "@/app/(auxiliary)/libs/redux-toolkit/store/hooks";
+import { selectOpenedFileName } from "@/app/(auxiliary)/libs/redux-toolkit/store/slices/PopupSlice/PopupSlice";
+import { selectUserDevice } from "@/app/(auxiliary)/libs/redux-toolkit/store/slices/AppSlice/AppSlice";
 import ArrowForList from "@/app/(auxiliary)/components/UI/SVG/ArrowForList/ArrowForList";
-import {findElement} from "@/app/(auxiliary)/func/editorHandlers";
-import {CustomFile} from "@/app/(auxiliary)/types/PopupTypes/PopupTypes";
+import { findElement } from "@/app/(auxiliary)/func/editorHandlers";
+import { CustomFile } from "@/app/(auxiliary)/types/FormTypes/PopupTypes/PopupTypes";
 
 interface PropsType {
     titleOfList: string;
@@ -19,10 +19,10 @@ interface PropsType {
 }
 
 const PopupFileList: FC<PropsType> = ({
-                                          titleOfList,
-                                          listOfPreviews,
-                                          func
-                                      }) => {
+    titleOfList,
+    listOfPreviews,
+    func
+}) => {
     const currentFileName = useAppSelector(selectOpenedFileName)
     const padAdaptive = useAppSelector(selectUserDevice).padAdaptive640_992
 
@@ -82,9 +82,9 @@ const PopupFileList: FC<PropsType> = ({
             {padAdaptive ? (
                 <div className={styles.slider}>
                     <div className={styles.sliderArrowLeft}
-                         onClick={prevFileHandler}>
+                        onClick={prevFileHandler}>
                         <ArrowForList className={styles.slideArrow}
-                                      activeStatus={!!currentSlide.id}/>
+                            activeStatus={!!currentSlide.id} />
                     </div>
 
                     <div className={styles.sliderListWrapper}>
@@ -104,16 +104,16 @@ const PopupFileList: FC<PropsType> = ({
 
                         <div className={styles.currentSlide}>
                             <PopupFile index={currentSlide.id}
-                                       file={currentSlide}
-                                       currentFileName={currentFileName}
-                                       func={func}/>
+                                file={currentSlide}
+                                currentFileName={currentFileName}
+                                func={func} />
                         </div>
                     </div>
 
                     <div className={styles.sliderArrowRight}
-                         onClick={nextFileHandler}>
+                        onClick={nextFileHandler}>
                         <ArrowForList className={styles.slideArrow}
-                                      activeStatus={listOfPreviews.length > 1 && currentSlide.id !== listOfPreviews.length - 1}/>
+                            activeStatus={listOfPreviews.length > 1 && currentSlide.id !== listOfPreviews.length - 1} />
                     </div>
                 </div>
             ) : (
@@ -123,10 +123,10 @@ const PopupFileList: FC<PropsType> = ({
                     }}>
                         {listOfPreviews.map((file, index) => (
                             <PopupFile key={`key=${index}`}
-                                       file={file}
-                                       currentFileName={currentFileName}
-                                       index={index}
-                                       func={func}/>
+                                file={file}
+                                currentFileName={currentFileName}
+                                index={index}
+                                func={func} />
                         ))}
                     </div>
                 </div>

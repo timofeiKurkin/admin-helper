@@ -1,9 +1,8 @@
-import {createAppSlice} from "@/app/(auxiliary)/libs/redux-toolkit/store/createAppSlice";
-import {PayloadAction} from "@reduxjs/toolkit";
-import {WritableDraft} from "immer";
-import {PhotoEditorSettingsType, VideoOrientationType} from "@/app/(auxiliary)/types/PopupTypes/PopupTypes";
-import {indexOfObject} from "@/app/(auxiliary)/func/handlers";
-import {PHOTO_KEY, PhotoAndVideoKeysType, VIDEO_KEY} from "@/app/(auxiliary)/types/AppTypes/InputHooksTypes";
+import { createAppSlice } from "@/app/(auxiliary)/libs/redux-toolkit/store/createAppSlice";
+import { PayloadAction } from "@reduxjs/toolkit";
+import { PhotoEditorSettingsType, VideoOrientationType } from "@/app/(auxiliary)/types/FormTypes/PopupTypes/PopupTypes";
+import { indexOfObject } from "@/app/(auxiliary)/func/handlers";
+import { PHOTO_KEY, PhotoAndVideoKeysType, VIDEO_KEY } from "@/app/(auxiliary)/types/AppTypes/InputHooksTypes";
 
 
 interface InitialState {
@@ -47,7 +46,7 @@ export const popupSlice = createAppSlice({
 
                     if (settingIndex !== -1) {
                         state.photoListSettings[settingIndex] =
-                            {...state.photoListSettings[settingIndex], ...setting}
+                            { ...state.photoListSettings[settingIndex], ...setting }
                     } else {
                         state.photoListSettings.push(setting)
                     }

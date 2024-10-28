@@ -1,6 +1,6 @@
 import React, { FC, useEffect } from 'react';
 import styles from "@/app/(auxiliary)/components/Blocks/FormBlock/DropZone/DropZone.module.scss";
-import { GetInputPropsType } from "@/app/(auxiliary)/types/DropZoneTypes/DropZoneTypes";
+import { GetInputPropsType } from "@/app/(auxiliary)/types/FormTypes/DropZoneTypes/DropZoneTypes";
 
 interface PropsType {
     getInputProps: GetInputPropsType;

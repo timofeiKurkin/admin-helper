@@ -1,7 +1,7 @@
-import React, {FC} from 'react';
+import React, { FC } from 'react';
 import styles from "./VideoPlayer.module.scss"
 import ReactPlayer from "react-player";
-import {HORIZONTAL, ImageOrientationType, VERTICAL} from "@/app/(auxiliary)/types/PopupTypes/PopupTypes";
+import { HORIZONTAL, ImageOrientationType, VERTICAL } from "@/app/(auxiliary)/types/FormTypes/PopupTypes/PopupTypes";
 
 interface PropsType {
     video: string;
@@ -9,9 +9,9 @@ interface PropsType {
 }
 
 const VideoPlayer: FC<PropsType> = ({
-                                        video,
-                                        orientation
-                                    }) => {
+    video,
+    orientation
+}) => {
 
     // const [url, setUrl] = useState<string>(URL.createObjectURL(video))
     //
@@ -23,10 +23,10 @@ const VideoPlayer: FC<PropsType> = ({
             <div className={styles.videoPlayerBackground}>
                 <div className={styles.videoPlayerBody}>
                     <ReactPlayer width={orientation === HORIZONTAL ? 640 : 360}
-                                 height={orientation === HORIZONTAL ? 360 : 640}
-                                 url={video}
-                                 volume={0.5}
-                                 controls/>
+                        height={orientation === HORIZONTAL ? 360 : 640}
+                        url={video}
+                        volume={0.5}
+                        controls />
                 </div>
             </div>
         </div>
