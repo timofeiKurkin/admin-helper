@@ -61,6 +61,7 @@ async def root():
 #     pass
 
 
+@router.get("")
 @router.get(
     "/get_user_requests",
     response_model=List[RequestForHelpPublic],
@@ -81,7 +82,9 @@ async def get_user_requests(*, preview: bool, request: Request, session: Session
     if str(candidate.id) != user_id:
         raise HTTPException(status_code=403, detail="Data of the token doesn't match")
 
-    user_requests = crud.get_user_requests(session=session, owner_id=user_id)
+    user_requests = crud.get_user_requests(
+        session=session, owner_id=user_id, order_by="created_at"
+    )
     user_public_requests = [
         RequestForHelpPublic.model_validate(
             user_request,
@@ -106,13 +109,15 @@ def get_help_request(request_id: int, request: Request):
     pass
 
 
-@router.get("/admin/show_request", response_class=HTMLResponse)
-async def show_request(request_id: str):
+@router.get("/admin/show_request/{request_accept_link}", response_class=HTMLResponse)
+async def show_request(request_accept_link: str):
     pass
 
 
-@router.post("/admin/change_request_status")
-async def change_request_status(update_request: ChangeRequestStatus):
+@router.post("/admin/change_request_status/{request_accept_link}")
+async def change_request_status(
+    request_accept_link: str, update_request: ChangeRequestStatus
+):
     button_message_id: int = 0
     keyboard = [
         [

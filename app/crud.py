@@ -59,8 +59,14 @@ def update_request_for_help(
     return db_request
 
 
-def get_user_requests(*, session: Session, owner_id: str) -> Sequence[RequestForHelp]:
+def get_user_requests(
+    *, session: Session, owner_id: str, order_by: str = "none"
+) -> Sequence[RequestForHelp]:
     statement = select(RequestForHelp).where(RequestForHelp.owner_id == owner_id)
+
+    if order_by == "created_at":
+        statement = statement.order_by(RequestForHelp.created_at.desc())
+
     user_requests = session.exec(statement=statement).all()
     return user_requests or []
 
