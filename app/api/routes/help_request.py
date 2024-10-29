@@ -1,5 +1,6 @@
 import logging
 import os
+import secrets
 from typing import Annotated, Any, List, Optional
 from uuid import uuid4
 
@@ -66,7 +67,9 @@ async def root():
     "/get_user_requests",
     response_model=List[RequestForHelpPublic],
 )
-async def get_user_requests(*, preview: bool, request: Request, session: SessionDep):
+async def get_user_requests(
+    *, preview: bool = True, request: Request, session: SessionDep
+):
     user_token = request.cookies.get("token")
 
     if not user_token:
@@ -367,12 +370,13 @@ async def create_help_request(
                         detail=f"Unexpected error occurred: {e}",
                     )
 
+        accept_url = secrets.token_urlsafe(32)
         keyboard = [
             [
                 InlineKeyboardButton(
                     text=f'Поменять статус заявки #{new_request.id} на "Выполнено"',
                     callback_data=f"request:{new_request.id}",
-                    url="https://google.com",
+                    url=f"{settings.FRONTEND_HOST}/{accept_url}",
                 )
             ]
         ]
@@ -395,6 +399,7 @@ async def create_help_request(
             message_file=voice_media_file,
             photos=photos_media_file,
             videos=videos_media_file,
+            accept_url=secrets.token_urlsafe(32),
         )
         crud.update_request_for_help(
             session=session,
@@ -417,7 +422,7 @@ async def create_help_request(
                 "message": f"Ваша заявка <b>#{new_request.id}</b> успешно создана и будет рассмотрена в ближайшее время.<br/>Вы можете посмотреть её в <b>ваших заявках</b>.",
                 "new_request": {**request_public.to_dict()},
             },
-            status_code=200,
+            status_code=201,
         )
         new_access_token = JWTToken.create_just_token(user=user_candidate)
         response.set_cookie(

@@ -48,6 +48,7 @@ async def global_exception_handler(request: Request, exc: Exception):
         content={"detail": str(exc)},
     )
 
+
 if settings.all_cors_origins:
     app.add_middleware(
         CORSMiddleware,

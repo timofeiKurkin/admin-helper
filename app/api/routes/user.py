@@ -26,7 +26,7 @@ async def authorizeUser(request: Request, session: SessionDep):
 
     candidate = crud.get_user_by_phone(session=session, phone=user_phone)
 
-    if not candidate or candidate.id != user_id:
+    if not candidate or str(candidate.id) != user_id:
         response = JSONResponse(status_code=200, content={"authorized": False})
         response.delete_cookie(key="token")
         return response

@@ -64,6 +64,9 @@ class RequestForHelpBase(SQLModel):
     photos: List[MediaFile] = Field(default_factory=list, sa_column=Column(JSON))
     videos: List[MediaFile] = Field(default_factory=list, sa_column=Column(JSON))
     is_completed: bool = Field(default=False)
+    accept_url: str = Field(
+        default=secrets.token_urlsafe(32), max_length=64, nullable=False
+    )
 
     def to_dict(self):
         return {
@@ -83,9 +86,6 @@ class RequestForHelp(RequestForHelpBase, table=True):
     # Определяем обратную связь
     owner: User = Relationship(back_populates="requests")
     owner_id: uuid.UUID = Field(foreign_key="users.id", nullable=False, index=True)
-    accept_url: str = Field(
-        default=secrets.token_urlsafe(32), max_length=64, nullable=False
-    )
 
     created_at: datetime = Field(default_factory=datetime.now)
     # expires_at: datetime = Field(nullable=False)
