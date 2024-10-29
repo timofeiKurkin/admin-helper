@@ -1,8 +1,8 @@
 import React, { FC } from 'react'
 import fontStyles from "@/styles/fonts.module.scss";
-import { ChildrenType } from '@/app/(auxiliary)/types/AppTypes/AppTypes';
+import { ChildrenProp } from '@/app/(auxiliary)/types/AppTypes/AppTypes';
 
-const SmallText: FC<ChildrenType> = ({children}) => {
+const SmallText: FC<ChildrenProp> = ({ children }) => {
   return (
     <p className={fontStyles.smallText}>{children}</p>
   )

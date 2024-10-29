@@ -1,5 +1,6 @@
 // Colors
 $green_dark: #5BA809;
+$green_light: #78C724;
 $blue_dark: #00608C;
 $blue_light: #0088C7;
 $red_dark: #BF2121;
@@ -57,6 +58,8 @@ $background_error: var(--background_error, radial-gradient(197.36% 111.8% at 100
 	background: $background_error;
 	opacity: 1;
 }
+
+$input_green_light_background: linear-gradient(0deg, rgba(120, 199, 36, 0.10) 0%, rgba(120, 199, 36, 0.10) 100%), #FFF;
 
 // Borders
 $black_input_border: 2px solid rgba($black, 0.85);

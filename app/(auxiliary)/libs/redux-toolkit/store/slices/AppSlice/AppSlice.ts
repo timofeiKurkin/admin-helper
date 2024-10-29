@@ -9,9 +9,6 @@ import { DeleteNotificationType, NotificationListType, SetNotificationType } fro
 interface InitialStateType {
     userDevice: UserDeviceStateType;
     blocksMoving: BlocksMovingType;
-    // editorState: EditorStateType;
-    rootPageContent: RootPageContentType;
-    // microphoneStatus: P
     notificationList: NotificationListType;
     disableFormInputs: boolean
 }
@@ -28,28 +25,14 @@ const initialState: InitialStateType = {
         desktopAdaptive: false,
         padAdaptive640_992: false,
     },
-    // editorState: {
-    //     currentFileIndex: 0,
-    //     currentFileName: ""
-    // },
-    rootPageContent: {} as RootPageContentType,
     notificationList: [],
     disableFormInputs: false
-    // microphoneStatus:
 }
 
 export const appSlice = createAppSlice({
     name: "app",
     initialState,
     reducers: (create) => ({
-        setRootPageContent: create.reducer(
-            (
-                state,
-                action: PayloadAction<RootPageContentType>
-            ) => {
-                state.rootPageContent = action.payload
-            }
-        ),
         setUserDevice: create.reducer(
             (
                 state,
@@ -142,7 +125,6 @@ export const appSlice = createAppSlice({
         )
     }),
     selectors: {
-        selectRootPageContent: (state) => state.rootPageContent,
         selectUserDevice: (state) => state.userDevice,
         selectBlocksMoving: (state) => state.blocksMoving,
         selectNotificationList: (state) => state.notificationList,
@@ -151,7 +133,6 @@ export const appSlice = createAppSlice({
 })
 
 export const {
-    setRootPageContent,
     setUserDevice,
     setOpenedPhotoBlock,
     setOpenedVideoBlock,
@@ -162,7 +143,6 @@ export const {
 } = appSlice.actions
 
 export const {
-    selectRootPageContent,
     selectUserDevice,
     selectBlocksMoving,
     selectNotificationList,

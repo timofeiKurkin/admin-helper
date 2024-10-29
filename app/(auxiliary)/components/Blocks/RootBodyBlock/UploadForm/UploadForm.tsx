@@ -26,6 +26,7 @@ import {
 import { AxiosResponse } from "axios";
 import { ResponseFromServerType } from "@/app/(auxiliary)/types/AxiosTypes/AxiosTypes";
 import { setDisableFormInputs, setNewNotification } from '@/app/(auxiliary)/libs/redux-toolkit/store/slices/AppSlice/AppSlice';
+import { setUserAuthorization } from '@/app/(auxiliary)/libs/redux-toolkit/store/slices/UserRequestsSlice/UserRequestsSlice';
 
 // const validationHandler = (args: {
 //     appState: ProviderStateType
@@ -109,8 +110,9 @@ const UploadForm: FC<PropsType> = ({ buttonText }) => {
                 const response =
                     await axiosRequestsHandler(HelpUserService.requestClassification(formData))
 
-                if ((response as AxiosResponse<ResponseFromServerType>).status === 200) {
+                if ((response as AxiosResponse<ResponseFromServerType>).status === 201) {
                     const succeedResponse = (response as AxiosResponse<ResponseFromServerType>)
+                    dispatch(setUserAuthorization(true))
                     dispatch(setFormToDefault())
                     dispatch(setNewNotification({
                         message: succeedResponse.data.message,
@@ -147,7 +149,7 @@ const UploadForm: FC<PropsType> = ({ buttonText }) => {
 
     return (
         <Button disabled={sendingRequest || (!validationFormStatus || !permissionsOfForm.userAgreed)}
-        loadingAnimation={sendingRequest}
+            loadingAnimation={sendingRequest}
             onClick={() => uploadUserData({
                 text_data: formTextData,
                 file_data: formFileData

@@ -1,21 +1,23 @@
-import React, { FC, useEffect } from 'react';
-import PopupScroll from "@/app/(auxiliary)/components/Common/Popups/PopupsWrapper/PopupDisableScroll/PopupDisableScroll";
 import styles from "@/app/(auxiliary)/components/Blocks/FormBlock/DropZone/DropZone.module.scss";
+import PopupScroll from "@/app/(auxiliary)/components/Common/Popups/PopupsWrapper/PopupDisableScroll/PopupDisableScroll";
+import Button from "@/app/(auxiliary)/components/UI/Button/Button";
 import UploadFile from "@/app/(auxiliary)/components/UI/SVG/UploadFile/UploadFile";
 import Title from "@/app/(auxiliary)/components/UI/TextTemplates/Title";
-import Button from "@/app/(auxiliary)/components/UI/Button/Button";
-import { white_1 } from "@/styles/colors";
-import { useAppDispatch, useAppSelector } from "@/app/(auxiliary)/libs/redux-toolkit/store/hooks";
-import { selectRootPageContent, setNewNotification } from "@/app/(auxiliary)/libs/redux-toolkit/store/slices/AppSlice/AppSlice";
-import { PHOTO_KEY, PhotoAndVideoKeysType } from "@/app/(auxiliary)/types/AppTypes/InputHooksTypes";
-import { GetInputPropsType, GetRootPropsType } from "@/app/(auxiliary)/types/FormTypes/DropZoneTypes/DropZoneTypes";
 import { formattedTime } from "@/app/(auxiliary)/func/formattedTime";
-import { addFileData } from "@/app/(auxiliary)/libs/redux-toolkit/store/slices/UserFormDataSlice/UserFormDataSlice";
+import { useAppDispatch } from "@/app/(auxiliary)/libs/redux-toolkit/store/hooks";
+import { setNewNotification } from "@/app/(auxiliary)/libs/redux-toolkit/store/slices/AppSlice/AppSlice";
 import {
     changePhotoSettings, changePopupVisibility,
     setCurrentOpenedFileName
 } from "@/app/(auxiliary)/libs/redux-toolkit/store/slices/PopupSlice/PopupSlice";
+import { addFileData } from "@/app/(auxiliary)/libs/redux-toolkit/store/slices/UserFormDataSlice/UserFormDataSlice";
+import { PHOTO_KEY, PhotoAndVideoKeysType } from "@/app/(auxiliary)/types/AppTypes/InputHooksTypes";
+import { ContentOfUploadBlockType } from '@/app/(auxiliary)/types/Data/Interface/RootPage/RootPageContentType';
+import { GetInputPropsType, GetRootPropsType } from "@/app/(auxiliary)/types/FormTypes/DropZoneTypes/DropZoneTypes";
 import { defaultPhotoSettings } from "@/app/(auxiliary)/types/FormTypes/PopupTypes/PopupTypes";
+import rootPageData from "@/data/interface/root-page/data.json";
+import { white_1 } from "@/styles/colors";
+import { FC, useEffect } from 'react';
 
 interface PropsType {
     inputProps: {
@@ -36,7 +38,8 @@ const DesktopDropZone: FC<PropsType> = ({
     createPhotoPreviews
 }) => {
     const dispatch = useAppDispatch()
-    const content = useAppSelector(selectRootPageContent).contentOfUploadBlock
+
+    const content: ContentOfUploadBlockType = rootPageData.contentOfUploadBlock
 
     /**
      * Эффект для получения изображения из буфера обмена при нажатии клавиш CTRL+V в открытой зоне

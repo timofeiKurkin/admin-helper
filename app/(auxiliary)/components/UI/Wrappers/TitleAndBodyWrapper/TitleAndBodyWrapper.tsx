@@ -1,8 +1,8 @@
-import React, {FC} from 'react';
-import {ChildrenType} from "@/app/(auxiliary)/types/AppTypes/AppTypes";
+import React, { FC } from 'react';
+import { ChildrenProp } from "@/app/(auxiliary)/types/AppTypes/AppTypes";
 import styles from "./TitleAndBodyWrapper.module.scss"
 
-const TitleAndBodyWrapper: FC<ChildrenType> = ({children}) => {
+const TitleAndBodyWrapper: FC<ChildrenProp> = ({ children }) => {
     return (
         <div className={styles.titleAndBodyWrapper}>
             {children}

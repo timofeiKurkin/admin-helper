@@ -1,20 +1,20 @@
-import React, {CSSProperties, FC} from 'react';
-import {ChildrenType} from "@/app/(auxiliary)/types/AppTypes/AppTypes";
-import {blue_dark} from "@/styles/colors";
+import React, { CSSProperties, FC } from 'react';
+import { ChildrenProp } from "@/app/(auxiliary)/types/AppTypes/AppTypes";
+import { blue_dark } from "@/styles/colors";
 
 
-interface PropsType extends ChildrenType {
+interface PropsType extends ChildrenProp {
     wordIndexes: [number, number];
     style?: CSSProperties;
     link?: string;
 }
 
 const TextHighlighting: FC<PropsType> = ({
-                                             children,
-                                             wordIndexes,
-                                             style,
-                                             link = ""
-                                         }) => {
+    children,
+    wordIndexes,
+    style,
+    link = ""
+}) => {
     const highlightColor = blue_dark
     const fontWeight = 400
 
@@ -57,7 +57,7 @@ const TextHighlighting: FC<PropsType> = ({
                     return currentChild
                 })
 
-            return React.cloneElement(child, {...child.props, children: updatedChildren})
+            return React.cloneElement(child, { ...child.props, children: updatedChildren })
         }
 
         return child

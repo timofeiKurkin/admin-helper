@@ -1,8 +1,8 @@
 import React, { FC } from 'react'
 import fontStyles from "@/styles/fonts.module.scss";
-import { ChildrenType } from '@/app/(auxiliary)/types/AppTypes/AppTypes';
+import { ChildrenProp } from '@/app/(auxiliary)/types/AppTypes/AppTypes';
 
-const ButtonText: FC<ChildrenType> = ({children}) => {
+const ButtonText: FC<ChildrenProp> = ({ children }) => {
   return (
     <p className={fontStyles.buttonText}>{children}</p>
   )

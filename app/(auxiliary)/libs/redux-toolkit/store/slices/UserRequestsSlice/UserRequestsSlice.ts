@@ -12,8 +12,8 @@ export const userRequestsSlice = createAppSlice({
     name: "userRequests",
     initialState,
     reducers: (create) => ({
-        userAuthorization: create.reducer((state) => {
-            state.userIsAuthorized = !state.userIsAuthorized
+        setUserAuthorization: create.reducer((state, action: PayloadAction<boolean>) => {
+            state.userIsAuthorized = action.payload
         }),
         changeRequestsModalVisibility: create.reducer((state) => {
             state.requestsModalIsOpen = !state.requestsModalIsOpen
@@ -45,15 +45,17 @@ export const userRequestsSlice = createAppSlice({
     }),
     selectors: {
         selectRequestsModalIsOpen: (state) => state.requestsModalIsOpen,
-        selectUserRequests: (state) => state.userRequests
+        selectUserRequests: (state) => state.userRequests,
+        selectUserIsAuthorized: (state) => state.userIsAuthorized
     }
 })
 
 export const {
+    setUserAuthorization,
     changeRequestsModalVisibility,
     setUserRequests,
     addUserRequest,
     changeUserRequestStatus,
-    deleteUserRequest
+    deleteUserRequest,
 } = userRequestsSlice.actions
-export const { selectRequestsModalIsOpen, selectUserRequests } = userRequestsSlice.selectors
+export const { selectRequestsModalIsOpen, selectUserRequests, selectUserIsAuthorized } = userRequestsSlice.selectors

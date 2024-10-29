@@ -1,7 +1,7 @@
 import { AxiosResponse } from "axios";
 import { $api } from "@/app/(auxiliary)/libs/axios";
 import { CreatedHelpRequestType } from "@/app/(auxiliary)/types/AxiosTypes/AxiosTypes";
-import { HelpRequestItemType } from "@/app/(auxiliary)/types/UserRequestsTypes/UserRequestsTypes";
+import { HelpRequestItemType, UserRequestListType } from "@/app/(auxiliary)/types/UserRequestsTypes/UserRequestsTypes";
 
 
 export default class HelpUserService {
@@ -11,7 +11,7 @@ export default class HelpUserService {
         return $api.post<CreatedHelpRequestType>(`${this.rootPage}create_request`, data)
     }
 
-    static async getUserRequests(): Promise<AxiosResponse<HelpRequestItemType[]>> {
-        return $api.get<HelpRequestItemType[]>(`${this.rootPage}get_user_requests`)
+    static async getUserRequests(): Promise<AxiosResponse<UserRequestListType>> {
+        return $api.get<UserRequestListType>(`${this.rootPage}get_user_requests`)
     }
 }

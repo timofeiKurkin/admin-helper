@@ -2,13 +2,16 @@
 
 
 .requestsListWrapper {
-
-    .separatedLine {
-        margin: 10px 0 25px 0;
-    }
+    display: flex;
+    flex-direction: column;
+    row-gap: 25px;
 }
 
-.headTableRequestsList {
+.headTable {
+    margin-bottom: 10px;
+}
+
+.headTableGrid, .headTable {
     display: grid;
     
     @media screen and ($desktop1920) {

@@ -1,12 +1,12 @@
-import React, {CSSProperties, FC} from 'react'
+import React, { CSSProperties, FC } from 'react'
 import fontStyles from "@/styles/fonts.module.scss";
-import { ChildrenType } from '@/app/(auxiliary)/types/AppTypes/AppTypes';
+import { ChildrenProp } from '@/app/(auxiliary)/types/AppTypes/AppTypes';
 
-interface PropsType extends ChildrenType{
-    styles?: CSSProperties;
+interface PropsType extends ChildrenProp {
+  styles?: CSSProperties;
 }
 
-const Title: FC<PropsType> = ({children, styles}) => {
+const Title: FC<PropsType> = ({ children, styles }) => {
   return (
     <h2 style={styles} className={fontStyles.title}>{children}</h2>
   )
