@@ -15,7 +15,9 @@ const RequestsList = () => {
             ))}
         </div>
     ) : (
-        <EmptyRequestList />
+        <div className={styles.emptyRequestList}>
+            <EmptyRequestList />
+        </div>
     )
 }
 

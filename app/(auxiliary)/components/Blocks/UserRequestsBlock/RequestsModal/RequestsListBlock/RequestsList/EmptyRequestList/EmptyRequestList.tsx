@@ -3,7 +3,7 @@ import React from 'react'
 
 const EmptyRequestList = () => {
     return (
-        <Title>
+        <Title styles={{ textAlign: "center" }}>
             У вас не ни одной заявки о технической помощи
         </Title>
     )

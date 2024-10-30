@@ -30,10 +30,10 @@ export const userRequestsSlice = createAppSlice({
         }),
         changeUserRequestStatus: create.reducer((state, action: PayloadAction<HelpRequestItemType>) => {
             state.userRequests = state.userRequests.map((request) => {
-                if (request.id === action.payload.id && !request.isCompleted) {
+                if (request.id === action.payload.id && !request.is_completed) {
                     return {
                         ...request,
-                        isCompleted: !request.isCompleted
+                        is_completed: !request.is_completed
                     }
                 }
                 return request

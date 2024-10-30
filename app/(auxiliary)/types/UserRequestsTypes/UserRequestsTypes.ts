@@ -1,7 +1,7 @@
 export interface HelpRequestItemType {
     id: number;
     created_at: string;
-    isCompleted: boolean
+    is_completed: boolean
 }
 export type UserRequestListType = HelpRequestItemType[];
 
