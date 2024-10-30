@@ -1,9 +1,8 @@
 import secrets
 import uuid
 from datetime import datetime
-from typing import Any, Dict, List, Optional
+from typing import List, Optional
 
-from fastapi import UploadFile
 from pydantic import BaseModel
 from sqlalchemy.types import JSON
 from sqlmodel import Column, Field, Relationship, SQLModel
@@ -53,9 +52,22 @@ class User(UserBase, table=True):
     created_at: datetime = Field(default_factory=datetime.now)
 
 
+class TelegramMessagesIDX(SQLModel):
+    main_message: int = Field(default=0)
+
+    def to_dict(self) -> dict:
+        return {
+            "main_message": self.main_message,
+        }
+
+    @staticmethod
+    def from_dict(data: dict) -> "TelegramMessagesIDX":
+        return TelegramMessagesIDX(**data)
+
+
 # Base type of the request
 class RequestForHelpBase(SQLModel):
-    device: str = Field(default=None, max_length=18)
+    device: str = Field(default="", max_length=18)
     message_text: str = Field(default="", max_length=100)
     message_file: MediaFile = Field(
         default_factory=lambda: MediaFile(id=0, file_path="", file_id=""),
@@ -64,13 +76,20 @@ class RequestForHelpBase(SQLModel):
     photos: List[MediaFile] = Field(default_factory=list, sa_column=Column(JSON))
     videos: List[MediaFile] = Field(default_factory=list, sa_column=Column(JSON))
     is_completed: bool = Field(default=False)
+    completed_at: Optional[datetime] = Field(default=None)
     accept_url: str = Field(
         default=secrets.token_urlsafe(32), max_length=64, nullable=False
+    )
+
+    telegram_messages_idx: TelegramMessagesIDX = Field(
+        default_factory=lambda: TelegramMessagesIDX(),
+        sa_column=Column(JSON),
     )
 
     def to_dict(self):
         return {
             **self.model_dump(),
+            "telegram_messages_idx": self.telegram_messages_idx.to_dict(),
             "message_file": self.message_file.to_dict(),
             "photos": [photo.to_dict() for photo in self.photos],
             "photos": [video.to_dict() for video in self.videos],
@@ -116,6 +135,16 @@ class RequestForHelpPublic(SQLModel):
 
     def to_dict(self):
         return {**self.model_dump()}
+
+
+class RequestForHelpOperatorPublic(RequestForHelpPublic):
+    phone: str = Field(default="", max_length=20, index=True)
+    company: str = Field(default="", max_length=50)
+    name: str = Field(default="", max_length=16)
+    device: str = Field(default=None, max_length=18)
+    completed_at: str = Field(
+        default=datetime.now().strftime(settings.PUBLIC_TIME_FORMAT)
+    )
 
 
 class AccessToken(SQLModel):

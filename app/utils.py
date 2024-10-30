@@ -30,7 +30,7 @@ def compress_image(
     )
 
 
-def convert_and_save_audio(*, input_voice: str, output_voice: str) -> bytes:
+def convert_and_save_voice(*, input_voice: str, output_voice: str) -> bytes:
     # Read audio that was uploaded and save .mp3 file to .ogg file with current codec for telegram
     try:
         ffmpeg.input(input_voice).output(

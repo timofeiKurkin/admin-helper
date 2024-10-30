@@ -1,5 +1,5 @@
 import uuid
-from typing import Sequence
+from typing import Any, Sequence
 
 from sqlmodel import Session, select
 
@@ -21,8 +21,20 @@ def create_user(*, session: Session, user_create: UserCreate) -> User:
     return new_user
 
 
+def get_user_by_id(*, session: Session, id: uuid.UUID) -> User | None:
+    statement = select(User).where(User.id == id)
+    session_user = session.exec(statement=statement).first()
+    return session_user
+
+
 def get_user_by_phone(*, session: Session, phone: str) -> User | None:
     statement = select(User).where(User.phone == phone)
+    session_user = session.exec(statement=statement).first()
+    return session_user
+
+
+def get_user(*, session: Session, **filters: dict[str, Any]) -> User | None:
+    statement = select(User).filter_by(**filters)
     session_user = session.exec(statement=statement).first()
     return session_user
 
@@ -69,6 +81,17 @@ def get_user_requests(
 
     user_requests = session.exec(statement=statement).all()
     return user_requests or []
+
+
+def get_user_request_by_accept_url(*, session: Session, accept_url: str):
+    statement = (
+        select(RequestForHelp)
+        .where(RequestForHelp.accept_url == accept_url)
+        .order_by(RequestForHelp.created_at.desc())
+    )
+
+    user_request = session.exec(statement=statement).first()
+    return user_request
 
 
 def delete_user_request(*, session: Session, db_request: RequestForHelp):
