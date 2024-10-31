@@ -1,0 +1,29 @@
+@import "@/styles/variables.module.scss";
+
+.completeRequestWrapper {
+    width: 100%;
+    height: 100%;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    row-gap: 4.38rem;
+
+    .completeRequestModal {
+        background-color: $white_1;
+        border: $success_input_border;
+        border-radius: $border_radius;
+        padding: 2.5rem;
+
+        .separatedLine {
+            margin-top: 2.19rem;
+            margin-bottom: 2.5rem;
+        }
+    }
+
+    .helpfulMessage {
+        max-width: 19.375rem;
+        text-align: center;
+    }
+}

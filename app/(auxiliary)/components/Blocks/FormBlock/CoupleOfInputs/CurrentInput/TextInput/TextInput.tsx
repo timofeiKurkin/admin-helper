@@ -50,7 +50,7 @@ const TextInput: FC<PropsType> = ({
     currentInput
 }) => {
     const dispatch = useAppDispatch()
-    const serverResponse = useAppSelector(selectServerResponse).sentToServer
+    const serverResponse = useAppSelector(selectServerResponse).status
     const value =
         useInput("", currentInput.type as AllKeysOfInputsType, inputValidations[currentInput.type])
     const [currentHelpfulList, setCurrentHelpfulList] =
@@ -86,7 +86,7 @@ const TextInput: FC<PropsType> = ({
     ]);
 
     useEffect(() => {
-        if (serverResponse) {
+        if (serverResponse === "success") {
             value.resetValue()
         }
     }, [

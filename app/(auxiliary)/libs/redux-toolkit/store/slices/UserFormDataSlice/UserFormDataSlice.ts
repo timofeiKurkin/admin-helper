@@ -1,6 +1,12 @@
-import {createAppSlice} from "@/app/(auxiliary)/libs/redux-toolkit/store/createAppSlice";
+import { indexOfObject } from "@/app/(auxiliary)/func/handlers";
+import { createAppSlice } from "@/app/(auxiliary)/libs/redux-toolkit/store/createAppSlice";
 import {
-    AllKeysOfInputsType,
+    FormDataItemType,
+    PermissionsOfFormStatesType,
+    ServerResponseType,
+    UserFormDataType
+} from "@/app/(auxiliary)/types/AppTypes/Context";
+import {
     COMPANY_KEY,
     DEVICE_KEY,
     MESSAGE_KEY,
@@ -12,14 +18,7 @@ import {
     TextInputsKeysType,
     VIDEO_KEY
 } from "@/app/(auxiliary)/types/AppTypes/InputHooksTypes";
-import {
-    FormDataItemType,
-    PermissionsOfFormStatesType,
-    ServerResponseType,
-    UserFormDataType
-} from "@/app/(auxiliary)/types/AppTypes/Context";
-import {PayloadAction} from "@reduxjs/toolkit";
-import {indexOfObject} from "@/app/(auxiliary)/func/handlers";
+import { PayloadAction } from "@reduxjs/toolkit";
 
 interface InitialStateType extends UserFormDataType {
     permissions: PermissionsOfFormStatesType;

@@ -1,9 +1,8 @@
-import {v4 as uuidv4} from "uuid";
-import {createAppSlice} from "@/app/(auxiliary)/libs/redux-toolkit/store/createAppSlice";
-import {RootPageContentType} from "@/app/(auxiliary)/types/Data/Interface/RootPage/RootPageContentType";
-import {PayloadAction} from "@reduxjs/toolkit";
-import {BlocksMovingType, UserDeviceStateType} from "@/app/(auxiliary)/types/AppTypes/Context";
+import { createAppSlice } from "@/app/(auxiliary)/libs/redux-toolkit/store/createAppSlice";
+import { BlocksMovingType, UserDeviceStateType } from "@/app/(auxiliary)/types/AppTypes/Context";
 import { DeleteNotificationType, NotificationListType, SetNotificationType } from "@/app/(auxiliary)/types/AppTypes/Notification";
+import { PayloadAction } from "@reduxjs/toolkit";
+import { v4 as uuidv4 } from "uuid";
 
 
 interface InitialStateType {
@@ -102,8 +101,8 @@ export const appSlice = createAppSlice({
         setNewNotification: create.reducer(
             (state, action: PayloadAction<SetNotificationType>) => {
                 const existingNotification = state.notificationList.findIndex((notice) => notice.message === action.payload.message)
-                
-                if(existingNotification !== -1) {
+
+                if (existingNotification !== -1) {
                     state.notificationList[existingNotification] = {
                         ...state.notificationList[existingNotification],
                         timeout: state.notificationList[existingNotification].timeout + 10000

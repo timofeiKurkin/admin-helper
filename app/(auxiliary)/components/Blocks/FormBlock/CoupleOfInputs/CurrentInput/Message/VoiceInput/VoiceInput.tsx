@@ -30,7 +30,7 @@ const VoiceInput: FC<PropsType> = ({
     removeRecorder
 }) => {
     const voiceMessage = useAppSelector(selectFormFileData)[MESSAGE_KEY]
-    const serverResponse = useAppSelector(selectServerResponse).sentToServer
+    const serverResponse = useAppSelector(selectServerResponse).status
 
     const [isRecording, setIsRecording] = useState(false)
     const [recordingIsDone, setRecordingIsDone] = useState<boolean>(voiceMessage.value instanceof File)
@@ -157,7 +157,7 @@ const VoiceInput: FC<PropsType> = ({
     }
 
     useEffect(() => {
-        if (serverResponse) {
+        if (serverResponse === "success") {
             setAudioBlob(null)
             setRecordingIsDone(false)
         }

@@ -1,0 +1,17 @@
+.completeRequestBodyWrapper {
+    display: flex;
+    flex-direction: column;
+    row-gap: 1.25rem;
+
+    .completeRequestBodyList {
+        display: flex;
+        flex-direction: column;
+        row-gap: 1.25rem;
+        margin-left: 0.63rem;
+
+        .completeRequestBodyItem {
+            display: flex;
+            column-gap: 5px;
+        }
+    }
+}

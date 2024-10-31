@@ -1,0 +1,43 @@
+@import "@/styles/variables.module.scss";
+
+.completeRequestHeaderWrapper {
+    display: flex;
+    // flex-direction: column;
+    justify-content: space-between;
+    column-gap: 8.31rem;
+
+    .requestNumber,
+    .requestStatus {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .requestNumber {
+        row-gap: 0.94rem;
+    }
+
+    .requestStatus {
+        row-gap: 0.62rem;
+        padding: 10px 0;
+
+        .requestStatusValue {
+            display: flex;
+            align-items: center;
+            column-gap: 0.5rem;
+
+            .requestStatusEllipse {
+                width: 9px;
+                height: 9px;
+                border-radius: 50%;
+            }
+
+            .requestStatusEllipseDone {
+                background-color: $green_light;
+            }
+
+            .requestStatusEllipsePending {
+                background-color: $yellow;
+            }
+        }
+    }
+}

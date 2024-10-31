@@ -112,8 +112,8 @@ const UploadForm: FC<PropsType> = ({ buttonText }) => {
 
                 if ((response as AxiosResponse<ResponseFromServerType>).status === 201) {
                     const succeedResponse = (response as AxiosResponse<ResponseFromServerType>)
-                    dispatch(setUserAuthorization(true))
                     dispatch(setFormToDefault())
+                    dispatch(setUserAuthorization(true))
                     dispatch(setNewNotification({
                         message: succeedResponse.data.message,
                         type: "success",

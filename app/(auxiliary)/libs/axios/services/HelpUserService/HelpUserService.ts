@@ -1,7 +1,7 @@
-import { AxiosResponse } from "axios";
 import { $api } from "@/app/(auxiliary)/libs/axios";
 import { CreatedHelpRequestType } from "@/app/(auxiliary)/types/AxiosTypes/AxiosTypes";
-import { HelpRequestItemType, UserRequestListType } from "@/app/(auxiliary)/types/UserRequestsTypes/UserRequestsTypes";
+import { UserRequestListType } from "@/app/(auxiliary)/types/UserRequestsTypes/UserRequestsTypes";
+import { AxiosResponse } from "axios";
 
 
 export default class HelpUserService {

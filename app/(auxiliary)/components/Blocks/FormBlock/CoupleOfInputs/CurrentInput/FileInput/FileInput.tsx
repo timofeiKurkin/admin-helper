@@ -1,9 +1,9 @@
-import React, {FC, useEffect, useState} from 'react';
-import {PhotoAndVideoInputType} from "@/app/(auxiliary)/types/Data/Interface/RootPage/RootPageContentType";
+import React, { FC, useEffect, useState } from 'react';
+import { PhotoAndVideoInputType } from "@/app/(auxiliary)/types/Data/Interface/RootPage/RootPageContentType";
 import styles from "./FileInput.module.scss";
 import Toggle from "@/app/(auxiliary)/components/Common/Switches/Toggle/Toggle";
-import {PHOTO_KEY, PhotoAndVideoKeysType, VIDEO_KEY} from "@/app/(auxiliary)/types/AppTypes/InputHooksTypes";
-import {useAppDispatch, useAppSelector} from "@/app/(auxiliary)/libs/redux-toolkit/store/hooks";
+import { PHOTO_KEY, PhotoAndVideoKeysType, VIDEO_KEY } from "@/app/(auxiliary)/types/AppTypes/InputHooksTypes";
+import { useAppDispatch, useAppSelector } from "@/app/(auxiliary)/libs/redux-toolkit/store/hooks";
 import {
     selectUserDevice,
     setOpenedPhotoBlock,
@@ -21,10 +21,10 @@ interface PropsType {
     input: PhotoAndVideoInputType;
 }
 
-const FileInput: FC<PropsType> = ({input}) => {
+const FileInput: FC<PropsType> = ({ input }) => {
     const dispatch = useAppDispatch()
     const userDevice = useAppSelector(selectUserDevice)
-    const serverResponse = useAppSelector(selectServerResponse).sentToServer
+    const serverResponse = useAppSelector(selectServerResponse).status
 
     const [haveMediaFile, setHaveMediaFile] =
         useState<boolean>(false)
@@ -46,7 +46,7 @@ const FileInput: FC<PropsType> = ({input}) => {
     }
 
     useEffect(() => {
-        if(serverResponse) {
+        if (serverResponse === "success") {
             setHaveMediaFile(false)
         }
     }, [serverResponse])
@@ -54,7 +54,7 @@ const FileInput: FC<PropsType> = ({input}) => {
     return (
         <div className={styles.fileInputWrapper}>
             <Toggle toggleStatus={haveMediaFile}
-                    onClick={fileBlockHandler}>
+                onClick={fileBlockHandler}>
                 {input.toggleText}
             </Toggle>
 
@@ -63,7 +63,7 @@ const FileInput: FC<PropsType> = ({input}) => {
                     type: input.type as PhotoAndVideoKeysType,
                     button: input.button || "",
                     placeholder: input.inputPlaceholder || ""
-                }}/>
+                }} />
             )}
         </div>
     );
