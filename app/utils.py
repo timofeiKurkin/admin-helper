@@ -85,3 +85,8 @@ def create_request_folder(*, user_folder: str, last_index: int) -> str:
         os.makedirs(request_folder)
 
     return request_folder
+
+
+def to_camel(field: str) -> str:
+    parts = field.split("_")
+    return parts[0] + "".join(word.capitalize() for word in parts[1:])

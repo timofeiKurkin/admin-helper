@@ -15,7 +15,9 @@ router = APIRouter()
 
 
 @router.patch(
-    "/complete_request/{accept_url}", response_model=RequestForHelpOperatorPublic
+    "/complete_request/{accept_url}",
+    response_model=RequestForHelpOperatorPublic,
+    status_code=200,
 )
 async def complete_request(accept_url: str, session: SessionDep):
     request_candidate = get_user_request_by_accept_url(
@@ -61,28 +63,34 @@ async def complete_request(accept_url: str, session: SessionDep):
 
         return request_for_help_operator_public
     else:
-        button_message_id: int = request_candidate.telegram_messages_idx["main_message"]
+        # main_message_id = 0
+        reply_markup_id = 0
+        if "reply_markup" in request_candidate.telegram_messages_idx:
+            # main_message_id = request_candidate.telegram_messages_idx["main_message"]
+            reply_markup_id = request_candidate.telegram_messages_idx["reply_markup"]
 
-        keyboard = [
-            [
-                InlineKeyboardButton(
-                    text=f"🥇 Заявка #{request_candidate.id} выполнена 🏆",
-                    url=f"{settings.CLIENT_HOST}/{accept_url}",
-                )
+        if reply_markup_id:
+            keyboard = [
+                [
+                    InlineKeyboardButton(
+                        text=f"🏆 Заявка #{request_candidate.id} выполнена 🏆",
+                        url=f"{settings.CLIENT_HOST}/{accept_url}",
+                    )
+                ]
             ]
-        ]
-        reply_markup = InlineKeyboardMarkup(inline_keyboard=keyboard)
+            new_reply_markup = InlineKeyboardMarkup(inline_keyboard=keyboard)
 
-        try:
-            await bot_api.edit_message_reply_markup(
-                chat_id=settings.GROUP_ID,
-                message_id=button_message_id,
-                reply_markup=reply_markup,
-            )
-        except TelegramError as e:
-            error = f"Error in editing reply markup of a message: {e}"
-            logging.error(error)
-            raise HTTPException(status_code=500, detail=error)
+            try:
+                await bot_api.edit_message_text(
+                    chat_id=settings.GROUP_ID,
+                    text="Заявка выполнена 🎯",
+                    message_id=reply_markup_id,
+                    reply_markup=new_reply_markup,
+                )
+            except TelegramError as e:
+                error = f"Error in editing reply markup of a message: {e}"
+                logging.error(error)
+                raise HTTPException(status_code=500, detail=error)
 
         compiled_time = datetime.now()
 
@@ -100,12 +108,21 @@ async def complete_request(accept_url: str, session: SessionDep):
             logging.error(error)
             raise HTTPException(status_code=500, detail=error)
 
+        public_request = RequestForHelpOperatorPublic(
+            id=updated_request.id,
+            is_completed=updated_request.is_completed,
+            phone=user_candidate.phone,
+            company=user_candidate.company,
+            name=user_candidate.name,
+            device=updated_request.device,
+        )
+
         try:
             request_for_help_operator_public = (
                 RequestForHelpOperatorPublic.model_validate(
-                    updated_request,
+                    public_request,
                     update={
-                        "created_at": request_candidate.created_at.strftime(
+                        "created_at": updated_request.created_at.strftime(
                             settings.PUBLIC_TIME_FORMAT
                         ),
                         "completed_at": compiled_time.strftime(

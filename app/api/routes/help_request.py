@@ -13,6 +13,7 @@ from telegram import (
     InputFile,
     InputMediaPhoto,
     InputMediaVideo,
+    ReplyParameters,
 )
 from telegram.error import TelegramError
 
@@ -33,6 +34,7 @@ from app.telegram_bot.bot import bot_api
 
 router = APIRouter()
 telegram_timeout_time = 120
+chat_id = settings.GROUP_ID
 
 
 @router.get("/")
@@ -156,17 +158,7 @@ async def create_help_request(
     # request_index = crud.get_last_request_index(session=session)
     last_index = new_request.id
 
-    accept_url = secrets.token_urlsafe(32)
-    keyboard = [
-        [
-            InlineKeyboardButton(
-                text=f"Завершить заявку #{new_request.id}",
-                url=f"{settings.CLIENT_HOST}/{accept_url}",
-            )
-        ]
-    ]
-    reply_markup = InlineKeyboardMarkup(inline_keyboard=keyboard)
-
+    # Trying to send the main message to which the others message will be linked (replied)
     try:
         telegram_text_message = telegram_utils.get_finally_message(
             last_index=last_index,
@@ -177,11 +169,10 @@ async def create_help_request(
             device=device,
             message_text=message_text,
         )
-        message = await bot_api.send_message(
-            settings.GROUP_ID,
-            telegram_text_message,
+        main_message = await bot_api.send_message(
+            chat_id=chat_id,
+            text=telegram_text_message,
             parse_mode="HTML",
-            reply_markup=reply_markup,
         )
     except TelegramError as e:
         crud.delete_user_request(session=session, db_request=new_request)
@@ -191,7 +182,7 @@ async def create_help_request(
             detail=f"Failed to send client's message to Telegram. Error: {e}",
         )
 
-    main_message_id = message.message_id
+    main_message_id = main_message.message_id
 
     voice_media_file = MediaFile(id=0, file_path="", file_id="")
     photos_media_file = []
@@ -218,7 +209,7 @@ async def create_help_request(
                 converted_audio = utils.convert_and_save_voice(
                     input_voice=input_voice, output_voice=output_voice
                 )
-                response = await message.reply_voice(
+                response = await main_message.reply_voice(
                     voice=InputFile(obj=converted_audio, filename=voice_name),
                     connect_timeout=telegram_timeout_time,
                 )
@@ -252,7 +243,7 @@ async def create_help_request(
                         path=photo_path,
                     )
                     photos_compressed.append(compressed_image)
-                photo_response = await message.reply_media_group(
+                photo_response = await main_message.reply_media_group(
                     media=photos_compressed, connect_timeout=telegram_timeout_time
                 )
                 for index, item in enumerate(photo_response):
@@ -268,7 +259,7 @@ async def create_help_request(
                 shutil.rmtree(request_folder)
                 crud.delete_user_request(session=session, db_request=new_request)
                 bot_api.delete_messages(
-                    chat_id=settings.GROUP_ID,
+                    chat_id=chat_id,
                     message_id=[main_message_id, voice_message_id],
                 )
                 crud.delete_user_request(session=session, db_request=new_request)
@@ -298,7 +289,7 @@ async def create_help_request(
                             filename=video_file,
                         )
                     )
-                video_response = await message.reply_media_group(
+                video_response = await main_message.reply_media_group(
                     media=video_compressed,
                     read_timeout=telegram_timeout_time,
                     connect_timeout=telegram_timeout_time,
@@ -317,7 +308,7 @@ async def create_help_request(
                 shutil.rmtree(request_folder)
                 crud.delete_user_request(session=session, db_request=new_request)
                 bot_api.delete_messages(
-                    chat_id=settings.GROUP_ID,
+                    chat_id=chat_id,
                     message_ids=[
                         main_message_id,
                         voice_message_id,
@@ -329,6 +320,32 @@ async def create_help_request(
                 logging.error(error)
                 raise HTTPException(status_code=504, detail=error)
 
+    accept_url = secrets.token_urlsafe(32)
+    keyboard = [
+        [
+            InlineKeyboardButton(
+                text=f"Завершить заявку #{new_request.id}",
+                url=f"{settings.CLIENT_HOST}/{accept_url}",
+            )
+        ]
+    ]
+    reply_markup = InlineKeyboardMarkup(inline_keyboard=keyboard)
+
+    try:
+        reply_markup_message = await bot_api.send_message(
+            chat_id=chat_id,
+            text="Чтобы завершить заявку, перейдите по ссылке 🎯",
+            reply_parameters=ReplyParameters(
+                message_id=main_message_id, chat_id=chat_id
+            ),
+            reply_markup=reply_markup,
+        )
+    except TelegramError as e:
+        error: f"Failed to send reply_markup message: {e}"
+        logging.error(error)
+        raise HTTPException(status_code=500, detail=error)
+    reply_markup_message = reply_markup_message.message_id
+
     # Create data base model
     new_request_for_help = RequestForHelpCreate(
         device=device,
@@ -337,7 +354,9 @@ async def create_help_request(
         photos=photos_media_file,
         videos=videos_media_file,
         accept_url=accept_url,
-        telegram_messages_idx=TelegramMessagesIDX(main_message=main_message_id),
+        telegram_messages_idx=TelegramMessagesIDX(
+            reply_markup=reply_markup_message
+        ),  # Saving message id to change them, when operator complete the help request
     )
 
     try:
@@ -350,7 +369,7 @@ async def create_help_request(
         shutil.rmtree(request_folder)
         crud.delete_user_request(session=session, db_request=new_request)
         bot_api.delete_messages(
-            chat_id=settings.GROUP_ID,
+            chat_id=chat_id,
             message_ids=[
                 main_message_id,
                 voice_message_id,

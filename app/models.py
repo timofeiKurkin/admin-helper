@@ -7,6 +7,7 @@ from pydantic import BaseModel
 from sqlalchemy.types import JSON
 from sqlmodel import Column, Field, Relationship, SQLModel
 
+from app import utils
 from app.core.config import settings
 
 
@@ -51,13 +52,21 @@ class User(UserBase, table=True):
     )
     created_at: datetime = Field(default_factory=datetime.now)
 
+    def to_dict(self):
+        return {
+            **self.model_dump(mode="json", by_alias=True),
+            "created_at": self.created_at.strftime(settings.PUBLIC_TIME_FORMAT),
+        }
+
 
 class TelegramMessagesIDX(SQLModel):
-    main_message: int = Field(default=0)
+    # main_message: int = Field(default=0)
+    reply_markup: int = Field(default=0)
 
     def to_dict(self) -> dict:
         return {
-            "main_message": self.main_message,
+            # "main_message": self.main_message,
+            "reply_markup": self.reply_markup
         }
 
     @staticmethod
@@ -78,7 +87,7 @@ class RequestForHelpBase(SQLModel):
     is_completed: bool = Field(default=False)
     completed_at: Optional[datetime] = Field(default=None)
     accept_url: str = Field(
-        default=secrets.token_urlsafe(32), max_length=64, nullable=False
+        default=secrets.token_urlsafe(32), max_length=43, nullable=False
     )
 
     telegram_messages_idx: TelegramMessagesIDX = Field(
@@ -88,7 +97,7 @@ class RequestForHelpBase(SQLModel):
 
     def to_dict(self):
         return {
-            **self.model_dump(),
+            **self.model_dump(mode="json", by_alias=True),
             "telegram_messages_idx": self.telegram_messages_idx.to_dict(),
             "message_file": self.message_file.to_dict(),
             "photos": [photo.to_dict() for photo in self.photos],
@@ -135,6 +144,10 @@ class RequestForHelpPublic(SQLModel):
 
     def to_dict(self):
         return {**self.model_dump()}
+
+    class Config:
+        alias_generator = utils.to_camel
+        populate_by_name = True
 
 
 class RequestForHelpOperatorPublic(RequestForHelpPublic):
