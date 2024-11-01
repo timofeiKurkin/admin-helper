@@ -1,5 +1,5 @@
-import React, {FC, useEffect} from 'react';
-import {InputChangeEventHandler} from "@/app/(auxiliary)/types/AppTypes/AppTypes";
+import React, { FC, useEffect } from 'react';
+import { InputChangeEventHandler } from "@/app/(auxiliary)/types/AppTypes/AppTypes";
 import inputsStyles
     from "@/app/(auxiliary)/components/Blocks/FormBlock/CoupleOfInputs/CurrentInput/InputsStyles.module.scss"
 import useInput from "@/app/(auxiliary)/hooks/useInput";
@@ -10,11 +10,11 @@ import Input from "@/app/(auxiliary)/components/UI/Inputs/Input/Input";
 import {
     inputHandleKeyDown
 } from "@/app/(auxiliary)/components/Blocks/FormBlock/CoupleOfInputs/CurrentInput/inputHandleKeyDown";
-import {useAppDispatch} from "@/app/(auxiliary)/libs/redux-toolkit/store/hooks";
-import {changeTextData} from "@/app/(auxiliary)/libs/redux-toolkit/store/slices/UserFormDataSlice/UserFormDataSlice";
-import {NUMBER_PC_KEY} from "@/app/(auxiliary)/types/AppTypes/InputHooksTypes";
+import { useAppDispatch } from "@/app/(auxiliary)/libs/redux-toolkit/store/hooks";
+import { changeTextData } from "@/app/(auxiliary)/libs/redux-toolkit/store/slices/UserFormDataSlice/UserFormDataSlice";
+import { NUMBER_PC_KEY } from "@/app/(auxiliary)/types/AppTypes/InputHooksTypes";
 import dynamic from 'next/dynamic';
-import InputSkeleton from '@/app/(auxiliary)/components/UI/Inputs/InputSkeleton/InputSkeleton';
+import InputLoadingSkeleton from '@/app/(auxiliary)/components/UI/Loaders/InputLoadingSkeleton/InputLoadingSkeleton';
 
 interface PropsType {
     // currentInput: NumberPcInputType;
@@ -22,16 +22,16 @@ interface PropsType {
 }
 
 const LazyInput = dynamic(
-    () => import("@/app/(auxiliary)/components/UI/Inputs/Input/Input"), 
+    () => import("@/app/(auxiliary)/components/UI/Inputs/Input/Input"),
     {
         ssr: false,
-        loading: () => <InputSkeleton />
+        loading: () => <InputLoadingSkeleton />
     }
 )
 
 const ComputerNumberInput: FC<PropsType> = ({
-                                                placeholder
-                                            }) => {
+    placeholder
+}) => {
     const dispatch = useAppDispatch()
     const value = useInput("", NUMBER_PC_KEY, inputValidations[NUMBER_PC_KEY])
 
@@ -78,15 +78,15 @@ const ComputerNumberInput: FC<PropsType> = ({
     return (
         <div className={inputsStyles.numberPCInputWrapper}>
             <LazyInput value={value.value}
-                   placeholder={placeholder}
-                   maxLength={inputValidations[NUMBER_PC_KEY].maxLength}
-                   tabIndex={1}
-                   type={"tel"}
-                   onBlur={value.onBlur}
-                   onKeyDown={(e) => inputHandleKeyDown(e, value)}
-                   onChange={numberPcHandler}
-                   inputIsDirty={value.isDirty}
-                   dynamicWidth={true}
+                placeholder={placeholder}
+                maxLength={inputValidations[NUMBER_PC_KEY].maxLength}
+                tabIndex={1}
+                type={"tel"}
+                onBlur={value.onBlur}
+                onKeyDown={(e) => inputHandleKeyDown(e, value)}
+                onChange={numberPcHandler}
+                inputIsDirty={value.isDirty}
+                dynamicWidth={true}
             />
         </div>
     );

@@ -6,6 +6,7 @@ import {
     selectBlocksMoving
 } from "@/app/(auxiliary)/libs/redux-toolkit/store/slices/AppSlice/AppSlice";
 import { RootPageContentType } from '@/app/(auxiliary)/types/Data/Interface/RootPage/RootPageContentType';
+import SeparatingLine from '../../UI/SeparatingLine/SeparatingLine';
 
 
 interface PropsType {
@@ -20,7 +21,7 @@ const RootBodyBlock: FC<PropsType> = ({ rootPageContent }) => {
             className={`${styles.bodyBlockGrid} ${(blocksMoving.openedPhotoBlock || blocksMoving.openedVideoBlock) && styles.openedFileBlock}`}>
             <FormPart inputsContent={rootPageContent.formContent.formPartOne} />
 
-            <div className={`${styles.separatingLine}`}></div>
+            <SeparatingLine className={styles.separatingLine} />
 
             <FormPart inputsContent={rootPageContent.formContent.formPartTwo}
                 permissionsContent={{

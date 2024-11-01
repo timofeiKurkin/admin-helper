@@ -1,5 +1,29 @@
 @import "@/styles/variables.module.scss";
 
+.headerDesktop {
+    @media screen and ($phone375_639) {
+        display: none;
+        height: 0;
+        width: 0;
+
+        .logoContainer {
+            display: none;
+            height: 0;
+        }
+
+        .logoWrapper {
+            width: 0;
+            height: 0;
+            
+            img {
+                display: none;
+                height: 0;
+                position: relative;
+            }
+        }
+
+    }
+}
 
 .header {
     display: grid;
@@ -28,13 +52,18 @@
     }
     
     @media screen and ($phone375_639) {
-        grid-template-columns: 15.6875rem;
+        grid-template-columns: minmax(10rem, 20.3125rem) minmax(9rem, 11.3125rem);
+        grid-template-areas: "logo-container user-requests-block";
     }
     
     .logoContainer {
         display: grid;
         grid-template-rows: 1fr;
         align-items: center;
+        
+        @media screen and ($phone375_639) {
+            grid-area: logo-container;
+        }
         
         .logoWrapper {
             position: relative;
@@ -73,10 +102,15 @@
         }
         
         @media screen and ($phone375_639) {
-            grid-template-columns: 2.875rem 11.875rem;
+            grid-template-columns: 2.875rem .8fr;
             grid-template-rows: 4.375rem;
             column-gap: 0.94rem;
+
+            .logoContainerText {
+                display: none;
+            }
         }
+
     }
     
     .repairServiceContainer {

@@ -1,7 +1,7 @@
 import React from 'react'
-import styles from "./Loading.module.scss"
+import styles from "./LoadingCircle.module.scss"
 
-const Loading = () => {
+const LoadingCircle = () => {
     return (
         <div className={styles.loaderWrapper}>
             <div className={styles.loader}></div>
@@ -9,4 +9,4 @@ const Loading = () => {
     )
 }
 
-export default Loading
+export default LoadingCircle

@@ -4,8 +4,9 @@ import HeaderOfTableList from './HeaderOfTableList/HeaderOfTableList';
 import styles from "./RequestsListBlock.module.scss";
 
 import dynamic from 'next/dynamic';
+import LoadingCircle from '@/app/(auxiliary)/components/UI/Loaders/LoadingCircle/LoadingCircle';
 
-const LazyRequestsList = dynamic(() => import('./RequestsList/RequestsList'), { loading: () => <div>Loading...1</div> })
+const LazyRequestsList = dynamic(() => import('./RequestsList/RequestsList'), { loading: () => <LoadingCircle /> })
 
 const RequestsListBlock: FC = () => {
     return (

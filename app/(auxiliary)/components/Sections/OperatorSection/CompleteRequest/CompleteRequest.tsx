@@ -7,7 +7,7 @@ import { axiosRequestsHandler } from '@/app/(auxiliary)/func/axiosRequestsHandle
 import OperatorService from '@/app/(auxiliary)/libs/axios/services/OperatorService/OperatorService'
 import { AxiosResponse } from 'axios'
 import { useAppDispatch } from '@/app/(auxiliary)/libs/redux-toolkit/store/hooks'
-import Loading from '../../../UI/Loading/Loading'
+import LoadingCircle from '../../../UI/Loaders/LoadingCircle/LoadingCircle'
 import { setNewNotification } from '@/app/(auxiliary)/libs/redux-toolkit/store/slices/AppSlice/AppSlice'
 
 interface PropsType {
@@ -56,7 +56,7 @@ const CompleteRequest: FC<PropsType> = ({ accept_url }) => {
             return <div>error block...</div>
         }
     } else {
-        return <Loading />
+        return <LoadingCircle />
     }
 }
 

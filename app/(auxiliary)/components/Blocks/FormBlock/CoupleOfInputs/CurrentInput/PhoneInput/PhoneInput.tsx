@@ -15,7 +15,7 @@ import { useAppDispatch } from "@/app/(auxiliary)/libs/redux-toolkit/store/hooks
 import { changeTextData } from "@/app/(auxiliary)/libs/redux-toolkit/store/slices/UserFormDataSlice/UserFormDataSlice";
 import { PHONE_KEY } from "@/app/(auxiliary)/types/AppTypes/InputHooksTypes";
 import dynamic from 'next/dynamic';
-import InputSkeleton from '@/app/(auxiliary)/components/UI/Inputs/InputSkeleton/InputSkeleton';
+import InputLoadingSkeleton from '@/app/(auxiliary)/components/UI/Loaders/InputLoadingSkeleton/InputLoadingSkeleton';
 
 interface PropsType {
     currentInput: PhoneNumberInputType;
@@ -25,7 +25,7 @@ const LazyInput = dynamic(
     () => import("@/app/(auxiliary)/components/UI/Inputs/Input/Input"),
     {
         ssr: false,
-        loading: () => <InputSkeleton />
+        loading: () => <InputLoadingSkeleton />
     }
 )
 
