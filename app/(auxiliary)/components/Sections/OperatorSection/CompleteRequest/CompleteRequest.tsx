@@ -7,6 +7,8 @@ import { axiosRequestsHandler } from '@/app/(auxiliary)/func/axiosRequestsHandle
 import OperatorService from '@/app/(auxiliary)/libs/axios/services/OperatorService/OperatorService'
 import { AxiosResponse } from 'axios'
 import { useAppDispatch } from '@/app/(auxiliary)/libs/redux-toolkit/store/hooks'
+import Loading from '../../../UI/Loading/Loading'
+import { setNewNotification } from '@/app/(auxiliary)/libs/redux-toolkit/store/slices/AppSlice/AppSlice'
 
 interface PropsType {
     accept_url: string
@@ -16,7 +18,6 @@ const CompleteRequest: FC<PropsType> = ({ accept_url }) => {
     const dispatch = useAppDispatch()
     const [success, setSuccess] = useState<boolean>(false)
     const [requestPublic, setRequestPublic] = useState<HelpRequestForOperatorType>()
-
 
     useEffect(() => {
         let active = true
@@ -31,11 +32,15 @@ const CompleteRequest: FC<PropsType> = ({ accept_url }) => {
                     setSuccess(true)
                 } else {
                     setRequestPublic({} as HelpRequestForOperatorType)
+                    dispatch(setNewNotification({
+                        message: "Не удалось завершить заявку!",
+                        type: "error"
+                    }))
                 }
             }
         }
 
-        if (accept_url) {
+        if (accept_url && !requestPublic) {
             completeRequest(accept_url).then()
         }
 
@@ -50,6 +55,8 @@ const CompleteRequest: FC<PropsType> = ({ accept_url }) => {
         } else {
             return <div>error block...</div>
         }
+    } else {
+        return <Loading />
     }
 }
 

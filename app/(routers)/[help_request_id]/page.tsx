@@ -1,7 +1,6 @@
 import CompleteRequest from '@/app/(auxiliary)/components/Sections/OperatorSection/CompleteRequest/CompleteRequest';
 import React, { FC } from 'react'
 import { notFound } from 'next/navigation';
-import dynamic from 'next/dynamic';
 
 interface PropsType {
     params: {
@@ -9,7 +8,7 @@ interface PropsType {
     }
 }
 
-const LazyCompleteRequest = dynamic(() => import('@/app/(auxiliary)/components/Sections/OperatorSection/CompleteRequest/CompleteRequest'), { ssr: false, loading: () => <div>Loading data...</div> })
+// const LazyCompleteRequest = dynamic(() => import('@/app/(auxiliary)/components/Sections/OperatorSection/CompleteRequest/CompleteRequest'), { ssr: false, loading: () => <div>Loading data...</div> })
 
 const ChangeUserRequestPage: FC<PropsType> = ({ params }) => {
     const help_request_id = params.help_request_id
@@ -19,7 +18,7 @@ const ChangeUserRequestPage: FC<PropsType> = ({ params }) => {
     }
 
     return (
-        <LazyCompleteRequest accept_url={help_request_id} />
+        <CompleteRequest accept_url={help_request_id} />
     )
 }
 

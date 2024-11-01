@@ -16,7 +16,7 @@ const CompleteRequestHeader: FC<PropsType> = ({ headerOfRequest }) => {
     return (
         <div className={styles.completeRequestHeaderWrapper}>
             <div className={styles.requestNumber}>
-                <div>{header.title}</div>
+                <Text>{header.title}</Text>
 
                 <Title>{header.request} #{headerOfRequest.id}</Title>
             </div>
