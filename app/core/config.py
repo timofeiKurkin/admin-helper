@@ -25,7 +25,7 @@ class Settings(BaseSettings):
     )
     API_V1_STR: str = "/api/v1"
     FRONTEND_HOST: str = "http://localhost:3030"
-    CLIENT_HOST: str
+    CLIENT_HOST: str = ""
     ENVIRONMENT: Literal["local", "staging", "production"] = "local"
 
     BACKEND_CORS_ORIGINS: Annotated[list[AnyUrl] | str, BeforeValidator(parse_cors)] = (
@@ -39,19 +39,19 @@ class Settings(BaseSettings):
             str(origin).rstrip("/") for origin in self.BACKEND_CORS_ORIGINS
         ]
 
-    PROJECT_NAME: str
+    PROJECT_NAME: str = ""
     SENTRY_DSN: HttpUrl | None = None
 
-    BOT_TOKEN: str
-    GROUP_ID: str
-    TELEGRAM_API_ID: str
-    TELEGRAM_API_HASH: str
+    BOT_TOKEN: str = ""
+    GROUP_ID: str = ""
+    TELEGRAM_API_ID: str = ""
+    TELEGRAM_API_HASH: str = ""
 
-    POSTGRES_SERVER: str
-    POSTGRES_PORT: int
-    POSTGRES_USER: str
-    POSTGRES_PASSWORD: str
-    POSTGRES_DB: str
+    POSTGRES_SERVER: str = ""
+    POSTGRES_PORT: int = 0
+    POSTGRES_USER: str = ""
+    POSTGRES_PASSWORD: str = ""
+    POSTGRES_DB: str = ""
 
     PUBLIC_TIME_FORMAT: str = r"%d.%m.%Y %H:%M"
 
@@ -76,7 +76,7 @@ class Settings(BaseSettings):
     # FIRST_SUPERUSER_PASSWORD: str
 
 
-BASE_DIR: str = Path(__file__).resolve().parent.parent
+BASE_DIR: Path = Path(__file__).resolve().parent.parent
 TEMPORARY_FOLDER: str = os.path.join(BASE_DIR, "api", "routes", "temporary_files")
 USER_REQUESTS_FOLDER: str = os.path.join(BASE_DIR, "user_requests_for_help")
 

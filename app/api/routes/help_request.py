@@ -2,7 +2,7 @@ import logging
 import os
 import secrets
 import shutil
-from typing import Annotated, Any, List, Optional
+from typing import Annotated, Any, List, Optional, Tuple
 from uuid import uuid4
 
 from fastapi import APIRouter, File, Form, HTTPException, Request, UploadFile
@@ -25,6 +25,7 @@ from app.models import (
     MediaFile,
     RequestForHelpCreate,
     RequestForHelpPublic,
+    RequestForHelpUpdate,
     TelegramMessagesIDX,
     User,
     UserCreate,
@@ -88,7 +89,7 @@ async def get_user_requests(
 
 def create_new_user(
     *, session: SessionDep, formatted_db_phone: str, company: str, name: str
-) -> dict[str, Any]:
+) -> Tuple[User, str]:
     user_create = UserCreate(
         phone=formatted_db_phone, company=company, is_superuser=False, name=name
     )
@@ -98,7 +99,7 @@ def create_new_user(
     if not os.path.exists(user_folder):
         os.makedirs(user_folder)
 
-    return {"user_candidate": user_candidate, "user_folder": user_folder}
+    return (user_candidate, user_folder)
 
 
 @router.post("/create_request")  # response_model=RequestForHelpPublic
@@ -120,23 +121,30 @@ async def create_help_request(
         os.makedirs(USER_REQUESTS_FOLDER)
 
     formatted_db_phone = "".join(filter(str.isdigit, phone))[1:]
-    user_candidate = crud.get_user_by_phone(session=session, phone=formatted_db_phone)
-    user_folder = ""  # Folder where are saving each request and its files
+    user_candidate: Optional[User] = crud.get_user_by_phone(
+        session=session, phone=formatted_db_phone
+    )
+    user_folder: str = ""  # Folder where are saving each request and its files
 
     # Create new user, if doesn't exist
-    try:
-        if not user_candidate:
+    if user_candidate is None:
+        try:
             result = create_new_user(
                 session=session,
                 formatted_db_phone=formatted_db_phone,
                 company=company,
                 name=name,
             )
-            user_candidate: User = result["user_candidate"]
-            user_folder: str = result["user_folder"]
-    except Exception as e:
-        logging.error(f"Error in creating user: {e}")
-        raise HTTPException(status_code=504, detail=f"Error in creating user: {e}")
+            created_user: User = result[0]
+            user_candidate = created_user
+
+            created_folder: str = result[1]
+            user_folder = created_folder
+        except Exception as e:
+            logging.error(f"Error in creating user: {e}")
+            raise HTTPException(status_code=504, detail=f"Error in creating user: {e}")
+
+    # assert user_candidate is not None
 
     if not user_folder:
         user_folder = os.path.join(
@@ -156,7 +164,7 @@ async def create_help_request(
         raise HTTPException(status_code=501, detail=error)
 
     # request_index = crud.get_last_request_index(session=session)
-    last_index = new_request.id
+    last_index = new_request.id or 0
 
     # Trying to send the main message to which the others message will be linked (replied)
     try:
@@ -165,9 +173,9 @@ async def create_help_request(
             name=name,
             phone=phone,
             company=company,
-            number_pc=number_pc,
+            number_pc=int(number_pc),
             device=device,
-            message_text=message_text,
+            message_text=message_text or "",
         )
         main_message = await bot_api.send_message(
             chat_id=chat_id,
@@ -176,10 +184,11 @@ async def create_help_request(
         )
     except TelegramError as e:
         crud.delete_user_request(session=session, db_request=new_request)
-        logging.error(f"Failed to send message to Telegram: {e}")
+        error = f"Failed to send message to Telegram: {e}"
+        logging.error(error)
         raise HTTPException(
             status_code=504,
-            detail=f"Failed to send client's message to Telegram. Error: {e}",
+            detail=error,
         )
 
     main_message_id = main_message.message_id
@@ -192,33 +201,39 @@ async def create_help_request(
         request_folder = utils.create_request_folder(
             user_folder=user_folder, last_index=last_index
         )
-        voice_message_id = []
-        photo_messages_idx = []
-        video_messages_idx = []
+        voice_message_id: List[int] = []
+        photo_messages_idx: List[int] = []
+        video_messages_idx: List[int] = []
 
         # Uploading voice message to telegram
         if message_file:
             try:
                 voice_name = str(uuid4())
                 input_voice = os.path.join(TEMPORARY_FOLDER, f"{voice_name}.mp3")
+
                 # Save .mp3 file in the temporary folder
                 with open(input_voice, "wb") as f:
                     f.write(await message_file.read())
+
                 output_voice_file = f"{voice_name}.ogg"
                 output_voice = os.path.join(request_folder, output_voice_file)
+
                 converted_audio = utils.convert_and_save_voice(
                     input_voice=input_voice, output_voice=output_voice
                 )
-                response = await main_message.reply_voice(
+
+                voice_response = await main_message.reply_voice(
                     voice=InputFile(obj=converted_audio, filename=voice_name),
                     connect_timeout=telegram_timeout_time,
                 )
-                voice_message_id.append(response.message_id)
-                voice_media_file = MediaFile(
-                    id=0,
-                    file_path=output_voice_file,
-                    file_id=response.voice.file_id,
-                )  # response.voice.file_id - Identifier for this file, which can be used to download or reuse the file
+
+                voice_message_id.append(voice_response.message_id)
+                if voice_response.voice:
+                    voice_media_file = MediaFile(
+                        id=0,
+                        file_path=output_voice_file,
+                        file_id=voice_response.voice.file_id,
+                    )  # response.voice.file_id - Identifier for this file, which can be used to download or reuse the file
             except TelegramError as e:
                 crud.delete_user_request(session=session, db_request=new_request)
                 shutil.rmtree(request_folder)
@@ -229,19 +244,23 @@ async def create_help_request(
         # Uploading photo to telegram
         if photo:
             try:
-                photos_compressed: InputMediaPhoto = []
+                photos_compressed: List[InputMediaPhoto] = []
                 for photo_item in photo:
                     photo_name = str(uuid4())
                     photo_path = os.path.join(request_folder, f"{photo_name}.jpeg")
+
                     # Compress photo
                     compressed_image = utils.compress_image(
                         file=photo_item.file, filename=photo_name, quality=85
                     )
+
                     # Save photo to user's folder
-                    utils.save_image(
-                        image=compressed_image.media,
-                        path=photo_path,
-                    )
+                    if isinstance(compressed_image.media, InputFile):
+                        utils.save_image(
+                            image=compressed_image.media,
+                            path=photo_path,
+                        )
+
                     photos_compressed.append(compressed_image)
                 photo_response = await main_message.reply_media_group(
                     media=photos_compressed, connect_timeout=telegram_timeout_time
@@ -258,9 +277,9 @@ async def create_help_request(
             except TelegramError as e:
                 shutil.rmtree(request_folder)
                 crud.delete_user_request(session=session, db_request=new_request)
-                bot_api.delete_messages(
+                await bot_api.delete_messages(
                     chat_id=chat_id,
-                    message_id=[main_message_id, voice_message_id],
+                    message_ids=[main_message_id, *voice_message_id],
                 )
                 crud.delete_user_request(session=session, db_request=new_request)
                 error = f"Failed to send photos to Telegram: {e}"
@@ -297,21 +316,22 @@ async def create_help_request(
                 )
                 for index, item in enumerate(video_response):
                     video_messages_idx.append(item.message_id)
-                    videos_media_file.append(
-                        MediaFile(
-                            id=index,
-                            file_path=video_file,
-                            file_id=item.video.file_id,
+                    if item.video:
+                        videos_media_file.append(
+                            MediaFile(
+                                id=index,
+                                file_path=video_file,
+                                file_id=item.video.file_id,
+                            )
                         )
-                    )
             except TelegramError as e:
                 shutil.rmtree(request_folder)
                 crud.delete_user_request(session=session, db_request=new_request)
-                bot_api.delete_messages(
+                await bot_api.delete_messages(
                     chat_id=chat_id,
                     message_ids=[
                         main_message_id,
-                        voice_message_id,
+                        *voice_message_id,
                         *photo_messages_idx,
                     ],
                 )
@@ -341,13 +361,13 @@ async def create_help_request(
             reply_markup=reply_markup,
         )
     except TelegramError as e:
-        error: f"Failed to send reply_markup message: {e}"
+        error = f"Failed to send reply_markup message: {e}"
         logging.error(error)
         raise HTTPException(status_code=500, detail=error)
-    reply_markup_message = reply_markup_message.message_id
+    reply_markup_message_id: int = reply_markup_message.message_id
 
     # Create data base model
-    new_request_for_help = RequestForHelpCreate(
+    new_request_for_help = RequestForHelpUpdate(
         device=device,
         message_text=message_text or "",
         message_file=voice_media_file,
@@ -355,7 +375,7 @@ async def create_help_request(
         videos=videos_media_file,
         accept_url=accept_url,
         telegram_messages_idx=TelegramMessagesIDX(
-            reply_markup=reply_markup_message
+            reply_markup=reply_markup_message_id
         ),  # Saving message id to change them, when operator complete the help request
     )
 
@@ -368,11 +388,11 @@ async def create_help_request(
     except Exception as e:
         shutil.rmtree(request_folder)
         crud.delete_user_request(session=session, db_request=new_request)
-        bot_api.delete_messages(
+        await bot_api.delete_messages(
             chat_id=chat_id,
             message_ids=[
                 main_message_id,
-                voice_message_id,
+                *voice_message_id,
                 *photo_messages_idx,
                 *video_messages_idx,
             ],

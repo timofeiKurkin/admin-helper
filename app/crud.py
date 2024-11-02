@@ -77,7 +77,7 @@ def get_user_requests(
     statement = select(RequestForHelp).where(RequestForHelp.owner_id == owner_id)
 
     if order_by == "created_at":
-        statement = statement.order_by(RequestForHelp.created_at.desc())
+        statement = statement.order_by(RequestForHelp.created_at.desc())  # type: ignore[attr-defined]
 
     user_requests = session.exec(statement=statement).all()
     return user_requests or []
@@ -87,7 +87,7 @@ def get_user_request_by_accept_url(*, session: Session, accept_url: str):
     statement = (
         select(RequestForHelp)
         .where(RequestForHelp.accept_url == accept_url)
-        .order_by(RequestForHelp.created_at.desc())
+        .order_by(RequestForHelp.created_at.desc())  # type: ignore[attr-defined]
     )
 
     user_request = session.exec(statement=statement).first()
