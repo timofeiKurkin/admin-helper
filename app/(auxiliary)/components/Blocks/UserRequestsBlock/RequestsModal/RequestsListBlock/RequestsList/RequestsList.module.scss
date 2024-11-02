@@ -1,7 +1,17 @@
+@import "@/styles/variables.module.scss";
+
 .requestsList {
     display: flex;
     flex-direction: column;
-    row-gap: 20px;
+    overflow-y: auto;
+    
+    @media screen and ($desktop1920), screen and ($desktop1440_1919), screen and ($desktop1280_1439) {
+        row-gap: 20px;
+    }
+
+    @media screen and ($phone375_639), screen and ($pad640_991), screen and ($pad992_1279) {
+        row-gap: 15px;
+    }
 }
 
 .emptyRequestList {

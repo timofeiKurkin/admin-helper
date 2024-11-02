@@ -13,6 +13,7 @@ const GetUserRequests: FC<ChildrenProp> = ({ children }) => {
 
     useEffect(() => {
         let active = true
+
         const getUserRequests = async () => {
             const response = await axiosRequestsHandler(HelpUserService.getUserRequests())
             if (active) {
@@ -22,7 +23,9 @@ const GetUserRequests: FC<ChildrenProp> = ({ children }) => {
                 }
             }
         }
+
         getUserRequests().then()
+
         return () => {
             active = false
         }

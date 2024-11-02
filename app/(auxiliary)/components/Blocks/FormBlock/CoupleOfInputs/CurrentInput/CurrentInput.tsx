@@ -23,6 +23,7 @@ import PhoneInput
 import TextHighlighting from "@/app/(auxiliary)/components/UI/TextHighlighting/TextHighlighting";
 import ComputerNumberInput
     from "@/app/(auxiliary)/components/Blocks/FormBlock/CoupleOfInputs/CurrentInput/ComputerNumberInput/ComputerNumberInput";
+import { blue_light } from '@/styles/colors';
 
 
 // const typeOfInputsClasses: { [key: string]: string } = {
@@ -41,19 +42,20 @@ interface PropsType {
 }
 
 const CurrentInput: FC<PropsType> = ({ currentInput }) => {
+    const requiredField = requiredFields.includes(currentInput.type as TextInputsKeysType)
+
     return (
         <FormFieldWrapper>
             {currentInput.type === NUMBER_PC_KEY ? (
                 <TextHighlighting wordIndexes={[3, 4]} style={{ fontWeight: 500 }}>
                     <Text>
-                        {currentInput.inputTitle}
-                        <b>*</b>
+                        {currentInput.inputTitle}<b>*</b>
                     </Text>
                 </TextHighlighting>
             ) : (
                 <Text>
                     {currentInput.inputTitle}
-                    {requiredFields.includes(currentInput.type as TextInputsKeysType) ? <b>*</b> : null}
+                    {requiredField ? <b>*</b> : null}
                 </Text>
             )}
 

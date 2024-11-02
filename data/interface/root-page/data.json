@@ -157,12 +157,17 @@
         "button": "Ваши заявки",
         "modalData": {
             "title": "Список ваших заявок",
-            "tableData": {
+            "tableDataDesktop": {
                 "number": "Номер",
                 "creationTime": "Время создания",
                 "status": "Статус"
             },
-            "getMoreRequests": "Загрузить больше"
+            "tableDataMobile": {
+                "number": "#",
+                "creationTime": "Время создания",
+                "status": "Статус"
+            },
+            "getMoreRequests": "Загрузить больше заявок"
         }
     }
 }

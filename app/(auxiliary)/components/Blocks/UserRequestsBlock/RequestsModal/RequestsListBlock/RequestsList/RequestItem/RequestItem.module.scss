@@ -2,8 +2,15 @@
 
 .requestItemWrapper {
     user-select: none;
-    padding: 20px 25px;
     border-radius: $border_radius;
+    
+    @media screen and ($desktop1920), screen and ($desktop1440_1919), screen and ($desktop1280_1439) {
+        padding: 20px 25px;
+    }
+
+    @media screen and ($phone375_639), screen and ($pad640_991), screen and ($pad992_1279) {
+        padding: 18px 20px;
+    }
 }
 
 

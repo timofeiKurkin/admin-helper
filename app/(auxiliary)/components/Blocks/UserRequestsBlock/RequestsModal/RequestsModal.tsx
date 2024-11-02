@@ -1,4 +1,4 @@
-import { useAppDispatch } from '@/app/(auxiliary)/libs/redux-toolkit/store/hooks';
+import { useAppDispatch, useAppSelector } from '@/app/(auxiliary)/libs/redux-toolkit/store/hooks';
 import { changeRequestsModalVisibility } from '@/app/(auxiliary)/libs/redux-toolkit/store/slices/UserRequestsSlice/UserRequestsSlice';
 import { ModalDataType } from '@/app/(auxiliary)/types/Data/Interface/RootPage/RootPageContentType';
 import { FC } from 'react';
@@ -8,6 +8,11 @@ import Title from '../../../UI/TextTemplates/Title';
 import Backdrop from '../../../UI/Wrappers/Backdrop/Backdrop';
 import RequestsListBlock from './RequestsListBlock/RequestsListBlock';
 import styles from "./RequestsModal.module.scss"
+import Button from '../../../UI/Button/Button';
+import { selectUserDevice } from '@/app/(auxiliary)/libs/redux-toolkit/store/slices/AppSlice/AppSlice';
+import Text from '../../../UI/TextTemplates/Text';
+import { black } from '@/styles/colors';
+import SeparatingLine from '../../../UI/SeparatingLine/SeparatingLine';
 
 interface PropsType {
     modalData: ModalDataType;
@@ -20,6 +25,10 @@ const RequestsModal: FC<PropsType> = ({ modalData }) => {
         dispatch(changeRequestsModalVisibility())
     }
 
+    const getMoreRequests = () => {
+
+    }
+
     return (
         <PopupDisableScroll>
             <Backdrop onBackdropClick={requestModalVisibilityHandler}>
@@ -30,11 +39,23 @@ const RequestsModal: FC<PropsType> = ({ modalData }) => {
                             <Title>{modalData.title}</Title>
 
                             <div className={styles.requestModalClose} onClick={requestModalVisibilityHandler}>
-                                <Close />
+                                <Close className={styles.closeButton} />
                             </div>
                         </div>
 
                         <RequestsListBlock />
+
+                        <div className={styles.getMoreRequests}>
+                            <div className={styles.getMoreRequestsButton} onClick={getMoreRequests}>
+                                <Text style={{ fontWeight: 500 }}>{modalData.getMoreRequests}</Text>
+                            </div>
+
+                            <SeparatingLine style={{ width: "100%", backgroundColor: black }} />
+                        </div>
+
+                        <Button onClick={requestModalVisibilityHandler}>
+                            Закрыть
+                        </Button>
                     </div>
                 </div>
             </Backdrop>

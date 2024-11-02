@@ -120,7 +120,8 @@ export interface UserRequestsType {
 
 export interface ModalDataType {
     title: string;
-    tableData: TableDataType;
+    tableDataDesktop: TableDataType;
+    tableDataMobile: TableDataType;
     getMoreRequests: string;
 }
 

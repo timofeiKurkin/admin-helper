@@ -116,6 +116,20 @@
     .repairServiceContainer {
         @media screen and ($phone375_639) {
             display: none;
+            height: 0;
+            width: 0;
+        }
+    }
+
+    .headerRequestBlock {
+        display: none;
+        width: 0;
+        height: 0;
+
+        @media screen and ($phone375_639) {
+            display: block;
+            width: 100%;
+            height: auto;
         }
     }
 }
