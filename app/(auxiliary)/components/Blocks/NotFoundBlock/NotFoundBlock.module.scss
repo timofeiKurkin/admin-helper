@@ -1,0 +1,59 @@
+@import "@/styles/variables.module.scss";
+
+.notFoundBlockWrapper {
+    width: 100%;
+    height: 100%;
+
+    display: grid;
+    justify-content: center;
+    justify-items: center;
+    // align-content: center;
+    margin-top: 70px;
+
+    @media screen and ($desktop1920), screen and ($desktop1440_1919), screen and ($desktop1280_1439) {
+        grid-template-columns: 42rem;
+    }
+
+    @media screen and ($pad992_1279), screen and ($pad640_991), screen and ($phone375_639) {
+        align-content: center;
+        margin: 0;
+    }
+
+    @media screen and ($pad992_1279) {
+        grid-template-columns: 39.375rem;
+    }
+
+    @media screen and ($pad640_991) {
+        grid-template-columns: 35.375rem;
+    }
+
+    @media screen and ($phone375_639) {
+        grid-template-columns: minmax(20.375rem, 26.625rem);
+    }
+
+    grid-template-rows: repeat(3, min-content);
+
+    .notFoundBlockDescription {
+        display: flex;
+        flex-direction: column;
+        row-gap: 0.94rem;
+        margin-top: 1.87rem;
+        margin-bottom: 4.38rem;
+        text-align: center;
+
+        @media screen and ($phone375_639) {
+            row-gap: 1.25rem;
+            margin-bottom: 3.13rem;
+        }
+    }
+
+    .notFoundBlockButton {
+        display: grid;
+        grid-template-columns: 14.875rem;
+
+        @media screen and ($phone375_639) {
+            width: 100%;
+            grid-template-columns: 1fr;
+        }
+    }
+}

@@ -1,6 +1,6 @@
 import CompleteRequest from '@/app/(auxiliary)/components/Sections/OperatorSection/CompleteRequest/CompleteRequest';
 import React, { FC } from 'react'
-import { notFound } from 'next/navigation';
+import { redirect } from 'next/navigation';
 
 interface PropsType {
     params: {
@@ -14,7 +14,7 @@ const ChangeUserRequestPage: FC<PropsType> = ({ params }) => {
     const help_request_id = params.help_request_id
 
     if (help_request_id.length !== 43) {
-        notFound()
+        redirect("/")
     }
 
     return (

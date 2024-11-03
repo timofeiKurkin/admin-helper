@@ -31,7 +31,7 @@ const LazyInput = dynamic(
 
 const PhoneInput: FC<PropsType> = ({ currentInput }) => {
     const dispatch = useAppDispatch()
-    const value = useInput("+7 ", PHONE_KEY, inputValidations[currentInput.type])
+    const value = useInput("+7 ", currentInput.type, inputValidations[currentInput.type])
 
     const phoneRegularExpression = (e: InputChangeEventHandler) => {
         e.target.value = e.target.value.replace(/\D/g, '')
@@ -57,7 +57,7 @@ const PhoneInput: FC<PropsType> = ({ currentInput }) => {
 
     useEffect(() => {
         dispatch(changeTextData({
-            key: PHONE_KEY,
+            key: currentInput.type,
             data: {
                 validationStatus: value.inputValid,
                 value: value.value

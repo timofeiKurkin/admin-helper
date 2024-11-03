@@ -10,7 +10,7 @@ import { useAppSelector } from "@/app/(auxiliary)/libs/redux-toolkit/store/hooks
 import { selectUserDevice } from "@/app/(auxiliary)/libs/redux-toolkit/store/slices/AppSlice/AppSlice";
 
 export default function RootSection() {
-    const rootPageData: RootPageContentType = RootPageData
+    const rootPageData = RootPageData as RootPageContentType
     const phoneAdaptive = useAppSelector(selectUserDevice).phoneAdaptive
 
     return (

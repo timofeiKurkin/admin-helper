@@ -11,6 +11,7 @@ import styles from "./Header.module.scss";
 import MobileHeader from './MobileHeader/MobileHeader';
 import { useAppSelector } from "@/app/(auxiliary)/libs/redux-toolkit/store/hooks";
 import { selectUserDevice } from "@/app/(auxiliary)/libs/redux-toolkit/store/slices/AppSlice/AppSlice";
+import { relative } from "path";
 
 const Header = () => {
     const userDevice = useAppSelector(selectUserDevice)
@@ -21,7 +22,7 @@ const Header = () => {
             <div className={styles.header}>
                 <div className={styles.logoContainer}>
                     <div className={styles.logoWrapper}>
-                        <Link href={"/"}>
+                        <Link href={"/"} className={styles.logoWrapper} style={{ display: "flex" }}>
                             <Image src={headerData.logo.imageSrc}
                                 alt={"logo"}
                                 fill={true}

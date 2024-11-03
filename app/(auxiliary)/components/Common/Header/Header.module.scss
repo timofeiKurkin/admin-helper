@@ -3,25 +3,6 @@
 .headerDesktop {
     @media screen and ($phone375_639) {
         display: none;
-        height: 0;
-        width: 0;
-
-        .logoContainer {
-            display: none;
-            height: 0;
-        }
-
-        .logoWrapper {
-            width: 0;
-            height: 0;
-            
-            img {
-                display: none;
-                height: 0;
-                position: relative;
-            }
-        }
-
     }
 }
 

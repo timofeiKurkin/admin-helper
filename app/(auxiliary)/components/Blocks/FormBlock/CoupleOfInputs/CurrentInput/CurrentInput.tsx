@@ -1,5 +1,5 @@
 import React, { FC } from 'react';
-import { AllTypesOfInputs } from "@/app/(auxiliary)/types/Data/Interface/RootPage/RootPageContentType";
+import { AllTypesOfInputs, PhoneNumberInputType } from "@/app/(auxiliary)/types/Data/Interface/RootPage/RootPageContentType";
 import {
     COMPANY_KEY,
     DEVICE_KEY,
@@ -49,13 +49,13 @@ const CurrentInput: FC<PropsType> = ({ currentInput }) => {
             {currentInput.type === NUMBER_PC_KEY ? (
                 <TextHighlighting wordIndexes={[3, 4]} style={{ fontWeight: 500 }}>
                     <Text>
-                        {currentInput.inputTitle}<b>*</b>
+                        {currentInput.inputTitle}<b style={{ userSelect: "none" }}>*</b>
                     </Text>
                 </TextHighlighting>
             ) : (
                 <Text>
                     {currentInput.inputTitle}
-                    {requiredField ? <b>*</b> : null}
+                    {requiredField ? <b style={{ userSelect: "none" }}>*</b> : null}
                 </Text>
             )}
 
@@ -64,7 +64,7 @@ const CurrentInput: FC<PropsType> = ({ currentInput }) => {
             )}
 
             {currentInput.type === PHONE_KEY && (
-                <PhoneInput currentInput={currentInput} />
+                <PhoneInput currentInput={currentInput as PhoneNumberInputType} />
             )}
 
             {currentInput.type === NUMBER_PC_KEY && (

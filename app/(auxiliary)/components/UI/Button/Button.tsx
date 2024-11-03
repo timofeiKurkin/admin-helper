@@ -1,4 +1,4 @@
-import React, {CSSProperties, FC} from 'react';
+import React, { CSSProperties, FC } from 'react';
 import styles from "./Button.module.scss";
 import ButtonText from "@/app/(auxiliary)/components/UI/TextTemplates/ButtonText";
 import { ButtonImageProps } from '@/app/(auxiliary)/types/AppTypes/AppTypes';
@@ -18,17 +18,17 @@ interface PropsType {
 }
 
 const Button: FC<PropsType> = ({
-                                   children,
-                                   type = "button",
-                                   disabled = false,
-                                   tabIndex,
-                                   onClick,
-                                   style,
-                                   image = {} as ButtonImageProps,
-                                   buttonRef,
-                                   className,
-                                   loadingAnimation = false
-                               }) => {
+    children,
+    type = "button",
+    disabled = false,
+    tabIndex,
+    onClick,
+    style,
+    image = {} as ButtonImageProps,
+    buttonRef,
+    className,
+    loadingAnimation = false
+}) => {
     const imageStyles: CSSProperties = Object.keys(image).length ? {
         flexDirection: image.position === "left" ? "row-reverse" : "row",
         columnGap: !image.visibleOnlyImage ? "0.75rem" : 0,
@@ -36,16 +36,16 @@ const Button: FC<PropsType> = ({
 
     return (
         <button type={type}
-                ref={buttonRef}
-                className={`${styles.button} ${className} ${loadingAnimation && styles.loadingAnimation}`}
-                style={{
-                    ...imageStyles,
-                    ...style
-                }}
-                onPointerDownCapture={(e) => e.stopPropagation()}
-                disabled={disabled}
-                tabIndex={tabIndex}
-                onClick={onClick}
+            ref={buttonRef}
+            className={`${styles.button} ${className} ${loadingAnimation && styles.loadingAnimation}`}
+            style={{
+                ...imageStyles,
+                ...style
+            }}
+            // onPointerDownCapture={(e) => e.stopPropagation()}
+            disabled={disabled}
+            tabIndex={tabIndex}
+            onClick={onClick}
         >
             {!image.visibleOnlyImage && (
                 <ButtonText>

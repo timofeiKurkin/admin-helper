@@ -6,10 +6,12 @@ import {
     DeviceKeyType,
     MESSAGE_KEY,
     PhotoAndVideoKeysType,
+    requiredFields,
     SavedInputsKeysType,
+    ValidateKeysType,
     VIDEO_KEY
 } from "@/app/(auxiliary)/types/AppTypes/InputHooksTypes";
-import { UserFormDataType } from "@/app/(auxiliary)/types/AppTypes/Context";
+import { UserFormDataType, UserTextDataType } from "@/app/(auxiliary)/types/AppTypes/Context";
 import { axiosRequestsHandler } from "@/app/(auxiliary)/func/axiosRequestsHandler";
 import HelpUserService from "@/app/(auxiliary)/libs/axios/services/HelpUserService/HelpUserService";
 import { useAppDispatch, useAppSelector } from "@/app/(auxiliary)/libs/redux-toolkit/store/hooks";
@@ -18,10 +20,9 @@ import {
     selectFormTextData,
     selectPermissionsOfForm,
     selectUserMessageStatus,
-    selectValidationFormStatus,
     setFormToDefault,
+    setRejectionInputs,
     setServerResponse,
-    setValidationFormStatus
 } from "@/app/(auxiliary)/libs/redux-toolkit/store/slices/UserFormDataSlice/UserFormDataSlice";
 import { AxiosResponse } from "axios";
 import { ResponseFromServerType } from "@/app/(auxiliary)/types/AxiosTypes/AxiosTypes";
@@ -54,32 +55,53 @@ const UploadForm: FC<PropsType> = ({ buttonText }) => {
     const formTextData = useAppSelector(selectFormTextData)
     const formFileData = useAppSelector(selectFormFileData)
     const permissionsOfForm = useAppSelector(selectPermissionsOfForm)
-    const validationFormStatus = useAppSelector(selectValidationFormStatus)
+    // const validationFormStatus = useAppSelector(selectValidationFormStatus)
 
     const userMessageStatus = useAppSelector(selectUserMessageStatus)
 
     const [sendingRequest, setSendingRequest] = useState<boolean>(false)
 
-    useEffect(() => {
-        dispatch(setValidationFormStatus())
-    }, [
-        dispatch,
-        formTextData,
-        formFileData
-    ]);
+    // useEffect(() => {
+    //     dispatch(setValidationFormStatus())
+    // }, [
+    //     dispatch,
+    //     formTextData,
+    //     formFileData
+    // ]);
+
+    const validateFormInputsHandler = (data: UserTextDataType): { keys: ValidateKeysType[], status: boolean } => {
+        const rejectionInputs: ValidateKeysType[] = []
+
+        for (const key of requiredFields) {
+            if (!data[key].validationStatus) {
+                rejectionInputs.push(key)
+            }
+        }
+
+        if (!permissionsOfForm.userAgreedPolitical) {
+            rejectionInputs.push("user_political")
+        }
+
+        return {
+            keys: rejectionInputs,
+            status: !rejectionInputs.length
+        }
+
+        // check all required inputs
+        // get notification to the user, if some inputs invalid
+    }
 
     const uploadUserData = async (userData: UserFormDataType) => {
-        if (
-            userData &&
-            (userData.text_data && userData.file_data)
-        ) {
+        const validateData = validateFormInputsHandler(formTextData) // Validate all form's inputs
+
+        if (validateData.status) {
             setSendingRequest(true)
             dispatch(setDisableFormInputs())
 
             try {
                 let formData = new FormData()
                 formData.append("userCanTalk", String(permissionsOfForm.userCanTalk))
-                formData.append("userAgreed", String(permissionsOfForm.userAgreed))
+                formData.append("userAgreed", String(permissionsOfForm.userAgreedPolitical))
 
                 if (userData.text_data) {
                     (Object.keys(userData.text_data) as (DeviceKeyType | SavedInputsKeysType)[]).forEach((key) => {
@@ -141,15 +163,16 @@ const UploadForm: FC<PropsType> = ({ buttonText }) => {
                 setSendingRequest((prevState) => !prevState)
                 dispatch(setDisableFormInputs())
             }
-
+        } else {
+            dispatch(setRejectionInputs(validateData.keys))
+            // dispatch(setNewNotification({ message: `Обязательные поля не заполнены`, type: "error" }))
         }
     }
 
     // TODO: Form blocking during sending request
 
     return (
-        <Button disabled={sendingRequest || (!validationFormStatus || !permissionsOfForm.userAgreed)}
-            loadingAnimation={sendingRequest}
+        <Button loadingAnimation={sendingRequest}
             onClick={() => uploadUserData({
                 text_data: formTextData,
                 file_data: formFileData

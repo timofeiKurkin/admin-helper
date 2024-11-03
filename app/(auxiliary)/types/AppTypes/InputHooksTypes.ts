@@ -9,6 +9,7 @@ export const NAME_KEY = "name"
 export const PHONE_KEY = "phone"
 export const COMPANY_KEY = "company"
 export const NUMBER_PC_KEY = "number_pc"
+export const USER_POLITICAL = "user_political"
 
 
 export interface ValidationsType {
@@ -25,11 +26,9 @@ export type PhotoAndVideoKeysType = typeof PHOTO_KEY | typeof VIDEO_KEY;
 
 export type DeviceKeyType = typeof DEVICE_KEY;
 
-export type SavedInputsKeysType = typeof NAME_KEY
-| typeof COMPANY_KEY
-| typeof NUMBER_PC_KEY
-| typeof PHONE_KEY
-| typeof MESSAGE_KEY;
+export type UserPoliticalType = typeof USER_POLITICAL;
+
+export type SavedInputsKeysType = typeof NAME_KEY | typeof COMPANY_KEY | typeof NUMBER_PC_KEY | typeof PHONE_KEY | typeof MESSAGE_KEY;
 
 export type TextInputsKeysType = SavedInputsKeysType | DeviceKeyType
 
@@ -43,7 +42,7 @@ export const savedInputsData: SavedInputsKeysType[] = [
     NUMBER_PC_KEY,
 ]
 
-export const requiredFields: (TextInputsKeysType)[] = [
+export const requiredFields: TextInputsKeysType[] = [
     MESSAGE_KEY,
     NAME_KEY,
     PHONE_KEY,
@@ -51,6 +50,8 @@ export const requiredFields: (TextInputsKeysType)[] = [
     NUMBER_PC_KEY,
     DEVICE_KEY
 ]
+
+export type ValidateKeysType = TextInputsKeysType | UserPoliticalType; // Type for keys which validate all required inputs for validateStatus
 
 // export const photoAndVideoInputsData: PhotoAndVideoKeysTypes[] = [PHOTO_KEY, VIDEO_KEY]
 

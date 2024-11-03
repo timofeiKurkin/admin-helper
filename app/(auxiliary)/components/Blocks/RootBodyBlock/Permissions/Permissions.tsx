@@ -1,12 +1,12 @@
 "use client"
 
-import React, {FC} from 'react';
+import React, { FC } from 'react';
 import SmallText from "@/app/(auxiliary)/components/UI/TextTemplates/SmallText";
-import {PermissionsContentType} from "@/app/(auxiliary)/types/Data/Interface/RootPage/RootPageContentType";
+import { PermissionsContentType } from "@/app/(auxiliary)/types/Data/Interface/RootPage/RootPageContentType";
 import Checkbox from "@/app/(auxiliary)/components/UI/SVG/Checkbox/Checkbox";
 import TextHighlighting from "@/app/(auxiliary)/components/UI/TextHighlighting/TextHighlighting";
 import styles from "./Permissions.module.scss"
-import {useAppDispatch, useAppSelector} from "@/app/(auxiliary)/libs/redux-toolkit/store/hooks";
+import { useAppDispatch, useAppSelector } from "@/app/(auxiliary)/libs/redux-toolkit/store/hooks";
 import {
     selectPermissionsOfForm,
     setAgreePolitics,
@@ -19,8 +19,8 @@ interface PropsType {
 }
 
 const Permissions: FC<PropsType> = ({
-                                        permissionsContent
-                                    }) => {
+    permissionsContent
+}) => {
     const dispatch = useAppDispatch()
     const permissionsOfForm = useAppSelector(selectPermissionsOfForm)
 
@@ -35,17 +35,17 @@ const Permissions: FC<PropsType> = ({
     return (
         <div className={styles.permissionsWrapper}>
             <div className={styles.permissionBlock}
-                 onClick={canTalkHandle}>
-                <Checkbox toggleStatus={permissionsOfForm.userCanTalk}/>
+                onClick={canTalkHandle}>
+                <Checkbox toggleStatus={permissionsOfForm.userCanTalk} />
                 <SmallText>{permissionsContent.ICanAnswer}</SmallText>
             </div>
 
             <div className={styles.permissionBlock}
-                 onClick={agreePermissionHandler}>
-                <Checkbox toggleStatus={permissionsOfForm.userAgreed}/>
+                onClick={agreePermissionHandler}>
+                <Checkbox toggleStatus={permissionsOfForm.userAgreedPolitical} />
                 <TextHighlighting wordIndexes={[3, 6]}
-                                  link={permissionsContent.preparationLinkToPolicy}
-                                  style={{fontWeight: 500}}>
+                    link={permissionsContent.preparationLinkToPolicy}
+                    style={{ fontWeight: 500 }}>
                     <SmallText>{permissionsContent.personalDataPreparation}</SmallText>
                 </TextHighlighting>
             </div>

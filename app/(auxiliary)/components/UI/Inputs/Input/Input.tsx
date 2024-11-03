@@ -9,6 +9,9 @@ import fontStyles from "@/styles/fonts.module.scss";
 import { useAppSelector } from '@/app/(auxiliary)/libs/redux-toolkit/store/hooks';
 import { selectDisableFormInputs } from '@/app/(auxiliary)/libs/redux-toolkit/store/slices/AppSlice/AppSlice';
 import InputBorder from './InputBorder';
+import { selectRejectionInputs } from '@/app/(auxiliary)/libs/redux-toolkit/store/slices/UserFormDataSlice/UserFormDataSlice';
+import { inputsNameError } from '../../../Blocks/FormBlock/CoupleOfInputs/CurrentInput/inputsNameError';
+import { ValidateKeysType } from '@/app/(auxiliary)/types/AppTypes/InputHooksTypes';
 
 
 const Input: FC<InputPropsType<InputChangeEventHandler>> = ({
@@ -23,22 +26,20 @@ const Input: FC<InputPropsType<InputChangeEventHandler>> = ({
     },
     onBlur,
     onChange,
-    inputIsDirty
+    inputIsDirty,
+    isError
 }) => {
     const disableFormInputs = useAppSelector(selectDisableFormInputs)
+    const rejectionInputs = useAppSelector(selectRejectionInputs)
     const spanRef = useRef<HTMLSpanElement>(null);
 
     const inputRef = useRef<HTMLInputElement>(null);
     const [inputWidth, setInputWidth] = useState<number>(0)
-    // const [client, setClient] = useState<boolean>(false)
+    // const [isError, setIsError] = useState<boolean>(false)
 
     const changeInputHandler = (e: InputChangeEventHandler) => {
         onChange(e)
     }
-
-    // useLayoutEffect(() => {
-    //     setClient((prevState) => prevState || !prevState)
-    // }, [])
 
     useEffect(() => {
         if (dynamicWidth) {
@@ -70,8 +71,18 @@ const Input: FC<InputPropsType<InputChangeEventHandler>> = ({
         dynamicWidth,
         value,
         placeholder,
-        // client
     ]);
+
+    // useEffect(() => {
+    //     if (rejectionInputs.length) {
+    //         const key = rejectionInputs.find((item) => item === inputType)
+    //         if (key) {
+    //             const message = `${inputsNameError[inputType as ValidateKeysType]}: ${value.isEmptyError}`
+    //             dispatch(setNewNotification({ message: message, type: "error" }))
+    //             setIsError(true)
+    //         }
+    //     }
+    // }, [rejectionInputs, inputType, dispatch, value.isEmptyError])
 
     return (
         <div className={inputStyles.inputWrapper}>
@@ -110,13 +121,12 @@ const Input: FC<InputPropsType<InputChangeEventHandler>> = ({
                 style={dynamicWidth ? {
                     width: inputWidth ? `${inputWidth}px` : "auto"
                 } : undefined}>
-                <InputBorder valueLength={value.length} inputIsDirty={!!inputIsDirty} />
+                <InputBorder valueLength={value.length}
+                    inputIsDirty={!!inputIsDirty}
+                    isError={isError} />
             </div>
         </div>
     )
-
-    // return client ? (
-    // ) : null;
 };
 
 export default Input;

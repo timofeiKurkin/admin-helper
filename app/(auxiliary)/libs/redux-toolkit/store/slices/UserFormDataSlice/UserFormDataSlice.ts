@@ -16,6 +16,7 @@ import {
     PHOTO_KEY,
     PhotoAndVideoKeysType,
     TextInputsKeysType,
+    ValidateKeysType,
     VIDEO_KEY
 } from "@/app/(auxiliary)/types/AppTypes/InputHooksTypes";
 import { PayloadAction } from "@reduxjs/toolkit";
@@ -25,6 +26,7 @@ interface InitialStateType extends UserFormDataType {
     validationFormStatus: boolean;
     userMessageStatus: boolean;
     serverResponse: ServerResponseType;
+    rejectionInputs: ValidateKeysType[];
     // resetForm:
 }
 
@@ -77,7 +79,7 @@ const initialState: InitialStateType = {
     },
     permissions: {
         userCanTalk: false,
-        userAgreed: false,
+        userAgreedPolitical: false,
     },
     validationFormStatus: false,
     userMessageStatus: false,
@@ -86,6 +88,7 @@ const initialState: InitialStateType = {
         sentToServer: false,
         message: ""
     },
+    rejectionInputs: []
     // resetForm: false
 }
 
@@ -249,11 +252,11 @@ export const userFormDataSlice = createAppSlice({
         ),
 
         /**
-         *
+         * User agreed with data political processing
          */
         setAgreePolitics: create.reducer(
             (state) => {
-                state.permissions.userAgreed = !state.permissions.userAgreed
+                state.permissions.userAgreedPolitical = !state.permissions.userAgreedPolitical
             }
         ),
 
@@ -263,21 +266,32 @@ export const userFormDataSlice = createAppSlice({
             }
         ),
 
+        setRejectionInputs: create.reducer(
+            (state, action: PayloadAction<ValidateKeysType[]>) => {
+                state.rejectionInputs = action.payload
+            }
+        ),
+        deleteRejectionInput: create.reducer(
+            (state, action: PayloadAction<ValidateKeysType>) => {
+                state.rejectionInputs = state.rejectionInputs.filter((rejection) => rejection !== action.payload)
+            }
+        ),
+
         /**
          * Slice для изменения состояния всей валидации формы. Этот статус показывает, что все поля формы корректно заполнены, поэтому файлы могут быть отправлены на сервер
          */
-        setValidationFormStatus: create.reducer(
-            (state) => {
-                const textDataKeys = Object.keys(state.text_data)
-                state.validationFormStatus = (textDataKeys as (TextInputsKeysType)[]).every((key) => {
-                    if (key === "message") {
-                        return state.text_data[key].validationStatus || state.file_data[key].validationStatus
-                    } else {
-                        return state.text_data[key]?.validationStatus
-                    }
-                })
-            }
-        ),
+        // setValidationFormStatus: create.reducer(
+        //     (state) => {
+        //         const textDataKeys = Object.keys(state.text_data)
+        //         state.validationFormStatus = (textDataKeys as (TextInputsKeysType)[]).every((key) => {
+        //             if (key === "message") {
+        //                 return state.text_data[key].validationStatus || state.file_data[key].validationStatus
+        //             } else {
+        //                 return state.text_data[key]?.validationStatus
+        //             }
+        //         })
+        //     }
+        // ),
 
         setServerResponse: create.reducer(
             (state, action: PayloadAction<ServerResponseType>) => {
@@ -307,7 +321,8 @@ export const userFormDataSlice = createAppSlice({
         selectPermissionsOfForm: (state) => state.permissions,
         selectValidationFormStatus: (state) => state.validationFormStatus,
         selectUserMessageStatus: (state) => state.userMessageStatus,
-        selectServerResponse: (state) => state.serverResponse
+        selectServerResponse: (state) => state.serverResponse,
+        selectRejectionInputs: (state) => state.rejectionInputs
     }
 })
 
@@ -317,14 +332,17 @@ export const {
     deleteFile,
     setAgreePolitics,
     setUserCanTalk,
-    setValidationFormStatus,
+    // setValidationFormStatus,
     addMessageData,
     deleteMessageRecorder,
     switchUserMessageStatus,
 
     changePreview,
     setServerResponse,
-    setFormToDefault
+    setFormToDefault,
+
+    setRejectionInputs,
+    deleteRejectionInput
 } = userFormDataSlice.actions
 
 export const {
@@ -333,5 +351,7 @@ export const {
     selectPermissionsOfForm,
     selectValidationFormStatus,
     selectUserMessageStatus,
-    selectServerResponse
+    selectServerResponse,
+
+    selectRejectionInputs
 } = userFormDataSlice.selectors

@@ -1,5 +1,5 @@
 import React from "react";
-import {ContentOfUploadBlockType} from "@/app/(auxiliary)/types/Data/Interface/RootPage/RootPageContentType";
+import { ContentOfUploadBlockType } from "@/app/(auxiliary)/types/Data/Interface/RootPage/RootPageContentType";
 import {
     COMPANY_KEY,
     DEVICE_KEY,
@@ -76,7 +76,7 @@ export interface UserDeviceStateType {
 
 export interface PermissionsOfFormStatesType {
     userCanTalk: boolean;
-    userAgreed: boolean;
+    userAgreedPolitical: boolean;
 }
 
 export interface BlocksMovingType {

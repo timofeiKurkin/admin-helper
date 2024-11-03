@@ -1,6 +1,6 @@
-import {InputMediaPhoto, InputMediaVideo} from "grammy/types";
-import {Bot, InputFile, webhookCallback} from 'grammy'
-import {PermissionsOfFormStatesType} from "@/app/(auxiliary)/types/AppTypes/Context";
+import { InputMediaPhoto, InputMediaVideo } from "grammy/types";
+import { Bot, InputFile, webhookCallback } from 'grammy'
+import { PermissionsOfFormStatesType } from "@/app/(auxiliary)/types/AppTypes/Context";
 
 export const dynamic = 'force-dynamic'
 
@@ -57,7 +57,7 @@ const recognizeVoiceRecorder = async (voiceRecorder: File) => {
             return "Не удалось распознать текст на голосовом сообщении"
         }
     } catch (e) {
-        throw new Error(`There's an error:`, {cause: e})
+        throw new Error(`There's an error:`, { cause: e })
     }
 }
 
@@ -87,7 +87,7 @@ export const POST = async function (request: Request) {
 
     const formPermissions: PermissionsOfFormStatesType = {
         userCanTalk: Boolean(formData.get("userCanTalk")! as string),
-        userAgreed: Boolean(formData.get("userAgreed")! as string)
+        userAgreedPolitical: Boolean(formData.get("userAgreed")! as string)
     }
 
     const userMessage = userProblemInfo.message_text ? `\n Сообщение пользователя: ${escapingCharacters(userProblemInfo.message_text)}` : ""

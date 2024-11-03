@@ -1,13 +1,7 @@
 // Form body
 import {
-    COMPANY_KEY,
-    DEVICE_KEY,
-    MESSAGE_KEY,
-    NAME_KEY,
-    NUMBER_PC_KEY,
-    PHONE_KEY,
-    PhotoAndVideoKeysType,
-    AllKeysOfInputsType
+    AllKeysOfInputsType,
+    PHONE_KEY
 } from "@/app/(auxiliary)/types/AppTypes/InputHooksTypes";
 
 export interface RootPageContentType extends Button {
@@ -32,7 +26,7 @@ export interface FormPartType {
 // Inputs
 export interface InputType {
     id: number;
-    type: AllKeysOfInputsType | string; // TODO: REMOVE STRING TYPE
+    type: AllKeysOfInputsType; // TODO: REMOVE STRING TYPE
     inputTitle: string;
     inputPlaceholder?: string;
     toggleText?: string;
@@ -64,7 +58,7 @@ export interface CompanyInputType extends InputType {
 }
 
 export interface PhoneNumberInputType extends InputType {
-    // type: typeof PHONE_KEY;
+    type: typeof PHONE_KEY;
 }
 
 export interface NumberPcInputType extends InputType {

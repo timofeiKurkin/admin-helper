@@ -3,6 +3,8 @@
 .inputWrapper {
 	position: relative;
 	overflow: visible;
+
+	width: inherit;
 }
 
 
@@ -26,6 +28,8 @@
 
 	display: flex;
 	flex-direction: column;
+
+	width: 85%;
 
 	.helpfulItem {
 		cursor: pointer;
