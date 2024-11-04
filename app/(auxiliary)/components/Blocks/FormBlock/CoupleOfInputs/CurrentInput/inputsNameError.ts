@@ -1,6 +1,6 @@
-import { ValidateKeysType } from "@/app/(auxiliary)/types/AppTypes/InputHooksTypes";
+import { ValidationKeysObject } from "@/app/(auxiliary)/types/AppTypes/InputHooksTypes";
 
-export const inputsNameError: { [key in ValidateKeysType]: string } = {
+export const inputsNameError: ValidationKeysObject = {
     "company": "Организация",
     "device": "Устройство",
     "message": "Сообщение",

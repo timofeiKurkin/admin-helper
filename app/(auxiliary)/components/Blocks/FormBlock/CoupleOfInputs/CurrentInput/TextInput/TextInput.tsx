@@ -26,6 +26,8 @@ import {
 import { FC, useEffect, useState } from 'react';
 import inputsStyles from "../InputsStyles.module.scss";
 import { InputChangeEventHandler } from "@/app/(auxiliary)/types/AppTypes/AppTypes";
+import dynamic from "next/dynamic";
+import InputLoadingSkeleton from "@/app/(auxiliary)/components/UI/Loaders/InputLoadingSkeleton/InputLoadingSkeleton";
 
 
 const typeOfInputsClasses: { [key: string]: string } = {
@@ -34,6 +36,14 @@ const typeOfInputsClasses: { [key: string]: string } = {
     "number-pc": inputsStyles.numberPCInputWrapper,
     "company": inputsStyles.companyInputWrapper
 }
+
+const LazyInput = dynamic(
+    () => import("@/app/(auxiliary)/components/UI/Inputs/Input/Input"),
+    {
+        ssr: false,
+        loading: () => <InputLoadingSkeleton />
+    }
+)
 
 interface PropsType {
     currentInput: DeviceInputType | CompanyInputType | NameInputType;
@@ -45,6 +55,8 @@ const TextInput: FC<PropsType> = ({
     const dispatch = useAppDispatch()
     const serverResponse = useAppSelector(selectServerResponse).status
     const rejectionInputs = useAppSelector(selectRejectionInputs)
+    const [isError, setIsError] = useState<boolean>(false)
+    const setErrorHandler = (status: boolean) => setIsError(status)
 
     const value =
         useInput("", currentInput.type as AllKeysOfInputsType, inputValidations[currentInput.type])
@@ -59,8 +71,9 @@ const TextInput: FC<PropsType> = ({
     const currentInputTypesClassName = typeOfInputsClasses[currentInput.type]
 
     const onChangeHandler = (e: InputChangeEventHandler) => {
-        if (rejectionInputs.includes(currentInput.type as TextInputsKeysType)) {
+        if (isError && rejectionInputs.includes(currentInput.type as TextInputsKeysType)) {
             dispatch(deleteRejectionInput(currentInput.type as TextInputsKeysType))
+            setErrorHandler(false)
         }
         value.onChange(e)
     }
@@ -89,7 +102,7 @@ const TextInput: FC<PropsType> = ({
         value
     ]);
 
-    return Object.keys(value).length ? (
+    return (
         <InputWithDataList value={value.value}
             dataList={currentHelpfulList.length ? {
                 list: currentHelpfulList,
@@ -98,21 +111,20 @@ const TextInput: FC<PropsType> = ({
             inputIsDirty={value.isDirty}>
 
             <div className={currentInputTypesClassName}>
-                <InputErrorLayout input={{
-                    value: value.value,
-                    placeholder: currentInput.inputPlaceholder!,
-                    maxLength: inputValidations[currentInput.type].maxLength,
-                    tabIndex: currentInput.id,
-                    onBlur: value.onBlur,
-                    onChange: onChangeHandler,
-                    inputIsDirty: value.isDirty
-                }} layout={{
-                    value,
-                    inputType: currentInput.type as TextInputsKeysType
-                }} />
+                <InputErrorLayout value={value} inputType={currentInput.type} setIsError={setErrorHandler} isError={isError}>
+                    <LazyInput value={value.value}
+                        placeholder={currentInput.inputPlaceholder!}
+                        maxLength={inputValidations[currentInput.type].maxLength}
+                        tabIndex={currentInput.id}
+                        onBlur={value.onBlur}
+                        onChange={onChangeHandler}
+                        inputIsDirty={value.isDirty}
+                        isError={isError}
+                    />
+                </InputErrorLayout>
             </div>
         </InputWithDataList>
-    ) : null
+    )
 };
 
 export default TextInput;

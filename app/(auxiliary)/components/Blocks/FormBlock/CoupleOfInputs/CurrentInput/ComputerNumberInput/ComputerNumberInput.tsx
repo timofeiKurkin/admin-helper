@@ -1,4 +1,4 @@
-import React, { FC, useEffect } from 'react';
+import React, { FC, useEffect, useState } from 'react';
 import { InputChangeEventHandler } from "@/app/(auxiliary)/types/AppTypes/AppTypes";
 import inputsStyles
     from "@/app/(auxiliary)/components/Blocks/FormBlock/CoupleOfInputs/CurrentInput/InputsStyles.module.scss"
@@ -10,15 +10,17 @@ import Input from "@/app/(auxiliary)/components/UI/Inputs/Input/Input";
 import {
     inputHandleKeyDown
 } from "@/app/(auxiliary)/components/Blocks/FormBlock/CoupleOfInputs/CurrentInput/inputHandleKeyDown";
-import { useAppDispatch } from "@/app/(auxiliary)/libs/redux-toolkit/store/hooks";
-import { changeTextData } from "@/app/(auxiliary)/libs/redux-toolkit/store/slices/UserFormDataSlice/UserFormDataSlice";
-import { NUMBER_PC_KEY } from "@/app/(auxiliary)/types/AppTypes/InputHooksTypes";
+import { useAppDispatch, useAppSelector } from "@/app/(auxiliary)/libs/redux-toolkit/store/hooks";
+import { changeTextData, deleteRejectionInput, selectRejectionInputs } from "@/app/(auxiliary)/libs/redux-toolkit/store/slices/UserFormDataSlice/UserFormDataSlice";
+import { NUMBER_PC_KEY, TextInputsKeysType } from "@/app/(auxiliary)/types/AppTypes/InputHooksTypes";
 import dynamic from 'next/dynamic';
 import InputLoadingSkeleton from '@/app/(auxiliary)/components/UI/Loaders/InputLoadingSkeleton/InputLoadingSkeleton';
+import { NumberPcInputType } from '@/app/(auxiliary)/types/Data/Interface/RootPage/RootPageContentType';
+import InputErrorLayout from '@/app/(auxiliary)/components/UI/Inputs/InputErrorLayout/InputErrorLayout';
 
 interface PropsType {
-    // currentInput: NumberPcInputType;
-    placeholder: string;
+    currentInput: NumberPcInputType;
+    // placeholder: string;
 }
 
 const LazyInput = dynamic(
@@ -30,12 +32,21 @@ const LazyInput = dynamic(
 )
 
 const ComputerNumberInput: FC<PropsType> = ({
-    placeholder
+    currentInput
 }) => {
     const dispatch = useAppDispatch()
-    const value = useInput("", NUMBER_PC_KEY, inputValidations[NUMBER_PC_KEY])
+    const value = useInput("", currentInput.type, inputValidations[currentInput.type])
+    const rejectionInputs = useAppSelector(selectRejectionInputs)
+    const [isError, setIsError] = useState<boolean>(false)
+    const setErrorHandler = (status: boolean) => setIsError(status)
+
 
     const numberPcHandler = (e: InputChangeEventHandler) => {
+        if (isError && rejectionInputs.includes(currentInput.type as TextInputsKeysType)) {
+            dispatch(deleteRejectionInput(currentInput.type as TextInputsKeysType))
+            setErrorHandler(false)
+        }
+
         e.target.value = e.target.value.replace(/\D/g, '')
         let computerNumber = ""
 
@@ -77,17 +88,20 @@ const ComputerNumberInput: FC<PropsType> = ({
 
     return (
         <div className={inputsStyles.numberPCInputWrapper}>
-            <LazyInput value={value.value}
-                placeholder={placeholder}
-                maxLength={inputValidations[NUMBER_PC_KEY].maxLength}
-                tabIndex={1}
-                type={"tel"}
-                onBlur={value.onBlur}
-                onKeyDown={(e) => inputHandleKeyDown(e, value)}
-                onChange={numberPcHandler}
-                inputIsDirty={value.isDirty}
-                dynamicWidth={true}
-            />
+            <InputErrorLayout value={value} inputType={currentInput.type} setIsError={setErrorHandler} isError={isError}>
+                <LazyInput value={value.value}
+                    placeholder={currentInput.inputPlaceholder!}
+                    maxLength={inputValidations[NUMBER_PC_KEY].maxLength}
+                    tabIndex={1}
+                    type={"tel"}
+                    onBlur={value.onBlur}
+                    onKeyDown={(e) => inputHandleKeyDown(e, value)}
+                    onChange={numberPcHandler}
+                    inputIsDirty={value.isDirty}
+                    isError={isError}
+                    dynamicWidth={true}
+                />
+            </InputErrorLayout>
         </div>
     );
 };

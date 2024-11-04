@@ -1,32 +1,35 @@
 "use client"
 
 // import {File} from "@web-stb/file"
-import React, { FC, useEffect, useRef, useState } from "react";
+import AllowToUseMicrophone from "@/app/(auxiliary)/components/Blocks/FormBlock/CoupleOfInputs/CurrentInput/Message/VoiceInput/AllowToUseMicrophone";
+import ReadyVoice from "@/app/(auxiliary)/components/Blocks/FormBlock/CoupleOfInputs/CurrentInput/Message/VoiceInput/ReadyVoice";
 import Button from "@/app/(auxiliary)/components/UI/Button/Button";
 import Microphone from "@/app/(auxiliary)/components/UI/SVG/Microphone/Microphone";
-import ReadyVoice
-    from "@/app/(auxiliary)/components/Blocks/FormBlock/CoupleOfInputs/CurrentInput/Message/VoiceInput/ReadyVoice";
+import { formattedTime } from "@/app/(auxiliary)/func/formattedTime";
 import { useAppSelector } from "@/app/(auxiliary)/libs/redux-toolkit/store/hooks";
 import {
     selectFormFileData,
     selectServerResponse
 } from "@/app/(auxiliary)/libs/redux-toolkit/store/slices/UserFormDataSlice/UserFormDataSlice";
 import { MESSAGE_KEY } from "@/app/(auxiliary)/types/AppTypes/InputHooksTypes";
-import { formattedTime } from "@/app/(auxiliary)/func/formattedTime";
-import styles from "./AudioPlayer.module.scss";
-import AllowToUseMicrophone
-    from "@/app/(auxiliary)/components/Blocks/FormBlock/CoupleOfInputs/CurrentInput/Message/VoiceInput/AllowToUseMicrophone";
 import { MessageType } from "@/app/(auxiliary)/types/Data/Interface/RootPage/RootPageContentType";
+import { blue_light, red_dark } from "@/styles/colors";
+import { FC, useEffect, useRef, useState } from "react";
+import styles from "./AudioPlayer.module.scss";
 
 interface PropsType {
     voicePlaceholder?: MessageType;
     setNewMessage: (newMessage: File, validationStatus: boolean) => void;
     removeRecorder: () => void;
+    isError: boolean;
+    setErrorHandler: (status: boolean) => void
 }
 
 const VoiceInput: FC<PropsType> = ({
     voicePlaceholder,
     setNewMessage,
+    isError,
+    setErrorHandler,
     removeRecorder
 }) => {
     const voiceMessage = useAppSelector(selectFormFileData)[MESSAGE_KEY]
@@ -200,7 +203,7 @@ const VoiceInput: FC<PropsType> = ({
                     <Button onClick={isRecording ? () => stopRecording() : () => startRecording()}
                         buttonRef={recordingButtonRef}
                         className={isRecording ? styles.recordingButton : ""}
-                        // style={}
+                        style={{ backgroundColor: isError ? red_dark : blue_light }}
                         image={{
                             position: "left",
                             children: <Microphone />,

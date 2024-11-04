@@ -19,9 +19,10 @@ const Textarea: FC<InputPropsType<TextareaChangeEventHandler>> = ({
     tabIndex,
     onBlur,
     onChange,
-    inputIsDirty
+    inputIsDirty,
+    isError,
 }) => {
-    
+
     const changeTextareaHandler = (e: TextareaChangeEventHandler) => {
         onChange(e)
     }
@@ -43,7 +44,7 @@ const Textarea: FC<InputPropsType<TextareaChangeEventHandler>> = ({
             </div>
 
             <div className={inputStyles.borderBox}>
-                <InputBorder valueLength={value.length} inputIsDirty={!!inputIsDirty}/>
+                <InputBorder valueLength={value.length} inputIsDirty={!!inputIsDirty} isError={isError} />
             </div>
         </div>
     );

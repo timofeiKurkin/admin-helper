@@ -52,6 +52,7 @@ export const requiredFields: TextInputsKeysType[] = [
 ]
 
 export type ValidateKeysType = TextInputsKeysType | UserPoliticalType; // Type for keys which validate all required inputs for validateStatus
+export type ValidationKeysObject = { [key in ValidateKeysType]: string }
 
 // export const photoAndVideoInputsData: PhotoAndVideoKeysTypes[] = [PHOTO_KEY, VIDEO_KEY]
 

@@ -30,9 +30,9 @@ const NotificationBlock = () => {
     }
 
     const exampleNotification: NotificationType = {
-        id: "asdsd", 
-        type: "success", 
-        timeout: 30000, 
+        id: "asdsd",
+        type: "success",
+        timeout: 30000,
         message: "Ваша заявка <b>#123</b> успешно создана и будет рассмотрена в ближайшее время.<br/>Вы можете посмотреть её в <b>ваших заявках</b>."
         // message: "Файлы успешно добавлены!"
     }

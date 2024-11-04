@@ -69,6 +69,8 @@ const UploadForm: FC<PropsType> = ({ buttonText }) => {
     //     formFileData
     // ]);
 
+    console.log(formTextData)
+
     const validateFormInputsHandler = (data: UserTextDataType): { keys: ValidateKeysType[], status: boolean } => {
         const rejectionInputs: ValidateKeysType[] = []
 

@@ -2,7 +2,7 @@ import React, { FC, useEffect, useState } from 'react'
 import InputLoadingSkeleton from '../../Loaders/InputLoadingSkeleton/InputLoadingSkeleton'
 import dynamic from 'next/dynamic'
 import { InputPropsType } from '@/app/(auxiliary)/types/FormTypes/InputTypes/InputPropsType'
-import { InputChangeEventHandler } from '@/app/(auxiliary)/types/AppTypes/AppTypes'
+import { InputChangeEventHandler, TextareaChangeEventHandler } from '@/app/(auxiliary)/types/AppTypes/AppTypes'
 import { TextInputsKeysType, UseInputType, ValidateKeysType } from '@/app/(auxiliary)/types/AppTypes/InputHooksTypes'
 import { selectRejectionInputs } from '@/app/(auxiliary)/libs/redux-toolkit/store/slices/UserFormDataSlice/UserFormDataSlice'
 import { useAppDispatch, useAppSelector } from '@/app/(auxiliary)/libs/redux-toolkit/store/hooks'
@@ -18,35 +18,65 @@ const LazyInput = dynamic(
 )
 
 interface PropsType {
-    layout: {
-        value: UseInputType<InputChangeEventHandler>
-        inputType: TextInputsKeysType;
-    }
-    input: InputPropsType<InputChangeEventHandler>
+    // layout: {
+    //     value: UseInputType<InputChangeEventHandler | TextareaChangeEventHandler>;
+    //     inputType: TextInputsKeysType;
+    //     setIsError?: (status: boolean) => void;
+    // }
+    // input?: InputPropsType<InputChangeEventHandler>;
+    value: UseInputType<InputChangeEventHandler | TextareaChangeEventHandler>;
+    inputType: TextInputsKeysType;
+    setIsError: (status: boolean) => void;
+    isError?: boolean;
+    children: React.ReactNode;
 }
 
 const InputErrorLayout: FC<PropsType> = ({
-    layout,
-    input
+    value,
+    inputType,
+    setIsError,
+    isError,
+    children
 }) => {
     const dispatch = useAppDispatch()
     const rejectionInputs = useAppSelector(selectRejectionInputs)
-    const [isError, setIsError] = useState<boolean>(false)
 
     useEffect(() => {
         if (rejectionInputs.length) {
-            const key = rejectionInputs.find((item) => item === layout.inputType)
-            if (key) {
-                const message = `${inputsNameError[layout.inputType as ValidateKeysType]}: ${layout.value.isEmptyError}`
-                dispatch(setNewNotification({ message: message, type: "error" }))
+            const key = rejectionInputs.find((item) => item === inputType)
+
+            if (key && !isError) {
+                let message = ""
+
+                if (value.isEmpty) {
+                    message += value.isEmptyError
+                } else if (value.maxLength) {
+                    message += value.maxLengthError
+                } else if (value.minLength) {
+                    message += value.minLengthError
+                }
+
+                if (message) {
+                    message = `${inputsNameError[inputType as ValidateKeysType]}: ${message}`
+                    dispatch(setNewNotification({ message: message, type: "error" }))
+                }
+
                 setIsError(true)
-            } else {
-                setIsError(false)
             }
         }
-    }, [rejectionInputs, layout.inputType, dispatch, layout.value.isEmptyError])
+    }, [
+        dispatch,
+        inputType,
+        setIsError,
+        value.isEmpty,
+        value.isEmptyError,
+        value.maxLength,
+        value.maxLengthError,
+        value.minLength,
+        value.minLengthError
+    ])
 
-    return <LazyInput {...input} isError={isError} />
+    return children
 }
 
 export default InputErrorLayout
