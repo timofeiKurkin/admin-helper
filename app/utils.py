@@ -4,31 +4,46 @@ from typing import BinaryIO
 
 import ffmpeg  # type: ignore[import-untyped]
 from fastapi import HTTPException
-from PIL import Image
+from PIL import Image, ImageFile
 from telegram import InputFile, InputMediaPhoto, InputMediaVideo
 
 
-def compress_image(
+def compress_and_save_image(
     *,
     file: BinaryIO,
     filename: str,
+    path: str,
     quality: int = 85,
 ) -> InputMediaPhoto:
     image = Image.open(file)
+    # newImage: Image.Image
 
-    newImage: Image.Image
     if image.mode in ("RGBA", "P"):
-        newImage = image.convert(mode="RGB")
+        newImage = image.convert("RGB")
+        buffer = io.BytesIO()
+        newImage.save(buffer, format="JPEG", optimize=True, quality=quality)
+        buffer.seek(0)
 
-    buffer = io.BytesIO()
-    newImage.save(buffer, format="JPEG", optimize=True, quality=quality)
-    buffer.seek(0)
+        pil_image = Image.open(buffer)
+        pil_image.save(path, format="JPEG", optimize=True, quality=100)
 
-    return InputMediaPhoto(
-        media=buffer,
-        filename=filename,
-        caption=filename,
-    )
+        return InputMediaPhoto(
+            media=InputFile(obj=buffer, filename=filename),
+            filename=filename,
+        )
+
+    else:
+        buffer = io.BytesIO()
+        image.save(buffer, format="JPEG", optimize=True, quality=quality)
+        buffer.seek(0)
+
+        pil_image = Image.open(buffer)
+        pil_image.save(path, format="JPEG", optimize=True, quality=100)
+
+        return InputMediaPhoto(
+            media=InputFile(obj=buffer, filename=filename),
+            filename=filename,
+        )
 
 
 def convert_and_save_voice(*, input_voice: str, output_voice: str) -> bytes:
@@ -71,9 +86,23 @@ def compress_and_save_video(*, input_file: str, output_file: str) -> bytes:
 
 def save_image(*, image: InputFile, path: str):
     try:
-        pil_image = Image.open(image.input_file_content)
-        pil_image.save(path, format="JPEG", optimize=True, quality=100)
+        file_content = image.input_file_content
+        if isinstance(file_content, bytes):
+            image_stream = io.BytesIO(file_content)
+            pil_image = Image.open(image_stream)
+            pil_image.save(path, format="JPEG", optimize=True, quality=100)
+        else:
+            pil_image = Image.open(file_content)
+            pil_image.save(path, format="JPEG", optimize=True, quality=100)
 
+        print("image successfully was written")
+        # if isinstance(image.input_file_content, bytes):
+        #     image_content: bytes = image.input_file_content
+
+        #     with io.BytesIO(image_content) as image_stream:
+        #         pil_image = Image.open(image_stream)
+        #         pil_image.save(path, format="JPEG", optimize=True, quality=100)
+        #         print("image successfully was written")
     except Exception as e:
         raise HTTPException(status_code=501, detail=f"Error saving image: {e}")
 

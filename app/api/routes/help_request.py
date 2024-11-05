@@ -1,8 +1,9 @@
+import io
 import logging
 import os
 import secrets
 import shutil
-from typing import Annotated, Any, List, Optional, Tuple
+from typing import Annotated, List, Optional, Tuple
 from uuid import uuid4
 
 from fastapi import APIRouter, File, Form, HTTPException, Request, UploadFile
@@ -19,6 +20,7 @@ from telegram.error import TelegramError
 
 from app import crud, utils
 from app.api.deps import SessionDep
+from app.api.error_handlers import help_request
 from app.auth import token as JWTToken
 from app.core.config import TEMPORARY_FOLDER, USER_REQUESTS_FOLDER, settings
 from app.models import (
@@ -141,11 +143,9 @@ async def create_help_request(
             created_folder: str = result[1]
             user_folder = created_folder
         except Exception as e:
-            logging.error(f"Error in creating user: {e}")
-            raise HTTPException(status_code=504, detail=f"Error in creating user: {e}")
+            help_request.visible_error(f"Error in creating user: {e}")
 
-    # assert user_candidate is not None
-
+    assert user_candidate is not None
     if not user_folder:
         user_folder = os.path.join(
             USER_REQUESTS_FOLDER, str(user_candidate.id), "requests"
@@ -159,9 +159,7 @@ async def create_help_request(
             owner_id=user_candidate.id,
         )
     except Exception as e:
-        error = f"Error in creating user's request: {e}"
-        logging.error(error)
-        raise HTTPException(status_code=501, detail=error)
+        help_request.visible_error(f"Error in creating user's request: {e}")
 
     # request_index = crud.get_last_request_index(session=session)
     last_index = new_request.id or 0
@@ -184,12 +182,7 @@ async def create_help_request(
         )
     except TelegramError as e:
         crud.delete_user_request(session=session, db_request=new_request)
-        error = f"Failed to send message to Telegram: {e}"
-        logging.error(error)
-        raise HTTPException(
-            status_code=504,
-            detail=error,
-        )
+        help_request.visible_error(f"Failed to send message to Telegram: {e}")
 
     main_message_id = main_message.message_id
 
@@ -237,9 +230,9 @@ async def create_help_request(
             except TelegramError as e:
                 crud.delete_user_request(session=session, db_request=new_request)
                 shutil.rmtree(request_folder)
-                error = f"Failed to send voice message to Telegram: {e}"
-                logging.error(error)
-                raise HTTPException(status_code=504, detail=error)
+                help_request.visible_error(
+                    f"Failed to send voice message to Telegram: {e}"
+                )
 
         # Uploading photo to telegram
         if photo:
@@ -250,21 +243,27 @@ async def create_help_request(
                     photo_path = os.path.join(request_folder, f"{photo_name}.jpeg")
 
                     # Compress photo
-                    compressed_image = utils.compress_image(
-                        file=photo_item.file, filename=photo_name, quality=85
+                    compressed_image = utils.compress_and_save_image(
+                        file=photo_item.file,
+                        filename=photo_name,
+                        quality=85,
+                        path=photo_path,
                     )
+                    photos_compressed.append(compressed_image)
 
                     # Save photo to user's folder
-                    if isinstance(compressed_image.media, InputFile):
-                        utils.save_image(
-                            image=compressed_image.media,
-                            path=photo_path,
-                        )
+                    # if isinstance(compressed_image.media, InputFile):
+                    #     utils.save_image(
+                    #         image=compressed_image.media,
+                    #         path=photo_path,
+                    #     )
 
-                    photos_compressed.append(compressed_image)
+                print("after cycle")
                 photo_response = await main_message.reply_media_group(
                     media=photos_compressed, connect_timeout=telegram_timeout_time
                 )
+                print("after sending media group")
+
                 for index, item in enumerate(photo_response):
                     photo_messages_idx.append(item.message_id)
                     photos_media_file.append(
@@ -274,17 +273,26 @@ async def create_help_request(
                             file_id=item.photo[-1].file_id,
                         )
                     )
-            except TelegramError as e:
-                shutil.rmtree(request_folder)
+            # except TelegramError as e:
+            #     shutil.rmtree(request_folder)
+            #     crud.delete_user_request(session=session, db_request=new_request)
+            #     await bot_api.delete_messages(
+            #         chat_id=chat_id,
+            #         message_ids=[main_message_id, *voice_message_id],
+            #     )
+            #     crud.delete_user_request(session=session, db_request=new_request)
+            #     help_request.visible_error(f"Failed to send photos to Telegram: {e}")
+            except Exception as e:
+                # shutil.rmtree(request_folder)
                 crud.delete_user_request(session=session, db_request=new_request)
                 await bot_api.delete_messages(
                     chat_id=chat_id,
                     message_ids=[main_message_id, *voice_message_id],
                 )
                 crud.delete_user_request(session=session, db_request=new_request)
-                error = f"Failed to send photos to Telegram: {e}"
-                logging.error(error)
-                raise HTTPException(status_code=504, detail=error)
+                help_request.visible_error(
+                    f"There's an exception during sending photos to Telegram: {e}"
+                )
 
         # Uploading video to telegram
         if video:
@@ -336,9 +344,7 @@ async def create_help_request(
                     ],
                 )
                 crud.delete_user_request(session=session, db_request=new_request)
-                error = f"Failed to send videos to Telegram: {e}"
-                logging.error(error)
-                raise HTTPException(status_code=504, detail=error)
+                help_request.visible_error(f"Failed to send videos to Telegram: {e}")
 
     accept_url = secrets.token_urlsafe(32)
     keyboard = [
@@ -361,9 +367,8 @@ async def create_help_request(
             reply_markup=reply_markup,
         )
     except TelegramError as e:
-        error = f"Failed to send reply_markup message: {e}"
-        logging.error(error)
-        raise HTTPException(status_code=500, detail=error)
+        help_request.visible_error(f"Failed to send reply_markup message: {e}")
+
     reply_markup_message_id: int = reply_markup_message.message_id
 
     # Create data base model
@@ -397,9 +402,7 @@ async def create_help_request(
                 *video_messages_idx,
             ],
         )
-        error = f"Error in updating user's request: {e}"
-        logging.error(error)
-        raise HTTPException(status_code=500, detail=error)
+        help_request.visible_error(f"Error in updating user's request: {e}")
 
     # return RequestForHelpPublic.model_validate(new_request)
     request_public = RequestForHelpPublic.model_validate(

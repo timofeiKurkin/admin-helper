@@ -3,9 +3,11 @@ from contextlib import asynccontextmanager
 
 import sentry_sdk
 from fastapi import FastAPI, Request
+
+# from starlette.middleware.cors import CORSMiddleware
+from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 from fastapi.routing import APIRoute
-from starlette.middleware.cors import CORSMiddleware
 
 from alembic import command
 from alembic.config import Config
@@ -45,7 +47,7 @@ app = FastAPI(
 async def global_exception_handler(request: Request, exc: Exception):
     return JSONResponse(
         status_code=500,
-        content={"detail": str(exc)},
+        content={"Error: ": str(exc)},
     )
 
 
@@ -54,7 +56,7 @@ if settings.all_cors_origins:
         CORSMiddleware,
         allow_origins=settings.all_cors_origins,
         allow_credentials=True,
-        allow_methods=["*"],
+        allow_methods=["POST", "GET", "PATCH"],
         allow_headers=["*"],
     )
 

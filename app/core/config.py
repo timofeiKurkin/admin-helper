@@ -1,6 +1,8 @@
 # import warnings
 import os
 import secrets
+import urllib
+import urllib.parse
 from pathlib import Path
 from typing import Annotated, Any, Literal
 
@@ -35,8 +37,10 @@ class Settings(BaseSettings):
     @computed_field  # type: ignore[prop-decorator]
     @property
     def all_cors_origins(self) -> list[str]:
-        return [self.FRONTEND_HOST, self.CLIENT_HOST] + [
-            str(origin).rstrip("/") for origin in self.BACKEND_CORS_ORIGINS
+        return [str(origin).rstrip("/") for origin in self.BACKEND_CORS_ORIGINS] + [
+            self.FRONTEND_HOST,
+            # self.CLIENT_HOST,
+            "http://localhost",
         ]
 
     PROJECT_NAME: str = ""
