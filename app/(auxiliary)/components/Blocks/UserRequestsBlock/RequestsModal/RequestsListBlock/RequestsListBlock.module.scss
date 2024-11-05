@@ -11,7 +11,11 @@
     }
 
     @media screen and ($desktop1440_1919) {
-        grid-template-rows: min-content minmax(300px, 503px);
+        // min-height: 300px;
+        // max-height: 803px;
+        // height: auto;
+
+        grid-template-rows: min-content 1fr;
     }
 
     @media screen and ($pad992_1279), screen and ($desktop1280_1439) {

@@ -19,7 +19,7 @@ export interface ValidationsType {
 }
 
 export interface ValidationsKeyType {
-    key: AllKeysOfInputsType;
+    key: TextInputsKeysType;
 }
 
 export type PhotoAndVideoKeysType = typeof PHOTO_KEY | typeof VIDEO_KEY;

@@ -21,7 +21,9 @@
 
     .requestsModalListBody {
         height: 100%;
-        display: flex;
+        display: grid;
+        grid-template-columns: 1fr;
+        grid-template-rows: min-content minmax(300px, auto) auto auto;
         flex-direction: column;
 
         @media screen and ($desktop1920), screen and ($desktop1440_1919) {

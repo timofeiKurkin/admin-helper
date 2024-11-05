@@ -1,8 +1,12 @@
-import {useEffect, useState} from "react";
-import {ValidationReturnDataType, ValidationsType} from "@/app/(auxiliary)/types/AppTypes/InputHooksTypes";
+import { useEffect, useState } from "react";
+import { ValidationReturnDataType, ValidationsKeyType, ValidationsType } from "@/app/(auxiliary)/types/AppTypes/InputHooksTypes";
 
 
-const UseValidation = (value: string, validations: ValidationsType): ValidationReturnDataType => {
+const UseValidation = (
+	value: string,
+	validations: ValidationsType,
+	key: ValidationsKeyType['key'],
+): ValidationReturnDataType => {
 	const [isEmpty, setEmpty] = useState(true)
 	const [minLength, setMinLength] = useState(false)
 	const [maxLength, setMaxLength] = useState(false)
@@ -17,21 +21,28 @@ const UseValidation = (value: string, validations: ValidationsType): ValidationR
 	useEffect(() => {
 		for (const validation in validations) {
 			switch (validation) {
-                case 'isEmpty':
-                    if (value) {
-                        setEmpty(false)
-                        setEmptyError('')
-                    } else {
-                        setEmpty(true)
-                        setEmptyError('Поле не может быть пустым')
-                    }
-                    break
+				case 'isEmpty':
+					if (value) {
+						setEmpty(false)
+						setEmptyError('')
+					} else {
+						setEmpty(true)
+						setEmptyError('Поле не может быть пустым')
+					}
+					break
 
-                case 'minLength':
-					if(validations[validation] > 0) {
+				case 'minLength':
+					if (validations[validation] > 0) {
 						if (value.length < validations[validation]) {
 							setMinLength(true)
-							setMinLengthError(`Минимальная длина - ${validations[validation]}`)
+
+							if (key === "phone") {
+								setMinLengthError(`Минимальная длина - ${validations[validation] - 9}`)
+							} else if (key === "number_pc") {
+								setMinLengthError(`Минимальная длина - ${validations[validation] - 2}`)
+							} else {
+								setMinLengthError(`Минимальная длина - ${validations[validation]}`)
+							}
 						} else {
 							setMinLength(false)
 							setMinLengthError('')

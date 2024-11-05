@@ -74,7 +74,7 @@ export interface UserDeviceStateType {
     padAdaptive640_992: boolean;
 }
 
-export interface PermissionsOfFormStatesType {
+export interface PermissionsOfFormType {
     userCanTalk: boolean;
     userAgreedPolitical: boolean;
 }
@@ -92,7 +92,7 @@ export interface EditorStateType {
 
 export interface ProviderStateType {
     userFormData?: UserFormDataType;
-    permissionAgree?: PermissionsOfFormStatesType;
+    permissionAgree?: PermissionsOfFormType;
     userDevice?: UserDeviceStateType;
     rootPageContent?: {
         uploadFileContent: ContentOfUploadBlockType;

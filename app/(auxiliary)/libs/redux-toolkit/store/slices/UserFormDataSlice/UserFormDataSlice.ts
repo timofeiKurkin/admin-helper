@@ -2,7 +2,7 @@ import { indexOfObject } from "@/app/(auxiliary)/func/handlers";
 import { createAppSlice } from "@/app/(auxiliary)/libs/redux-toolkit/store/createAppSlice";
 import {
     FormDataItemType,
-    PermissionsOfFormStatesType,
+    PermissionsOfFormType,
     ServerResponseType,
     UserFormDataType
 } from "@/app/(auxiliary)/types/AppTypes/Context";
@@ -22,7 +22,7 @@ import {
 import { PayloadAction } from "@reduxjs/toolkit";
 
 interface InitialStateType extends UserFormDataType {
-    permissions: PermissionsOfFormStatesType;
+    permissions: PermissionsOfFormType;
     validationFormStatus: boolean;
     userMessageStatus: boolean;
     serverResponse: ServerResponseType;
@@ -277,22 +277,6 @@ export const userFormDataSlice = createAppSlice({
             }
         ),
 
-        /**
-         * Slice для изменения состояния всей валидации формы. Этот статус показывает, что все поля формы корректно заполнены, поэтому файлы могут быть отправлены на сервер
-         */
-        // setValidationFormStatus: create.reducer(
-        //     (state) => {
-        //         const textDataKeys = Object.keys(state.text_data)
-        //         state.validationFormStatus = (textDataKeys as (TextInputsKeysType)[]).every((key) => {
-        //             if (key === "message") {
-        //                 return state.text_data[key].validationStatus || state.file_data[key].validationStatus
-        //             } else {
-        //                 return state.text_data[key]?.validationStatus
-        //             }
-        //         })
-        //     }
-        // ),
-
         setServerResponse: create.reducer(
             (state, action: PayloadAction<ServerResponseType>) => {
                 state.serverResponse = action.payload
@@ -300,7 +284,7 @@ export const userFormDataSlice = createAppSlice({
         ),
 
 
-        setFormToDefault: create.reducer(
+        resetFormToDefault: create.reducer(
             (state) => {
                 state.file_data = initialState.file_data
                 state.permissions = initialState.permissions
@@ -339,7 +323,7 @@ export const {
 
     changePreview,
     setServerResponse,
-    setFormToDefault,
+    resetFormToDefault,
 
     setRejectionInputs,
     deleteRejectionInput

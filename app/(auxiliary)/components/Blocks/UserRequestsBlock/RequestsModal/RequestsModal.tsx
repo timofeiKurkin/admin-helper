@@ -38,9 +38,9 @@ const RequestsModal: FC<PropsType> = ({ modalData }) => {
                         <div className={styles.requestsModalTitle}>
                             <Title>{modalData.title}</Title>
 
-                            <div className={styles.requestModalClose} onClick={requestModalVisibilityHandler}>
+                            {/* <div className={styles.requestModalClose} onClick={requestModalVisibilityHandler}>
                                 <Close className={styles.closeButton} />
-                            </div>
+                            </div> */}
                         </div>
 
                         <RequestsListBlock />

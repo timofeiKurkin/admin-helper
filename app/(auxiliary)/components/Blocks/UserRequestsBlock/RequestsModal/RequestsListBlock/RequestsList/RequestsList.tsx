@@ -8,15 +8,15 @@ import styles from "./RequestsList.module.scss"
 const RequestsList = () => {
     const userRequests = useAppSelector(selectUserRequests)
 
-    const testRequests = [
-        { id: 1, createdAt: "", isCompleted: false },
-        { id: 2, createdAt: "", isCompleted: true },
-        { id: 3, createdAt: "", isCompleted: true }
-    ]
+    // const testRequests = [
+    //     { id: 1, createdAt: "", isCompleted: false },
+    //     { id: 2, createdAt: "", isCompleted: true },
+    //     { id: 3, createdAt: "", isCompleted: true }
+    // ]
 
     return userRequests.length ? (
         <div className={styles.requestsList}>
-            {[...testRequests, ...userRequests].map((item) => (
+            {userRequests.map((item) => (
                 <RequestItem key={`key=${item.id}`} request={item} />
             ))}
         </div>

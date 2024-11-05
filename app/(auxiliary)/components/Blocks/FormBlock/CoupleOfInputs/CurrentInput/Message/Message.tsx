@@ -23,6 +23,7 @@ import {
     selectUserMessageStatus,
     switchUserMessageStatus
 } from "@/app/(auxiliary)/libs/redux-toolkit/store/slices/UserFormDataSlice/UserFormDataSlice";
+import InputErrorLayout from '@/app/(auxiliary)/components/UI/Inputs/InputErrorLayout/InputErrorLayout';
 
 interface PropsType {
     currentInput: MessageInputType;
@@ -37,6 +38,9 @@ const Message: FC<PropsType> = ({ currentInput }) => {
     const [isError, setIsError] = useState<boolean>(false)
     const setErrorHandler = (status: boolean) => setIsError(status)
 
+    // console.log("rejectionInputs: ", rejectionInputs)
+    // console.log("isError: ", isError)
+
     const setNewMessageHandler = useCallback((
         newMessage: File | string,
         validationStatus: boolean
@@ -50,10 +54,15 @@ const Message: FC<PropsType> = ({ currentInput }) => {
             validationStatus,
             value: newMessage
         }))
-    }, [dispatch, currentInput])
+    }, [dispatch, currentInput, isError, rejectionInputs])
 
     const removerRecorderHandler = () => {
         dispatch(deleteMessageRecorder())
+    }
+
+
+    const switchTypeMessageHandler = () => {
+        dispatch(switchUserMessageStatus())
     }
 
     useEffect(() => {
@@ -67,10 +76,6 @@ const Message: FC<PropsType> = ({ currentInput }) => {
         userCannotTalk,
         userDevice.padAdaptive640_992
     ]);
-
-    const switchTypeMessageHandler = () => {
-        dispatch(switchUserMessageStatus())
-    }
 
     return (
         <div className={styles.messageWrapper}>

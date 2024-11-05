@@ -1,6 +1,6 @@
 import { InputMediaPhoto, InputMediaVideo } from "grammy/types";
 import { Bot, InputFile, webhookCallback } from 'grammy'
-import { PermissionsOfFormStatesType } from "@/app/(auxiliary)/types/AppTypes/Context";
+import { PermissionsOfFormType } from "@/app/(auxiliary)/types/AppTypes/Context";
 
 export const dynamic = 'force-dynamic'
 
@@ -85,7 +85,7 @@ export const POST = async function (request: Request) {
         video: formData.getAll("video") as File[]
     }
 
-    const formPermissions: PermissionsOfFormStatesType = {
+    const formPermissions: PermissionsOfFormType = {
         userCanTalk: Boolean(formData.get("userCanTalk")! as string),
         userAgreedPolitical: Boolean(formData.get("userAgreed")! as string)
     }

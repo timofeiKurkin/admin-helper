@@ -88,7 +88,7 @@ const ComputerNumberInput: FC<PropsType> = ({
 
     return (
         <div className={inputsStyles.numberPCInputWrapper}>
-            <InputErrorLayout value={value} inputType={currentInput.type} setIsError={setErrorHandler} isError={isError}>
+            <InputErrorLayout value={value} type={currentInput.type} setIsError={setErrorHandler} isError={isError}>
                 <LazyInput value={value.value}
                     placeholder={currentInput.inputPlaceholder!}
                     maxLength={inputValidations[NUMBER_PC_KEY].maxLength}

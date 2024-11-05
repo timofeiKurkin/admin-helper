@@ -38,18 +38,23 @@ const MessageInput: FC<PropsType> = ({
         value.onChange(e)
     }
 
+    // Update app state when value was changed.
+    // Helpful when input gets value from localStorage and changes app state
     useEffect(() => {
-        setNewMessage(value.value, value.inputValid)
-
-        return () => {
-            setNewMessage("", false)
+        if (value.value) {
+            setNewMessage(value.value, value.inputValid)
         }
+
+        // return () => {
+        //     setNewMessage("", false)
+        // }
     }, [
-        setNewMessage,
         value.inputValid,
         value.value
     ]);
 
+    // Reset input after sending help request from client to server
+    // Will work when server response is "success", otherwise the value will be
     useEffect(() => {
         if (serverResponse === "success") {
             value.resetValue()
@@ -61,7 +66,10 @@ const MessageInput: FC<PropsType> = ({
 
     return (
         <div className={styles.messageWrapper}>
-            <InputErrorLayout value={value} inputType={type} setIsError={setErrorHandler}>
+            <InputErrorLayout value={value}
+                type={type}
+                setIsError={setErrorHandler}
+                isError={isError}>
                 <Textarea value={value.value}
                     placeholder={placeholder}
                     maxLength={inputValidations[type].maxLength}

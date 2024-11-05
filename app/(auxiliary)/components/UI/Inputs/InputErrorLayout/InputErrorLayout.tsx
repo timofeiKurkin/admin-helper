@@ -25,7 +25,7 @@ interface PropsType {
     // }
     // input?: InputPropsType<InputChangeEventHandler>;
     value: UseInputType<InputChangeEventHandler | TextareaChangeEventHandler>;
-    inputType: TextInputsKeysType;
+    type: TextInputsKeysType;
     setIsError: (status: boolean) => void;
     isError?: boolean;
     children: React.ReactNode;
@@ -33,7 +33,7 @@ interface PropsType {
 
 const InputErrorLayout: FC<PropsType> = ({
     value,
-    inputType,
+    type: inputType,
     setIsError,
     isError,
     children
@@ -56,7 +56,9 @@ const InputErrorLayout: FC<PropsType> = ({
                     message += value.minLengthError
                 }
 
+
                 if (message) {
+                    console.log("set notification")
                     message = `${inputsNameError[inputType as ValidateKeysType]}: ${message}`
                     dispatch(setNewNotification({ message: message, type: "error" }))
                 }
@@ -66,6 +68,7 @@ const InputErrorLayout: FC<PropsType> = ({
         }
     }, [
         dispatch,
+        rejectionInputs,
         inputType,
         setIsError,
         value.isEmpty,

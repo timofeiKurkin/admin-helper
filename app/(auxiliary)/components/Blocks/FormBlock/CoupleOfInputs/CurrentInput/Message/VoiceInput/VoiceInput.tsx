@@ -6,9 +6,10 @@ import ReadyVoice from "@/app/(auxiliary)/components/Blocks/FormBlock/CoupleOfIn
 import Button from "@/app/(auxiliary)/components/UI/Button/Button";
 import Microphone from "@/app/(auxiliary)/components/UI/SVG/Microphone/Microphone";
 import { formattedTime } from "@/app/(auxiliary)/func/formattedTime";
-import { useAppSelector } from "@/app/(auxiliary)/libs/redux-toolkit/store/hooks";
+import { useAppDispatch, useAppSelector } from "@/app/(auxiliary)/libs/redux-toolkit/store/hooks";
 import {
     selectFormFileData,
+    selectRejectionInputs,
     selectServerResponse
 } from "@/app/(auxiliary)/libs/redux-toolkit/store/slices/UserFormDataSlice/UserFormDataSlice";
 import { MESSAGE_KEY } from "@/app/(auxiliary)/types/AppTypes/InputHooksTypes";
@@ -16,6 +17,8 @@ import { MessageType } from "@/app/(auxiliary)/types/Data/Interface/RootPage/Roo
 import { blue_light, red_dark } from "@/styles/colors";
 import { FC, useEffect, useRef, useState } from "react";
 import styles from "./AudioPlayer.module.scss";
+import { setNewNotification } from "@/app/(auxiliary)/libs/redux-toolkit/store/slices/AppSlice/AppSlice";
+import { inputsNameError } from "../../inputsNameError";
 
 interface PropsType {
     voicePlaceholder?: MessageType;
@@ -32,8 +35,10 @@ const VoiceInput: FC<PropsType> = ({
     setErrorHandler,
     removeRecorder
 }) => {
+    const dispatch = useAppDispatch()
     const voiceMessage = useAppSelector(selectFormFileData)[MESSAGE_KEY]
     const serverResponse = useAppSelector(selectServerResponse).status
+    const rejectionInputs = useAppSelector(selectRejectionInputs)
 
     const [isRecording, setIsRecording] = useState(false)
     const [recordingIsDone, setRecordingIsDone] = useState<boolean>(voiceMessage.value instanceof File)
@@ -169,8 +174,18 @@ const VoiceInput: FC<PropsType> = ({
     ]);
 
     useEffect(() => {
+        if (!isError && rejectionInputs.length) {
+            if (rejectionInputs.includes("message")) {
+                console.log("set notification")
+                dispatch(setNewNotification({ message: `${inputsNameError[MESSAGE_KEY]}: Сообщение не может быть пустым`, type: "error" }))
+                setErrorHandler(true)
+            }
+        }
+    }, [rejectionInputs, isError])
+
+    useEffect(() => {
         /**
-         * Проверка, что в устройстве есть микрофон и доступ к нему
+         * Checking, if user's devices has microphone and access to use it
          */
         if (!(navigator.mediaDevices && navigator.mediaDevices.getUserMedia)) {
             setNoMicrophone((prevState) => !prevState)

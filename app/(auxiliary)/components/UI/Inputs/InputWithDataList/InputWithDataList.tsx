@@ -1,7 +1,9 @@
-import React, {FC, ReactNode, useEffect, useState} from 'react';
+import React, { FC, ReactNode, useEffect, useRef, useState } from 'react';
 import styles from "./InputWithDataList.module.scss"
-import {InputHelpfulItemType} from "@/app/(auxiliary)/types/Data/Interface/RootPage/RootPageContentType";
+import { InputHelpfulItemType } from "@/app/(auxiliary)/types/Data/Interface/RootPage/RootPageContentType";
 import Fuse from "fuse.js";
+import { ChildrenProp } from '@/app/(auxiliary)/types/AppTypes/AppTypes';
+import Text from '../../TextTemplates/Text';
 
 
 const searchHandler = (
@@ -25,32 +27,34 @@ const searchHandler = (
 }
 
 
-interface PropsType {
+interface PropsType extends ChildrenProp {
     value: string;
-    dataList?: {
-        listType: string;
-        list: InputHelpfulItemType[];
-    };
+    dataList?: InputHelpfulItemType[];
     inputIsDirty: boolean;
-    children: ReactNode;
+    changeValueHandler: (newValue: string) => void
 }
 
 const InputWithDataList: FC<PropsType> = ({
-                                              value,
-                                              dataList,
-                                              inputIsDirty,
-                                              children,
-                                          }) => {
-
+    value,
+    dataList,
+    inputIsDirty,
+    changeValueHandler,
+    children,
+}) => {
+    const helpfulListRef = useRef<HTMLUListElement>(null)
     const [currentHelpfulList, setCurrentHelpfulList] = useState<string[]>([])
+    const [listVisibility, setListVisibility] = useState<boolean>(inputIsDirty)
 
     useEffect(() => {
-        if (value.length >= 3 && dataList) {
-            const searchResult = searchHandler(dataList.list, value)
+        if (value.length >= 2 && dataList) {
+            const searchResult = searchHandler(dataList, value)
             const foundedItems = searchResult.map((res) => res.item.title)
 
-            if(!foundedItems.includes(value)) {
+            // setCurrentHelpfulList(foundedItems)
+            if (!foundedItems.includes(value)) {
                 setCurrentHelpfulList(foundedItems)
+            } else {
+                setCurrentHelpfulList([])
             }
         }
 
@@ -58,21 +62,41 @@ const InputWithDataList: FC<PropsType> = ({
             setCurrentHelpfulList([])
         }
     }, [
-        inputIsDirty,
         value,
         dataList
     ]);
 
     const chooseHelpfulItem = (item: string) => {
-        setCurrentHelpfulList([])
+        changeValueHandler(item)
 
-        React.Children.map(children, element => {
-            if (!React.isValidElement(element)) return
+        // if (helpfulListRef.current) {
+        //     helpfulListRef.current.style.display = "none"
+        // }
 
-            element.props.children.props.onChange({target: {value: item}})
-            return element
-        })
+        // setCurrentHelpfulList([])
+        // React.Children.map(children, element => {
+        //     if (!React.isValidElement(element)) return
+
+        //     element.props.children.props.onChange({ target: { value: item } })
+        //     return element
+        // })
     }
+
+    // useEffect(() => {
+    //     if (helpfulListRef.current && !currentHelpfulList.includes(value)) {
+    //         helpfulListRef.current.style.display = "flex"
+    //     }
+    // }, [currentHelpfulList, value])
+
+    useEffect(() => {
+        const timer = setTimeout(() => {
+            setListVisibility(inputIsDirty)
+        }, 90)
+
+        return () => {
+            clearTimeout(timer)
+        }
+    }, [inputIsDirty])
 
     return (
         <div className={styles.inputWrapper}>
@@ -80,15 +104,15 @@ const InputWithDataList: FC<PropsType> = ({
 
             {
                 (currentHelpfulList.length) ? (
-                    <div className={styles.helpfulList}>
+                    <ul ref={helpfulListRef} style={{ display: listVisibility ? "flex" : "none" }} className={styles.helpfulList}>
                         {currentHelpfulList.map((item, index) => (
-                            <span key={`key=${index}`}
-                                  className={styles.helpfulItem}
-                                  onClick={() => chooseHelpfulItem(item)}>
-                                {item}
-                            </span>
+                            <li key={`key=${index}`} className={styles.helpfulItem} onClick={() => chooseHelpfulItem(item)}>
+                                <Text>
+                                    {item}
+                                </Text>
+                            </li>
                         ))}
-                    </div>
+                    </ul>
                 ) : null
             }
         </div>

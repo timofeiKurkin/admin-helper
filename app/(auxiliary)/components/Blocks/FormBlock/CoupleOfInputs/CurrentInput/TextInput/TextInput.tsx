@@ -59,7 +59,7 @@ const TextInput: FC<PropsType> = ({
     const setErrorHandler = (status: boolean) => setIsError(status)
 
     const value =
-        useInput("", currentInput.type as AllKeysOfInputsType, inputValidations[currentInput.type])
+        useInput("", currentInput.type, inputValidations[currentInput.type])
     const [currentHelpfulList, setCurrentHelpfulList] =
         useState<InputHelpfulItemType[]>(() => {
             if (currentInput.type === DEVICE_KEY || currentInput.type === COMPANY_KEY) {
@@ -75,6 +75,7 @@ const TextInput: FC<PropsType> = ({
             dispatch(deleteRejectionInput(currentInput.type as TextInputsKeysType))
             setErrorHandler(false)
         }
+
         value.onChange(e)
     }
 
@@ -102,16 +103,18 @@ const TextInput: FC<PropsType> = ({
         value
     ]);
 
+    const changeValueHandler = (newValue: string) => {
+        console.log("new value outside of the input with data: ", newValue)
+        onChangeHandler({ target: { value: newValue } } as InputChangeEventHandler)
+    }
+
     return (
         <InputWithDataList value={value.value}
-            dataList={currentHelpfulList.length ? {
-                list: currentHelpfulList,
-                listType: currentInput.type
-            } : undefined}
-            inputIsDirty={value.isDirty}>
-
+            dataList={currentHelpfulList}
+            inputIsDirty={value.isDirty}
+            changeValueHandler={changeValueHandler}>
             <div className={currentInputTypesClassName}>
-                <InputErrorLayout value={value} inputType={currentInput.type} setIsError={setErrorHandler} isError={isError}>
+                <InputErrorLayout value={value} type={currentInput.type} setIsError={setErrorHandler} isError={isError}>
                     <LazyInput value={value.value}
                         placeholder={currentInput.inputPlaceholder!}
                         maxLength={inputValidations[currentInput.type].maxLength}

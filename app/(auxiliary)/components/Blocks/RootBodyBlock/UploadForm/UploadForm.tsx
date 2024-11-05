@@ -1,7 +1,22 @@
 "use client"
 
-import React, { FC, useEffect, useState } from 'react';
 import Button from "@/app/(auxiliary)/components/UI/Button/Button";
+import { axiosRequestsHandler } from "@/app/(auxiliary)/func/axiosRequestsHandler";
+import { validateFormInputs } from "@/app/(auxiliary)/func/validateFormInputs";
+import HelpUserService from "@/app/(auxiliary)/libs/axios/services/HelpUserService/HelpUserService";
+import { useAppDispatch, useAppSelector } from "@/app/(auxiliary)/libs/redux-toolkit/store/hooks";
+import { setDisableFormInputs, setNewNotification } from '@/app/(auxiliary)/libs/redux-toolkit/store/slices/AppSlice/AppSlice';
+import {
+    selectFormFileData,
+    selectFormTextData,
+    selectPermissionsOfForm,
+    selectUserMessageStatus,
+    resetFormToDefault,
+    setRejectionInputs,
+    setServerResponse,
+} from "@/app/(auxiliary)/libs/redux-toolkit/store/slices/UserFormDataSlice/UserFormDataSlice";
+import { setUserAuthorization } from '@/app/(auxiliary)/libs/redux-toolkit/store/slices/UserRequestsSlice/UserRequestsSlice';
+import { UserFormDataType, UserTextDataType } from "@/app/(auxiliary)/types/AppTypes/Context";
 import {
     DeviceKeyType,
     MESSAGE_KEY,
@@ -11,23 +26,9 @@ import {
     ValidateKeysType,
     VIDEO_KEY
 } from "@/app/(auxiliary)/types/AppTypes/InputHooksTypes";
-import { UserFormDataType, UserTextDataType } from "@/app/(auxiliary)/types/AppTypes/Context";
-import { axiosRequestsHandler } from "@/app/(auxiliary)/func/axiosRequestsHandler";
-import HelpUserService from "@/app/(auxiliary)/libs/axios/services/HelpUserService/HelpUserService";
-import { useAppDispatch, useAppSelector } from "@/app/(auxiliary)/libs/redux-toolkit/store/hooks";
-import {
-    selectFormFileData,
-    selectFormTextData,
-    selectPermissionsOfForm,
-    selectUserMessageStatus,
-    setFormToDefault,
-    setRejectionInputs,
-    setServerResponse,
-} from "@/app/(auxiliary)/libs/redux-toolkit/store/slices/UserFormDataSlice/UserFormDataSlice";
-import { AxiosResponse } from "axios";
 import { ResponseFromServerType } from "@/app/(auxiliary)/types/AxiosTypes/AxiosTypes";
-import { setDisableFormInputs, setNewNotification } from '@/app/(auxiliary)/libs/redux-toolkit/store/slices/AppSlice/AppSlice';
-import { setUserAuthorization } from '@/app/(auxiliary)/libs/redux-toolkit/store/slices/UserRequestsSlice/UserRequestsSlice';
+import { AxiosResponse } from "axios";
+import { FC, useState } from 'react';
 
 // const validationHandler = (args: {
 //     appState: ProviderStateType
@@ -55,46 +56,16 @@ const UploadForm: FC<PropsType> = ({ buttonText }) => {
     const formTextData = useAppSelector(selectFormTextData)
     const formFileData = useAppSelector(selectFormFileData)
     const permissionsOfForm = useAppSelector(selectPermissionsOfForm)
-    // const validationFormStatus = useAppSelector(selectValidationFormStatus)
 
     const userMessageStatus = useAppSelector(selectUserMessageStatus)
 
     const [sendingRequest, setSendingRequest] = useState<boolean>(false)
 
-    // useEffect(() => {
-    //     dispatch(setValidationFormStatus())
-    // }, [
-    //     dispatch,
-    //     formTextData,
-    //     formFileData
-    // ]);
-
-    console.log(formTextData)
-
-    const validateFormInputsHandler = (data: UserTextDataType): { keys: ValidateKeysType[], status: boolean } => {
-        const rejectionInputs: ValidateKeysType[] = []
-
-        for (const key of requiredFields) {
-            if (!data[key].validationStatus) {
-                rejectionInputs.push(key)
-            }
-        }
-
-        if (!permissionsOfForm.userAgreedPolitical) {
-            rejectionInputs.push("user_political")
-        }
-
-        return {
-            keys: rejectionInputs,
-            status: !rejectionInputs.length
-        }
-
-        // check all required inputs
-        // get notification to the user, if some inputs invalid
-    }
-
     const uploadUserData = async (userData: UserFormDataType) => {
-        const validateData = validateFormInputsHandler(formTextData) // Validate all form's inputs
+        /**
+         * Validate all form's inputs
+         */
+        const validateData = validateFormInputs(formTextData, permissionsOfForm)
 
         if (validateData.status) {
             setSendingRequest(true)
@@ -136,7 +107,7 @@ const UploadForm: FC<PropsType> = ({ buttonText }) => {
 
                 if ((response as AxiosResponse<ResponseFromServerType>).status === 201) {
                     const succeedResponse = (response as AxiosResponse<ResponseFromServerType>)
-                    dispatch(setFormToDefault())
+                    dispatch(resetFormToDefault())
                     dispatch(setUserAuthorization(true))
                     dispatch(setNewNotification({
                         message: succeedResponse.data.message,

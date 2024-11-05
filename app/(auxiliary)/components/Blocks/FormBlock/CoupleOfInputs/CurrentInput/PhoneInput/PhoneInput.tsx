@@ -77,7 +77,7 @@ const PhoneInput: FC<PropsType> = ({ currentInput }) => {
 
     return (
         <div className={inputsStyles.phoneNumberInputWrapper}>
-            <InputErrorLayout value={value} inputType={currentInput.type} setIsError={setErrorHandler} isError={isError}>
+            <InputErrorLayout value={value} type={currentInput.type} setIsError={setErrorHandler} isError={isError}>
                 <LazyInput
                     value={(value.isDirty || value.value.length >= 4) ? value.value : ""}
                     onBlur={value.onBlur}

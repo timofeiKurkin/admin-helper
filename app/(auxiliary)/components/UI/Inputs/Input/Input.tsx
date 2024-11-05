@@ -52,7 +52,7 @@ const Input: FC<InputPropsType<InputChangeEventHandler>> = ({
                 const emptyWidth = spanRef.current.offsetWidth + 52
 
                 /**
-                 * Если input пустой
+                 * If value of the input is empty
                  */
                 if (!value) {
                     inputRef.current.style.width = emptyWidth + "px"
@@ -60,9 +60,13 @@ const Input: FC<InputPropsType<InputChangeEventHandler>> = ({
                 } else {
                     spanRef.current.textContent = value
                     const fullWidth = spanRef.current.offsetWidth + 52
+
                     if (fullWidth >= emptyWidth) {
                         inputRef.current.style.width = fullWidth + "px"
                         setInputWidth(fullWidth)
+                    } else {
+                        inputRef.current.style.width = emptyWidth + "px"
+                        setInputWidth(emptyWidth)
                     }
                 }
             }
