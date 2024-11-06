@@ -1,5 +1,3 @@
-import io
-import logging
 import os
 import secrets
 import shutil
@@ -11,7 +9,6 @@ from fastapi.responses import JSONResponse
 from telegram import (
     InlineKeyboardButton,
     InlineKeyboardMarkup,
-    InputFile,
     InputMediaPhoto,
     InputMediaVideo,
     ReplyParameters,
@@ -20,7 +17,8 @@ from telegram.error import TelegramError
 
 from app import crud, utils
 from app.api.deps import SessionDep
-from app.api.error_handlers import help_request
+from app.api.error_handlers import help_request as help_request_error
+from app.api.func.help_request import help_request as help_request_func
 from app.auth import token as JWTToken
 from app.core.config import TEMPORARY_FOLDER, USER_REQUESTS_FOLDER, settings
 from app.models import (
@@ -143,7 +141,7 @@ async def create_help_request(
             created_folder: str = result[1]
             user_folder = created_folder
         except Exception as e:
-            help_request.visible_error(f"Error in creating user: {e}")
+            help_request_error.visible_error(f"Error in creating user: {e}")
 
     assert user_candidate is not None
     if not user_folder:
@@ -159,7 +157,7 @@ async def create_help_request(
             owner_id=user_candidate.id,
         )
     except Exception as e:
-        help_request.visible_error(f"Error in creating user's request: {e}")
+        help_request_error.visible_error(f"Error in creating user's request: {e}")
 
     # request_index = crud.get_last_request_index(session=session)
     last_index = new_request.id or 0
@@ -182,7 +180,7 @@ async def create_help_request(
         )
     except TelegramError as e:
         crud.delete_user_request(session=session, db_request=new_request)
-        help_request.visible_error(f"Failed to send message to Telegram: {e}")
+        help_request_error.visible_error(f"Failed to send message to Telegram: {e}")
 
     main_message_id = main_message.message_id
 
@@ -201,96 +199,71 @@ async def create_help_request(
         # Uploading voice message to telegram
         if message_file:
             try:
-                voice_name = str(uuid4())
-                input_voice = os.path.join(TEMPORARY_FOLDER, f"{voice_name}.mp3")
-
-                # Save .mp3 file in the temporary folder
-                with open(input_voice, "wb") as f:
-                    f.write(await message_file.read())
-
-                output_voice_file = f"{voice_name}.ogg"
-                output_voice = os.path.join(request_folder, output_voice_file)
-
-                converted_audio = utils.convert_and_save_voice(
-                    input_voice=input_voice, output_voice=output_voice
+                (voice, output_voice_file) = await help_request_func.send_voice_message(
+                    main_message=main_message,
+                    message_file=message_file,
+                    request_folder=request_folder,
                 )
 
-                voice_response = await main_message.reply_voice(
-                    voice=InputFile(obj=converted_audio, filename=voice_name),
-                    connect_timeout=telegram_timeout_time,
-                )
-
-                voice_message_id.append(voice_response.message_id)
-                if voice_response.voice:
+                voice_message_id.append(voice.message_id)
+                if voice.voice:
                     voice_media_file = MediaFile(
                         id=0,
                         file_path=output_voice_file,
-                        file_id=voice_response.voice.file_id,
+                        file_id=voice.voice.file_id,
                     )  # response.voice.file_id - Identifier for this file, which can be used to download or reuse the file
-            except TelegramError as e:
+            except Exception as e:
                 crud.delete_user_request(session=session, db_request=new_request)
                 shutil.rmtree(request_folder)
-                help_request.visible_error(
+                help_request_error.visible_error(
                     f"Failed to send voice message to Telegram: {e}"
                 )
 
         # Uploading photo to telegram
-        if photo:
+        if photo and len(photo):
             try:
                 photos_compressed: List[InputMediaPhoto] = []
                 for photo_item in photo:
                     photo_name = str(uuid4())
                     photo_path = os.path.join(request_folder, f"{photo_name}.jpeg")
 
-                    # Compress photo
-                    compressed_image = utils.compress_and_save_image(
+                    # Compress and save image to request folder
+                    buffer = utils.compress_and_save_image(
                         file=photo_item.file,
-                        filename=photo_name,
                         quality=85,
                         path=photo_path,
                     )
+
+                    compressed_image = InputMediaPhoto(
+                        media=buffer,
+                        filename=photo_name,
+                        caption=photo_name,
+                    )
+
                     photos_compressed.append(compressed_image)
 
-                    # Save photo to user's folder
-                    # if isinstance(compressed_image.media, InputFile):
-                    #     utils.save_image(
-                    #         image=compressed_image.media,
-                    #         path=photo_path,
-                    #     )
-
-                print("after cycle")
-                photo_response = await main_message.reply_media_group(
-                    media=photos_compressed, connect_timeout=telegram_timeout_time
-                )
-                print("after sending media group")
-
-                for index, item in enumerate(photo_response):
-                    photo_messages_idx.append(item.message_id)
-                    photos_media_file.append(
-                        MediaFile(
-                            id=index,
-                            file_path=f"{item.caption}.jpeg",
-                            file_id=item.photo[-1].file_id,
-                        )
+                if len(photos_compressed):
+                    photo_response = await main_message.reply_media_group(
+                        media=photos_compressed, connect_timeout=telegram_timeout_time
                     )
-            # except TelegramError as e:
-            #     shutil.rmtree(request_folder)
-            #     crud.delete_user_request(session=session, db_request=new_request)
-            #     await bot_api.delete_messages(
-            #         chat_id=chat_id,
-            #         message_ids=[main_message_id, *voice_message_id],
-            #     )
-            #     crud.delete_user_request(session=session, db_request=new_request)
-            #     help_request.visible_error(f"Failed to send photos to Telegram: {e}")
+                    for index, item in enumerate(photo_response):
+                        photo_messages_idx.append(item.message_id)
+                        photos_media_file.append(
+                            MediaFile(
+                                id=index,
+                                file_path=f"{item.caption}.jpeg",
+                                file_id=item.photo[-1].file_id,
+                            )
+                        )
+
             except Exception as e:
-                # shutil.rmtree(request_folder)
+                shutil.rmtree(request_folder)
                 crud.delete_user_request(session=session, db_request=new_request)
                 await bot_api.delete_messages(
                     chat_id=chat_id,
                     message_ids=[main_message_id, *voice_message_id],
                 )
-                crud.delete_user_request(session=session, db_request=new_request)
-                help_request.visible_error(
+                help_request_error.visible_error(
                     f"There's an exception during sending photos to Telegram: {e}"
                 )
 
@@ -303,9 +276,11 @@ async def create_help_request(
                     video_file = f"{video_name}.mp4"
                     input_temporary = os.path.join(TEMPORARY_FOLDER, video_file)
                     output_video_path = os.path.join(request_folder, video_file)
+
                     # Create temporary video file
                     with open(input_temporary, "wb") as f:
                         f.write(await video_item.read())
+
                     compressed_video = utils.compress_and_save_video(
                         input_file=input_temporary, output_file=output_video_path
                     )
@@ -316,23 +291,26 @@ async def create_help_request(
                             filename=video_file,
                         )
                     )
-                video_response = await main_message.reply_media_group(
-                    media=video_compressed,
-                    read_timeout=telegram_timeout_time,
-                    connect_timeout=telegram_timeout_time,
-                    pool_timeout=300,
-                )
-                for index, item in enumerate(video_response):
-                    video_messages_idx.append(item.message_id)
-                    if item.video:
-                        videos_media_file.append(
-                            MediaFile(
-                                id=index,
-                                file_path=video_file,
-                                file_id=item.video.file_id,
+
+                if len(video_compressed):
+                    video_response = await main_message.reply_media_group(
+                        media=video_compressed,
+                        read_timeout=telegram_timeout_time,
+                        connect_timeout=telegram_timeout_time,
+                        pool_timeout=300,
+                    )
+                    for index, item in enumerate(video_response):
+                        video_messages_idx.append(item.message_id)
+                        if item.video:
+                            videos_media_file.append(
+                                MediaFile(
+                                    id=index,
+                                    file_path=video_file,
+                                    file_id=item.video.file_id,
+                                )
                             )
-                        )
-            except TelegramError as e:
+
+            except Exception as e:
                 shutil.rmtree(request_folder)
                 crud.delete_user_request(session=session, db_request=new_request)
                 await bot_api.delete_messages(
@@ -343,8 +321,9 @@ async def create_help_request(
                         *photo_messages_idx,
                     ],
                 )
-                crud.delete_user_request(session=session, db_request=new_request)
-                help_request.visible_error(f"Failed to send videos to Telegram: {e}")
+                help_request_error.visible_error(
+                    f"Failed to send videos to Telegram: {e}"
+                )
 
     accept_url = secrets.token_urlsafe(32)
     keyboard = [
@@ -367,7 +346,7 @@ async def create_help_request(
             reply_markup=reply_markup,
         )
     except TelegramError as e:
-        help_request.visible_error(f"Failed to send reply_markup message: {e}")
+        help_request_error.visible_error(f"Failed to send reply_markup message: {e}")
 
     reply_markup_message_id: int = reply_markup_message.message_id
 
@@ -402,7 +381,7 @@ async def create_help_request(
                 *video_messages_idx,
             ],
         )
-        help_request.visible_error(f"Error in updating user's request: {e}")
+        help_request_error.visible_error(f"Error in updating user's request: {e}")
 
     # return RequestForHelpPublic.model_validate(new_request)
     request_public = RequestForHelpPublic.model_validate(

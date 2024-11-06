@@ -26,7 +26,7 @@ class Settings(BaseSettings):
         extra="ignore",
     )
     API_V1_STR: str = "/api/v1"
-    FRONTEND_HOST: str = "http://localhost:3030"
+    FRONTEND_HOST: str = ""
     CLIENT_HOST: str = ""
     ENVIRONMENT: Literal["local", "staging", "production"] = "local"
 
@@ -38,9 +38,10 @@ class Settings(BaseSettings):
     @property
     def all_cors_origins(self) -> list[str]:
         return [str(origin).rstrip("/") for origin in self.BACKEND_CORS_ORIGINS] + [
-            self.FRONTEND_HOST,
-            # self.CLIENT_HOST,
-            "http://localhost",
+            # "http://localhost",
+            # self.FRONTEND_HOST,
+            # "127.0.0.1:3030"
+            self.CLIENT_HOST,
         ]
 
     PROJECT_NAME: str = ""

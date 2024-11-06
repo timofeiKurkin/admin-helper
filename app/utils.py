@@ -11,39 +11,24 @@ from telegram import InputFile, InputMediaPhoto, InputMediaVideo
 def compress_and_save_image(
     *,
     file: BinaryIO,
-    filename: str,
     path: str,
     quality: int = 85,
-) -> InputMediaPhoto:
-    image = Image.open(file)
-    # newImage: Image.Image
+) -> bytes:
+    image: Image.Image = Image.open(file)
 
     if image.mode in ("RGBA", "P"):
-        newImage = image.convert("RGB")
-        buffer = io.BytesIO()
-        newImage.save(buffer, format="JPEG", optimize=True, quality=quality)
-        buffer.seek(0)
+        image = image.convert("RGB")
 
-        pil_image = Image.open(buffer)
-        pil_image.save(path, format="JPEG", optimize=True, quality=100)
+    image.save(path, format="JPEG", optimize=True, quality=quality)
 
-        return InputMediaPhoto(
-            media=InputFile(obj=buffer, filename=filename),
-            filename=filename,
-        )
+    # buffer = io.BytesIO()
+    # image.save(buffer, format="JPEG", optimize=True, quality=quality)
+    # buffer.seek(0)
 
-    else:
-        buffer = io.BytesIO()
-        image.save(buffer, format="JPEG", optimize=True, quality=quality)
-        buffer.seek(0)
+    with open(path, "rb") as f:
+        buffer = f.read()
 
-        pil_image = Image.open(buffer)
-        pil_image.save(path, format="JPEG", optimize=True, quality=100)
-
-        return InputMediaPhoto(
-            media=InputFile(obj=buffer, filename=filename),
-            filename=filename,
-        )
+    return buffer
 
 
 def convert_and_save_voice(*, input_voice: str, output_voice: str) -> bytes:

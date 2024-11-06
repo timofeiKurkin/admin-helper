@@ -95,8 +95,14 @@ def get_user_request_by_accept_url(*, session: Session, accept_url: str):
 
 
 def delete_user_request(*, session: Session, db_request: RequestForHelp):
-    session.delete(db_request)
-    session.commit()
+    deleted_candidate = session.get(RequestForHelp, db_request.id)
+    if deleted_candidate:
+        session.delete(db_request)
+        session.commit()
+    else:
+        print(
+            f"Request for help {db_request.id} not found or have been already deleted"
+        )
 
 
 def delete_user_requests(*, session: Session, phone: str):
