@@ -28,14 +28,15 @@ export type DeviceKeyType = typeof DEVICE_KEY;
 
 export type UserPoliticalType = typeof USER_POLITICAL;
 
-export type SavedInputsKeysType = typeof NAME_KEY | typeof COMPANY_KEY | typeof NUMBER_PC_KEY | typeof PHONE_KEY | typeof MESSAGE_KEY;
+export type MessageKeyType = typeof MESSAGE_KEY
 
-export type TextInputsKeysType = SavedInputsKeysType | DeviceKeyType
+export type SavedInputsKeysType = typeof NAME_KEY | typeof COMPANY_KEY | typeof NUMBER_PC_KEY | typeof PHONE_KEY; // | typeof MESSAGE_KEY;
 
+export type TextInputsKeysType = SavedInputsKeysType | DeviceKeyType | MessageKeyType
 export type AllKeysOfInputsType = PhotoAndVideoKeysType | TextInputsKeysType;
 
 export const savedInputsData: SavedInputsKeysType[] = [
-    MESSAGE_KEY,
+    // MESSAGE_KEY,
     NAME_KEY,
     PHONE_KEY,
     COMPANY_KEY,

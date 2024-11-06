@@ -40,14 +40,14 @@ const CompleteRequest: FC<PropsType> = ({ accept_url }) => {
             }
         }
 
-        if (accept_url && !requestPublic) {
+        if (accept_url) {
             completeRequest(accept_url).then()
         }
 
         return () => {
             active = false
         }
-    }, [])
+    }, [dispatch, accept_url])
 
     if (requestPublic) {
         if (success) {

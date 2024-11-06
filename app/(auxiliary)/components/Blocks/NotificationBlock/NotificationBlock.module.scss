@@ -48,6 +48,7 @@
         border-radius: $border_radius;
         background-color: $white;
         user-select: none;
+        cursor: pointer;
 
         @media screen and ($desktop1920), 
         screen and ($desktop1440_1919), 

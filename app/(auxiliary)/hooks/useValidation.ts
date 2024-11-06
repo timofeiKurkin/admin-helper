@@ -22,12 +22,22 @@ const UseValidation = (
 		for (const validation in validations) {
 			switch (validation) {
 				case 'isEmpty':
-					if (value) {
-						setEmpty(false)
-						setEmptyError('')
+					if (key === "phone") {
+						if (value.length <= 3) {
+							setEmpty(true)
+							setEmptyError('Поле не может быть пустым')
+						} else {
+							setEmpty(false)
+							setEmptyError('')
+						}
 					} else {
-						setEmpty(true)
-						setEmptyError('Поле не может быть пустым')
+						if (value) {
+							setEmpty(false)
+							setEmptyError('')
+						} else {
+							setEmpty(true)
+							setEmptyError('Поле не может быть пустым')
+						}
 					}
 					break
 
@@ -63,7 +73,7 @@ const UseValidation = (
 					break
 			}
 		}
-	}, [value, validations])
+	}, [value, validations, key])
 
 	useEffect(() => {
 		if (isEmpty || minLength || maxLength) { // и сюда

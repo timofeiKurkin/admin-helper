@@ -176,12 +176,14 @@ const VoiceInput: FC<PropsType> = ({
     useEffect(() => {
         if (!isError && rejectionInputs.length) {
             if (rejectionInputs.includes("message")) {
-                console.log("set notification")
-                dispatch(setNewNotification({ message: `${inputsNameError[MESSAGE_KEY]}: Сообщение не может быть пустым`, type: "error" }))
+                dispatch(setNewNotification({
+                    message: `<span style="font-weight: 500">${inputsNameError[MESSAGE_KEY]}</span>: Сообщение не может быть пустым`,
+                    type: "error"
+                }))
                 setErrorHandler(true)
             }
         }
-    }, [rejectionInputs, isError])
+    }, [rejectionInputs, isError, dispatch, setErrorHandler])
 
     useEffect(() => {
         /**

@@ -29,7 +29,7 @@ const GetUserRequests: FC<ChildrenProp> = ({ children }) => {
         return () => {
             active = false
         }
-    }, [])
+    }, [dispatch])
 
     return children
 }

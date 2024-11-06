@@ -1,5 +1,5 @@
 import { ChildrenProp } from '@/app/(auxiliary)/types/AppTypes/AppTypes'
-import React, { FC, useEffect, useState } from 'react'
+import React, { FC, useCallback, useEffect, useState } from 'react'
 import styles from "./MobileHeader.module.scss"
 import { useAppSelector } from '@/app/(auxiliary)/libs/redux-toolkit/store/hooks'
 import { selectUserDevice } from '@/app/(auxiliary)/libs/redux-toolkit/store/slices/AppSlice/AppSlice'
@@ -9,7 +9,7 @@ const MobileHeader: FC<ChildrenProp> = ({ children }) => {
     const [headerVisible, setHeaderVisible] = useState<boolean>(true)
     const [lastScrollY, setLastScrollY] = useState<number>(0)
 
-    const scrollHandler = () => {
+    const scrollHandler = useCallback(() => {
         const currentScroll = window.scrollY
 
         if (currentScroll > lastScrollY && currentScroll > 70) {
@@ -18,7 +18,7 @@ const MobileHeader: FC<ChildrenProp> = ({ children }) => {
             setHeaderVisible(true)
         }
         setLastScrollY(currentScroll)
-    }
+    }, [lastScrollY])
 
     useEffect(() => {
         if (window !== undefined && phoneAdaptive) {
@@ -28,7 +28,7 @@ const MobileHeader: FC<ChildrenProp> = ({ children }) => {
                 window.removeEventListener("scroll", scrollHandler)
             }
         }
-    }, [lastScrollY, phoneAdaptive])
+    }, [lastScrollY, phoneAdaptive, scrollHandler])
 
     return (
         <header className={styles.mobileHeaderWrapper} style={{

@@ -58,8 +58,7 @@ const InputErrorLayout: FC<PropsType> = ({
 
 
                 if (message) {
-                    console.log("set notification")
-                    message = `${inputsNameError[inputType as ValidateKeysType]}: ${message}`
+                    message = `<span style="font-weight: 500">${inputsNameError[inputType as ValidateKeysType]}</span>: ${message}`
                     dispatch(setNewNotification({ message: message, type: "error" }))
                 }
 
@@ -71,6 +70,7 @@ const InputErrorLayout: FC<PropsType> = ({
         rejectionInputs,
         inputType,
         setIsError,
+        isError,
         value.isEmpty,
         value.isEmptyError,
         value.maxLength,

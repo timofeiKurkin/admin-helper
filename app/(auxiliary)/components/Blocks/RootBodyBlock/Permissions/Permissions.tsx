@@ -14,6 +14,7 @@ import {
     setAgreePolitics,
     setUserCanTalk
 } from "@/app/(auxiliary)/libs/redux-toolkit/store/slices/UserFormDataSlice/UserFormDataSlice";
+import { setNewNotification } from '@/app/(auxiliary)/libs/redux-toolkit/store/slices/AppSlice/AppSlice';
 
 
 interface PropsType {
@@ -42,10 +43,14 @@ const Permissions: FC<PropsType> = ({
     }
 
     useEffect(() => {
-        if (rejectionInputs.length && rejectionInputs.includes("user_political")) {
+        if (!isError && rejectionInputs.length && rejectionInputs.includes("user_political")) {
             setIsError(true)
+            dispatch(setNewNotification({
+                message: "Разрешите обработку персональных данных",
+                type: "error"
+            }))
         }
-    }, [rejectionInputs])
+    }, [rejectionInputs, dispatch, isError])
 
     return (
         <div className={styles.permissionsWrapper}>
