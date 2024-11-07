@@ -38,9 +38,8 @@ class Settings(BaseSettings):
     @property
     def all_cors_origins(self) -> list[str]:
         return [str(origin).rstrip("/") for origin in self.BACKEND_CORS_ORIGINS] + [
-            # "http://localhost",
-            # self.FRONTEND_HOST,
-            # "127.0.0.1:3030"
+            "http://localhost",
+            self.FRONTEND_HOST,
             self.CLIENT_HOST,
         ]
 
