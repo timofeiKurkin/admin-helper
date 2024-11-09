@@ -21,13 +21,12 @@ def parse_cors(v: Any) -> list[str] | str:
 
 class Settings(BaseSettings):
     model_config = SettingsConfigDict(
-        env_file=".env",
+        env_file="../.env",
         env_ignore_empty=True,
         extra="ignore",
     )
     API_V1_STR: str = "/api/v1"
-    FRONTEND_HOST: str = ""
-    CLIENT_HOST: str = ""
+    FRONTEND_HOST: str = "http://localhost:3030"
     ENVIRONMENT: Literal["local", "staging", "production"] = "local"
 
     BACKEND_CORS_ORIGINS: Annotated[list[AnyUrl] | str, BeforeValidator(parse_cors)] = (
@@ -40,7 +39,6 @@ class Settings(BaseSettings):
         return [str(origin).rstrip("/") for origin in self.BACKEND_CORS_ORIGINS] + [
             "http://localhost",
             self.FRONTEND_HOST,
-            self.CLIENT_HOST,
         ]
 
     PROJECT_NAME: str = ""
@@ -80,8 +78,8 @@ class Settings(BaseSettings):
     # FIRST_SUPERUSER_PASSWORD: str
 
 
+settings = Settings()
+
 BASE_DIR: Path = Path(__file__).resolve().parent.parent
 TEMPORARY_FOLDER: str = os.path.join(BASE_DIR, "api", "routes", "temporary_files")
-USER_REQUESTS_FOLDER: str = os.path.join(BASE_DIR, "user_requests_for_help")
-
-settings = Settings()
+USER_REQUESTS_FOLDER: str = os.path.join(BASE_DIR, "users_help_requests")

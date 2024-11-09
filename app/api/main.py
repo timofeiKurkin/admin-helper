@@ -1,6 +1,5 @@
+from app.api.routes import help_request, operator, user, utils
 from fastapi import APIRouter
-
-from app.api.routes import help_request, operator, user
 
 api_router = APIRouter()
 api_router.include_router(
@@ -14,3 +13,4 @@ api_router.include_router(
     tags=["user"],
 )
 api_router.include_router(operator.router, prefix="/operator", tags=["operator"])
+api_router.include_router(utils.router, prefix="/utils", tags=["utils"])

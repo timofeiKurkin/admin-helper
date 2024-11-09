@@ -1,20 +1,19 @@
-# Используем базовый образ Python
-FROM python:3.12-slim
+FROM python:3.12
 
 ENV PYTHONUNBUFFERED=1
 
-# Устанавливаем рабочую директорию в контейнере
-WORKDIR /app
+WORKDIR /app/
 
-# Копируем файлы приложения в контейнер
-COPY ./app /app
+ENV PYTHONPATH=/app
+
+COPY ./scripts /app/scripts
+COPY ./alembic.ini /app/
+COPY ./app /app/app
+
 COPY requirements.txt /app
+RUN pip install --no-cache-dir --upgrade -r ./requirements.txt
 
-# Устанавливаем зависимости
-RUN pip install --no-cache-dir -r requirements.txt
-
-# Открываем порт, на котором будет работать FastAPI
 EXPOSE 8000
 
-# Команда для запуска приложения
-CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000", "--reload"]
+# CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000", "--reload"]
+CMD ["fastapi", "run", "--workers", "3", "app/main.py"]

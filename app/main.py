@@ -2,6 +2,10 @@
 from contextlib import asynccontextmanager
 
 import sentry_sdk
+from alembic import command
+from alembic.config import Config
+from app.api.main import api_router
+from app.core.config import settings
 from fastapi import FastAPI, Request
 
 # from starlette.middleware.cors import CORSMiddleware
@@ -9,11 +13,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 from fastapi.routing import APIRoute
 
-from alembic import command
-from alembic.config import Config
-from app.api.main import api_router
-from app.core.config import settings
-from app.core.db import create_db_and_tables
+# from app.core.db import create_db_and_tables
 
 # from app.telegram_bot.bot import main as telegram_main
 
@@ -29,10 +29,10 @@ if settings.SENTRY_DSN and settings.ENVIRONMENT != "local":
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     # await telegram_main()
-    create_db_and_tables()
+    # create_db_and_tables()
     alembic_cfg = Config("alembic.ini")
     command.upgrade(alembic_cfg, "head")
-    yield  # Приложение продолжит работу после миграций
+    yield
 
 
 app = FastAPI(
