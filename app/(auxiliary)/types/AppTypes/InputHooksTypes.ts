@@ -11,6 +11,8 @@ export const COMPANY_KEY = "company"
 export const NUMBER_PC_KEY = "number_pc"
 export const USER_POLITICAL = "user_political"
 
+export type MessageInputDataType = "text" | "file"
+export type CompanyInputDataType = "choose" | "write"
 
 export interface ValidationsType {
     isEmpty: boolean;
@@ -36,7 +38,6 @@ export type TextInputsKeysType = SavedInputsKeysType | DeviceKeyType | MessageKe
 export type AllKeysOfInputsType = PhotoAndVideoKeysType | TextInputsKeysType;
 
 export const savedInputsData: SavedInputsKeysType[] = [
-    // MESSAGE_KEY,
     NAME_KEY,
     PHONE_KEY,
     COMPANY_KEY,

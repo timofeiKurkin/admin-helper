@@ -97,7 +97,8 @@
 
 .companyInputWrapper {
 	@media screen and ($desktop1920) {
-		width: 16.875rem;
+		// width: 19.88rem;
+		width: 100%;
 	}
 
 	@media screen and ($desktop1440_1919) {
@@ -116,11 +117,6 @@
 }
 
 .numberPCInputWrapper {
-
 	width: auto;
 	min-width: 2rem;
-
-	input::placeholder {
-		//letter-spacing: 3.6px;
-	}
 }

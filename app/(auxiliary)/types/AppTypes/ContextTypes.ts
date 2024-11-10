@@ -1,38 +1,24 @@
-import React from "react";
-import { ContentOfUploadBlockType } from "@/app/(auxiliary)/types/Data/Interface/RootPage/RootPageContentType";
 import {
-    COMPANY_KEY,
-    DEVICE_KEY,
     MESSAGE_KEY,
-    NAME_KEY,
-    NUMBER_PC_KEY,
-    PHONE_KEY,
     PHOTO_KEY,
     PhotoAndVideoKeysType,
-    VIDEO_KEY,
+    TextInputsKeysType,
+    VIDEO_KEY
 } from "@/app/(auxiliary)/types/AppTypes/InputHooksTypes";
+import { ContentOfUploadBlockType } from "@/app/(auxiliary)/types/Data/Interface/RootPage/RootPageContentType";
+import React from "react";
+
 
 export interface AppContextType {
     appState: ProviderStateType;
     setAppState: React.Dispatch<React.SetStateAction<ProviderStateType>>;
 }
 
-// export interface CustomFileType {
-//     url: string;
-//     name: string;
-// }
-
-// export interface FilePreviewType {
-//     name: string;
-//     link: string;
-// }
-
 export interface FileListStateType {
     type: PhotoAndVideoKeysType;
     filesNames: string[]; // Список имен файлов, доступных для открытия
     files: File[]; // Список исходных файлов, которые загрузил пользователь
     filesFinally: File[]; // Список файлов, прошедших изменения пользователя в фоторедакторе
-    // filesOrientation: FileOrientationType;
 }
 
 export interface VoiceMessageFileType {
@@ -47,13 +33,8 @@ export interface FormDataItemType<T> {
 }
 
 
-export interface UserTextDataType {
-    [DEVICE_KEY]: FormDataItemType<string>;
-    [NAME_KEY]: FormDataItemType<string>;
-    [MESSAGE_KEY]: FormDataItemType<string>;
-    [COMPANY_KEY]: FormDataItemType<string>;
-    [NUMBER_PC_KEY]: FormDataItemType<string>;
-    [PHONE_KEY]: FormDataItemType<string>;
+export type UserTextDataType = {
+    [key in TextInputsKeysType]: FormDataItemType<string>;
 }
 
 interface UserFileDataType {

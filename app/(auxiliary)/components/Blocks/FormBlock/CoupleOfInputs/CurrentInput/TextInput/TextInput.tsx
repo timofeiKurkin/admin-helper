@@ -104,7 +104,6 @@ const TextInput: FC<PropsType> = ({
     ]);
 
     const changeValueHandler = (newValue: string) => {
-        console.log("new value outside of the input with data: ", newValue)
         onChangeHandler({ target: { value: newValue } } as InputChangeEventHandler)
     }
 
@@ -112,6 +111,7 @@ const TextInput: FC<PropsType> = ({
         <InputWithDataList value={value.value}
             dataList={currentHelpfulList}
             inputIsDirty={value.isDirty}
+            type={currentInput.type === "company" ? "chooseOrWrite" : "helpful"}
             changeValueHandler={changeValueHandler}>
             <div className={currentInputTypesClassName}>
                 <InputErrorLayout value={value} type={currentInput.type} setIsError={setErrorHandler} isError={isError}>

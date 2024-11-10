@@ -1,6 +1,6 @@
 import { createAppSlice } from "@/app/(auxiliary)/libs/redux-toolkit/store/createAppSlice";
-import { BlocksMovingType, UserDeviceStateType } from "@/app/(auxiliary)/types/AppTypes/Context";
-import { DeleteNotificationType, NotificationListType, SetNotificationType } from "@/app/(auxiliary)/types/AppTypes/Notification";
+import { BlocksMovingType, UserDeviceStateType } from "@/app/(auxiliary)/types/AppTypes/ContextTypes";
+import { DeleteNotificationType, NotificationListType, SetNotificationType } from "@/app/(auxiliary)/types/AppTypes/NotificationTypes";
 import { PayloadAction } from "@reduxjs/toolkit";
 import { v4 as uuidv4 } from "uuid";
 

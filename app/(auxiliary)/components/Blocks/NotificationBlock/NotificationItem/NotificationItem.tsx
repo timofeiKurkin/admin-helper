@@ -1,7 +1,7 @@
 import React, { FC } from 'react'
 import Text from '../../../UI/TextTemplates/Text';
 import styles from "../NotificationBlock.module.scss";
-import { NotificationType } from '@/app/(auxiliary)/types/AppTypes/Notification';
+import { NotificationType } from '@/app/(auxiliary)/types/AppTypes/NotificationTypes';
 import parse from "html-react-parser"
 
 interface PropsType {

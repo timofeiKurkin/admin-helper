@@ -6,7 +6,7 @@ import React, { useEffect } from 'react'
 import Text from '../../UI/TextTemplates/Text'
 import styles from "./NotificationBlock.module.scss";
 import NotificationItem from './NotificationItem/NotificationItem'
-import { NotificationType } from '@/app/(auxiliary)/types/AppTypes/Notification'
+import { NotificationType } from '@/app/(auxiliary)/types/AppTypes/NotificationTypes'
 
 const NotificationBlock = () => {
     const dispatch = useAppDispatch()

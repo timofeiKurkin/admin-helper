@@ -1,14 +1,8 @@
 "use client"
 
-import React, { FC, useCallback, useEffect, useState } from 'react';
+import MessageInput from "@/app/(auxiliary)/components/Blocks/FormBlock/CoupleOfInputs/CurrentInput/Message/MessageInput/MessageInput";
+import VoiceInput from "@/app/(auxiliary)/components/Blocks/FormBlock/CoupleOfInputs/CurrentInput/Message/VoiceInput/VoiceInput";
 import Toggle from "@/app/(auxiliary)/components/Common/Switches/Toggle/Toggle";
-import { MessageInputType } from "@/app/(auxiliary)/types/Data/Interface/RootPage/RootPageContentType";
-import VoiceInput
-    from "@/app/(auxiliary)/components/Blocks/FormBlock/CoupleOfInputs/CurrentInput/Message/VoiceInput/VoiceInput";
-import styles from "./Message.module.scss"
-import MessageInput
-    from "@/app/(auxiliary)/components/Blocks/FormBlock/CoupleOfInputs/CurrentInput/Message/MessageInput/MessageInput";
-import { MESSAGE_KEY, TextInputsKeysType } from "@/app/(auxiliary)/types/AppTypes/InputHooksTypes";
 import { useAppDispatch, useAppSelector } from "@/app/(auxiliary)/libs/redux-toolkit/store/hooks";
 import {
     selectUserDevice,
@@ -17,13 +11,16 @@ import {
 } from "@/app/(auxiliary)/libs/redux-toolkit/store/slices/AppSlice/AppSlice";
 import {
     addMessageData,
+    changeMessageInputDataType,
     deleteMessageRecorder,
     deleteRejectionInput,
-    selectRejectionInputs,
-    selectUserMessageStatus,
-    switchUserMessageStatus
+    selectMessageInputDataType,
+    selectRejectionInputs
 } from "@/app/(auxiliary)/libs/redux-toolkit/store/slices/UserFormDataSlice/UserFormDataSlice";
-import InputErrorLayout from '@/app/(auxiliary)/components/UI/Inputs/InputErrorLayout/InputErrorLayout';
+import { MessageInputDataType, TextInputsKeysType } from "@/app/(auxiliary)/types/AppTypes/InputHooksTypes";
+import { MessageInputType } from "@/app/(auxiliary)/types/Data/Interface/RootPage/RootPageContentType";
+import { FC, useCallback, useEffect, useState } from 'react';
+import styles from "./Message.module.scss";
 
 interface PropsType {
     currentInput: MessageInputType;
@@ -31,15 +28,19 @@ interface PropsType {
 
 const Message: FC<PropsType> = ({ currentInput }) => {
     const dispatch = useAppDispatch()
-    const userCannotTalk = useAppSelector(selectUserMessageStatus)
+    // const userCannotTalk = useAppSelector(selectUserMessageStatus)
+    const dataOfMessageType = useAppSelector(selectMessageInputDataType)
     const rejectionInputs = useAppSelector(selectRejectionInputs)
     const userDevice = useAppSelector(selectUserDevice)
 
+
+    /**
+     * false - "file" data type of the message
+     * true - "text" data type of message
+    */
+    const [userCannotTalk, setUserCannotTalk] = useState(false)
     const [isError, setIsError] = useState<boolean>(false)
     const setErrorHandler = (status: boolean) => setIsError(status)
-
-    // console.log("rejectionInputs: ", rejectionInputs)
-    // console.log("isError: ", isError)
 
     const setNewMessageHandler = useCallback((
         newMessage: File | string,
@@ -61,8 +62,9 @@ const Message: FC<PropsType> = ({ currentInput }) => {
     }
 
 
-    const switchTypeMessageHandler = () => {
-        dispatch(switchUserMessageStatus())
+    const changeMessageTypeHandler = (newType: MessageInputDataType) => {
+        setUserCannotTalk((prevState) => !prevState)
+        dispatch(changeMessageInputDataType(newType))
     }
 
     useEffect(() => {
@@ -90,7 +92,7 @@ const Message: FC<PropsType> = ({ currentInput }) => {
             }
 
             <Toggle toggleStatus={userCannotTalk}
-                onClick={switchTypeMessageHandler}>
+                onClick={() => changeMessageTypeHandler(dataOfMessageType === "file" ? "text" : "file")}>
                 {currentInput.toggleText}
             </Toggle>
 

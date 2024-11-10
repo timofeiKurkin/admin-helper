@@ -8,6 +8,7 @@ import { selectRejectionInputs } from '@/app/(auxiliary)/libs/redux-toolkit/stor
 import { useAppDispatch, useAppSelector } from '@/app/(auxiliary)/libs/redux-toolkit/store/hooks'
 import { setNewNotification } from '@/app/(auxiliary)/libs/redux-toolkit/store/slices/AppSlice/AppSlice'
 import { inputsNameError } from '../../../Blocks/FormBlock/CoupleOfInputs/CurrentInput/inputsNameError'
+import { boldSpanTag } from '@/app/(auxiliary)/func/tags/boldSpanTag'
 
 const LazyInput = dynamic(
     () => import("@/app/(auxiliary)/components/UI/Inputs/Input/Input"),
@@ -58,7 +59,7 @@ const InputErrorLayout: FC<PropsType> = ({
 
 
                 if (message) {
-                    message = `<span style="font-weight: 500">${inputsNameError[inputType as ValidateKeysType]}</span>: ${message}`
+                    message = `${boldSpanTag(inputsNameError[inputType as ValidateKeysType])}: ${message}`
                     dispatch(setNewNotification({ message: message, type: "error" }))
                 }
 

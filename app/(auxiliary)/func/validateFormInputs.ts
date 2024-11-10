@@ -1,5 +1,7 @@
-import { PermissionsOfFormType, UserTextDataType } from "../types/AppTypes/Context";
-import { requiredFields, ValidateKeysType } from "../types/AppTypes/InputHooksTypes";
+import { PermissionsOfFormType, UserTextDataType } from "../types/AppTypes/ContextTypes";
+import { CompanyInputDataType, requiredFields, ValidateKeysType } from "../types/AppTypes/InputHooksTypes";
+import { CompanyInputType, InputHelpfulItemType } from "../types/Data/Interface/RootPage/RootPageContentType";
+import rootData from "@/data/interface/root-page/companies.json"
 
 interface ValidateFormInputsResponse {
     keys: ValidateKeysType[];
@@ -35,4 +37,14 @@ export const validateFormInputs = (
 
     // check all required inputs
     // get notification to the user, if some inputs invalid
+}
+
+
+export const validateCompanyData = (company: string, type: CompanyInputDataType): boolean => {
+    const companies = rootData as InputHelpfulItemType[]
+    if (type === "choose") {
+        return !!companies.find((comp) => comp.title === company)
+    }
+
+    return true
 }

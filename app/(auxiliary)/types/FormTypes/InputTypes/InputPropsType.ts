@@ -1,11 +1,8 @@
-import React, { HTMLInputTypeAttribute } from "react";
 import {
-    InputChangeEventHandler,
-    KeyBoardEventHandler,
-    TextareaChangeEventHandler
+    KeyBoardEventHandler
 } from "@/app/(auxiliary)/types/AppTypes/AppTypes";
 import { InputHelpfulItemType } from "@/app/(auxiliary)/types/Data/Interface/RootPage/RootPageContentType";
-import { TextInputsKeysType } from "../../AppTypes/InputHooksTypes";
+import React, { HTMLInputTypeAttribute } from "react";
 
 export interface InputPropsType<OnChangeType> {
     value: string;
