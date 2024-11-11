@@ -14,6 +14,11 @@ export const USER_POLITICAL = "user_political"
 export type MessageInputDataType = "text" | "file"
 export type CompanyInputDataType = "choose" | "write"
 
+export const companyLocalData: { [key: string]: CompanyInputDataType } = {
+    "0": "write",
+    "1": "choose"
+}
+
 export interface ValidationsType {
     isEmpty: boolean;
     minLength: number;

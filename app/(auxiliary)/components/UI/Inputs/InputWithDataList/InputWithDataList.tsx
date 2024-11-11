@@ -9,7 +9,7 @@ import { useAppDispatch, useAppSelector } from '@/app/(auxiliary)/libs/redux-too
 import { changeCompanyInputDataType, selectCompanyInputDataType } from '@/app/(auxiliary)/libs/redux-toolkit/store/slices/UserFormDataSlice/UserFormDataSlice';
 import ArrowForList from '../../SVG/ArrowForList/ArrowForList';
 import Arrow from '../../SVG/Arrow/Arrow';
-import { CompanyInputDataType } from '@/app/(auxiliary)/types/AppTypes/InputHooksTypes';
+import { CompanyInputDataType, companyLocalData } from '@/app/(auxiliary)/types/AppTypes/InputHooksTypes';
 
 
 const searchHandler = (
@@ -51,9 +51,13 @@ const InputWithDataList: FC<PropsType> = ({
 }) => {
     const dispatch = useAppDispatch()
     const companyInputDataType = useAppSelector(selectCompanyInputDataType)
+    // const [] = useState()
 
     const [currentHelpfulList, setCurrentHelpfulList] = useState<string[]>([])
     const [listVisibility, setListVisibility] = useState<boolean>(inputIsDirty)
+    const listVisibilityHandler = (noUpdate?: boolean) => {
+        setListVisibility((prevState) => !prevState)
+    }
     const [isChosen, setIsChosen] = useState<boolean>(false)
 
     // The effect which works when the user changes the input
@@ -82,25 +86,11 @@ const InputWithDataList: FC<PropsType> = ({
         changeValueHandler(item)
     }
 
-    useEffect(() => {
-        const timer = setTimeout(() => {
-            setListVisibility(inputIsDirty)
-        }, 75)
-
-        return () => {
-            clearTimeout(timer)
-        }
-    }, [inputIsDirty])
-
 
     useEffect(() => {
         if (type === "chooseOrWrite") {
             const candidate = dataList.find((item) => item.title === value)
-            if (candidate) {
-                setIsChosen(true)
-            } else {
-                setIsChosen(false)
-            }
+            setIsChosen(!!candidate)
         }
     }, [dataList, value])
 
@@ -109,21 +99,31 @@ const InputWithDataList: FC<PropsType> = ({
         changeValueHandler("")
     }
 
-    const changeInputTypeHandler = (prevType: CompanyInputDataType) => {
-        dispatch(changeCompanyInputDataType(prevType === "choose" ? "write" : "choose"))
-        setListVisibility(true)
+    const changeInputTypeHandler = (newType: CompanyInputDataType) => {
+        let localStorageKey = "0"
+        for (const key in companyLocalData) {
+            if (companyLocalData[key] === newType) {
+                localStorageKey = key
+            }
+        }
+
+        localStorage.setItem("cidt", localStorageKey)
+        dispatch(changeCompanyInputDataType(newType))
         setIsChosen(false)
     }
 
     if (type === "helpful") {
         return (
-            <div className={styles.inputWrapper}>
+            <div className={styles.inputWrapper}
+                tabIndex={-1}
+                onFocus={() => listVisibilityHandler()}
+                onBlur={() => listVisibilityHandler()}>
                 {children}
 
                 {
                     (currentHelpfulList.length) ? (
                         <ul className={styles.helpfulList}
-                            style={{ display: listVisibility ? "flex" : "flex" }}>
+                            style={{ display: listVisibility ? "flex" : "none" }}>
                             {currentHelpfulList.map((item, index) => (
                                 <li key={`key=${index}`} className={styles.helpfulItem} onClick={() => chooseHelpfulItem(item)}>
                                     <Text>
@@ -138,7 +138,11 @@ const InputWithDataList: FC<PropsType> = ({
         );
     } else {
         return (
-            <div className={styles.inputWrapper}>
+            <div className={styles.inputWrapper}
+                tabIndex={-1}
+                onFocus={() => listVisibilityHandler()}
+                onBlur={() => listVisibilityHandler()}
+            >
                 {(isChosen) ? (
                     <div className={styles.removeSelected} onClick={clearValue}>
                         <Close className={styles.removeButton} />
@@ -161,7 +165,7 @@ const InputWithDataList: FC<PropsType> = ({
                                 )) : null}
 
                                 <li key={`key=${currentHelpfulList.length}`}
-                                    onClick={() => changeInputTypeHandler(companyInputDataType)}
+                                    onClick={() => changeInputTypeHandler("write")}
                                     className={`${styles.helpfulItem} ${styles.differentOrganization}`}>
                                     <Text>Другая организация</Text> <Arrow />
                                 </li>
@@ -172,7 +176,7 @@ const InputWithDataList: FC<PropsType> = ({
                     <ul className={styles.helpfulList}
                         style={{ display: (listVisibility && value.length >= 3) ? "flex" : "none" }}>
                         <li key={`key=${currentHelpfulList.length}`}
-                            onClick={() => changeInputTypeHandler(companyInputDataType)}
+                            onClick={() => changeInputTypeHandler("choose")}
                             className={`${styles.helpfulItem} ${styles.differentOrganization}`}>
                             <Text>Найти в списке</Text> <Arrow />
                         </li>
@@ -181,8 +185,6 @@ const InputWithDataList: FC<PropsType> = ({
             </div>
         )
     }
-
-
 };
 
 export default InputWithDataList;
