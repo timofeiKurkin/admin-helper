@@ -1,15 +1,14 @@
-import { ChildrenProp } from '@/app/(auxiliary)/types/AppTypes/AppTypes';
-import { InputHelpfulItemType } from "@/app/(auxiliary)/types/Data/Interface/RootPage/RootPageContentType";
-import Fuse from "fuse.js";
-import { FC, useEffect, useState } from 'react';
-import Text from '../../TextTemplates/Text';
-import styles from "./InputWithDataList.module.scss";
-import Close from '../../SVG/Close/Close';
 import { useAppDispatch, useAppSelector } from '@/app/(auxiliary)/libs/redux-toolkit/store/hooks';
 import { changeCompanyInputDataType, selectCompanyInputDataType } from '@/app/(auxiliary)/libs/redux-toolkit/store/slices/UserFormDataSlice/UserFormDataSlice';
-import ArrowForList from '../../SVG/ArrowForList/ArrowForList';
+import { ChildrenProp } from '@/app/(auxiliary)/types/AppTypes/AppTypes';
+import { CompanyInputDataType, companyLocalData, companyLocalDataVariable } from '@/app/(auxiliary)/types/AppTypes/InputHooksTypes';
+import { InputHelpfulItemType } from "@/app/(auxiliary)/types/Data/Interface/RootPage/RootPageContentType";
+import Fuse from "fuse.js";
+import { FC, useEffect, useRef, useState } from 'react';
 import Arrow from '../../SVG/Arrow/Arrow';
-import { CompanyInputDataType, companyLocalData } from '@/app/(auxiliary)/types/AppTypes/InputHooksTypes';
+import Close from '../../SVG/Close/Close';
+import Text from '../../TextTemplates/Text';
+import styles from "./InputWithDataList.module.scss";
 
 
 const searchHandler = (
@@ -51,6 +50,7 @@ const InputWithDataList: FC<PropsType> = ({
 }) => {
     const dispatch = useAppDispatch()
     const companyInputDataType = useAppSelector(selectCompanyInputDataType)
+    const rootRef = useRef<HTMLDivElement>(null)
     // const [] = useState()
 
     const [currentHelpfulList, setCurrentHelpfulList] = useState<string[]>([])
@@ -92,7 +92,7 @@ const InputWithDataList: FC<PropsType> = ({
             const candidate = dataList.find((item) => item.title === value)
             setIsChosen(!!candidate)
         }
-    }, [dataList, value])
+    }, [dataList, value, type])
 
     const clearValue = () => {
         setIsChosen(false)
@@ -107,84 +107,87 @@ const InputWithDataList: FC<PropsType> = ({
             }
         }
 
-        localStorage.setItem("cidt", localStorageKey)
+        localStorage.setItem(companyLocalDataVariable, localStorageKey)
         dispatch(changeCompanyInputDataType(newType))
         setIsChosen(false)
+
+        if (newType === "write" && rootRef.current) {
+            rootRef.current.blur()
+        }
     }
 
-    if (type === "helpful") {
-        return (
-            <div className={styles.inputWrapper}
-                tabIndex={-1}
-                onFocus={() => listVisibilityHandler()}
-                onBlur={() => listVisibilityHandler()}>
-                {children}
+    return (
+        <div className={styles.inputWrapper}
+            tabIndex={-1}
+            onFocus={() => listVisibilityHandler()}
+            onBlur={() => listVisibilityHandler()}
+            ref={rootRef}
+        >
+            {type === "helpful" ? (
+                <>
+                    {children}
 
-                {
-                    (currentHelpfulList.length) ? (
-                        <ul className={styles.helpfulList}
-                            style={{ display: listVisibility ? "flex" : "none" }}>
-                            {currentHelpfulList.map((item, index) => (
-                                <li key={`key=${index}`} className={styles.helpfulItem} onClick={() => chooseHelpfulItem(item)}>
-                                    <Text>
-                                        {item}
-                                    </Text>
-                                </li>
-                            ))}
-                        </ul>
-                    ) : null
-                }
-            </div>
-        );
-    } else {
-        return (
-            <div className={styles.inputWrapper}
-                tabIndex={-1}
-                onFocus={() => listVisibilityHandler()}
-                onBlur={() => listVisibilityHandler()}
-            >
-                {(isChosen) ? (
-                    <div className={styles.removeSelected} onClick={clearValue}>
-                        <Close className={styles.removeButton} />
-                    </div>
-                ) : null}
-
-                {children}
-
-                {companyInputDataType === "choose" ? (
-                    <>
-                        {!isChosen ? (
+                    {
+                        (currentHelpfulList.length) ? (
                             <ul className={styles.helpfulList}
-                                style={{ display: (listVisibility && value.length >= 3) ? "flex" : "none" }}>
-                                {companyInputDataType === "choose" && currentHelpfulList.length ? currentHelpfulList.map((item, index) => (
+                                style={{ display: listVisibility ? "flex" : "none" }}>
+                                {currentHelpfulList.map((item, index) => (
                                     <li key={`key=${index}`} className={styles.helpfulItem} onClick={() => chooseHelpfulItem(item)}>
                                         <Text>
                                             {item}
                                         </Text>
                                     </li>
-                                )) : null}
-
-                                <li key={`key=${currentHelpfulList.length}`}
-                                    onClick={() => changeInputTypeHandler("write")}
-                                    className={`${styles.helpfulItem} ${styles.differentOrganization}`}>
-                                    <Text>Другая организация</Text> <Arrow />
-                                </li>
+                                ))}
                             </ul>
-                        ) : null}
-                    </>
-                ) : (
-                    <ul className={styles.helpfulList}
-                        style={{ display: (listVisibility && value.length >= 3) ? "flex" : "none" }}>
-                        <li key={`key=${currentHelpfulList.length}`}
-                            onClick={() => changeInputTypeHandler("choose")}
-                            className={`${styles.helpfulItem} ${styles.differentOrganization}`}>
-                            <Text>Найти в списке</Text> <Arrow />
-                        </li>
-                    </ul>
-                )}
-            </div>
-        )
-    }
+                        ) : null
+                    }
+                </>
+            ) : (
+                <>
+                    {(isChosen) ? (
+                        <div className={styles.removeSelected} onClick={clearValue}>
+                            <Close className={styles.removeButton} />
+                        </div>
+                    ) : null}
+
+                    {children}
+
+                    {companyInputDataType === "choose" ? (
+                        <>
+                            {!isChosen ? (
+                                <ul className={styles.helpfulList}
+                                    style={{ display: (listVisibility && value.length >= 3) ? "flex" : "none" }}>
+                                    {companyInputDataType === "choose" && currentHelpfulList.length ? currentHelpfulList.map((item, index) => (
+                                        <li key={`key=${index}`} className={styles.helpfulItem} onClick={() => chooseHelpfulItem(item)}>
+                                            <Text>
+                                                {item}
+                                            </Text>
+                                        </li>
+                                    )) : null}
+
+                                    <li key={`key=${currentHelpfulList.length}`}
+                                        onClick={() => changeInputTypeHandler("write")}
+                                        className={`${styles.helpfulItem} ${styles.differentOrganization}`}>
+                                        <Text>Другая организация</Text> <Arrow />
+                                    </li>
+                                </ul>
+                            ) : null}
+                        </>
+                    ) : (
+                        <ul className={styles.helpfulList}
+                            style={{ display: (listVisibility && value.length >= 3) ? "flex" : "none" }}>
+                            <li key={`key=${currentHelpfulList.length}`}
+                                onClick={() => changeInputTypeHandler("choose")}
+                                className={`${styles.helpfulItem} ${styles.differentOrganization}`}>
+                                <Text>Найти в списке</Text> <Arrow />
+                            </li>
+                        </ul>
+                    )}
+                </>
+            )}
+
+        </div>
+    )
 };
 
 export default InputWithDataList;

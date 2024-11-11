@@ -18,6 +18,7 @@ export const companyLocalData: { [key: string]: CompanyInputDataType } = {
     "0": "write",
     "1": "choose"
 }
+export const companyLocalDataVariable = "cidt"
 
 export interface ValidationsType {
     isEmpty: boolean;
