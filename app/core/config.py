@@ -27,6 +27,7 @@ class Settings(BaseSettings):
     )
     API_V1_STR: str = "/api/v1"
     FRONTEND_HOST: str = "http://localhost:3030"
+    CLIENT_HOST: str = ""
     ENVIRONMENT: Literal["local", "staging", "production"] = "local"
 
     BACKEND_CORS_ORIGINS: Annotated[list[AnyUrl] | str, BeforeValidator(parse_cors)] = (
@@ -82,4 +83,4 @@ settings = Settings()
 
 BASE_DIR: Path = Path(__file__).resolve().parent.parent
 TEMPORARY_FOLDER: str = os.path.join(BASE_DIR, "api", "routes", "temporary_files")
-USER_REQUESTS_FOLDER: str = os.path.join(BASE_DIR, "users_help_requests")
+# USER_REQUESTS_FOLDER: str = os.path.join(BASE_DIR, "users_help_requests")

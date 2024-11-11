@@ -8,7 +8,7 @@ from PIL import Image, ImageFile
 from telegram import InputFile, InputMediaPhoto, InputMediaVideo
 
 
-def compress_and_save_image(
+def compress_image(
     *,
     file: BinaryIO,
     path: str,
@@ -31,7 +31,7 @@ def compress_and_save_image(
     return buffer
 
 
-def convert_and_save_voice(*, input_voice: str, output_voice: str) -> bytes:
+def convert_voice(*, input_voice: str, output_voice: str) -> bytes:
     # Read audio that was uploaded and save .mp3 file to .ogg file with current codec for telegram
     try:
         ffmpeg.input(input_voice).output(
@@ -52,7 +52,7 @@ def convert_and_save_voice(*, input_voice: str, output_voice: str) -> bytes:
     return audio
 
 
-def compress_and_save_video(*, input_file: str, output_file: str) -> bytes:
+def compress_video(*, input_file: str, output_file: str) -> bytes:
     try:
         ffmpeg.input(input_file).output(
             output_file, vcodec="libx264", crf=28, loglevel="quiet"
@@ -69,37 +69,47 @@ def compress_and_save_video(*, input_file: str, output_file: str) -> bytes:
     # buffer = io.BytesIO()
 
 
-def save_image(*, image: InputFile, path: str):
-    try:
-        file_content = image.input_file_content
-        if isinstance(file_content, bytes):
-            image_stream = io.BytesIO(file_content)
-            pil_image = Image.open(image_stream)
-            pil_image.save(path, format="JPEG", optimize=True, quality=100)
-        else:
-            pil_image = Image.open(file_content)
-            pil_image.save(path, format="JPEG", optimize=True, quality=100)
+# def save_image(*, image: InputFile, path: str):
+#     try:
+#         file_content = image.input_file_content
+#         if isinstance(file_content, bytes):
+#             image_stream = io.BytesIO(file_content)
+#             pil_image = Image.open(image_stream)
+#             pil_image.save(path, format="JPEG", optimize=True, quality=100)
+#         else:
+#             pil_image = Image.open(file_content)
+#             pil_image.save(path, format="JPEG", optimize=True, quality=100)
 
-        print("image successfully was written")
-        # if isinstance(image.input_file_content, bytes):
-        #     image_content: bytes = image.input_file_content
+#         print("image successfully was written")
+#         # if isinstance(image.input_file_content, bytes):
+#         #     image_content: bytes = image.input_file_content
 
-        #     with io.BytesIO(image_content) as image_stream:
-        #         pil_image = Image.open(image_stream)
-        #         pil_image.save(path, format="JPEG", optimize=True, quality=100)
-        #         print("image successfully was written")
-    except Exception as e:
-        raise HTTPException(status_code=501, detail=f"Error saving image: {e}")
+#         #     with io.BytesIO(image_content) as image_stream:
+#         #         pil_image = Image.open(image_stream)
+#         #         pil_image.save(path, format="JPEG", optimize=True, quality=100)
+#         #         print("image successfully was written")
+#     except Exception as e:
+#         raise HTTPException(status_code=501, detail=f"Error saving image: {e}")
 
 
-def create_request_folder(*, user_folder: str, last_index: int) -> str:
+# def create_request_folder(*, user_folder: str, last_index: int) -> str:
+#     # Folder for current request where are saving requests files
+#     request_folder = os.path.join(user_folder, f"request_{last_index}")
+#     # Create if doesn't exist
+#     if not os.path.exists(request_folder):
+#         os.makedirs(request_folder)
+
+#     return request_folder
+
+
+def create_request_folder(*, user_folder: str) -> str:
     # Folder for current request where are saving requests files
-    request_folder = os.path.join(user_folder, f"request_{last_index}")
-    # Create if doesn't exist
-    if not os.path.exists(request_folder):
-        os.makedirs(request_folder)
 
-    return request_folder
+    # Create if doesn't exist
+    if not os.path.exists(user_folder):
+        os.makedirs(user_folder)
+
+    return user_folder
 
 
 def to_camel(field: str) -> str:

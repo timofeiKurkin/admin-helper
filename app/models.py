@@ -3,23 +3,22 @@ import uuid
 from datetime import datetime
 from typing import List, Optional
 
+from app import utils
+from app.core.config import settings
 from pydantic import BaseModel
 from sqlalchemy.types import JSON
 from sqlmodel import Column, Field, Relationship, SQLModel
 
-from app import utils
-from app.core.config import settings
-
 
 class MediaFile(SQLModel):
     id: int
-    file_path: str
+    # file_path: str
     file_id: str
 
     def to_dict(self) -> dict:
         return {
             "id": self.id,
-            "file_path": self.file_path,
+            # "file_path": self.file_path,
             "file_id": self.file_id,  # Change on photo_size
         }
 
@@ -79,7 +78,7 @@ class RequestForHelpBase(SQLModel):
     device: str = Field(default="", max_length=18)
     message_text: str = Field(default="", max_length=100)
     message_file: MediaFile = Field(
-        default_factory=lambda: MediaFile(id=0, file_path="", file_id=""),
+        default_factory=lambda: MediaFile(id=0, file_id=""),
         sa_column=Column(JSON),
     )
     photos: List[MediaFile] = Field(default_factory=list, sa_column=Column(JSON))
