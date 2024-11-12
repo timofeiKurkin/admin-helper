@@ -1,12 +1,10 @@
 "use client"
 
-import React, { FC, useEffect, useState } from 'react';
-import SmallText from "@/app/(auxiliary)/components/UI/TextTemplates/SmallText";
-import { PermissionsContentType } from "@/app/(auxiliary)/types/Data/Interface/RootPage/RootPageContentType";
 import Checkbox from "@/app/(auxiliary)/components/UI/SVG/Checkbox/Checkbox";
 import TextHighlighting from "@/app/(auxiliary)/components/UI/TextHighlighting/TextHighlighting";
-import styles from "./Permissions.module.scss"
+import SmallText from "@/app/(auxiliary)/components/UI/TextTemplates/SmallText";
 import { useAppDispatch, useAppSelector } from "@/app/(auxiliary)/libs/redux-toolkit/store/hooks";
+import { setNewNotification } from '@/app/(auxiliary)/libs/redux-toolkit/store/slices/AppSlice/AppSlice';
 import {
     deleteRejectionInput,
     selectPermissionsOfForm,
@@ -14,7 +12,9 @@ import {
     setAgreePolitics,
     setUserCanTalk
 } from "@/app/(auxiliary)/libs/redux-toolkit/store/slices/UserFormDataSlice/UserFormDataSlice";
-import { setNewNotification } from '@/app/(auxiliary)/libs/redux-toolkit/store/slices/AppSlice/AppSlice';
+import { PermissionsContentType } from "@/app/(auxiliary)/types/Data/Interface/RootPage/RootPageContentType";
+import { FC, useEffect, useState } from 'react';
+import styles from "./Permissions.module.scss";
 
 
 interface PropsType {
@@ -56,13 +56,15 @@ const Permissions: FC<PropsType> = ({
         <div className={styles.permissionsWrapper}>
             <div className={styles.permissionBlock}
                 onClick={canTalkHandle}>
-                <Checkbox toggleStatus={permissionsOfForm.userCanTalk} />
+                <Checkbox toggleStatus={permissionsOfForm.userCanTalk} className={styles.permissionCheckbox} />
                 <SmallText>{permissionsContent.ICanAnswer}</SmallText>
             </div>
 
             <div className={styles.permissionBlock}
                 onClick={agreePermissionHandler}>
-                <Checkbox toggleStatus={permissionsOfForm.userAgreedPolitical} isError={isError} />
+                <Checkbox toggleStatus={permissionsOfForm.userAgreedPolitical}
+                    isError={isError}
+                    className={styles.permissionCheckbox} />
                 <TextHighlighting wordIndexes={[3, 6]}
                     link={permissionsContent.preparationLinkToPolicy}
                     style={{ fontWeight: 500 }}>

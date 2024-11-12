@@ -7,6 +7,7 @@ import Button from '../../UI/Button/Button'
 import BulletList from '../../UI/SVG/BulletList/BulletList'
 import RequestsModal from './RequestsModal/RequestsModal'
 import styles from "./UserRequestsBlock.module.scss"
+import { setNewNotification } from '@/app/(auxiliary)/libs/redux-toolkit/store/slices/AppSlice/AppSlice'
 
 const UserRequestsBlock = () => {
     const dispatch = useAppDispatch()
@@ -20,22 +21,30 @@ const UserRequestsBlock = () => {
         children: <BulletList />
     }
 
-    const requestModalVisibilityHandler = () => {
-        dispatch(changeRequestsModalVisibility())
+    const requestModalVisibilityHandler = (authorizationStatus: boolean) => {
+        if (authorizationStatus) {
+            dispatch(changeRequestsModalVisibility())
+        } else {
+            dispatch(setNewNotification({
+                message: "Вам нужно отправить хотя бы одну заявку, чтобы увидеть полный список 😉",
+                type: "warning",
+                timeout: 5000
+            }))
+        }
     }
 
-    if (userIsAuthorized) {
-        return (
-            <div className={styles.userRequestsWrapper}>
-                <Button onClick={requestModalVisibilityHandler} image={imageProps} className={styles.userRequestsButton}>
-                    {userRequestData.button}
-                </Button>
-                {requestsModalIsOpen ? (
-                    <RequestsModal modalData={userRequestData.modalData} />
-                ) : null}
-            </div>
-        )
-    }
+    return (
+        <div className={styles.userRequestsWrapper}>
+            <Button onClick={() => requestModalVisibilityHandler(userIsAuthorized)}
+                image={imageProps}
+                className={styles.userRequestsButton}>
+                {userRequestData.button}
+            </Button>
+            {requestsModalIsOpen ? (
+                <RequestsModal modalData={userRequestData.modalData} />
+            ) : null}
+        </div>
+    )
 }
 
 export default UserRequestsBlock

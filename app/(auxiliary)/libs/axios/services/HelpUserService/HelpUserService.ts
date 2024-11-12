@@ -8,7 +8,12 @@ export default class HelpUserService {
     static rootPage = "help_request/"
 
     static async requestClassification(data: FormData): Promise<AxiosResponse<CreatedHelpRequestType>> {
-        return $api.post<CreatedHelpRequestType>(`${this.rootPage}create_request`, data)
+        return $api.post<CreatedHelpRequestType>(`${this.rootPage}create_request`, data, {
+            maxBodyLength: Infinity,
+            headers: {
+                'Content-Type': 'multipart/form-data',
+            }
+        })
     }
 
     static async getUserRequests(): Promise<AxiosResponse<UserRequestListType>> {

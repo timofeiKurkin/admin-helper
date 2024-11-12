@@ -1,0 +1,7 @@
+@import "@/styles/variables.module.scss";
+
+.rootSectionUserRequest {
+    @media screen and ($phone375_639) {
+        display: none;
+    }
+}

@@ -27,6 +27,10 @@
     @media screen and ($phone375_639) {
         row-gap: 1.87rem;
         grid-template-columns: 1fr;
+
+        // display: flex;
+        // flex-wrap: wrap;
+        // justify-content: space-between;
     }
 }
 

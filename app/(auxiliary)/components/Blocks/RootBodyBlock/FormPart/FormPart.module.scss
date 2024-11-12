@@ -5,11 +5,14 @@
 	flex-direction: column;
 
 	@media screen and ($desktop1920) {
-		//width: 100%;
 		row-gap: 2.19rem;
 	}
 
 	row-gap: 2.5rem;
+
+	@media screen and ($phone375_639) {
+		row-gap: 1.56rem;
+	}
 
 	.permissionsAndSend {
 		display: grid;
@@ -35,7 +38,7 @@
 
 		@media screen and ($phone375_639) {
 			grid-template-columns: 1fr;
-			row-gap: 1.25rem;
+			row-gap: 1.56rem;
 
 			.permissions {
 				padding-left: .62rem;

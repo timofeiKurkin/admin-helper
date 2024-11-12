@@ -5,6 +5,7 @@
     },
     "repairService": {
         "linkToRepairService": "https://it-nk.ru/",
-        "textToRepairService": "Лучший сервис по ремонту электроники в г. Новокузнецке"
+        "textToRepairService": "Лучший сервис по ремонту электроники в г. Новокузнецке",
+        "mobile": "IT-NK - не просто сервис"
     }
 }
