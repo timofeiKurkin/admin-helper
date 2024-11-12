@@ -3,15 +3,16 @@ import os
 from typing import BinaryIO
 
 import ffmpeg  # type: ignore[import-untyped]
+from app.core.config import TEMPORARY_FOLDER
 from fastapi import HTTPException
-from PIL import Image, ImageFile
-from telegram import InputFile, InputMediaPhoto, InputMediaVideo
+from PIL import Image
+from telegram import InputFile
 
 
 def compress_image(
     *,
     file: BinaryIO,
-    path: str,
+    filename: str,
     quality: int = 85,
 ) -> bytes:
     image: Image.Image = Image.open(file)
@@ -19,16 +20,18 @@ def compress_image(
     if image.mode in ("RGBA", "P"):
         image = image.convert("RGB")
 
-    image.save(path, format="JPEG", optimize=True, quality=quality)
+    # image.save(path, format="JPEG", optimize=True, quality=quality)
+    # with open(path, "rb") as f:
+    #     buffer = f.read()
 
-    # buffer = io.BytesIO()
-    # image.save(buffer, format="JPEG", optimize=True, quality=quality)
+    buffer = io.BytesIO()
+    image.save(buffer, format="JPEG", optimize=True, quality=quality)
     # buffer.seek(0)
+    bytes_buff = buffer.getvalue()
 
-    with open(path, "rb") as f:
-        buffer = f.read()
+    input_file = InputFile(bytes_buff, filename=filename)
 
-    return buffer
+    return bytes_buff
 
 
 def convert_voice(*, input_voice: str, output_voice: str) -> bytes:
@@ -66,7 +69,6 @@ def compress_video(*, input_file: str, output_file: str) -> bytes:
         video = f.read()
 
     return video
-    # buffer = io.BytesIO()
 
 
 # def save_image(*, image: InputFile, path: str):
@@ -110,6 +112,11 @@ def create_request_folder(*, user_folder: str) -> str:
         os.makedirs(user_folder)
 
     return user_folder
+
+
+def create_temporary_folder():
+    if not os.path.exists(TEMPORARY_FOLDER):
+        os.makedirs(TEMPORARY_FOLDER)
 
 
 def to_camel(field: str) -> str:

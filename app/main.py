@@ -1,17 +1,19 @@
 # import asyncio
+import os
 from contextlib import asynccontextmanager
 
 import sentry_sdk
 from alembic import command
 from alembic.config import Config
+from app import utils
 from app.api.main import api_router
-from app.core.config import settings
+from app.core.config import TEMPORARY_FOLDER, settings
 from fastapi import FastAPI, Request
 
-# from starlette.middleware.cors import CORSMiddleware
-from fastapi.middleware.cors import CORSMiddleware
+# from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 from fastapi.routing import APIRoute
+from starlette.middleware.cors import CORSMiddleware
 
 # from app.core.db import create_db_and_tables
 
@@ -30,6 +32,9 @@ if settings.SENTRY_DSN and settings.ENVIRONMENT != "local":
 async def lifespan(app: FastAPI):
     # await telegram_main()
     # create_db_and_tables()
+
+    utils.create_temporary_folder()
+
     alembic_cfg = Config("alembic.ini")
     command.upgrade(alembic_cfg, "head")
     yield
@@ -54,9 +59,9 @@ async def global_exception_handler(request: Request, exc: Exception):
 if settings.all_cors_origins:
     app.add_middleware(
         CORSMiddleware,
-        allow_origins=settings.all_cors_origins,  # ['http://localhost:3030']
+        allow_origins=settings.all_cors_origins,
         allow_credentials=True,
-        allow_methods=["POST", "GET", "PATCH"],
+        allow_methods=["*"],
         allow_headers=["*"],
     )
 
