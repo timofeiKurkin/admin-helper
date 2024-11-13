@@ -8,6 +8,7 @@ import BulletList from '../../UI/SVG/BulletList/BulletList'
 import RequestsModal from './RequestsModal/RequestsModal'
 import styles from "./UserRequestsBlock.module.scss"
 import { setNewNotification } from '@/app/(auxiliary)/libs/redux-toolkit/store/slices/AppSlice/AppSlice'
+import { AnimatePresence } from 'framer-motion'
 
 const UserRequestsBlock = () => {
     const dispatch = useAppDispatch()
@@ -40,9 +41,11 @@ const UserRequestsBlock = () => {
                 className={styles.userRequestsButton}>
                 {userRequestData.button}
             </Button>
-            {requestsModalIsOpen ? (
-                <RequestsModal modalData={userRequestData.modalData} />
-            ) : null}
+            <AnimatePresence>
+                {requestsModalIsOpen ? (
+                    <RequestsModal modalData={userRequestData.modalData} />
+                ) : null}
+            </AnimatePresence>
         </div>
     )
 }

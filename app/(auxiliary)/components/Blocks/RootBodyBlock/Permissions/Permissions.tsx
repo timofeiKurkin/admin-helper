@@ -15,6 +15,7 @@ import {
 import { PermissionsContentType } from "@/app/(auxiliary)/types/Data/Interface/RootPage/RootPageContentType";
 import { FC, useEffect, useState } from 'react';
 import styles from "./Permissions.module.scss";
+import { boldSpanTag } from "@/app/(auxiliary)/func/tags/boldSpanTag";
 
 
 interface PropsType {
@@ -46,7 +47,7 @@ const Permissions: FC<PropsType> = ({
         if (!isError && rejectionInputs.length && rejectionInputs.includes("user_political")) {
             setIsError(true)
             dispatch(setNewNotification({
-                message: "Разрешите обработку персональных данных",
+                message: `${boldSpanTag("Разрешите обработку")} персональных данных`,
                 type: "error"
             }))
         }

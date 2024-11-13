@@ -1,0 +1,123 @@
+import { useAppDispatch, useAppSelector } from '@/app/(auxiliary)/libs/redux-toolkit/store/hooks'
+import { ChildrenProp } from '@/app/(auxiliary)/types/AppTypes/AppTypes'
+import React, { FC, RefObject, useEffect, useRef, useState } from 'react'
+import styles from "../InputWithDataList.module.scss"
+import Text from '../../../TextTemplates/Text'
+import { changeCompanyInputDataType, selectCompanyInputDataType } from '@/app/(auxiliary)/libs/redux-toolkit/store/slices/UserFormDataSlice/UserFormDataSlice'
+import { CompanyInputDataType, companyLocalData, companyLocalDataVariable } from '@/app/(auxiliary)/types/AppTypes/InputHooksTypes'
+import { InputHelpfulItemType } from '@/app/(auxiliary)/types/Data/Interface/RootPage/RootPageContentType'
+import Arrow from '../../../SVG/Arrow/Arrow'
+import Close from '../../../SVG/Close/Close'
+
+interface PropsType extends ChildrenProp {
+    value: string;
+    currentHelpfulList: string[];
+    dataList: InputHelpfulItemType[];
+    inputIsDirty: boolean;
+    changeValueHandler: (newValue: string) => void;
+    chooseHelpfulItem: (newItem: string) => void;
+}
+
+
+const MultiValuableList: FC<PropsType> = ({
+    value,
+    children,
+    currentHelpfulList,
+    dataList,
+    inputIsDirty,
+    changeValueHandler,
+    chooseHelpfulItem
+}) => {
+    const rootRef = useRef<HTMLDivElement>(null)
+
+    const dispatch = useAppDispatch()
+    const companyInputDataType = useAppSelector(selectCompanyInputDataType)
+
+    const [isChosen, setIsChosen] = useState<boolean>(false)
+    const [listVisibility, setListVisibility] = useState<boolean>(inputIsDirty)
+    const listVisibilityHandler = (noUpdate?: boolean) => {
+        setListVisibility((prevState) => !prevState)
+    }
+
+    const changeInputTypeHandler = (newType: CompanyInputDataType) => {
+        let localStorageKey = "0"
+        for (const key in companyLocalData) {
+            if (companyLocalData[key] === newType) {
+                localStorageKey = key
+            }
+        }
+
+        localStorage.setItem(companyLocalDataVariable, localStorageKey)
+        dispatch(changeCompanyInputDataType(newType))
+        setIsChosen(false)
+
+        if (newType === "write" && rootRef.current) {
+            rootRef.current.blur()
+        }
+    }
+
+    const clearValue = () => {
+        setIsChosen(false)
+        changeValueHandler("")
+    }
+
+    useEffect(() => {
+        const candidate = dataList.find((item) => item.title === value)
+        setIsChosen(!!candidate)
+    }, [dataList, value])
+
+    const chooseHelpfulItemHandler = (newItem: string) => {
+        setIsChosen(true)
+        chooseHelpfulItem(newItem)
+    }
+
+    return (
+        <div className={styles.inputWrapper}
+            tabIndex={-1}
+            onFocus={() => listVisibilityHandler()}
+            onBlur={() => listVisibilityHandler()}
+            ref={rootRef}>
+            {(isChosen) ? (
+                <div className={styles.removeSelected} onClick={clearValue}>
+                    <Close className={styles.removeButton} />
+                </div>
+            ) : null}
+
+            {children}
+
+            {companyInputDataType === "choose" ? (
+                <>
+                    {!isChosen ? (
+                        <ul className={styles.companyList}
+                            style={{ display: (listVisibility && value.length >= 3) ? "flex" : "none" }}>
+                            {companyInputDataType === "choose" && currentHelpfulList.length ? currentHelpfulList.map((item, index) => (
+                                <li key={`key=${index}`} className={styles.helpfulItem} onClick={() => chooseHelpfulItemHandler(item)}>
+                                    <Text>
+                                        {item}
+                                    </Text>
+                                </li>
+                            )) : null}
+
+                            <li key={`key=${currentHelpfulList.length}`}
+                                onClick={() => changeInputTypeHandler("write")}
+                                className={`${styles.helpfulItem} ${styles.differentOrganization}`}>
+                                <Text>Другая организация</Text> <Arrow />
+                            </li>
+                        </ul>
+                    ) : null}
+                </>
+            ) : (
+                <ul className={styles.companyList}
+                    style={{ display: (listVisibility && value.length >= 3) ? "flex" : "none" }}>
+                    <li key={`key=${currentHelpfulList.length}`}
+                        onClick={() => changeInputTypeHandler("choose")}
+                        className={`${styles.helpfulItem} ${styles.differentOrganization}`}>
+                        <Text>Найти в списке</Text> <Arrow />
+                    </li>
+                </ul>
+            )}
+        </div>
+    )
+}
+
+export default MultiValuableList

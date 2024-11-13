@@ -2,17 +2,16 @@
 
 import TextHighlighting from "@/app/(auxiliary)/components/UI/TextHighlighting/TextHighlighting";
 import Text from "@/app/(auxiliary)/components/UI/TextTemplates/Text";
+import { useAppSelector } from "@/app/(auxiliary)/libs/redux-toolkit/store/hooks";
+import { selectUserDevice } from "@/app/(auxiliary)/libs/redux-toolkit/store/slices/AppSlice/AppSlice";
 import { HeaderTypes } from "@/app/(auxiliary)/types/Data/Interface/Header/HeaderTypes";
 import data from "@/data/interface/header/data.json";
 import Image from "next/image";
 import Link from 'next/link';
 import UserRequestsBlock from '../../Blocks/UserRequestsBlock/UserRequestsBlock';
+import TextMedium from "../../UI/TextTemplates/TextMedium";
 import styles from "./Header.module.scss";
 import MobileHeader from './MobileHeader/MobileHeader';
-import { useAppSelector } from "@/app/(auxiliary)/libs/redux-toolkit/store/hooks";
-import { selectUserDevice } from "@/app/(auxiliary)/libs/redux-toolkit/store/slices/AppSlice/AppSlice";
-import { relative } from "path";
-import TextMedium from "../../UI/TextTemplates/TextMedium";
 
 const Header = () => {
     const userDevice = useAppSelector(selectUserDevice)

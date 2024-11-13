@@ -2,11 +2,11 @@
 
 import { useAppDispatch, useAppSelector } from '@/app/(auxiliary)/libs/redux-toolkit/store/hooks'
 import { deleteNotification, selectNotificationList } from '@/app/(auxiliary)/libs/redux-toolkit/store/slices/AppSlice/AppSlice'
-import React, { useEffect } from 'react'
-import Text from '../../UI/TextTemplates/Text'
-import styles from "./NotificationBlock.module.scss";
-import NotificationItem from './NotificationItem/NotificationItem'
 import { NotificationType } from '@/app/(auxiliary)/types/AppTypes/NotificationTypes'
+import { useEffect } from 'react'
+import styles from "./NotificationBlock.module.scss"
+import NotificationItem from './NotificationItem/NotificationItem'
+import { AnimatePresence } from 'framer-motion'
 
 const NotificationBlock = () => {
     const dispatch = useAppDispatch()
@@ -39,11 +39,13 @@ const NotificationBlock = () => {
 
     return (
         <div className={styles.notificationBlock}>
-            {notificationList.map((notice) => (
-                <NotificationItem key={`key=${notice.id}`}
-                    notice={notice}
-                    removeNotificationClick={removeNotificationClick} />
-            ))}
+            <AnimatePresence>
+                {notificationList.map((notice) => (
+                    <NotificationItem key={`key=${notice.id}`}
+                        notice={notice}
+                        removeNotificationClick={removeNotificationClick} />
+                ))}
+            </AnimatePresence>
         </div>
     )
 }

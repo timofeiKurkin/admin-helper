@@ -1,19 +1,17 @@
-import { useAppDispatch, useAppSelector } from '@/app/(auxiliary)/libs/redux-toolkit/store/hooks';
+import { useAppDispatch } from '@/app/(auxiliary)/libs/redux-toolkit/store/hooks';
 import { changeRequestsModalVisibility } from '@/app/(auxiliary)/libs/redux-toolkit/store/slices/UserRequestsSlice/UserRequestsSlice';
 import { ModalDataType } from '@/app/(auxiliary)/types/Data/Interface/RootPage/RootPageContentType';
+import { black } from '@/styles/colors';
 import { FC } from 'react';
 import PopupDisableScroll from '../../../Common/Popups/PopupsWrapper/PopupDisableScroll/PopupDisableScroll';
-import Close from '../../../UI/SVG/Close/Close';
+import Button from '../../../UI/Button/Button';
+import SeparatingLine from '../../../UI/SeparatingLine/SeparatingLine';
+import TextMedium from '../../../UI/TextTemplates/TextMedium';
 import Title from '../../../UI/TextTemplates/Title';
 import Backdrop from '../../../UI/Wrappers/Backdrop/Backdrop';
 import RequestsListBlock from './RequestsListBlock/RequestsListBlock';
-import styles from "./RequestsModal.module.scss"
-import Button from '../../../UI/Button/Button';
-import { selectUserDevice } from '@/app/(auxiliary)/libs/redux-toolkit/store/slices/AppSlice/AppSlice';
-import Text from '../../../UI/TextTemplates/Text';
-import { black } from '@/styles/colors';
-import SeparatingLine from '../../../UI/SeparatingLine/SeparatingLine';
-import TextMedium from '../../../UI/TextTemplates/TextMedium';
+import styles from "./RequestsModal.module.scss";
+import { motion, AnimatePresence, Variants } from "framer-motion"
 
 interface PropsType {
     modalData: ModalDataType;
@@ -29,38 +27,49 @@ const RequestsModal: FC<PropsType> = ({ modalData }) => {
     const getMoreRequests = () => {
 
     }
+    const variants: Variants = {
+        hidden: {
+            opacity: 0, x: "100%", transition: { when: "afterChildren", type: "tween" }
+        },
+        visible: {
+            opacity: 1, x: 0, transition: { when: "beforeChildren", type: "tween" }
+        },
+    }
 
     return (
         <PopupDisableScroll>
             <Backdrop onBackdropClick={requestModalVisibilityHandler}>
-                <div className={styles.requestsModalListWrapper}
-                    onClick={(e) => e.stopPropagation()}>
-                    <div className={styles.requestsModalListBody}>
-                        <div className={styles.requestsModalTitle}>
-                            <Title>{modalData.title}</Title>
-
-                            {/* <div className={styles.requestModalClose} onClick={requestModalVisibilityHandler}>
-                                <Close className={styles.closeButton} />
-                            </div> */}
-                        </div>
-
-                        <RequestsListBlock />
-
-                        <div className={styles.getMoreRequests}>
-                            <div className={styles.getMoreRequestsButton} onClick={getMoreRequests}>
-                                <TextMedium>
-                                    {modalData.getMoreRequests}
-                                </TextMedium>
+                <AnimatePresence>
+                    <motion.div className={styles.requestsModalListWrapper}
+                        transition={{ type: "linear" }}
+                        variants={variants}
+                        initial={"hidden"}
+                        animate={"visible"}
+                        exit={"hidden"}
+                        onClick={(e) => e.stopPropagation()}>
+                        <div className={styles.requestsModalListBody}>
+                            <div className={styles.requestsModalTitle}>
+                                <Title>{modalData.title}</Title>
                             </div>
 
-                            <SeparatingLine style={{ width: "100%", backgroundColor: black }} />
-                        </div>
+                            <RequestsListBlock />
 
-                        <Button onClick={requestModalVisibilityHandler}>
-                            Закрыть
-                        </Button>
-                    </div>
-                </div>
+                            <div className={styles.getMoreRequests}>
+                                <div className={styles.getMoreRequestsButton} onClick={getMoreRequests}>
+                                    <TextMedium>
+                                        {modalData.getMoreRequests}
+                                    </TextMedium>
+                                </div>
+
+                                <SeparatingLine style={{ width: "100%", backgroundColor: black }} />
+                            </div>
+
+                            <Button onClick={requestModalVisibilityHandler}>
+                                Закрыть
+                            </Button>
+                        </div>
+                    </motion.div>
+                </AnimatePresence>
             </Backdrop>
         </PopupDisableScroll>
     )
