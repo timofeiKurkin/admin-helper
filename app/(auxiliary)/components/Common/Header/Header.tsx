@@ -12,6 +12,7 @@ import MobileHeader from './MobileHeader/MobileHeader';
 import { useAppSelector } from "@/app/(auxiliary)/libs/redux-toolkit/store/hooks";
 import { selectUserDevice } from "@/app/(auxiliary)/libs/redux-toolkit/store/slices/AppSlice/AppSlice";
 import { relative } from "path";
+import TextMedium from "../../UI/TextTemplates/TextMedium";
 
 const Header = () => {
     const userDevice = useAppSelector(selectUserDevice)
@@ -31,11 +32,19 @@ const Header = () => {
                         </Link>
                     </div>
 
-                    <div className={styles.logoContainerText}>
-                        <Text style={{ fontWeight: 500, letterSpacing: "0.01875rem", lineHeight: "1.4375rem" }}>
-                            {headerData.logo.title}
-                        </Text>
-                    </div>
+                    {!userDevice.phoneAdaptive ?
+                        (<div className={styles.logoTitleDesktop}>
+                            <TextMedium>
+                                {headerData.logo.logoTitleDesktop}
+                            </TextMedium>
+                        </div>) :
+
+                        (<div className={styles.logoTitleMobile}>
+                            <TextMedium>
+                                {headerData.logo.logoTitleMobile}
+                            </TextMedium>
+                        </div>)
+                    }
                 </div>
 
                 <div className={styles.repairServiceContainer}>

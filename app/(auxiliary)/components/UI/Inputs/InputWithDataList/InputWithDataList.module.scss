@@ -5,7 +5,7 @@
 	overflow: visible;
 }
 
-.helpfulList {
+.helpfulList, .companyList {
 	border: $black_input_border;
 	border-radius: $border_radius;
 	box-sizing: border-box;
@@ -51,6 +51,10 @@
 			background-color: rgba($color: $white_1, $alpha: .5);
 		}
 	}
+
+}
+
+.companyList {
 
 	.differentOrganization {
 		display: flex;

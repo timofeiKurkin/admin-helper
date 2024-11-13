@@ -155,7 +155,7 @@ const InputWithDataList: FC<PropsType> = ({
                     {companyInputDataType === "choose" ? (
                         <>
                             {!isChosen ? (
-                                <ul className={styles.helpfulList}
+                                <ul className={styles.companyList}
                                     style={{ display: (listVisibility && value.length >= 3) ? "flex" : "none" }}>
                                     {companyInputDataType === "choose" && currentHelpfulList.length ? currentHelpfulList.map((item, index) => (
                                         <li key={`key=${index}`} className={styles.helpfulItem} onClick={() => chooseHelpfulItem(item)}>
@@ -174,7 +174,7 @@ const InputWithDataList: FC<PropsType> = ({
                             ) : null}
                         </>
                     ) : (
-                        <ul className={styles.helpfulList}
+                        <ul className={styles.companyList}
                             style={{ display: (listVisibility && value.length >= 3) ? "flex" : "none" }}>
                             <li key={`key=${currentHelpfulList.length}`}
                                 onClick={() => changeInputTypeHandler("choose")}

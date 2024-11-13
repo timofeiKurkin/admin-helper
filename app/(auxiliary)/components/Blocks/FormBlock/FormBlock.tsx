@@ -1,10 +1,10 @@
 "use client"
 
-import React, {FC, useEffect, useState} from 'react';
-import {AllTypesOfInputsArray} from "@/app/(auxiliary)/types/Data/Interface/RootPage/RootPageContentType";
+import React, { FC, useEffect, useState } from 'react';
+import { AllTypesOfInputsArray } from "@/app/(auxiliary)/types/Data/Interface/RootPage/RootPageContentType";
 import PartOfForm from "@/app/(auxiliary)/components/Blocks/FormBlock/PartOfForm/PartOfForm";
-import {useAppSelector} from "@/app/(auxiliary)/libs/redux-toolkit/store/hooks";
-import {selectUserDevice} from "@/app/(auxiliary)/libs/redux-toolkit/store/slices/AppSlice/AppSlice";
+import { useAppSelector } from "@/app/(auxiliary)/libs/redux-toolkit/store/hooks";
+import { selectUserDevice } from "@/app/(auxiliary)/libs/redux-toolkit/store/slices/AppSlice/AppSlice";
 
 
 interface PropsType {
@@ -13,9 +13,9 @@ interface PropsType {
 }
 
 const FormBlock: FC<PropsType> = ({
-                                      inputContent,
-                                      formPartNumber
-                                  }) => {
+    inputContent,
+    formPartNumber
+}) => {
     const userDevice = useAppSelector(selectUserDevice)
     const [inputCouples, setInputCouples] = useState<{
         first: AllTypesOfInputsArray,
@@ -26,35 +26,38 @@ const FormBlock: FC<PropsType> = ({
     })
 
     useEffect(() => {
-
         if (userDevice.desktopAdaptive) {
             setInputCouples({
                 first: inputContent.slice(0, 2),
                 second: inputContent.slice(2, 5)
             })
-        }
-
-        if (!formPartNumber) {
-            if (userDevice.padAdaptive || userDevice.padAdaptive640_992) {
-                setInputCouples({
-                    first: [inputContent[0], inputContent[2]],
-                    second: [inputContent[1], inputContent[3]]
-                })
-            }
         } else {
-            if (userDevice.phoneAdaptive) {
-                setInputCouples({
-                    first: [inputContent[0], inputContent[2]],
-                    second: [inputContent[1], inputContent[3]]
-                })
-            } else if (userDevice.padAdaptive640_992) {
-                setInputCouples({
-                    first: inputContent.slice(0, 2),
-                    second: inputContent.slice(2, 5)
-                })
+            if (!formPartNumber) {
+                if (userDevice.padAdaptive || userDevice.padAdaptive640_992) {
+                    setInputCouples({
+                        first: [inputContent[0], inputContent[2]],
+                        second: [inputContent[1], inputContent[3]]
+                    })
+                } else if (userDevice.phoneAdaptive) {
+                    setInputCouples({
+                        first: inputContent.slice(0, 2),
+                        second: inputContent.slice(2, 5)
+                    })
+                }
+            } else {
+                if (userDevice.phoneAdaptive) {
+                    setInputCouples({
+                        first: [inputContent[0], inputContent[2]],
+                        second: [inputContent[1], inputContent[3]]
+                    })
+                } else if (userDevice.padAdaptive640_992) {
+                    setInputCouples({
+                        first: inputContent.slice(0, 2),
+                        second: inputContent.slice(2, 5)
+                    })
+                }
             }
         }
-
     }, [
         userDevice.padAdaptive640_992,
         userDevice.padAdaptive,
@@ -65,8 +68,8 @@ const FormBlock: FC<PropsType> = ({
     ])
 
     return <PartOfForm formPartNumber={formPartNumber}
-                       partOfInputsOne={inputCouples.first}
-                       partOfInputsTwo={inputCouples.second}/>;
+        partOfInputsOne={inputCouples.first}
+        partOfInputsTwo={inputCouples.second} />;
 };
 
 export default FormBlock;

@@ -13,6 +13,7 @@ import { selectUserDevice } from '@/app/(auxiliary)/libs/redux-toolkit/store/sli
 import Text from '../../../UI/TextTemplates/Text';
 import { black } from '@/styles/colors';
 import SeparatingLine from '../../../UI/SeparatingLine/SeparatingLine';
+import TextMedium from '../../../UI/TextTemplates/TextMedium';
 
 interface PropsType {
     modalData: ModalDataType;
@@ -47,7 +48,9 @@ const RequestsModal: FC<PropsType> = ({ modalData }) => {
 
                         <div className={styles.getMoreRequests}>
                             <div className={styles.getMoreRequestsButton} onClick={getMoreRequests}>
-                                <Text style={{ fontWeight: 500 }}>{modalData.getMoreRequests}</Text>
+                                <TextMedium>
+                                    {modalData.getMoreRequests}
+                                </TextMedium>
                             </div>
 
                             <SeparatingLine style={{ width: "100%", backgroundColor: black }} />

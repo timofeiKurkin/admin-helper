@@ -41,6 +41,10 @@
         display: grid;
         grid-template-rows: 1fr;
         align-items: center;
+
+        .logoTitleMobile {
+            display: none;
+        }
         
         @media screen and ($phone375_639) {
             grid-area: logo-container;
@@ -87,8 +91,12 @@
             grid-template-rows: 4.375rem;
             column-gap: 0.94rem;
 
-            .logoContainerText {
+            .logoTitleDesktop {
                 display: none;
+            }
+
+            .logoTitleMobile {
+                display: block;
             }
         }
 
