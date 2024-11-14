@@ -52,7 +52,12 @@ const UploadForm: FC<PropsType> = ({ buttonText }) => {
         /**
          * Validate all form's inputs
          */
-        const validateData = validateFormInputs(formTextData, permissionsOfForm)
+        const validateData = validateFormInputs(
+            formTextData,
+            formFileData[MESSAGE_KEY],
+            permissionsOfForm,
+            messageInputDataType
+        )
 
         if (validateData.status) {
             const validateCompany = validateCompanyData(userData.text_data[COMPANY_KEY].value, companyInputDataType)

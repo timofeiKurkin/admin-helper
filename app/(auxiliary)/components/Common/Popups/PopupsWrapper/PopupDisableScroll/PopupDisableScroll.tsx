@@ -1,10 +1,10 @@
-import React, {FC, useEffect} from 'react';
+import React, { FC, useEffect } from 'react';
 
 interface PropsType {
     children: React.ReactNode;
 }
 
-const PopupScroll: FC<PropsType> = ({children}) => {
+const PopupDisableScroll: FC<PropsType> = ({ children }) => {
     useEffect(() => {
         document.body.style.overflowY = "hidden"
 
@@ -16,4 +16,4 @@ const PopupScroll: FC<PropsType> = ({children}) => {
     return children
 };
 
-export default PopupScroll;
+export default PopupDisableScroll;

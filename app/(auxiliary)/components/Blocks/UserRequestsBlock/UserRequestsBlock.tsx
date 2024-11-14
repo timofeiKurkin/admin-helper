@@ -8,7 +8,7 @@ import BulletList from '../../UI/SVG/BulletList/BulletList'
 import RequestsModal from './RequestsModal/RequestsModal'
 import styles from "./UserRequestsBlock.module.scss"
 import { setNewNotification } from '@/app/(auxiliary)/libs/redux-toolkit/store/slices/AppSlice/AppSlice'
-import { AnimatePresence } from 'framer-motion'
+import { AnimatePresence, Variants, motion } from 'framer-motion'
 
 const UserRequestsBlock = () => {
     const dispatch = useAppDispatch()
@@ -34,6 +34,15 @@ const UserRequestsBlock = () => {
         }
     }
 
+    const variants: Variants = {
+        hidden: {
+            opacity: 0, transition: { when: "afterChildren", type: "tween" }
+        },
+        visible: {
+            opacity: 1, transition: { when: "beforeChildren", type: "tween" }
+        },
+    }
+
     return (
         <div className={styles.userRequestsWrapper}>
             <Button onClick={() => requestModalVisibilityHandler(userIsAuthorized)}
@@ -41,9 +50,11 @@ const UserRequestsBlock = () => {
                 className={styles.userRequestsButton}>
                 {userRequestData.button}
             </Button>
-            <AnimatePresence>
+            <AnimatePresence mode={"wait"}>
                 {requestsModalIsOpen ? (
-                    <RequestsModal modalData={userRequestData.modalData} />
+                    <motion.div variants={variants} initial={"hidden"} exit={"hidden"} animate={"visible"}>
+                        <RequestsModal modalData={userRequestData.modalData} />
+                    </motion.div>
                 ) : null}
             </AnimatePresence>
         </div>

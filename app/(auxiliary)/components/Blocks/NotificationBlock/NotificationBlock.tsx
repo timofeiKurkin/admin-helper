@@ -30,7 +30,7 @@ const NotificationBlock = () => {
     }
 
     const exampleNotification: NotificationType = {
-        id: "asdsd",
+        id: "hello",
         type: "success",
         timeout: 30000,
         message: "Ваша заявка <b>#123</b> успешно создана и будет рассмотрена в ближайшее время.<br/>Вы можете посмотреть её в <b>ваших заявках</b>."
@@ -40,8 +40,9 @@ const NotificationBlock = () => {
     return (
         <div className={styles.notificationBlock}>
             <AnimatePresence>
-                {notificationList.map((notice) => (
+                {notificationList.map((notice, index) => (
                     <NotificationItem key={`key=${notice.id}`}
+                        index={index}
                         notice={notice}
                         removeNotificationClick={removeNotificationClick} />
                 ))}

@@ -1,6 +1,10 @@
 @import "@/styles/variables.module.scss";
 
 .rootSectionUserRequest {
+    position: relative;
+    width: 100%;
+    height: 100%;
+
     @media screen and ($phone375_639) {
         display: none;
     }

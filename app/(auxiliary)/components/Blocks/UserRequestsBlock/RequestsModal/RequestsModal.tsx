@@ -29,47 +29,47 @@ const RequestsModal: FC<PropsType> = ({ modalData }) => {
     }
     const variants: Variants = {
         hidden: {
-            opacity: 0, x: "100%", transition: { when: "afterChildren", type: "tween" }
+            opacity: 0, x: "100%", transition: { type: "tween" }
         },
         visible: {
-            opacity: 1, x: 0, transition: { when: "beforeChildren", type: "tween" }
+            opacity: 1, x: 0, transition: { type: "tween" }
         },
     }
 
     return (
         <PopupDisableScroll>
             <Backdrop onBackdropClick={requestModalVisibilityHandler}>
-                <AnimatePresence>
-                    <motion.div className={styles.requestsModalListWrapper}
-                        transition={{ type: "linear" }}
-                        variants={variants}
-                        initial={"hidden"}
-                        animate={"visible"}
-                        exit={"hidden"}
-                        onClick={(e) => e.stopPropagation()}>
-                        <div className={styles.requestsModalListBody}>
-                            <div className={styles.requestsModalTitle}>
-                                <Title>{modalData.title}</Title>
-                            </div>
-
-                            <RequestsListBlock />
-
-                            <div className={styles.getMoreRequests}>
-                                <div className={styles.getMoreRequestsButton} onClick={getMoreRequests}>
-                                    <TextMedium>
-                                        {modalData.getMoreRequests}
-                                    </TextMedium>
-                                </div>
-
-                                <SeparatingLine style={{ width: "100%", backgroundColor: black }} />
-                            </div>
-
-                            <Button onClick={requestModalVisibilityHandler}>
-                                Закрыть
-                            </Button>
+                {/* <AnimatePresence> */}
+                <motion.div className={styles.requestsModalListWrapper}
+                    transition={{ type: "linear" }}
+                    variants={variants}
+                    initial={"hidden"}
+                    animate={"visible"}
+                    exit={"hidden"}
+                    onClick={(e) => e.stopPropagation()}>
+                    <div className={styles.requestsModalListBody}>
+                        <div className={styles.requestsModalTitle}>
+                            <Title>{modalData.title}</Title>
                         </div>
-                    </motion.div>
-                </AnimatePresence>
+
+                        <RequestsListBlock />
+
+                        <div className={styles.getMoreRequests}>
+                            <div className={styles.getMoreRequestsButton} onClick={getMoreRequests}>
+                                <TextMedium>
+                                    {modalData.getMoreRequests}
+                                </TextMedium>
+                            </div>
+
+                            <SeparatingLine style={{ width: "100%", backgroundColor: black }} />
+                        </div>
+
+                        <Button onClick={requestModalVisibilityHandler}>
+                            Закрыть
+                        </Button>
+                    </div>
+                </motion.div>
+                {/* </AnimatePresence> */}
             </Backdrop>
         </PopupDisableScroll>
     )

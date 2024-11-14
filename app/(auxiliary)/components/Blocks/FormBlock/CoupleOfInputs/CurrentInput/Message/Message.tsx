@@ -21,6 +21,7 @@ import { MessageInputDataType, TextInputsKeysType } from "@/app/(auxiliary)/type
 import { MessageInputType } from "@/app/(auxiliary)/types/Data/Interface/RootPage/RootPageContentType";
 import { FC, useCallback, useEffect, useState } from 'react';
 import styles from "./Message.module.scss";
+import HideAnimation from "@/app/(auxiliary)/components/UI/Animations/HideAnimation/HideAnimation";
 
 interface PropsType {
     currentInput: MessageInputType;

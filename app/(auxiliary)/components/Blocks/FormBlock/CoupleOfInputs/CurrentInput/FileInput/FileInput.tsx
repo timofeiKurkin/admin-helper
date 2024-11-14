@@ -15,6 +15,7 @@ import HaveMediaFile
 import {
     selectServerResponse
 } from "@/app/(auxiliary)/libs/redux-toolkit/store/slices/UserFormDataSlice/UserFormDataSlice";
+import HideAnimation from '@/app/(auxiliary)/components/UI/Animations/HideAnimation/HideAnimation';
 
 
 interface PropsType {
@@ -58,13 +59,13 @@ const FileInput: FC<PropsType> = ({ input }) => {
                 {input.toggleText}
             </Toggle>
 
-            {haveMediaFile && (
+            <HideAnimation trigger={haveMediaFile}>
                 <HaveMediaFile inputData={{
                     type: input.type as PhotoAndVideoKeysType,
                     button: input.button || "",
                     placeholder: input.inputPlaceholder || ""
                 }} />
-            )}
+            </HideAnimation>
         </div>
     );
 };

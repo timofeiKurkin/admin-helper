@@ -1,5 +1,5 @@
-import { PermissionsOfFormType, UserTextDataType } from "../types/AppTypes/ContextTypes";
-import { CompanyInputDataType, requiredFields, ValidateKeysType } from "../types/AppTypes/InputHooksTypes";
+import { PermissionsOfFormType, UserTextDataType, VoiceMessageFileType } from "../types/AppTypes/ContextTypes";
+import { CompanyInputDataType, MessageInputDataType, requiredFields, ValidateKeysType } from "../types/AppTypes/InputHooksTypes";
 import { CompanyInputType, InputHelpfulItemType } from "../types/Data/Interface/RootPage/RootPageContentType";
 import rootData from "@/data/interface/root-page/companies.json"
 
@@ -10,19 +10,27 @@ interface ValidateFormInputsResponse {
 
 /**
  * Function for checking all inputs for validate status. Return "true" if all of inputs good and "false" otherwise
- * @param data - text data for validation
+ * @param textData - text data for validation
  * @param permissionsOfForm - permissions for processing personal data
  * @returns ValidateFormInputsResponse
  */
 export const validateFormInputs = (
-    data: UserTextDataType,
-    permissionsOfForm: PermissionsOfFormType
+    textData: UserTextDataType,
+    messageFile: VoiceMessageFileType,
+    permissionsOfForm: PermissionsOfFormType,
+    messageType: MessageInputDataType
 ): ValidateFormInputsResponse => {
     const rejectionInputs: ValidateKeysType[] = []
 
     for (const key of requiredFields) {
-        if (!data[key].validationStatus) {
-            rejectionInputs.push(key)
+        if (key === "message" && messageType === "file") {
+            if (!validateFileMessage(messageFile)) {
+                rejectionInputs.push(key)
+            }
+        } else {
+            if (!textData[key].validationStatus) {
+                rejectionInputs.push(key)
+            }
         }
     }
 
@@ -47,4 +55,9 @@ export const validateCompanyData = (company: string, type: CompanyInputDataType)
     }
 
     return true
+}
+
+
+export const validateFileMessage = (messageFile: VoiceMessageFileType): boolean => {
+    return messageFile.validationStatus
 }

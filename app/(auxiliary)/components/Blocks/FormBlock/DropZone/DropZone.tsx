@@ -1,25 +1,28 @@
-import React, { FC, useCallback, useEffect } from "react";
-import { FileListType } from "@/app/(auxiliary)/types/FormTypes/DropZoneTypes/DropZoneTypes";
-import { ErrorCode, FileError, useDropzone } from "react-dropzone";
-import { PHOTO_KEY, PhotoAndVideoKeysType, VIDEO_KEY } from "@/app/(auxiliary)/types/AppTypes/InputHooksTypes";
+import DesktopDropZone from "@/app/(auxiliary)/components/Blocks/FormBlock/DropZone/DesktopDropZone/DesktopDropZone";
+import MobileDropZone from "@/app/(auxiliary)/components/Blocks/FormBlock/DropZone/MobileDropZone/MobileDropZone";
+import { acceptSettings, maxFiles, maxSize } from "@/app/(auxiliary)/components/Blocks/FormBlock/DropZone/possibleFileExtensions";
+import { determineOrientation } from "@/app/(auxiliary)/func/editorHandlers";
 import { useAppDispatch, useAppSelector } from "@/app/(auxiliary)/libs/redux-toolkit/store/hooks";
-import {
-    addFileData,
-    changePreview,
-    selectFormFileData
-} from "@/app/(auxiliary)/libs/redux-toolkit/store/slices/UserFormDataSlice/UserFormDataSlice";
+import { selectUserDevice, setNewNotification } from "@/app/(auxiliary)/libs/redux-toolkit/store/slices/AppSlice/AppSlice";
 import {
     changePhotoSettings,
     changePopupVisibility,
     changeVideoOrientation,
     setCurrentOpenedFileName
 } from "@/app/(auxiliary)/libs/redux-toolkit/store/slices/PopupSlice/PopupSlice";
+import {
+    addFileData,
+    changePreview,
+    selectFormFileData
+} from "@/app/(auxiliary)/libs/redux-toolkit/store/slices/UserFormDataSlice/UserFormDataSlice";
+import { PHOTO_KEY, PhotoAndVideoKeysType, VIDEO_KEY } from "@/app/(auxiliary)/types/AppTypes/InputHooksTypes";
+import { FileListType } from "@/app/(auxiliary)/types/FormTypes/DropZoneTypes/DropZoneTypes";
 import { defaultPhotoSettings } from "@/app/(auxiliary)/types/FormTypes/PopupTypes/PopupTypes";
-import { acceptSettings, maxFiles, maxSize } from "@/app/(auxiliary)/components/Blocks/FormBlock/DropZone/possibleFileExtensions";
-import { determineOrientation } from "@/app/(auxiliary)/func/editorHandlers";
-import { selectUserDevice, setNewNotification } from "@/app/(auxiliary)/libs/redux-toolkit/store/slices/AppSlice/AppSlice";
-import MobileDropZone from "@/app/(auxiliary)/components/Blocks/FormBlock/DropZone/MobileDropZone/MobileDropZone";
-import DesktopDropZone from "@/app/(auxiliary)/components/Blocks/FormBlock/DropZone/DesktopDropZone/DesktopDropZone";
+import { FC, useCallback, useEffect } from "react";
+import { ErrorCode, FileError, useDropzone } from "react-dropzone";
+import PopupDisableScroll from "../../../Common/Popups/PopupsWrapper/PopupDisableScroll/PopupDisableScroll";
+import OpacityAnimation from "../../../UI/Animations/OpacityAnimation/OpacityAnimation";
+import styles from "./DropZone.module.scss";
 
 
 interface PropsType {
@@ -223,15 +226,28 @@ const DropZone: FC<PropsType> = ({
 
 
     if (userDevice.phoneAdaptive) {
-        return <MobileDropZone getInputProps={getInputProps}
-            dragDropZoneIsOpen={dragDropZoneIsOpen}
-            inputRef={inputRef} />
+        return (
+            <OpacityAnimation trigger={userDevice.phoneAdaptive}>
+                <MobileDropZone getInputProps={getInputProps}
+                    dragDropZoneIsOpen={dragDropZoneIsOpen}
+                    inputRef={inputRef} />
+            </OpacityAnimation>
+        )
     } else {
-        return <DesktopDropZone inputProps={{ getInputProps, getRootProps }}
-            type={inputType}
-            isDragActive={isDragActive}
-            openDragDropZone={openDragDropZone}
-            createPhotoPreviews={createPhotoPreviews} />
+        return (
+            <PopupDisableScroll>
+                <div className={styles.dropZoneWrapper}>
+                    <OpacityAnimation trigger={!userDevice.phoneAdaptive}>
+                        <DesktopDropZone inputProps={{ getInputProps, getRootProps }}
+                            type={inputType}
+                            isDragActive={isDragActive}
+                            openDragDropZone={openDragDropZone}
+                            createPhotoPreviews={createPhotoPreviews} />
+                    </OpacityAnimation>
+
+                </div>
+            </PopupDisableScroll>
+        )
     }
 };
 

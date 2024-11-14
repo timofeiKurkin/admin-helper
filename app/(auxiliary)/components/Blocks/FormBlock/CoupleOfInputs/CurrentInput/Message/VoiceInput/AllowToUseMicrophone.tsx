@@ -1,6 +1,6 @@
-import React, {FC, useEffect, useState} from 'react';
+import React, { FC, useEffect, useState } from 'react';
 import styles from "./AllowToUseMicrophone.module.scss"
-import PopupScroll from "@/app/(auxiliary)/components/Common/Popups/PopupsWrapper/PopupDisableScroll/PopupDisableScroll";
+import PopupDisableScroll from "@/app/(auxiliary)/components/Common/Popups/PopupsWrapper/PopupDisableScroll/PopupDisableScroll";
 import Title from "@/app/(auxiliary)/components/UI/TextTemplates/Title";
 
 interface PropsType {
@@ -17,10 +17,10 @@ interface PropsType {
  * @constructor
  */
 const AllowToUseMicrophone: FC<PropsType> = ({
-                                                 isRecording,
-                                                 microphonePermission,
-                                                 stopRecording
-                                             }) => {
+    isRecording,
+    microphonePermission,
+    stopRecording
+}) => {
 
     useEffect(() => {
         // setTimeout(() => {
@@ -29,14 +29,14 @@ const AllowToUseMicrophone: FC<PropsType> = ({
     }, [stopRecording]);
 
     return (
-        <PopupScroll>
+        <PopupDisableScroll>
             <div className={styles.allowWrapper}>
                 <div className={styles.allowBody}>
                     <Title>Сперва нужно разрешить приложению использовать микрофон вашего устройства.
                         Нажмите разрешить в появившемся уведомлении браузера</Title>
                 </div>
             </div>
-        </PopupScroll>
+        </PopupDisableScroll>
     );
 };
 

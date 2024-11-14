@@ -112,13 +112,13 @@
 
     .headerRequestBlock {
         display: none;
-        width: 0;
-        height: 0;
 
         @media screen and ($phone375_639) {
-            display: block;
+            position: relative;
+            display: flex;
+            align-items: center;
             width: 100%;
-            height: auto;
+            height: 52px;
         }
     }
 }
