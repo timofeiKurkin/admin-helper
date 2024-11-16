@@ -1,38 +1,26 @@
-# import asyncio
-import os
 from contextlib import asynccontextmanager
 
-import sentry_sdk
 from alembic import command
 from alembic.config import Config
 from app import utils
 from app.api.main import api_router
-from app.core.config import TEMPORARY_FOLDER, settings
+from app.core.config import settings
 from fastapi import FastAPI, Request
-
-# from fastapi.middleware.cors import CORSMiddleware
+from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 from fastapi.routing import APIRoute
-from starlette.middleware.cors import CORSMiddleware
-
-# from app.core.db import create_db_and_tables
-
-# from app.telegram_bot.bot import main as telegram_main
 
 
 def custom_generate_unique_id(route: APIRoute) -> str:
     return f"{route.tags[0]}-{route.name}"
 
 
-if settings.SENTRY_DSN and settings.ENVIRONMENT != "local":
-    sentry_sdk.init(dsn=str(settings.SENTRY_DSN), enable_tracing=True)
+# if settings.SENTRY_DSN and settings.ENVIRONMENT != "local":
+#     sentry_sdk.init(dsn=str(settings.SENTRY_DSN), enable_tracing=True)
 
 
 @asynccontextmanager
-async def lifespan(app: FastAPI):
-    # await telegram_main()
-    # create_db_and_tables()
-
+async def lifespan(_: FastAPI):
     utils.create_temporary_folder()
 
     alembic_cfg = Config("alembic.ini")
@@ -48,12 +36,18 @@ app = FastAPI(
 )
 
 
-@app.exception_handler(Exception)
-async def global_exception_handler(request: Request, exc: Exception):
-    return JSONResponse(
-        status_code=500,
-        content={"Error: ": str(exc)},
-    )
+# @app.middleware("http")
+# async def add_cors_headers(request, call_next):
+#     response = await call_next(request)
+#     response.headers["Access-Control-Allow-Origin"] = "http://localhost:3030"
+#     response.headers["Access-Control-Allow-Credentials"] = "true"
+#     response.headers["Access-Control-Allow-Methods"] = (
+#         "GET, POST, PATCH, DELETE, OPTIONS"
+#     )
+#     response.headers["Access-Control-Allow-Headers"] = (
+#         "Content-Type, Authorization, X-Requested-With",
+#     )
+#     return response
 
 
 if settings.all_cors_origins:
@@ -65,23 +59,13 @@ if settings.all_cors_origins:
         allow_headers=["*"],
     )
 
+
+@app.exception_handler(Exception)
+async def global_exception_handler(request: Request, exc: Exception):
+    return JSONResponse(
+        status_code=500,
+        content={"Error: ": str(exc)},
+    )
+
+
 app.include_router(api_router, prefix=settings.API_V1_STR)
-
-
-# @app.on_event("startup")
-# async def startup_event():
-#     updater.start_polling()
-
-
-# async def start_fastapi():
-#     config = uvicorn.Config(app, host="localhost", port=8000, log_level="info")
-#     server = uvicorn.Server(config)
-#     await server.serve()
-
-
-# async def main():
-#     await asyncio.gather(start_fastapi(), telegram_main())
-
-
-# if __name__ == "__main__":
-#     asyncio.run(main())

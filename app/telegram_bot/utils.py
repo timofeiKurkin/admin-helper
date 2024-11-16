@@ -7,16 +7,19 @@ def get_finally_message(
     number_pc: int,
     device: str,
     message_text: str,
+    user_can_talk: bool,
 ):
-    user_message = f"\n    Сообщение пользователя: {message_text}" if message_text else ""
-    
+    user_message = (
+        f"\n    Сообщение пользователя: {message_text}" if message_text else ""
+    )
+
     return (
-        f"Новая заявка о технической помощи - <b>#{last_index}</b>\n\n"
+        f"Заявка о технической помощи - <b>#{last_index}</b>\n\n"
         + "Информация о пользователе:\n"
-        + f"    Имя пользователя: {name}\n"
-        + f"    Номер телефона: {phone}\n"
-        + f"    Организация: {company}\n"
-        + f"    Номер компьютера в AnyDesk: {number_pc}\n\n"
+        + f"    <b>Имя пользователя</b>: {name}\n"
+        + f"    <b>Номер телефона</b>: {''.join(phone.split(" "))}{' (+15 мин)' if user_can_talk else ""}\n"
+        + f"    <b>Организация</b>: {company}\n"
+        + f"    <b>Номер компьютера в AnyDesk</b>: <code>{number_pc}</code>\n\n"
         + "Информация о проблеме пользователя:\n"
-        + f"    Проблемное устройство: {device} {user_message}"
+        + f"    <b>Проблемное устройство</b>: {device} {user_message}"
     )

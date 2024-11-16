@@ -142,7 +142,11 @@ class RequestForHelpPublic(SQLModel):
     is_completed: bool = Field(default=False)
 
     def to_dict(self):
-        return {**self.model_dump()}
+        return {
+            "id": self.id,
+            "createdAt": self.created_at,
+            "isCompleted": self.is_completed,
+        }
 
     class Config:
         alias_generator = utils.to_camel

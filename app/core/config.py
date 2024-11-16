@@ -26,7 +26,7 @@ class Settings(BaseSettings):
         extra="ignore",
     )
     API_V1_STR: str = "/api/v1"
-    FRONTEND_HOST: str = "http://localhost:3030/"
+    FRONTEND_HOST: str = "http://localhost:3030"
     CLIENT_HOST: str = ""
     ENVIRONMENT: Literal["local", "staging", "production"] = "local"
 
@@ -37,12 +37,10 @@ class Settings(BaseSettings):
     @computed_field  # type: ignore[prop-decorator]
     @property
     def all_cors_origins(self) -> list[str]:
-        return [str(origin).rstrip("/") for origin in self.BACKEND_CORS_ORIGINS] + [
-            self.FRONTEND_HOST,
-        ]
+        return [str(origin).rstrip("/") for origin in self.BACKEND_CORS_ORIGINS] + []
 
     PROJECT_NAME: str = ""
-    SENTRY_DSN: HttpUrl | None = None
+    # SENTRY_DSN: HttpUrl | None = None
 
     BOT_TOKEN: str = ""
     GROUP_ID: str = ""

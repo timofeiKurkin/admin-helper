@@ -2,7 +2,6 @@ import os
 import secrets
 import shutil
 from typing import Annotated, List, Optional
-from uuid import uuid4
 
 from app import crud, utils
 from app.api.deps import SessionDep
@@ -45,7 +44,7 @@ async def root():
 
 @router.get(
     "/get_user_requests",
-    response_model=List[RequestForHelpPublic],
+    # response_model=List[RequestForHelpPublic],
 )
 async def get_user_requests(
     *, preview: bool = True, request: Request, session: SessionDep
@@ -80,10 +79,26 @@ async def get_user_requests(
         for user_request in user_requests
     ]
 
+    preview_count = 7
+
     if preview:
-        return user_public_requests[:8]
-        # TODO: if count of requests less or equal to 8, add status in response object to show client he can't get more requests
+        response = JSONResponse(
+            content={
+                "requests": [
+                    {**item.to_dict()} for item in user_public_requests[:preview_count]
+                ],
+                "has_more": len(user_public_requests) > preview_count,
+            },
+            status_code=200,
+        )
+        return response
     else:
+        response = JSONResponse(
+            content={
+                "requests": [{**item.to_dict()} for item in user_public_requests],
+                "has_more": len(user_public_requests) > preview_count,
+            }
+        )
         return user_public_requests
 
 
@@ -115,6 +130,8 @@ async def create_help_request(
     message_file: Annotated[Optional[UploadFile], File()] = None,
     photo: Annotated[Optional[List[UploadFile]], File()] = None,
     video: Annotated[Optional[List[UploadFile]], File()] = None,
+    user_can_talk: Annotated[bool, Form()] = False,
+    user_political: Annotated[bool, Form()] = False,
 ):
     formatted_db_phone = "".join(filter(str.isdigit, phone))[1:]
     user_candidate: Optional[User] = crud.get_user_by_phone(
@@ -166,9 +183,10 @@ async def create_help_request(
             name=name,
             phone=phone,
             company=company,
-            number_pc=int(number_pc),
+            number_pc=int("".join(filter(str.isdigit, number_pc))),
             device=device,
             message_text=message_text or "",
+            user_can_talk=user_can_talk,
         )
         main_message = await bot_api.send_message(
             chat_id=chat_id,
@@ -187,12 +205,14 @@ async def create_help_request(
     photos_media_file: List[MediaFile] = []
     videos_media_file: List[MediaFile] = []
 
-    if message_file or photo or video:
+    if message_file is not None or photo is not None or video is not None:
         voice_file: InputFile = InputFile(obj=b"")
         photo_files: List[InputMediaPhoto] = []
         video_files: List[InputMediaVideo] = []
 
-        request_folder = utils.create_request_folder(user_folder=user_temporary_folder)
+        request_folder: str = utils.create_request_folder(
+            user_folder=user_temporary_folder
+        )
 
         # At first, we should convert audio and compress photos and videos, and then upload them to Telegram
         # Uploading voice message to telegram
@@ -330,6 +350,8 @@ async def create_help_request(
                 message=f"Failed to send video message to Telegram: {e}",
             )
 
+        shutil.rmtree(request_folder)
+
     # Creating safe url to complete request by operator
     accept_url = secrets.token_urlsafe(32)
     keyboard = [
@@ -351,10 +373,21 @@ async def create_help_request(
             ),
             reply_markup=reply_markup,
         )
-    except TelegramError as e:
-        help_request_error.visible_error(f"Failed to send reply_markup message: {e}")
-        shutil.rmtree(request_folder)
+    except Exception as e:
+        await help_request_error.error_exception(
+            session=session,
+            request=new_request,
+            delete_messages=[
+                main_message_id,
+                *voice_message_id,
+                *photo_messages_idx,
+                *video_messages_idx,
+            ],
+            request_folder=request_folder,
+            message=f"Failed to send markup message to Telegram: {e}",
+        )
 
+    # Saving message id to change it, when operator complete the help request
     reply_markup_message_id: int = reply_markup_message.message_id
 
     # Create data base model
@@ -365,9 +398,7 @@ async def create_help_request(
         photos=photos_media_file,
         videos=videos_media_file,
         accept_url=accept_url,
-        telegram_messages_idx=TelegramMessagesIDX(
-            reply_markup=reply_markup_message_id
-        ),  # Saving message id to change them, when operator complete the help request
+        telegram_messages_idx=TelegramMessagesIDX(reply_markup=reply_markup_message_id),
     )
 
     try:
@@ -377,44 +408,29 @@ async def create_help_request(
             request_in=updated_request,
         )
     except Exception as e:
-        shutil.rmtree(request_folder)
-        crud.delete_user_request(session=session, db_request=new_request)
-        await bot_api.delete_messages(
-            chat_id=chat_id,
-            message_ids=[
+        await help_request_error.error_exception(
+            session=session,
+            request=new_request,
+            delete_messages=[
                 main_message_id,
                 *voice_message_id,
                 *photo_messages_idx,
                 *video_messages_idx,
+                reply_markup_message_id,
             ],
+            request_folder=request_folder,
+            message=f"Error in updating user's request: {e}",
         )
-        help_request_error.visible_error(f"Error in updating user's request: {e}")
-    finally:
-        shutil.rmtree(request_folder)
-
-    # Create public request for sending it to the client
-    request_public = RequestForHelpPublic.model_validate(
-        new_request,
-        update={
-            "created_at": new_request.created_at.strftime(settings.PUBLIC_TIME_FORMAT),
-        },
-    )
 
     response = JSONResponse(
         content={
             "message": f"Ваша заявка <b>#{new_request.id}</b> успешно создана и будет рассмотрена в ближайшее время.<br/>Вы можете посмотреть её в <b>ваших заявках</b>.",
-            "new_request": {**request_public.to_dict()},
         },
         status_code=201,
     )
 
-    response.headers["Access-Control-Allow-Origin"] = "http://localhost:3030"
-    response.headers["Access-Control-Allow-Methods"] = "POST, GET, PATCH, OPTIONS"
-    response.headers["Access-Control-Allow-Headers"] = "*"
-    response.headers["Access-Control-Allow-Credentials"] = "true"
-
-    new_access_token = JWTToken.create_just_token(user=user_candidate)
     # Set cookie for user authorize
+    new_access_token = JWTToken.create_just_token(user=user_candidate)
     response.set_cookie(
         key="token",
         value=new_access_token,

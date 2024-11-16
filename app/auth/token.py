@@ -55,6 +55,6 @@ def create_just_token(*, user: User) -> str:
 
 def decode_token(token: str) -> dict:
     try:
-        return jwt.decode(jwt=token, key=TOKEN_SECRET_KEY, algorithms=ALGORITHM)
+        return jwt.decode(jwt=token, key=TOKEN_SECRET_KEY, algorithms=[ALGORITHM])
     except PyJWTError as e:
         raise HTTPException(status_code=400, detail=str("Cannot decode token"))

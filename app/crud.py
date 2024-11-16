@@ -1,8 +1,6 @@
 import uuid
 from typing import Any, Sequence
 
-from sqlmodel import Session, select
-
 from app.models import (
     RequestForHelp,
     RequestForHelpCreate,
@@ -10,6 +8,7 @@ from app.models import (
     User,
     UserCreate,
 )
+from sqlmodel import Session, select
 
 
 # Work with user
