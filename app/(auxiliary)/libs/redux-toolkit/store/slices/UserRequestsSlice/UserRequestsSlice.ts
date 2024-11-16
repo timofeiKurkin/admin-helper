@@ -5,7 +5,8 @@ import { PayloadAction } from "@reduxjs/toolkit";
 const initialState: UserRequestsStateType = {
     userRequests: [],
     requestsModalIsOpen: false,
-    userIsAuthorized: false
+    userIsAuthorized: false,
+    hasMore: false
 }
 
 export const userRequestsSlice = createAppSlice({

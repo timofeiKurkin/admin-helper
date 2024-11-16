@@ -21,10 +21,16 @@ import { setUserAuthorization } from '@/app/(auxiliary)/libs/redux-toolkit/store
 import { UserFormDataType } from "@/app/(auxiliary)/types/AppTypes/ContextTypes";
 import {
     COMPANY_KEY,
+    DEVICE_KEY,
     MESSAGE_KEY,
+    NAME_KEY,
+    NUMBER_PC_KEY,
+    PHONE_KEY,
     PHOTO_KEY,
     PhotoAndVideoKeysType,
     TextInputsKeysType,
+    USER_CAN_TALK,
+    USER_POLITICAL,
     VIDEO_KEY
 } from "@/app/(auxiliary)/types/AppTypes/InputHooksTypes";
 import { ResponseFromServerType } from "@/app/(auxiliary)/types/AxiosTypes/AxiosTypes";
@@ -68,8 +74,8 @@ const UploadForm: FC<PropsType> = ({ buttonText }) => {
 
                 try {
                     let formData = new FormData()
-                    formData.append("userCanTalk", String(permissionsOfForm.userCanTalk))
-                    formData.append("userAgreed", String(permissionsOfForm.userAgreedPolitical))
+                    formData.append(USER_CAN_TALK, String(permissionsOfForm.userCanTalk))
+                    formData.append(USER_POLITICAL, String(permissionsOfForm.userAgreedPolitical))
 
                     if (messageInputDataType === "text") {
                         formData.append(`${MESSAGE_KEY}_text`, userData.text_data[MESSAGE_KEY].value)
@@ -77,24 +83,21 @@ const UploadForm: FC<PropsType> = ({ buttonText }) => {
                         formData.append(`${MESSAGE_KEY}_file`, userData.file_data[MESSAGE_KEY].value)
                     }
 
-                    if (userData.text_data) {
-                        const keys = Object.keys(userData.text_data) as TextInputsKeysType[]
-                        const filteredKeys = keys.filter((key) => key !== "message")
-                        filteredKeys.forEach((key) => {
-                            if (userData.text_data[key].validationStatus) {
-                                formData.append(key, userData.text_data[key]?.value)
-                            }
+                    formData.append(DEVICE_KEY, userData.text_data[DEVICE_KEY].value)
+                    formData.append(NAME_KEY, userData.text_data[NAME_KEY].value)
+                    formData.append(COMPANY_KEY, userData.text_data[COMPANY_KEY].value)
+                    formData.append(PHONE_KEY, userData.text_data[PHONE_KEY].value)
+                    formData.append(NUMBER_PC_KEY, userData.text_data[NUMBER_PC_KEY].value)
+
+                    if (userData.file_data[PHOTO_KEY].files.length) {
+                        userData.file_data[PHOTO_KEY].filesFinally.forEach((photo) => {
+                            formData.append(PHOTO_KEY, photo)
                         })
                     }
 
-                    if (userData.file_data) {
-                        const keys = Object.keys(userData.file_data) as PhotoAndVideoKeysType[]
-                        keys.forEach((key) => {
-                            if (key === VIDEO_KEY) {
-                                userData.file_data[key]?.files.forEach((file) => formData.append(key, file))
-                            } else if (key === PHOTO_KEY) {
-                                userData.file_data[key]?.filesFinally.forEach((file) => formData.append(key, file))
-                            }
+                    if (userData.file_data[VIDEO_KEY].files.length) {
+                        userData.file_data[VIDEO_KEY].files.forEach((photo) => {
+                            formData.append(VIDEO_KEY, photo)
                         })
                     }
 

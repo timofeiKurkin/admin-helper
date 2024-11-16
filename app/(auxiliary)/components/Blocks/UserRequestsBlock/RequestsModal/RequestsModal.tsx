@@ -11,7 +11,7 @@ import Title from '../../../UI/TextTemplates/Title';
 import Backdrop from '../../../UI/Wrappers/Backdrop/Backdrop';
 import RequestsListBlock from './RequestsListBlock/RequestsListBlock';
 import styles from "./RequestsModal.module.scss";
-import { motion, AnimatePresence, Variants } from "framer-motion"
+import { motion, Variants } from "framer-motion"
 
 interface PropsType {
     modalData: ModalDataType;
@@ -39,7 +39,6 @@ const RequestsModal: FC<PropsType> = ({ modalData }) => {
     return (
         <PopupDisableScroll>
             <Backdrop onBackdropClick={requestModalVisibilityHandler}>
-                {/* <AnimatePresence> */}
                 <motion.div className={styles.requestsModalListWrapper}
                     transition={{ type: "linear" }}
                     variants={variants}
@@ -69,7 +68,6 @@ const RequestsModal: FC<PropsType> = ({ modalData }) => {
                         </Button>
                     </div>
                 </motion.div>
-                {/* </AnimatePresence> */}
             </Backdrop>
         </PopupDisableScroll>
     )

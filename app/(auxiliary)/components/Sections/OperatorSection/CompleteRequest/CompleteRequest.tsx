@@ -9,6 +9,7 @@ import { AxiosResponse } from 'axios'
 import { useAppDispatch } from '@/app/(auxiliary)/libs/redux-toolkit/store/hooks'
 import LoadingCircle from '../../../UI/Loaders/LoadingCircle/LoadingCircle'
 import { setNewNotification } from '@/app/(auxiliary)/libs/redux-toolkit/store/slices/AppSlice/AppSlice'
+import { AnimatePresence, motion, Variants } from 'framer-motion'
 
 interface PropsType {
     accept_url: string
@@ -49,9 +50,20 @@ const CompleteRequest: FC<PropsType> = ({ accept_url }) => {
         }
     }, [dispatch, accept_url])
 
+    const variants: Variants = {
+        visible: { y: 0, opacity: 1, transition: { duration: .4 } },
+        hidden: { y: 150, opacity: 0, transition: { duration: .4 } }
+    }
+
     if (requestPublic) {
         if (success) {
-            return <CompleteRequestBlock request={requestPublic} />
+            return (
+                <AnimatePresence>
+                    <motion.div style={{ overflow: "hidden" }} variants={variants} initial={"hidden"} animate={"visible"} exit={"hidden"}>
+                        <CompleteRequestBlock request={requestPublic} />
+                    </motion.div>
+                </AnimatePresence>
+            )
         } else {
             return <div>error block...</div>
         }
