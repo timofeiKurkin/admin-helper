@@ -1,6 +1,6 @@
 "use client"
 
-import React, {FC, useEffect, useRef, useState} from 'react';
+import React, { FC, useEffect, useRef, useState } from 'react';
 import Play from "@/app/(auxiliary)/components/UI/SVG/Play/Play";
 import Button from "@/app/(auxiliary)/components/UI/Button/Button";
 import AudioTrack from "@/app/(auxiliary)/components/UI/SVG/AudioTrack/AudioTrack";
@@ -11,7 +11,7 @@ interface PropsType {
     audioBlob: Blob;
 }
 
-const AudioPlayer: FC<PropsType> = ({audioBlob}) => {
+const AudioPlayer: FC<PropsType> = ({ audioBlob }) => {
     const [isPlaying, setIsPlaying] = useState<boolean>(false)
     // const [isManualStop, setIsManualStop] = useState<boolean>(false)
     // const isPlayingRef = useRef<boolean>(isPlaying)
@@ -138,6 +138,7 @@ const AudioPlayer: FC<PropsType> = ({audioBlob}) => {
                  * Событие, которое срабатывает, когда запись полностью воспроизведена
                  */
                 sourceRef.current.onended = () => {
+                    setProgress(100)
                     stopTimeRef.current = 0
                     startTimeRef.current = 0
                     setIsPlaying(false)
@@ -220,22 +221,22 @@ const AudioPlayer: FC<PropsType> = ({audioBlob}) => {
     return (
         <>
             <Button onClick={isPlaying ? stopPlaying : startPlaying}
-                    image={{
-                        children: isPlaying ? <Pause/> : <Play/>,
-                        visibleOnlyImage: true,
-                    }}/>
+                image={{
+                    children: isPlaying ? <Pause /> : <Play />,
+                    visibleOnlyImage: true,
+                }} />
 
             <div ref={progressBarRef}
-                 className={styles.audioTrackWrapper}
-                // onClick={(e) => handleProgressClick(e)}
+                className={styles.audioTrackWrapper}
+            // onClick={(e) => handleProgressClick(e)}
             >
                 <div className={styles.audioFill}
-                     style={{
-                         width: `${progress}%`,
-                     }}></div>
+                    style={{
+                        width: `${progress}%`,
+                    }}></div>
 
                 <div className={styles.audioTrack}>
-                    <AudioTrack/>
+                    <AudioTrack />
                 </div>
             </div>
         </>

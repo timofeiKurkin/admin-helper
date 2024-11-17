@@ -6,7 +6,6 @@ const initialState: UserRequestsStateType = {
     userRequests: [],
     requestsModalIsOpen: false,
     userIsAuthorized: false,
-    hasMore: false
 }
 
 export const userRequestsSlice = createAppSlice({
@@ -42,12 +41,12 @@ export const userRequestsSlice = createAppSlice({
         }),
         deleteUserRequest: create.reducer((state, action: PayloadAction<HelpRequestItemType>) => {
             state.userRequests = state.userRequests.filter(item => item.id !== action.payload.id)
-        })
+        }),
     }),
     selectors: {
         selectRequestsModalIsOpen: (state) => state.requestsModalIsOpen,
         selectUserRequests: (state) => state.userRequests,
-        selectUserIsAuthorized: (state) => state.userIsAuthorized
+        selectUserIsAuthorized: (state) => state.userIsAuthorized,
     }
 })
 

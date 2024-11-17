@@ -23,7 +23,7 @@
         height: 100%;
         display: grid;
         grid-template-columns: 1fr;
-        grid-template-rows: min-content minmax(300px, auto) auto auto;
+        grid-template-rows: min-content minmax(300px, auto) 2px 60px;
         flex-direction: column;
 
         @media screen and ($desktop1920), screen and ($desktop1440_1919) {

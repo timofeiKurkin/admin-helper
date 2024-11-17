@@ -15,10 +15,12 @@ import {
 import { MESSAGE_KEY } from "@/app/(auxiliary)/types/AppTypes/InputHooksTypes";
 import { MessageType } from "@/app/(auxiliary)/types/Data/Interface/RootPage/RootPageContentType";
 import { blue_light, red_dark } from "@/styles/colors";
-import { FC, useEffect, useRef, useState } from "react";
+import { FC, useEffect, useLayoutEffect, useRef, useState } from "react";
 import styles from "./AudioPlayer.module.scss";
 import { setNewNotification } from "@/app/(auxiliary)/libs/redux-toolkit/store/slices/AppSlice/AppSlice";
 import { inputsNameError } from "../../inputsNameError";
+import { boldSpanTag } from "@/app/(auxiliary)/func/tags/boldSpanTag";
+import { span } from "framer-motion/client";
 
 interface PropsType {
     voicePlaceholder?: MessageType;
@@ -61,7 +63,10 @@ const VoiceInput: FC<PropsType> = ({
     const recordingButtonRef = useRef<HTMLButtonElement | null>(null)
 
     const startRecording = async () => {
-        if (noMicrophone) return
+        if (noMicrophone) {
+            dispatch(setNewNotification({ message: `К сожалению, мы не смогли получить доступ к вашему микрофону 😞<br/>${boldSpanTag("Опишите вашу проблему в текстовом блоке")} 📝`, "type": "warning" }))
+            return
+        }
 
         setIsRecording((prevState) => !prevState)
         audioChunksRef.current = []
@@ -94,14 +99,28 @@ const VoiceInput: FC<PropsType> = ({
         source.connect(analyser)
         // source.disconnect()
 
+        const lerp = (start: number, end: number, t: number) => start + t * (end - start)
+        let currentPosition = 100
+
         const analyzeVolume = () => {
             analyser.getByteFrequencyData(dataArray)
 
             const sum = dataArray.reduce((a, b) => a + b, 0)
-            const averageVolume = sum / dataArray.length // Средний уровень громкости
+            const averageVolume = (sum / dataArray.length) * 2 // Средний уровень громкости
 
             // Изменяем фон кнопки в зависимости от громкости (пример с градиентом)
             const intensity = Math.min(Math.max(averageVolume / 255, 0), 1) // Интенсивность от 0 до 1
+
+            // const gradientPosition = lerp(currentPosition, 100 - intensity * 100, 0.1) // Процент градиента
+            // currentPosition = gradientPosition
+
+            // const gradientColor1 = `rgba(${lerp(38, 255, intensity)}, ${lerp(167, 50, intensity)}, ${lerp(227, 50, intensity)}, 1)`
+            // const gradientColor2 = `rgba(${lerp(255, 255, 1 - intensity)}, ${lerp(255, 255, 1 - intensity)}, ${lerp(255, 255, 1 - intensity)}, 1)`
+
+            // if (recordingButtonRef.current) {
+            //     recordingButtonRef.current.style.background = `radial-gradient(circle, ${gradientColor1} 0%, ${gradientColor2} ${gradientPosition}%)`
+            // }
+
             const gradientPosition = 100 - (intensity * 100) // Процент градиента
 
             if (recordingButtonRef.current) {
@@ -177,7 +196,7 @@ const VoiceInput: FC<PropsType> = ({
         if (!isError && rejectionInputs.length) {
             if (rejectionInputs.includes("message")) {
                 dispatch(setNewNotification({
-                    message: `<span style="font-weight: 500">${inputsNameError[MESSAGE_KEY]}</span>: Сообщение не может быть пустым`,
+                    message: `${boldSpanTag(inputsNameError[MESSAGE_KEY])}: Сообщение не может быть пустым`,
                     type: "error"
                 }))
                 setErrorHandler(true)
@@ -185,13 +204,11 @@ const VoiceInput: FC<PropsType> = ({
         }
     }, [rejectionInputs, isError, dispatch, setErrorHandler])
 
-    useEffect(() => {
+    useLayoutEffect(() => {
         /**
          * Checking, if user's devices has microphone and access to use it
          */
-        if (!(navigator.mediaDevices && navigator.mediaDevices.getUserMedia)) {
-            setNoMicrophone((prevState) => !prevState)
-        }
+        setNoMicrophone(typeof navigator.mediaDevices?.getUserMedia !== "function")
 
         if (navigator.permissions) {
             navigator.permissions.query({ name: "microphone" as PermissionName }).then((permissions) => {

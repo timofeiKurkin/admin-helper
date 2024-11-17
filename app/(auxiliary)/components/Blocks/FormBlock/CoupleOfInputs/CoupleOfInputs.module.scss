@@ -33,34 +33,41 @@
     }
 }
 
-.device {
+.device, .message, .photo, .video, .name, .company {
     @media screen and ($phone375_639) {
-        flex: 1 0 14.5rem;
-        max-width: 14.5rem;
+        flex: 1 0 100%;
     }
 }
 
-.message, .photo, .video {
-    @media screen and ($phone375_639) {
-        flex: 1 0 15.4375rem;
-        max-width: 23.0625rem;
-    }
-}
+// .device {
+//     @media screen and ($phone550_639) {
+//         flex: 1 0 14.5rem;
+//         max-width: 18.5rem;
+//     }
+// }
 
-.company {
-    @media screen and ($phone375_639) {
-        flex: 1 0 16rem;
-        max-width: 18rem;
-    }
-}
 
-.name {
-    @media screen and ($phone375_639) {
-        flex: 1 0 11.5rem;
-        max-width: 12.5rem;
-        // min-width: 11.5rem;
-    }
-}
+// .photo, .video {
+//     @media screen and ($phone550_639) {
+//         flex: 1 0 17rem;
+//         max-width: 23.1rem;
+//     }
+// }
+
+// .company {
+//     @media screen and ($phone550_639) {
+//         flex: 1 0 14.5rem;
+//         max-width: 18rem;
+//     }
+// }
+
+// .name {
+//     @media screen and ($phone550_639) {
+//         flex: 1 0 11.5rem;
+//         max-width: 12.5rem;
+//         // min-width: 11.5rem;
+//     }
+// }
 
 .phoneAndPcNumber {
     @media screen and ($phone375_639) {

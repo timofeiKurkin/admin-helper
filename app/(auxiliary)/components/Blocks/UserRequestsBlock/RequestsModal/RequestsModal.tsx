@@ -1,17 +1,16 @@
 import { useAppDispatch } from '@/app/(auxiliary)/libs/redux-toolkit/store/hooks';
 import { changeRequestsModalVisibility } from '@/app/(auxiliary)/libs/redux-toolkit/store/slices/UserRequestsSlice/UserRequestsSlice';
 import { ModalDataType } from '@/app/(auxiliary)/types/Data/Interface/RootPage/RootPageContentType';
-import { black } from '@/styles/colors';
+import { motion, Variants } from "framer-motion";
 import { FC } from 'react';
 import PopupDisableScroll from '../../../Common/Popups/PopupsWrapper/PopupDisableScroll/PopupDisableScroll';
 import Button from '../../../UI/Button/Button';
-import SeparatingLine from '../../../UI/SeparatingLine/SeparatingLine';
-import TextMedium from '../../../UI/TextTemplates/TextMedium';
 import Title from '../../../UI/TextTemplates/Title';
 import Backdrop from '../../../UI/Wrappers/Backdrop/Backdrop';
 import RequestsListBlock from './RequestsListBlock/RequestsListBlock';
 import styles from "./RequestsModal.module.scss";
-import { motion, Variants } from "framer-motion"
+import SeparatingLine from '../../../UI/SeparatingLine/SeparatingLine';
+import { black } from '@/styles/colors';
 
 interface PropsType {
     modalData: ModalDataType;
@@ -24,9 +23,6 @@ const RequestsModal: FC<PropsType> = ({ modalData }) => {
         dispatch(changeRequestsModalVisibility())
     }
 
-    const getMoreRequests = () => {
-
-    }
     const variants: Variants = {
         hidden: {
             opacity: 0, x: "100%", transition: { type: "tween" }
@@ -53,15 +49,19 @@ const RequestsModal: FC<PropsType> = ({ modalData }) => {
 
                         <RequestsListBlock />
 
-                        <div className={styles.getMoreRequests}>
-                            <div className={styles.getMoreRequestsButton} onClick={getMoreRequests}>
-                                <TextMedium>
-                                    {modalData.getMoreRequests}
-                                </TextMedium>
-                            </div>
+                        {/* {hasMoreRequests ? (
+                            <div className={styles.getMoreRequests}>
+                                <div className={styles.getMoreRequestsButton} onClick={getMoreRequests}>
+                                    <TextMedium>
+                                        {modalData.getMoreRequests}
+                                    </TextMedium>
+                                </div>
 
-                            <SeparatingLine style={{ width: "100%", backgroundColor: black }} />
-                        </div>
+                                <SeparatingLine style={{ width: "100%", backgroundColor: black }} />
+                            </div>
+                        ) : null} */}
+
+                        <SeparatingLine style={{ width: "100%", backgroundColor: black }} />
 
                         <Button onClick={requestModalVisibilityHandler}>
                             Закрыть

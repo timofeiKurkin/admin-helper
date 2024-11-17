@@ -38,7 +38,7 @@
 	}
 
 	@media screen and ($phone375_639) {
-		grid-template-columns: 8.4375rem 1fr;
+		grid-template-columns: 1fr 1fr; // 8.4375rem
 	}
 
 	.fileList {
@@ -49,5 +49,9 @@
 
 	.addFiles {
 		grid-column: 1 / 2;
+
+		@media screen and ($phone375_639) {
+			grid-column: 2/ 3;
+		}
 	}
 }

@@ -38,12 +38,12 @@
     }
 
     @media screen and ($phone375_639) {
-        top: 50px;
+        top: 110px;
         left: 0;
         // bottom: 50px;
         align-items: center;
         padding: 0 15px; // Position center for elements with large width
-        width: 95%;
+        width: 100%;
     }
 
     .notification {
