@@ -296,12 +296,12 @@
             "title": "Список ваших заявок",
             "tableDataDesktop": {
                 "number": "Номер",
-                "creationTime": "Время создания",
+                "creationTime": "Время создания — выполнения",
                 "status": "Статус"
             },
             "tableDataMobile": {
                 "number": "#",
-                "creationTime": "Время создания",
+                "creationTime": "Время выполнения",
                 "status": "Статус"
             },
             "getMoreRequests": "Загрузить больше заявок",

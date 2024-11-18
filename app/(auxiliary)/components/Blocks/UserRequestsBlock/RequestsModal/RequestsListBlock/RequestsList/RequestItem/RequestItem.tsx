@@ -12,7 +12,7 @@ const RequestItem: FC<PropsType> = ({ request }) => {
     return (
         <div className={`${styles.requestItemWrapper} ${tableStyle.headTableGrid} ${request.isCompleted ? styles.requestItemCompeted : styles.requestItemPending}`}>
             <Text>{request.id}</Text>
-            <Text>{request.createdAt}</Text>
+            <Text>{request.createdAt} — {request.completedAt}</Text>
             <Text>{request.isCompleted ? "Выполнена" : "Выполняется"}</Text>
         </div>
     )

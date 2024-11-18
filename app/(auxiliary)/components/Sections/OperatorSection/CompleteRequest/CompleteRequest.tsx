@@ -10,6 +10,9 @@ import { useAppDispatch } from '@/app/(auxiliary)/libs/redux-toolkit/store/hooks
 import LoadingCircle from '../../../UI/Loaders/LoadingCircle/LoadingCircle'
 import { setNewNotification } from '@/app/(auxiliary)/libs/redux-toolkit/store/slices/AppSlice/AppSlice'
 import { AnimatePresence, motion, Variants } from 'framer-motion'
+import CompleteRequestError from '../../../Blocks/OperatorBlocks/CompleteRequestError/CompleteRequestError'
+import styles from "./CompleteRequest.module.scss";
+import { AxiosErrorType } from '@/app/(auxiliary)/types/AxiosTypes/AxiosTypes'
 
 interface PropsType {
     accept_url: string
@@ -19,6 +22,7 @@ const CompleteRequest: FC<PropsType> = ({ accept_url }) => {
     const dispatch = useAppDispatch()
     const [success, setSuccess] = useState<boolean>(false)
     const [requestPublic, setRequestPublic] = useState<HelpRequestForOperatorType>()
+    const [errorData, setErrorData] = useState<{ message: string; code: number }>({ message: "", code: 500 })
 
     useEffect(() => {
         let active = true
@@ -32,6 +36,8 @@ const CompleteRequest: FC<PropsType> = ({ accept_url }) => {
                     setRequestPublic(data.data)
                     setSuccess(true)
                 } else {
+                    const error = response as AxiosErrorType
+                    setErrorData({ message: error.message, code: error.statusCode })
                     setRequestPublic({} as HelpRequestForOperatorType)
                     dispatch(setNewNotification({
                         message: "Не удалось завершить заявку!",
@@ -55,21 +61,25 @@ const CompleteRequest: FC<PropsType> = ({ accept_url }) => {
         hidden: { y: 150, opacity: 0, transition: { duration: .4 } }
     }
 
-    if (requestPublic) {
-        if (success) {
-            return (
-                <AnimatePresence>
-                    <motion.div style={{ overflow: "hidden" }} variants={variants} initial={"hidden"} animate={"visible"} exit={"hidden"}>
-                        <CompleteRequestBlock request={requestPublic} />
-                    </motion.div>
-                </AnimatePresence>
-            )
-        } else {
-            return <div>error block...</div>
-        }
-    } else {
-        return <LoadingCircle />
-    }
+    return (
+        <div className={styles.completeRequestWrapper}>
+            {requestPublic ? (
+                <>
+                    <AnimatePresence>
+                        <motion.div style={{ overflow: "hidden", height: "inherit" }} variants={variants} initial={"hidden"} animate={"visible"} exit={"hidden"}>
+                            {success ? (
+                                <CompleteRequestBlock request={requestPublic} />
+                            ) : (
+                                <CompleteRequestError code={errorData.code} message={errorData.message} />
+                            )}
+                        </motion.div>
+                    </AnimatePresence>
+                </>
+            ) : (
+                <LoadingCircle />
+            )}
+        </div>
+    )
 }
 
 export default CompleteRequest

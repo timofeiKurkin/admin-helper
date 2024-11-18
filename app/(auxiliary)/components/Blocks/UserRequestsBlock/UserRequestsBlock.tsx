@@ -9,6 +9,7 @@ import RequestsModal from './RequestsModal/RequestsModal'
 import styles from "./UserRequestsBlock.module.scss"
 import { setNewNotification } from '@/app/(auxiliary)/libs/redux-toolkit/store/slices/AppSlice/AppSlice'
 import { AnimatePresence, Variants, motion } from 'framer-motion'
+import ModalWrapper from '../../UI/Wrappers/ModalWrapper/ModalWrapper'
 
 const UserRequestsBlock = () => {
     const dispatch = useAppDispatch()
@@ -50,13 +51,15 @@ const UserRequestsBlock = () => {
                 className={styles.userRequestsButton}>
                 {userRequestData.button}
             </Button>
-            <AnimatePresence mode={"wait"}>
-                {requestsModalIsOpen ? (
-                    <motion.div variants={variants} initial={"hidden"} exit={"hidden"} animate={"visible"}>
-                        <RequestsModal modalData={userRequestData.modalData} />
-                    </motion.div>
-                ) : null}
-            </AnimatePresence>
+            <ModalWrapper>
+                <AnimatePresence mode={"wait"}>
+                    {requestsModalIsOpen ? (
+                        <motion.div variants={variants} initial={"hidden"} exit={"hidden"} animate={"visible"}>
+                            <RequestsModal modalData={userRequestData.modalData} />
+                        </motion.div>
+                    ) : null}
+                </AnimatePresence>
+            </ModalWrapper>
         </div>
     )
 }

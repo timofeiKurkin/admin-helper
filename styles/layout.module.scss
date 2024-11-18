@@ -52,8 +52,10 @@
 		}
 
 		@media screen and ($phone375_639) {
-			// height: 100%;
-			padding: 1.56rem;
+			// height: 100dvh;
+			height: inherit;
+			padding: 0 1.56rem;
+			align-items: center;
 			grid-template-columns: 1fr;
 		}
 
@@ -85,6 +87,7 @@
 			@media screen and ($phone375_639) {
 				grid-template-rows: 1fr;
 				row-gap: 1.88rem;
+				padding: 1.56rem 0;
 			}
 		}
 	}

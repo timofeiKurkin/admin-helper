@@ -40,13 +40,12 @@ const HelpfulList: FC<PropsType> = ({
 
             <AnimatePresence>
                 {
-                    (currentHelpfulList.length) ? (
+                    (currentHelpfulList.length && listVisibility) ? (
                         <motion.ul className={styles.helpfulList}
                             variants={variants}
                             initial={"hidden"}
                             animate={"visible"}
-                            exit={"hidden"}
-                            style={{ display: listVisibility ? "flex" : "none" }}>
+                            exit={"hidden"}>
                             {currentHelpfulList.map((item, index) => (
                                 <li key={`key=${index}`} className={styles.helpfulItem} onClick={() => chooseHelpfulItem(item)}>
                                     <Text>

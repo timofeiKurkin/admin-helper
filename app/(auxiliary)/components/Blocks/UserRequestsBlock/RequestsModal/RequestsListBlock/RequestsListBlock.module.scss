@@ -48,7 +48,7 @@
     display: grid;
 
     @media screen and ($desktop1920), screen and ($desktop1440_1919) {
-        grid-template-columns: 8rem 14.4375rem 8.1875rem;
+        grid-template-columns: 6rem 1fr 8.1875rem;
         padding: 0 25px;
     }
 

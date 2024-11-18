@@ -10,6 +10,8 @@ import DropZone from "@/app/(auxiliary)/components/Blocks/FormBlock/DropZone/Dro
 import FileList
     from "@/app/(auxiliary)/components/Blocks/FormBlock/CoupleOfInputs/CurrentInput/FileInput/FilesList/FileList";
 import { selectUserDevice } from '@/app/(auxiliary)/libs/redux-toolkit/store/slices/AppSlice/AppSlice';
+import ModalWrapper from '@/app/(auxiliary)/components/UI/Wrappers/ModalWrapper/ModalWrapper';
+import OpacityAnimation from '@/app/(auxiliary)/components/UI/Animations/OpacityAnimation/OpacityAnimation';
 
 interface PropsType {
     inputData: {
@@ -55,9 +57,15 @@ const HaveMediaFile: FC<PropsType> = ({ inputData }) => {
                 ) : null
             )}
 
-            {popupVisibility && inputData.type === PHOTO_KEY && (
+            <ModalWrapper>
+                <OpacityAnimation trigger={popupVisibility && inputData.type === PHOTO_KEY}>
+                    <PhotoEditorPopup />
+                </OpacityAnimation>
+            </ModalWrapper>
+
+            {/* {popupVisibility && inputData.type === PHOTO_KEY && (
                 <PhotoEditorPopup />
-            )}
+            )} */}
 
             {popupVisibility && inputData.type === VIDEO_KEY && (
                 <VideoPlayerPopup />

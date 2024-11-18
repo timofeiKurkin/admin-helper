@@ -1,0 +1,69 @@
+@import "@/styles/variables.module.scss";
+
+.filePreviewWrapper {
+	box-sizing: border-box;
+	overflow: hidden;
+	position: relative;
+
+	width: 100%;
+	height: 100%;
+
+	border-radius: 0.625rem;
+	border: $blue_input_border;
+	background-color: $white_1;
+	cursor: pointer;
+
+	user-select: none;
+
+	.fileCover {
+		width: 100%;
+		height: 100%;
+		position: absolute;
+		background-color: rgba($white, .8);
+		z-index: 1;
+
+		display: flex;
+		justify-content: center;
+		align-items: center;
+	}
+}
+
+
+.fileRemove {
+	position: absolute;
+	z-index: 1;
+	padding: 3px;
+	cursor: pointer;
+
+	top: -3px;
+	right: 2px;
+
+	@media screen and ($phone375_639) {
+		width: 100%;
+		height: 90%;
+
+		display: flex;
+		justify-content: center;
+		align-items: center;
+		position: static;
+		padding: 0;
+		border-radius: 10px;
+
+		background-color: $white_1;
+	}
+}
+
+
+.filePreviewMobileWrapper {
+	display: grid;
+	grid-template-columns: 25px 70px auto 40px;
+	grid-template-rows: 50px;
+	align-items: center;
+	position: relative;
+
+	.filePreviewMobileFilename {
+		text-wrap: nowrap;
+		overflow: hidden;
+		margin: 0 15px;
+	}
+}

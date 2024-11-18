@@ -19,8 +19,7 @@
 
 	@media screen and ($desktop1280_1439),
 		//screen and ($pad992_1279),
-		screen and ($pad640_991),
-		screen and ($phone375_639) {
+		screen and ($pad640_991) {
 		grid-template-rows: 5.9375rem min-content;
 	}
 
@@ -39,6 +38,7 @@
 
 	@media screen and ($phone375_639) {
 		grid-template-columns: 1fr 1fr; // 8.4375rem
+		grid-template-rows: 1fr min-content;
 	}
 
 	.fileList {

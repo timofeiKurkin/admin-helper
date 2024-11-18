@@ -16,7 +16,7 @@ const GetUserRequests: FC<ChildrenProp> = ({ children }) => {
         let active = true
 
         const getUserRequests = async () => {
-            const response = await axiosRequestsHandler(HelpUserService.getUserRequests(true))
+            const response = await axiosRequestsHandler(HelpUserService.getUserRequests())
             if (active) {
                 if ((response as AxiosResponse).status === 200) {
                     const successResponse = response as AxiosResponse<UserRequestListType>

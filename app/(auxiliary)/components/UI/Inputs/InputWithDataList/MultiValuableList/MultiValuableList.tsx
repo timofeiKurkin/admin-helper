@@ -8,6 +8,8 @@ import { CompanyInputDataType, companyLocalData, companyLocalDataVariable } from
 import { InputHelpfulItemType } from '@/app/(auxiliary)/types/Data/Interface/RootPage/RootPageContentType'
 import Arrow from '../../../SVG/Arrow/Arrow'
 import Close from '../../../SVG/Close/Close'
+import { AnimatePresence, motion, Variants } from "framer-motion"
+
 
 interface PropsType extends ChildrenProp {
     value: string;
@@ -71,6 +73,15 @@ const MultiValuableList: FC<PropsType> = ({
         chooseHelpfulItem(newItem)
     }
 
+    const variants: Variants = {
+        hidden: {
+            opacity: 0, y: "-10%", transition: { when: "afterChildren" }
+        },
+        visible: {
+            opacity: 1, y: 0, transition: { when: "beforeChildren" }
+        },
+    }
+
     return (
         <div className={styles.inputWrapper}
             tabIndex={-1}
@@ -85,37 +96,46 @@ const MultiValuableList: FC<PropsType> = ({
 
             {children}
 
-            {companyInputDataType === "choose" ? (
-                <>
-                    {!isChosen ? (
-                        <ul className={styles.companyList}
-                            style={{ display: (listVisibility && value.length >= 3) ? "flex" : "none" }}>
-                            {companyInputDataType === "choose" && currentHelpfulList.length ? currentHelpfulList.map((item, index) => (
-                                <li key={`key=${index}`} className={styles.helpfulItem} onClick={() => chooseHelpfulItemHandler(item)}>
-                                    <Text>
-                                        {item}
-                                    </Text>
-                                </li>
-                            )) : null}
-
-                            <li key={`key=${currentHelpfulList.length}`}
-                                onClick={() => changeInputTypeHandler("write")}
-                                className={`${styles.helpfulItem} ${styles.differentOrganization}`}>
-                                <Text>Другая организация</Text> <Arrow />
+            <AnimatePresence>
+                {(companyInputDataType === "choose" && !isChosen && (listVisibility && value.length >= 3)) ? (
+                    <motion.ul className={styles.companyList}
+                        variants={variants}
+                        initial={"hidden"}
+                        animate={"visible"}
+                        exit={"hidden"}>
+                        {companyInputDataType === "choose" && currentHelpfulList.length ? currentHelpfulList.map((item, index) => (
+                            <li key={`key=${index}`} className={styles.helpfulItem} onClick={() => chooseHelpfulItemHandler(item)}>
+                                <Text>
+                                    {item}
+                                </Text>
                             </li>
-                        </ul>
-                    ) : null}
-                </>
-            ) : (
-                <ul className={styles.companyList}
-                    style={{ display: (listVisibility && value.length >= 3) ? "flex" : "none" }}>
-                    <li key={`key=${currentHelpfulList.length}`}
-                        onClick={() => changeInputTypeHandler("choose")}
-                        className={`${styles.helpfulItem} ${styles.differentOrganization}`}>
-                        <Text>Найти в списке</Text> <Arrow />
-                    </li>
-                </ul>
-            )}
+                        )) : null}
+
+                        <li key={`key=${currentHelpfulList.length}`}
+                            onClick={() => changeInputTypeHandler("write")}
+                            className={`${styles.helpfulItem} ${styles.differentOrganization}`}>
+                            <Text>Другая организация</Text> <Arrow />
+                        </li>
+                    </motion.ul>
+                ) : null}
+            </AnimatePresence>
+
+
+            <AnimatePresence>
+                {(companyInputDataType === "write" && (listVisibility && value.length >= 3)) ? (
+                    <motion.ul className={styles.companyList}
+                        variants={variants}
+                        initial={"hidden"}
+                        animate={"visible"}
+                        exit={"hidden"}>
+                        <li key={`key=${currentHelpfulList.length}`}
+                            onClick={() => changeInputTypeHandler("choose")}
+                            className={`${styles.helpfulItem} ${styles.differentOrganization}`}>
+                            <Text>Найти в списке</Text> <Arrow />
+                        </li>
+                    </motion.ul>
+                ) : null}
+            </AnimatePresence>
         </div>
     )
 }

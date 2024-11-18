@@ -17,7 +17,7 @@ export default class HelpUserService {
         })
     }
 
-    static async getUserRequests(preview: boolean): Promise<AxiosResponse<UserRequestListType>> {
-        return $api.get<UserRequestListType>(`${this.rootPage}get_user_requests?preview=${preview}`)
+    static async getUserRequests(): Promise<AxiosResponse<UserRequestListType>> {
+        return $api.get<UserRequestListType>(`${this.rootPage}get_user_requests`)
     }
 }

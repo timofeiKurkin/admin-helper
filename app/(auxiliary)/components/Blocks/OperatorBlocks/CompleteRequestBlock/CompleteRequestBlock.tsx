@@ -26,7 +26,7 @@ const CompleteRequestBlock: FC<PropsType> = ({ request }) => {
 
             <div className={styles.helpfulMessage}>
                 <Text style={{ opacity: 0.7 }}>
-                    {!request.isCompleted ? helpfulText.helpfulText : helpfulText.helpfulTextCompleted}
+                    {helpfulText.helpfulText}
                 </Text>
             </div>
         </div>

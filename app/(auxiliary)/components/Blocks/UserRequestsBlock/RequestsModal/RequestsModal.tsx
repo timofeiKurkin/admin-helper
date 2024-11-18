@@ -49,18 +49,6 @@ const RequestsModal: FC<PropsType> = ({ modalData }) => {
 
                         <RequestsListBlock />
 
-                        {/* {hasMoreRequests ? (
-                            <div className={styles.getMoreRequests}>
-                                <div className={styles.getMoreRequestsButton} onClick={getMoreRequests}>
-                                    <TextMedium>
-                                        {modalData.getMoreRequests}
-                                    </TextMedium>
-                                </div>
-
-                                <SeparatingLine style={{ width: "100%", backgroundColor: black }} />
-                            </div>
-                        ) : null} */}
-
                         <SeparatingLine style={{ width: "100%", backgroundColor: black }} />
 
                         <Button onClick={requestModalVisibilityHandler}>
