@@ -36,6 +36,14 @@ app = FastAPI(
 )
 
 
+@app.exception_handler(Exception)
+async def global_exception_handler(request: Request, exc: Exception):
+    return JSONResponse(
+        status_code=500,
+        content={"Error: ": str(exc)},
+    )
+
+
 # @app.middleware("http")
 # async def add_cors_headers(request, call_next):
 #     response = await call_next(request)
@@ -57,14 +65,6 @@ if settings.all_cors_origins:
         allow_credentials=True,
         allow_methods=["*"],
         allow_headers=["*"],
-    )
-
-
-@app.exception_handler(Exception)
-async def global_exception_handler(request: Request, exc: Exception):
-    return JSONResponse(
-        status_code=500,
-        content={"Error: ": str(exc)},
     )
 
 

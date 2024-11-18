@@ -1,9 +1,8 @@
-from fastapi import APIRouter, HTTPException, Request
-from fastapi.responses import JSONResponse
-
 from app import crud
 from app.api.deps import SessionDep
 from app.auth import token as JWTToken
+from fastapi import APIRouter, HTTPException, Request
+from fastapi.responses import JSONResponse
 
 router = APIRouter()
 
@@ -39,5 +38,6 @@ async def authorizeUser(request: Request, session: SessionDep):
             httponly=True,
             path="/",
             max_age=60 * 60 * 24 * 30,
+            samesite="none",
         )
         return response

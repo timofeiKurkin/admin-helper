@@ -44,11 +44,9 @@ async def root():
 
 @router.get(
     "/get_user_requests",
-    # response_model=List[RequestForHelpPublic],
+    response_model=List[RequestForHelpPublic],
 )
-async def get_user_requests(
-    *, preview: bool = True, request: Request, session: SessionDep
-):
+async def get_user_requests(*, request: Request, session: SessionDep):
     user_token = request.cookies.get("token")
 
     if not user_token:
@@ -67,7 +65,7 @@ async def get_user_requests(
     user_requests = crud.get_user_requests(
         session=session, owner_id=user_id, order_by="created_at"
     )
-    user_public_requests = [
+    user_public_requests: List[RequestForHelpPublic] = [
         RequestForHelpPublic.model_validate(
             user_request,
             update={
@@ -81,25 +79,7 @@ async def get_user_requests(
 
     preview_count = 7
 
-    if preview:
-        response = JSONResponse(
-            content={
-                "requests": [
-                    {**item.to_dict()} for item in user_public_requests[:preview_count]
-                ],
-                "has_more": len(user_public_requests) > preview_count,
-            },
-            status_code=200,
-        )
-        return response
-    else:
-        response = JSONResponse(
-            content={
-                "requests": [{**item.to_dict()} for item in user_public_requests],
-                "has_more": len(user_public_requests) > preview_count,
-            }
-        )
-        return user_public_requests
+    return user_public_requests[:preview_count]
 
 
 def create_new_user(
@@ -438,6 +418,8 @@ async def create_help_request(
         httponly=True,
         path="/",
         max_age=60 * 60 * 24 * 30,
+        # domain=settings.CLIENT_HOST,
+        samesite="none",
     )
 
     return response
