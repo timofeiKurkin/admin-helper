@@ -1,9 +1,9 @@
-import React, {FC} from 'react';
+import React, { FC } from 'react';
 import Button from "@/app/(auxiliary)/components/UI/Button/Button";
 import AudioPlayer
     from "@/app/(auxiliary)/components/Blocks/FormBlock/CoupleOfInputs/CurrentInput/Message/VoiceInput/AudioPlayer";
 import Trash from "@/app/(auxiliary)/components/UI/SVG/Trash/Trash";
-import {red_dark} from "@/styles/colors";
+import { red_dark } from "@/styles/colors";
 import styles from "./AudioPlayer.module.scss"
 
 interface PropsType {
@@ -12,21 +12,23 @@ interface PropsType {
 }
 
 const ReadyVoice: FC<PropsType> = ({
-                                       audioBlob,
-                                       removeCurrentRecord
-                                   }) => {
+    audioBlob,
+    removeCurrentRecord
+}) => {
     return (
         <div className={styles.readyVoiceWrapper}>
-            <AudioPlayer audioBlob={audioBlob}/>
+            {audioBlob && (
+                <AudioPlayer audioBlob={audioBlob} />
+            )}
 
             <Button image={{
-                children: <Trash/>,
+                children: <Trash />,
                 visibleOnlyImage: true,
             }}
-                    onClick={removeCurrentRecord}
-                    style={{
-                        backgroundColor: red_dark
-                    }}
+                onClick={removeCurrentRecord}
+                style={{
+                    backgroundColor: red_dark
+                }}
             />
         </div>
     );

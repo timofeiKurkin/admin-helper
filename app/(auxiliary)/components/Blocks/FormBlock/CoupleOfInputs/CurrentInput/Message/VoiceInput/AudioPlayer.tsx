@@ -1,6 +1,6 @@
 "use client"
 
-import React, { FC, useEffect, useRef, useState } from 'react';
+import React, { FC, useCallback, useEffect, useRef, useState } from 'react';
 import Play from "@/app/(auxiliary)/components/UI/SVG/Play/Play";
 import Button from "@/app/(auxiliary)/components/UI/Button/Button";
 import AudioTrack from "@/app/(auxiliary)/components/UI/SVG/AudioTrack/AudioTrack";
@@ -58,6 +58,30 @@ const AudioPlayer: FC<PropsType> = ({ audioBlob }) => {
         audioBlob
     ]);
 
+    const handleAudioEnd = () => {
+        setProgress(100);
+        stopTimeRef.current = 0;
+        startTimeRef.current = 0;
+        setIsPlaying(false);
+        if (animationFrameRef.current) {
+            cancelAnimationFrame(animationFrameRef.current);
+        }
+    };
+
+    useEffect(() => {
+        if (!sourceRef.current || !audioBufferRef.current) return
+
+        sourceRef.current.onended = () => {
+            handleAudioEnd()
+        }
+
+        return () => {
+            if (sourceRef.current) {
+                sourceRef.current.onended = null
+            }
+        }
+    }, [])
+
     useEffect(() => {
         return () => {
             if (sourceRef.current) {
@@ -65,6 +89,37 @@ const AudioPlayer: FC<PropsType> = ({ audioBlob }) => {
             }
         }
     }, []);
+
+    /**
+         * Функция для обновления линии прогресса аудиодорожки
+         * @param status
+         */
+    const updateProgress = () => {
+        if (
+            !sourceRef.current ||
+            !audioContextRef.current ||
+            !startTimeRef.current ||
+            !audioBufferRef.current
+        ) {
+            return
+        }
+
+        const currentTime = audioContextRef.current.currentTime - startTimeRef.current
+        const duration = audioBufferRef.current.duration
+        const newProgress = roundNumber((currentTime / duration) * 100)
+
+        if (currentTime >= duration) {
+            /**
+             * Событие, которое срабатывает, когда запись полностью воспроизведена
+            */
+            handleAudioEnd()
+            return
+        }
+
+        setProgress(newProgress)
+        console.log(newProgress)
+        animationFrameRef.current = requestAnimationFrame(() => updateProgress())
+    }
 
     /**
      * Функция, для воспроизведения голосового сообщения
@@ -92,7 +147,7 @@ const AudioPlayer: FC<PropsType> = ({ audioBlob }) => {
             startTimeRef.current = startTime // Сохранение времени старта
 
             setIsPlaying(true)
-            updateProgress(true) // Обновление прогресса полосы воспроизведения
+            updateProgress() // Обновление прогресса полосы воспроизведения
         }
     }
 
@@ -113,43 +168,6 @@ const AudioPlayer: FC<PropsType> = ({ audioBlob }) => {
             if (animationFrameRef.current) { // Отключение анимации
                 cancelAnimationFrame(animationFrameRef.current)
             }
-        }
-    }
-
-    /**
-     * Функция для обновления линии прогресса аудиодорожки
-     * @param status
-     */
-    const updateProgress = (status?: boolean) => {
-        if (
-            (isPlaying || status) &&
-            sourceRef.current &&
-            audioContextRef.current &&
-            startTimeRef.current &&
-            audioBufferRef.current
-        ) {
-            const currentTime = audioContextRef.current.currentTime - startTimeRef.current
-            const duration = audioBufferRef.current.duration
-            const newProgress = roundNumber((currentTime / duration) * 100)
-            setProgress(newProgress)
-
-            if (Math.floor(newProgress) >= 99) {
-                /**
-                 * Событие, которое срабатывает, когда запись полностью воспроизведена
-                 */
-                sourceRef.current.onended = () => {
-                    setProgress(100)
-                    stopTimeRef.current = 0
-                    startTimeRef.current = 0
-                    setIsPlaying(false)
-
-                    if (animationFrameRef.current) {
-                        cancelAnimationFrame(animationFrameRef.current)
-                    }
-                }
-            }
-
-            animationFrameRef.current = requestAnimationFrame(() => updateProgress(true))
         }
     }
 

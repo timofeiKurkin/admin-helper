@@ -2,6 +2,7 @@
 
 import React, { FC, useEffect, useState } from 'react'
 import CompleteRequestBlock from '../../../Blocks/OperatorBlocks/CompleteRequestBlock/CompleteRequestBlock'
+import completeRequestData from "@/data/interface/complete-request-page/data.json"
 import { HelpRequestForOperatorType } from '@/app/(auxiliary)/types/OperatorTypes/OperatorTypes'
 import { axiosRequestsHandler } from '@/app/(auxiliary)/func/axiosRequestsHandler'
 import OperatorService from '@/app/(auxiliary)/libs/axios/services/OperatorService/OperatorService'
@@ -13,6 +14,7 @@ import { AnimatePresence, motion, Variants } from 'framer-motion'
 import CompleteRequestError from '../../../Blocks/OperatorBlocks/CompleteRequestError/CompleteRequestError'
 import styles from "./CompleteRequest.module.scss";
 import { AxiosErrorType } from '@/app/(auxiliary)/types/AxiosTypes/AxiosTypes'
+import { boldSpanTag } from '@/app/(auxiliary)/func/tags/boldSpanTag'
 
 interface PropsType {
     accept_url: string
@@ -22,7 +24,7 @@ const CompleteRequest: FC<PropsType> = ({ accept_url }) => {
     const dispatch = useAppDispatch()
     const [success, setSuccess] = useState<boolean>(false)
     const [requestPublic, setRequestPublic] = useState<HelpRequestForOperatorType>()
-    const [errorData, setErrorData] = useState<{ message: string; code: number }>({ message: "", code: 500 })
+    const [errorData, setErrorData] = useState<{ message: string; statusCode: number }>({ message: "", statusCode: 500 })
 
     useEffect(() => {
         let active = true
@@ -35,9 +37,10 @@ const CompleteRequest: FC<PropsType> = ({ accept_url }) => {
                     const data = response as AxiosResponse<HelpRequestForOperatorType>
                     setRequestPublic(data.data)
                     setSuccess(true)
+                    dispatch(setNewNotification({ message: completeRequestData.helpfulText, type: "success" }))
                 } else {
                     const error = response as AxiosErrorType
-                    setErrorData({ message: error.message, code: error.statusCode })
+                    setErrorData(error)
                     setRequestPublic({} as HelpRequestForOperatorType)
                     dispatch(setNewNotification({
                         message: "Не удалось завершить заявку!",
@@ -70,7 +73,7 @@ const CompleteRequest: FC<PropsType> = ({ accept_url }) => {
                             {success ? (
                                 <CompleteRequestBlock request={requestPublic} />
                             ) : (
-                                <CompleteRequestError code={errorData.code} message={errorData.message} />
+                                <CompleteRequestError code={errorData.statusCode} message={errorData.message} />
                             )}
                         </motion.div>
                     </AnimatePresence>

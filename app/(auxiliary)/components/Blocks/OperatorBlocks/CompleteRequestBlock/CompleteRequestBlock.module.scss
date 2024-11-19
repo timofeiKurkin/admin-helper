@@ -8,7 +8,6 @@
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    row-gap: 4.38rem;
 
     @media screen and ($pad640_991), screen and ($phone375_639) {
         row-gap: 3.12rem;
@@ -39,8 +38,8 @@
     }
 
     .separatedLine {
-        margin-top: 2.19rem;
-        margin-bottom: 2.5rem;
+        margin-top: 1.88rem;
+        margin-bottom: 2.19rem;
 
         @media screen and ($pad992_1279) {
             margin-top: 1.88rem;
@@ -58,5 +57,16 @@
             margin-top: 1.25rem;
             margin-bottom: 1.56rem;
         }
+    }
+}
+
+.removeButton {
+    margin: 0 auto;
+    width: 60% !important;
+    background-color: $white !important;
+    border: $black_input_border !important;
+    
+    & > p {
+        color: $black !important;
     }
 }

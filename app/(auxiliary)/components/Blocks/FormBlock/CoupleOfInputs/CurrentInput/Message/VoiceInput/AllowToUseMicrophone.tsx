@@ -17,16 +17,8 @@ interface PropsType {
  * @constructor
  */
 const AllowToUseMicrophone: FC<PropsType> = ({
-    isRecording,
-    microphonePermission,
-    stopRecording
-}) => {
 
-    useEffect(() => {
-        // setTimeout(() => {
-        //     stopRecording()
-        // }, 15000)
-    }, [stopRecording]);
+}) => {
 
     return (
         <PopupDisableScroll>

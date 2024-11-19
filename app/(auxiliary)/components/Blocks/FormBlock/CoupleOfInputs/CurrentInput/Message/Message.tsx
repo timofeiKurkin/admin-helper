@@ -85,6 +85,7 @@ const Message: FC<PropsType> = ({ currentInput }) => {
             {
                 !userCannotTalk && (
                     <VoiceInput voicePlaceholder={currentInput.voiceMessage}
+                        changeMessageTypeHandler={changeMessageTypeHandler}
                         setNewMessage={setNewMessageHandler}
                         isError={isError}
                         setErrorHandler={setErrorHandler}

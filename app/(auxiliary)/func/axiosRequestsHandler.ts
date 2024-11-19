@@ -7,7 +7,7 @@ export const axiosRequestsHandler = async <T, D>(axiosFunction: T): Promise<Axio
     } catch (error: unknown) {
         if(isAxiosError(error)) {
             return {
-                message: error.response?.data || error.message,
+                message: error.response?.data.message || error.message,
                 statusCode: error.response?.status || 500
             }
         } else {

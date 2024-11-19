@@ -12,7 +12,7 @@ import {
     selectRejectionInputs,
     selectServerResponse
 } from "@/app/(auxiliary)/libs/redux-toolkit/store/slices/UserFormDataSlice/UserFormDataSlice";
-import { MESSAGE_KEY } from "@/app/(auxiliary)/types/AppTypes/InputHooksTypes";
+import { MESSAGE_KEY, MessageInputDataType } from "@/app/(auxiliary)/types/AppTypes/InputHooksTypes";
 import { MessageType } from "@/app/(auxiliary)/types/Data/Interface/RootPage/RootPageContentType";
 import { blue_light, red_dark } from "@/styles/colors";
 import { FC, useEffect, useLayoutEffect, useRef, useState } from "react";
@@ -27,7 +27,9 @@ interface PropsType {
     setNewMessage: (newMessage: File, validationStatus: boolean) => void;
     removeRecorder: () => void;
     isError: boolean;
-    setErrorHandler: (status: boolean) => void
+    changeMessageTypeHandler: (newType: MessageInputDataType) => void;
+    setErrorHandler: (status: boolean) => void;
+
 }
 
 const VoiceInput: FC<PropsType> = ({
@@ -35,6 +37,7 @@ const VoiceInput: FC<PropsType> = ({
     setNewMessage,
     isError,
     setErrorHandler,
+    changeMessageTypeHandler,
     removeRecorder
 }) => {
     const dispatch = useAppDispatch()
@@ -46,6 +49,7 @@ const VoiceInput: FC<PropsType> = ({
     const [recordingIsDone, setRecordingIsDone] = useState<boolean>(voiceMessage.value instanceof File)
     const [microphonePermission, setMicrophonePermission] = useState<PermissionState>()
     const [noMicrophone, setNoMicrophone] = useState<boolean>(false)
+    const [modalToAllowUseMicro, setModalToAllowUseMicro] = useState<boolean>(false)
 
     const [audioBlob, setAudioBlob] = useState<Blob | null>(() => {
         if (voiceMessage.value instanceof File) {
@@ -64,12 +68,24 @@ const VoiceInput: FC<PropsType> = ({
 
     const startRecording = async () => {
         if (noMicrophone) {
-            dispatch(setNewNotification({ message: `К сожалению, мы не смогли получить доступ к вашему микрофону 😞<br/>${boldSpanTag("Опишите вашу проблему в текстовом блоке")} 📝`, "type": "warning" }))
+            changeMessageTypeHandler("text")
+            dispatch(setNewNotification({
+                message: `К сожалению, мы не смогли получить доступ к вашему микрофону 😞<br/>${boldSpanTag("Опишите вашу проблему в текстовом блоке")} 📝`,
+                "type": "warning"
+            }))
+            return
+        }
+
+        if (microphonePermission === "denied") {
+            dispatch(setNewNotification({ message: `Вы запретили доступ к микрофону для нашего сайта 😞<br/> Но если Вы передумали, ${boldSpanTag("нажмите на значок замка 🔒 или значок настроек ⚙️ рядом с адресом сайта")} в строке браузера.<br/> Там вы сможете ${boldSpanTag("разрешить использование микрофона")}.`, type: "warning" }))
             return
         }
 
         setIsRecording((prevState) => !prevState)
         audioChunksRef.current = []
+
+        setModalToAllowUseMicro(microphonePermission === "prompt")
+
         /**
          * Доступ к микрофону пользователя
          */
@@ -218,6 +234,8 @@ const VoiceInput: FC<PropsType> = ({
 
                 permissions.onchange = () => {
                     setMicrophonePermission(permissions.state)
+
+                    setModalToAllowUseMicro(false)
                 }
             }).catch(() => {
                 console.warn("Microphone permission query is not supported in this browser.")
@@ -226,6 +244,18 @@ const VoiceInput: FC<PropsType> = ({
             console.warn("Permissions API is not available in this browser")
         }
     }, []);
+
+    useEffect(() => {
+        if (modalToAllowUseMicro) {
+            const timer = setTimeout(() => {
+                setModalToAllowUseMicro(false)
+            }, 3000)
+
+            return () => {
+                clearTimeout(timer)
+            }
+        }
+    }, [modalToAllowUseMicro])
 
     return (
         <>
@@ -248,7 +278,7 @@ const VoiceInput: FC<PropsType> = ({
                 )}
             </div>
 
-            {isRecording && microphonePermission === "prompt" ? (
+            {modalToAllowUseMicro ? (
                 <AllowToUseMicrophone isRecording={isRecording}
                     microphonePermission={microphonePermission}
                     stopRecording={stopRecording} />
