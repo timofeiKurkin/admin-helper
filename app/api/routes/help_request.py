@@ -65,17 +65,34 @@ async def get_user_requests(*, request: Request, session: SessionDep):
     user_requests = crud.get_user_requests(
         session=session, owner_id=user_id, order_by="created_at"
     )
-    user_public_requests: List[RequestForHelpPublic] = [
-        RequestForHelpPublic.model_validate(
-            user_request,
-            update={
-                "created_at": user_request.created_at.strftime(
-                    settings.PUBLIC_TIME_FORMAT
+    user_public_requests: List[RequestForHelpPublic] = []
+
+    try:
+        for user_request in user_requests:
+            created_at = user_request.created_at
+            completed_at = user_request.completed_at
+
+            update_data = {
+                "created_at": created_at.strftime(settings.PUBLIC_TIME_FORMAT),
+                "completed_at": "",
+            }
+
+            if completed_at:
+                completed_format = (
+                    settings.PUBLIC_SHORT_TIME_FORMAT
+                    if completed_at.day == created_at.day
+                    and completed_at.month == created_at.month
+                    else settings.PUBLIC_TIME_FORMAT
                 )
-            },
-        )
-        for user_request in user_requests
-    ]
+                update_data["completed_at"] = completed_at.strftime(completed_format)
+
+            user_public_requests.append(
+                RequestForHelpPublic.model_validate(user_request, update=update_data)
+            )
+    except Exception as e:
+        error = f"There's an error: {e}"
+        help_request_error.visible_error(error)
+        raise HTTPException(status_code=500, detail=error)
 
     preview_count = 7
 
@@ -185,6 +202,11 @@ async def create_help_request(
     photos_media_file: List[MediaFile] = []
     videos_media_file: List[MediaFile] = []
 
+    # Telegram indexes of messages
+    voice_message_id: List[int] = []
+    photo_messages_idx: List[int] = []
+    video_messages_idx: List[int] = []
+
     if message_file is not None or photo is not None or video is not None:
         voice_file: InputFile = InputFile(obj=b"")
         photo_files: List[InputMediaPhoto] = []
@@ -242,15 +264,12 @@ async def create_help_request(
                     message=f"Failed to compress video: {e}",
                 )
 
-        voice_message_id: List[int] = []
-        photo_messages_idx: List[int] = []
-        video_messages_idx: List[int] = []
-
         try:
             if voice_file.input_file_content and voice_file.filename:
                 voice_response = await main_message.reply_voice(
                     voice=voice_file,
                     connect_timeout=telegram_timeout_time,
+                    caption="Сообщение пользователя:",
                 )
                 voice_message_id.append(voice_response.message_id)
                 if voice_response.voice:
@@ -371,6 +390,13 @@ async def create_help_request(
     reply_markup_message_id: int = reply_markup_message.message_id
 
     # Create data base model
+    telegram_messages_idx = TelegramMessagesIDX(
+        reply_markup=reply_markup_message_id,
+        main_message=main_message_id,
+        voice_message=voice_message_id[0] if len(voice_message_id) else 0,
+        photos=photo_messages_idx,
+        videos=video_messages_idx,
+    )
     updated_request = RequestForHelpUpdate(
         device=device,
         message_text=message_text or "",
@@ -378,7 +404,7 @@ async def create_help_request(
         photos=photos_media_file,
         videos=videos_media_file,
         accept_url=accept_url,
-        telegram_messages_idx=TelegramMessagesIDX(reply_markup=reply_markup_message_id),
+        telegram_messages_idx=telegram_messages_idx,
     )
 
     try:
@@ -418,7 +444,6 @@ async def create_help_request(
         httponly=True,
         path="/",
         max_age=60 * 60 * 24 * 30,
-        # domain=settings.CLIENT_HOST,
         samesite="none",
     )
 

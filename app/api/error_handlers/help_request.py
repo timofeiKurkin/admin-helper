@@ -12,7 +12,7 @@ from app.telegram_bot.bot import bot_api
 from fastapi import HTTPException
 
 
-def visible_error(error: str):
+def visible_error(error: object):
     logging.error(error)
     raise HTTPException(
         status_code=504,

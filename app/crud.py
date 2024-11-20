@@ -1,5 +1,5 @@
 import uuid
-from typing import Any, Sequence
+from typing import Any, Dict, Sequence
 
 from app.models import (
     RequestForHelp,
@@ -32,7 +32,7 @@ def get_user_by_phone(*, session: Session, phone: str) -> User | None:
     return session_user
 
 
-def get_user(*, session: Session, **filters: dict[str, Any]) -> User | None:
+def get_user(*, session: Session, **filters: Any) -> User | None:
     statement = select(User).filter_by(**filters)
     session_user = session.exec(statement=statement).first()
     return session_user
@@ -82,7 +82,9 @@ def get_user_requests(
     return user_requests or []
 
 
-def get_user_request_by_accept_url(*, session: Session, accept_url: str):
+def get_user_request_by_accept_url(
+    *, session: Session, accept_url: str
+) -> RequestForHelp | None:
     statement = (
         select(RequestForHelp)
         .where(RequestForHelp.accept_url == accept_url)
@@ -102,10 +104,6 @@ def delete_user_request(*, session: Session, db_request: RequestForHelp):
         print(
             f"Request for help {db_request.id} not found or have been already deleted"
         )
-
-
-def delete_user_requests(*, session: Session, phone: str):
-    pass
 
 
 # def get_last_request_index(*, session: Session) -> int:

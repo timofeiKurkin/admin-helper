@@ -53,7 +53,8 @@ class Settings(BaseSettings):
     POSTGRES_PASSWORD: str = ""
     POSTGRES_DB: str = ""
 
-    PUBLIC_TIME_FORMAT: str = r"%d.%m.%Y %H:%M"
+    PUBLIC_TIME_FORMAT: str = r"%d.%m.%y %H:%M"
+    PUBLIC_SHORT_TIME_FORMAT: str = r"%H:%M"
 
     @computed_field  # type: ignore[prop-decorator]
     @property

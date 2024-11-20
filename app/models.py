@@ -59,13 +59,19 @@ class User(UserBase, table=True):
 
 
 class TelegramMessagesIDX(SQLModel):
-    # main_message: int = Field(default=0)
+    main_message: int = Field(default=0)
+    voice_message: int = Field(default=0)
     reply_markup: int = Field(default=0)
+    photos: List[int] = Field(default_factory=list, sa_column=Column(JSON))
+    videos: List[int] = Field(default_factory=list, sa_column=Column(JSON))
 
     def to_dict(self) -> dict:
         return {
-            # "main_message": self.main_message,
-            "reply_markup": self.reply_markup
+            "main_message": self.main_message,
+            "voice_message": self.voice_message,
+            "reply_markup": self.reply_markup,
+            "photos": self.photos,
+            "videos": self.videos,
         }
 
     @staticmethod
@@ -100,8 +106,12 @@ class RequestForHelpBase(SQLModel):
             "telegram_messages_idx": self.telegram_messages_idx.to_dict(),
             "message_file": self.message_file.to_dict(),
             "photos": [photo.to_dict() for photo in self.photos],
-            "photos": [video.to_dict() for video in self.videos],
+            "videos": [video.to_dict() for video in self.videos],
         }
+
+    @staticmethod
+    def from_dict(data: dict) -> "RequestForHelpBase":
+        return RequestForHelpBase(**data)
 
 
 # Request for help type in data base
@@ -139,12 +149,14 @@ class RequestForHelpPublic(SQLModel):
     created_at: str = Field(
         default=datetime.now().strftime(settings.PUBLIC_TIME_FORMAT)
     )
+    completed_at: str = Field(default="")
     is_completed: bool = Field(default=False)
 
     def to_dict(self):
         return {
             "id": self.id,
             "createdAt": self.created_at,
+            "completedAt": self.completed_at,
             "isCompleted": self.is_completed,
         }
 
