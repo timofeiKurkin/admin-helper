@@ -71,7 +71,7 @@ const CompleteRequest: FC<PropsType> = ({ accept_url }) => {
                     <AnimatePresence>
                         <motion.div style={{ overflow: "hidden", height: "inherit" }} variants={variants} initial={"hidden"} animate={"visible"} exit={"hidden"}>
                             {success ? (
-                                <CompleteRequestBlock request={requestPublic} />
+                                <CompleteRequestBlock request={requestPublic} request_url={accept_url} />
                             ) : (
                                 <CompleteRequestError code={errorData.statusCode} message={errorData.message} />
                             )}

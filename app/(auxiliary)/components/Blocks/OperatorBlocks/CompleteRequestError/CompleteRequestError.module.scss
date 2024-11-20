@@ -3,20 +3,40 @@
 .completeRequestErrorWrapper {
     height: inherit;
     width: 100%;
+
     display: flex;
     align-items: center;
-
+    justify-content: center;
 
     // @media screen and ($pho) {
-        
+
     // }
 
     .completeRequestErrorModal {
-        width: inherit;
-
         border: $error_input_border;
         border-radius: $border_radius;
-
+        background-color: $white;
         padding: 2.5rem;
+
+        .requestErrorDescription {
+            display: flex;
+            flex-direction: column;
+            row-gap: 10px;
+
+            .requestErrorCode {
+                display: flex;
+                column-gap: 10px;
+            }
+
+            .requestErrorMessage {
+                display: flex;
+                flex-direction: column;
+                row-gap: 5px;
+
+                & > p:last-child {
+                    margin-left: 5px;
+                }
+            }
+        }
     }
 }

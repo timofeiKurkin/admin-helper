@@ -51,12 +51,10 @@
         background-color: $white;
         user-select: none;
         cursor: pointer;
-
-        // display: flex;
-        // justify-content: space-between;
         
         display: grid;
         column-gap: 20px;
+        box-shadow: $main_box_shadow;
         
         @media screen and ($desktop1920), 
         screen and ($desktop1440_1919), 

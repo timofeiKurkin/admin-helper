@@ -8,4 +8,8 @@ export default class OperatorService {
     static async complete_request(acceptUrl: string): Promise<AxiosResponse<HelpRequestForOperatorType>> {
         return $api.patch<HelpRequestForOperatorType>(`${this.rootPage}complete_request/${acceptUrl}`)
     }
+
+    static async delete_request(acceptURL: string): Promise<AxiosResponse> {
+        return $api.delete(`${this.rootPage}delete_request/${acceptURL}`)
+    }
 }
