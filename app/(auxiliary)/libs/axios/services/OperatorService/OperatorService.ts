@@ -1,4 +1,4 @@
-import { HelpRequestForOperatorType } from "@/app/(auxiliary)/types/OperatorTypes/OperatorTypes";
+import { DeleteRequestType, HelpRequestForOperatorType } from "@/app/(auxiliary)/types/OperatorTypes/OperatorTypes";
 import { AxiosResponse } from "axios";
 import { $api } from "../../index";
 
@@ -9,7 +9,7 @@ export default class OperatorService {
         return $api.patch<HelpRequestForOperatorType>(`${this.rootPage}complete_request/${acceptUrl}`)
     }
 
-    static async delete_request(acceptURL: string): Promise<AxiosResponse> {
-        return $api.delete(`${this.rootPage}delete_request/${acceptURL}`)
+    static async delete_request(acceptURL: string): Promise<AxiosResponse<DeleteRequestType>> {
+        return $api.delete<DeleteRequestType>(`${this.rootPage}delete_request/${acceptURL}`)
     }
 }

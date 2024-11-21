@@ -1,65 +1,49 @@
 // Colors
-$green_dark: #5BA809;
-$green_light: #78C724;
-$blue_dark: #00608C;
-$blue_light: #0088C7;
-$red_dark: #BF2121;
-$yellow: #F3C623;
+$green_dark: #5ba809;
+$green_light: #78c724;
+$blue_dark: #00608c;
+$blue_light: #0088c7;
+$red_dark: #bf2121;
+$yellow: #f3c623;
 
 $black: #151515;
-$grey: #8A9BB3;
-$white: #FFFFFF;
-$white_1: #F2F6FA;
-$cold_white: #D0D8E4;
+$grey: #8a9bb3;
+$white: #ffffff;
+$white_1: #f2f6fa;
+$cold_white: #d0d8e4;
 
 // Media
-$phone375_639: '(min-width: 375px) and (max-width: 639px)';
-$phone550_639: '(min-width: 550px) and (max-width: 639px)';
-$pad640_991: '(min-width: 640px) and (max-width: 991px)';
-$pad992_1279: '(min-width: 992px) and (max-width: 1279px)';
-$desktop1280_1439: '(min-width: 1280px) and (max-width: 1439px)';
-$desktop1440_1919: '(min-width: 1440px) and (max-width: 1919px)';
-$desktop1920: '(min-width: 1920px)';
+$phone375_639: "(min-width: 375px) and (max-width: 639px)";
+$phone550_639: "(min-width: 550px) and (max-width: 639px)";
+$pad640_991: "(min-width: 640px) and (max-width: 991px)";
+$pad992_1279: "(min-width: 992px) and (max-width: 1279px)";
+$desktop1280_1439: "(min-width: 1280px) and (max-width: 1439px)";
+$desktop1440_1919: "(min-width: 1440px) and (max-width: 1919px)";
+$desktop1920: "(min-width: 1920px)";
 
 // Backgrounds
-$background: radial-gradient(188.48% 111.8% at 100% 100%, #D0F0FF 0%, $white 80.36%);
-.background {
-	width: 100dvw;
-	height: 100dvh;
-	background: $background;
-	position: fixed;
-	top: 0;
-	left: 0;
-	z-index: -2;
-	transition: background 1s ease;
-
-	&:before {
-		content: '';
-		position: absolute;
-		top: 0;
-		left: 0;
-		width: 100%;
-		height: 100%;
-		background: radial-gradient(198.52% 111.8% at 100% 100%, #E8FFCF 0%, white 80.25%);
-		opacity: 0;
-		transition: opacity 1s ease;
-		z-index: -1;
-	}
+$background_default: radial-gradient(188.48% 111.8% at 100% 100%, #d0f0ff 0%, $white 80.36%);
+.background_default {
+	// --background: #d0f0ff;
+	background: $background_default;
 }
 
-$background_success: var(--background_success, radial-gradient(198.52% 111.8% at 100% 100%, #E8FFCF 0%, $white_1 80.25%), $white);
-.background_success::before {
+$background_success: radial-gradient(198.52% 111.8% at 100% 100%, #e8ffcf 0%, $white_1 80.25%);
+.background_success {
 	background: $background_success;
-	opacity: 1;
 }
 
-$background_error: var(--background_error, radial-gradient(197.36% 111.8% at 100% 100%, #FFD0D0 0%, $white_1 80%), $white);
-.background_error::before {
+$background_error: radial-gradient(197.36% 111.8% at 100% 100%, #ffd0d0 0%, $white_1 80%);
+.background_error {
 	background: $background_error;
-	opacity: 1;
 }
 
-$input_green_light_background: linear-gradient(0deg, rgba(120, 199, 36, 0.10) 0%, rgba(120, 199, 36, 0.10) 100%), #FFF;
+$background_warning: radial-gradient(197.36% 111.8% at 100% 100%, #ffe5b4 0%, $white_1 80%);
+.background_warning {
+	background: $background_error;
+}
+
+$input_green_light_background: linear-gradient(0deg, rgba(120, 199, 36, 0.1) 0%, rgba(120, 199, 36, 0.1) 100%), #fff;
 
 // Borders
 $black_input_border: 2px solid rgba($black, 0.85);
@@ -74,10 +58,10 @@ $border_radius: 0.9375rem;
 $main_box_shadow: 3px 3px 5px 2px rgba(21, 21, 21, 0.15);
 
 // Letter Spacing
-$letter_spacing: .01875rem;
+$letter_spacing: 0.01875rem;
 
 // Transition
-$transition: .4s ease-in-out;
+$transition: 0.4s ease-in-out;
 
 // Opacities
-$input_opacity: .7;
+$input_opacity: 0.7;

@@ -7,6 +7,7 @@ import { AxiosResponse } from 'axios';
 import { useAppDispatch } from '@/app/(auxiliary)/libs/redux-toolkit/store/hooks';
 import { setNewNotification } from '@/app/(auxiliary)/libs/redux-toolkit/store/slices/AppSlice/AppSlice';
 import { AxiosErrorType } from '@/app/(auxiliary)/types/AxiosTypes/AxiosTypes';
+import { DeleteRequestType } from '@/app/(auxiliary)/types/OperatorTypes/OperatorTypes';
 
 interface PropsType {
     request_url: string;
@@ -24,6 +25,10 @@ const DeleteUserRequest: FC<PropsType> = ({ request_url, changeDeleteStatus }) =
 
         if ((response as AxiosResponse).status === 204) {
             changeDeleteStatus()
+        } else if ((response as AxiosResponse).status === 200) {
+            const deletedResponse = response as AxiosResponse<DeleteRequestType>
+            changeDeleteStatus()
+            dispatch(setNewNotification({ message: deletedResponse.data.message, type: "warning" }))
         } else {
             const errorResponse = response as AxiosErrorType
             dispatch(setNewNotification({ message: `Не удалось удалить заявку: ${errorResponse.message}`, type: "error" }))

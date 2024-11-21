@@ -9,7 +9,6 @@ import { selectPopups } from "@/app/(auxiliary)/libs/redux-toolkit/store/slices/
 import DropZone from "@/app/(auxiliary)/components/Blocks/FormBlock/DropZone/DropZone";
 import FileList
     from "@/app/(auxiliary)/components/Blocks/FormBlock/CoupleOfInputs/CurrentInput/FileInput/FilesList/FileList";
-import { selectUserDevice } from '@/app/(auxiliary)/libs/redux-toolkit/store/slices/AppSlice/AppSlice';
 import ModalWrapper from '@/app/(auxiliary)/components/UI/Wrappers/ModalWrapper/ModalWrapper';
 import OpacityAnimation from '@/app/(auxiliary)/components/UI/Animations/OpacityAnimation/OpacityAnimation';
 
@@ -22,10 +21,9 @@ interface PropsType {
 }
 
 const HaveMediaFile: FC<PropsType> = ({ inputData }) => {
-    const { phoneAdaptive } = useAppSelector(selectUserDevice)
     const popupVisibility = useAppSelector(selectPopups)[inputData.type]
     const [dragDropZoneIsOpen, setDragDropZoneIsOpen] =
-        useState<boolean>()
+        useState<boolean>(false)
 
     const openDragDropZone = () => {
         setDragDropZoneIsOpen((prevState) => (!prevState));
@@ -43,19 +41,11 @@ const HaveMediaFile: FC<PropsType> = ({ inputData }) => {
                 </div>
             </div>
 
-            {phoneAdaptive ? (
-                dragDropZoneIsOpen !== undefined ? (
-                    <DropZone inputType={inputData.type as PhotoAndVideoKeysType}
-                        openDragDropZone={openDragDropZone}
-                        dragDropZoneIsOpen={dragDropZoneIsOpen} />
-                ) : null
-            ) : (
-                dragDropZoneIsOpen ? (
-                    <DropZone inputType={inputData.type as PhotoAndVideoKeysType}
-                        openDragDropZone={openDragDropZone}
-                        dragDropZoneIsOpen={dragDropZoneIsOpen} />
-                ) : null
-            )}
+            {dragDropZoneIsOpen ? (
+                <DropZone inputType={inputData.type as PhotoAndVideoKeysType}
+                    openDragDropZone={openDragDropZone}
+                    dragDropZoneIsOpen={dragDropZoneIsOpen} />
+            ) : null}
 
             <ModalWrapper>
                 <OpacityAnimation trigger={popupVisibility && inputData.type === PHOTO_KEY}>
@@ -63,13 +53,11 @@ const HaveMediaFile: FC<PropsType> = ({ inputData }) => {
                 </OpacityAnimation>
             </ModalWrapper>
 
-            {/* {popupVisibility && inputData.type === PHOTO_KEY && (
-                <PhotoEditorPopup />
-            )} */}
-
-            {popupVisibility && inputData.type === VIDEO_KEY && (
-                <VideoPlayerPopup />
-            )}
+            <ModalWrapper>
+                <OpacityAnimation trigger={popupVisibility && inputData.type === VIDEO_KEY}>
+                    <VideoPlayerPopup />
+                </OpacityAnimation>
+            </ModalWrapper>
         </>
     );
 };

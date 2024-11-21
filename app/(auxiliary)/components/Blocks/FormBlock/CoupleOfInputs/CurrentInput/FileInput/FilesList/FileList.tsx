@@ -48,10 +48,12 @@ const FileList: FC<PropsType> = ({
         }
     }
 
+    console.log(formFileData)
+
     if (formFileData.files.length) {
         return (
             <HorizontalScroll filesListLength={formFileData.files.length}>
-                {formFileData.filesFinally.length ? formFileData.filesFinally.map((file, i) => (
+                {formFileData.filesFinally.map((file, i) => (
                     <div key={`key=${i}`} className={styles.fileWrapper}>
                         <FilePreviewWithHandlers file={file}
                             removeFile={removeFile}
@@ -59,7 +61,7 @@ const FileList: FC<PropsType> = ({
                             index={i} />
 
                     </div>
-                )) : null}
+                ))}
             </HorizontalScroll>
         )
     } else {

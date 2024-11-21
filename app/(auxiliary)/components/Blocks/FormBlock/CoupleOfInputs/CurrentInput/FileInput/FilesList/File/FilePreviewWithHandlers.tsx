@@ -53,12 +53,17 @@ const FilePreviewWithHandlers: FC<PropsType> = ({
                     </div>
                 ) : null}
 
-                <FilePreviewBlock url={URL.createObjectURL(file)}
-                    alt={file.name} />
+                {Object.keys(file).length ? (
+                    <FilePreviewBlock url={URL.createObjectURL(file)}
+                        alt={file.name} />
+                ) : (
+                    <FilePreviewBlock url={"/default_video.png"}
+                        alt={"video_prev"} />
+                )}
             </div>
         );
     } else {
-        return <FilePreviewMobile file={file} handleRemove={handleRemove} index={index}/>
+        return <FilePreviewMobile file={file} handleRemove={handleRemove} index={index} />
     }
 }
 

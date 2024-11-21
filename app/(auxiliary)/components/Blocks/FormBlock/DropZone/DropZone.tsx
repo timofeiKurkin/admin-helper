@@ -25,6 +25,9 @@ import OpacityAnimation from "../../../UI/Animations/OpacityAnimation/OpacityAni
 import styles from "./DropZone.module.scss";
 
 
+const availableVideoFormats = ["mp4", "webm"]
+
+
 interface PropsType {
     inputType: PhotoAndVideoKeysType;
     openDragDropZone: () => void;
@@ -52,6 +55,21 @@ const DropZone: FC<PropsType> = ({
 
     const createVideoPreviews = useCallback((newFiles: File[]) => {
         newFiles.forEach((file, index) => {
+            const videoFormat = file.name.split(".").pop()!
+            console.log(videoFormat)
+
+            if (!availableVideoFormats.includes(videoFormat)) {
+                dispatch(changePreview({
+                    key: inputType,
+                    data: {} as File
+                }))
+                dispatch(changeVideoOrientation({
+                    name: file.name,
+                    orientation: "horizontal"
+                }))
+                return
+            }
+
             const videoElement = document.createElement("video")
             const canvas = document.createElement("canvas")
 

@@ -239,8 +239,8 @@ export const userFormDataSlice = createAppSlice({
                 action.payload.data.forEach((file) => {
                     changePreview(file, key)
                 })
-            } else if (action.payload.data instanceof File) {
-                changePreview(action.payload.data, key)
+            } else {
+                changePreview(action.payload.data as File, key)
             }
         }),
 

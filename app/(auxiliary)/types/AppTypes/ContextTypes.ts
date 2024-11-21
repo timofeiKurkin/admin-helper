@@ -85,7 +85,7 @@ export interface ProviderStateType {
 }
 
 export interface ServerResponseType {
-    status: "success" | "error" | "";
+    status: "success" | "error" | "warning" | "";
     sentToServer: boolean;
     message: string;
 }

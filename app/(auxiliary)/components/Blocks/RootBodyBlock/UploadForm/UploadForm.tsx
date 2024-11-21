@@ -33,8 +33,8 @@ import {
     USER_POLITICAL,
     VIDEO_KEY
 } from "@/app/(auxiliary)/types/AppTypes/InputHooksTypes";
-import { ResponseFromServerType } from "@/app/(auxiliary)/types/AxiosTypes/AxiosTypes";
-import { AxiosResponse } from "axios";
+import { AxiosErrorType, ResponseFromServerType } from "@/app/(auxiliary)/types/AxiosTypes/AxiosTypes";
+import { AxiosError, AxiosResponse } from "axios";
 import { FC, useState } from 'react';
 
 
@@ -103,8 +103,9 @@ const UploadForm: FC<PropsType> = ({ buttonText }) => {
 
                     const response =
                         await axiosRequestsHandler(HelpUserService.requestClassification(formData))
+                    console.log("response:", response)
 
-                    if ((response as AxiosResponse<ResponseFromServerType>).status === 201) {
+                    if ((response as AxiosResponse<ResponseFromServerType>).status <= 299) {
                         const succeedResponse = (response as AxiosResponse<ResponseFromServerType>)
                         dispatch(resetFormToDefault())
                         dispatch(setUserAuthorization(true))
@@ -117,6 +118,18 @@ const UploadForm: FC<PropsType> = ({ buttonText }) => {
                             status: "success",
                             sentToServer: true,
                             message: succeedResponse.data.message
+                        }))
+                    } else if ((response as AxiosErrorType).statusCode >= 499) {
+                        const message = (response as AxiosErrorType).message
+                        dispatch(setServerResponse({
+                            status: "warning",
+                            sentToServer: true,
+                            message
+                        }))
+                        dispatch(setNewNotification({
+                            message,
+                            type: "warning",
+                            timeout: 10000
                         }))
                     } else {
                         const message = "Произошла ошибка при отправке формы! Обновите страницу и попробуйте еще раз!"

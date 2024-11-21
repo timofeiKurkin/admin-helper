@@ -1,0 +1,17 @@
+@import "@/styles/variables.module.scss";
+
+.backgroundWrapper {
+    width: 100dvw;
+    height: 100dvh;
+    z-index: -2;
+    top: 0;
+    left: 0;
+    position: fixed;
+
+    .backgroundWrapper {
+        width: inherit;
+        height: inherit;
+        // background: var(--background, $background_default);
+        // transition: background 1s ease-in-out;
+    }
+}
