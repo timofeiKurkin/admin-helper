@@ -55,6 +55,8 @@ class Settings(BaseSettings):
 
     PUBLIC_TIME_FORMAT: str = r"%d.%m.%y %H:%M"
     PUBLIC_SHORT_TIME_FORMAT: str = r"%H:%M"
+    
+    REQUEST_CREATING_INTERVAL: int = 12
 
     @computed_field  # type: ignore[prop-decorator]
     @property

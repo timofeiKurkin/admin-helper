@@ -1,5 +1,5 @@
 import logging
-from datetime import datetime, timedelta
+from datetime import datetime
 from typing import List
 
 from app.api.deps import SessionDep
@@ -43,10 +43,10 @@ async def delete_request(accept_url: str, session: SessionDep, response: Respons
 
         created_at = request_candidate.created_at
         current_time = datetime.now()
-        time_difference = created_at - current_time
+        time_difference = current_time - created_at
         total_hours = int(time_difference.total_seconds() // 3600)
 
-        if total_hours >= 48:
+        if total_hours <= 48:
             telegram_idx = TelegramMessagesIDX.model_validate(
                 request_candidate.telegram_messages_idx
             ).model_dump()
@@ -68,7 +68,7 @@ async def delete_request(accept_url: str, session: SessionDep, response: Respons
         else:
             response.status_code = 200
             return {
-                "message": "Заявка удалена из базы данных! Вам нужно вручную удалить сообщения из Telegram"
+                "message": "Заявка удалена из базы данных! Но вам нужно вручную удалить сообщения из Telegram"
             }
 
     except Exception as e:

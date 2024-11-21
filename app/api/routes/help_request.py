@@ -1,6 +1,7 @@
 import os
 import secrets
 import shutil
+from datetime import datetime
 from typing import Annotated, List, Optional
 
 from app import crud, utils
@@ -130,6 +131,12 @@ async def create_help_request(
     user_can_talk: Annotated[bool, Form()] = False,
     user_political: Annotated[bool, Form()] = False,
 ):
+    if not user_political:
+        return JSONResponse(
+            content={"message": "Вы не дали согласие на обработку ваших данных"},
+            status_code=403,
+        )
+
     formatted_db_phone = "".join(filter(str.isdigit, phone))[1:]
     user_candidate: Optional[User] = crud.get_user_by_phone(
         session=session, phone=formatted_db_phone
@@ -151,6 +158,26 @@ async def create_help_request(
             # user_folder = created_folder
         except Exception as e:
             help_request_error.visible_error(f"Error in creating user: {e}")
+    else:
+        user_requests = crud.get_user_requests(
+            session=session, owner_id=str(user_candidate.id), order_by="created_at"
+        )
+
+        last_request = user_requests[0]
+        request_created_at = last_request.created_at
+        current_time = datetime.now()
+        difference = current_time - request_created_at
+        total_minutes = int(difference.total_seconds() // 60)
+
+        if total_minutes < settings.REQUEST_CREATING_INTERVAL:
+            next_in = settings.REQUEST_CREATING_INTERVAL - total_minutes
+            minutes_text = f"минут{"у" if next_in == 1 else ""}{"ы" if next_in >= 2 and next_in <= 4 else ""}"
+            message = f"Вы сможете создать следующую заявку только через {next_in} {minutes_text}"
+            response = JSONResponse(
+                content={"message": message},
+                status_code=429,
+            )
+            return response
 
     assert user_candidate is not None
     user_temporary_folder: str = os.path.join(TEMPORARY_FOLDER, str(user_candidate.id))
