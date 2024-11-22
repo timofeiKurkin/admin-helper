@@ -23,29 +23,6 @@
 
 	position: relative;
 
-	.fileName {
-		width: 100%;
-		white-space: nowrap;
-		overflow: hidden;
-		display: flex;
-		position: relative;
-
-		@media screen and ($pad640_991) {
-			display: none;
-		}
-
-		&:before {
-			content: "";
-			position: absolute;
-			width: 30px;
-			height: 100%;
-			top: 0;
-			right: 0;
-
-			background: linear-gradient(90deg, rgba($white, 0) 0%, $white_1 75%)
-		}
-	}
-
 	.fileName, .fileIndex {
 		p {
 			font-size: 16px;
@@ -97,5 +74,14 @@
 				background: linear-gradient(90deg, rgba($white, 0) 0%, $cold_white 75%)
 			}
 		}
+	}
+}
+
+.fileName {
+	display: flex;
+	--file-color: #{$white_1};
+
+	@media screen and ($pad640_991) {
+		display: none;
 	}
 }

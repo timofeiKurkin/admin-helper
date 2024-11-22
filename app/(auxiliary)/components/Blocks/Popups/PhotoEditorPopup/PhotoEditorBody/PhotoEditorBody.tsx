@@ -30,6 +30,8 @@ import EditorControls
     from "@/app/(auxiliary)/components/Blocks/Popups/PhotoEditorPopup/PhotoEditorBody/EditorControls/EditorControls";
 import ClosePopup
     from "@/app/(auxiliary)/components/Blocks/Popups/PhotoEditorPopup/PhotoEditorBody/Buttons/ClosePopup/ClosePopup";
+import { AnimatePresence } from 'framer-motion';
+import OpacityAnimation from '@/app/(auxiliary)/components/UI/Animations/OpacityAnimation/OpacityAnimation';
 
 
 interface PropsType {
@@ -212,14 +214,14 @@ const PhotoEditorBody: FC<PropsType> = ({
     return (
         <div className={`${popupsCommonStyles.popupBody} ${styles.photoEditorBody}`}>
             <div className={styles.editorGrid}>
-                {fileName === photo.name ? (
+                <OpacityAnimation trigger={fileName === photo.name}>
                     <Editor scale={currentPhotoSettings.scale}
                         rotate={currentPhotoSettings.rotate}
                         setCrop={updateCrop}
                         updatePhoto={updatePhotoPreview}
                         crop={currentPhotoSettings.crop}
                         photo={photo} />
-                ) : null}
+                </OpacityAnimation>
             </div>
 
             <div className={styles.editorControlsWrapper}>
@@ -246,6 +248,7 @@ const PhotoEditorBody: FC<PropsType> = ({
             <SeparatingLine className={styles.separatedLine} />
 
             <PopupFileList titleOfList={data.photoList.uploadedPhotos}
+                type={type}
                 listOfPreviews={listOfPreviews}
                 func={{
                     switchToAnotherFile,

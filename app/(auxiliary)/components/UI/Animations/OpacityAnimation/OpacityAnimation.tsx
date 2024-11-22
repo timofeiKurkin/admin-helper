@@ -17,9 +17,14 @@ const OpacityAnimation: FC<PropsType> = ({ children, trigger }) => {
     }
 
     return (
-        <AnimatePresence>
+        <AnimatePresence mode='wait'>
             {trigger && (
-                <motion.div style={{ width: "100%", height: "100%" }} variants={variants} initial={"hidden"} exit={"hidden"} animate={"visible"}>
+                <motion.div style={{ width: "100%", height: "100%" }}
+                    variants={variants}
+                    initial={"hidden"}
+                    exit={"hidden"}
+                    transition={{ duration: 0.5 }}
+                    animate={"visible"}>
                     {children}
                 </motion.div>
             )}

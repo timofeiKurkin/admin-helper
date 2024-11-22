@@ -108,6 +108,7 @@ const VideoPlayerBody: FC<PropsType> = ({ data, type }) => {
 
             <PopupFileList titleOfList={data.photoList.uploadedPhotos}
                 listOfPreviews={filesFinally as CustomFile[]}
+                type={type}
                 func={{
                     switchToAnotherFile,
                     removeFile

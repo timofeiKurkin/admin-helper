@@ -8,11 +8,14 @@ import { useAppSelector } from "@/app/(auxiliary)/libs/redux-toolkit/store/hooks
 import { selectUserDevice } from "@/app/(auxiliary)/libs/redux-toolkit/store/slices/AppSlice/AppSlice";
 import FilePreviewMobile from './FilePreviewMobile';
 import { DivMouseEventHandler } from '@/app/(auxiliary)/types/AppTypes/AppTypes';
+import { PhotoAndVideoKeysType } from '@/app/(auxiliary)/types/AppTypes/InputHooksTypes';
+import PreviewAdaptive from './PreviewAdaptive';
 
 interface PropsType {
     file: File;
     removeFile: RemoveFileFuncType;
     openFile: (fileName: string) => void;
+    type: PhotoAndVideoKeysType;
     index: number;
 }
 
@@ -21,6 +24,7 @@ const FilePreviewWithHandlers: FC<PropsType> = ({
     file,
     removeFile,
     openFile,
+    type,
     index
 }) => {
     const userDevice = useAppSelector(selectUserDevice)
@@ -53,17 +57,14 @@ const FilePreviewWithHandlers: FC<PropsType> = ({
                     </div>
                 ) : null}
 
-                {Object.keys(file).length ? (
-                    <FilePreviewBlock url={URL.createObjectURL(file)}
-                        alt={file.name} />
-                ) : (
-                    <FilePreviewBlock url={"/default_video.png"}
-                        alt={"video_prev"} />
-                )}
+                <PreviewAdaptive type={type} file={file} />
             </div>
         );
     } else {
-        return <FilePreviewMobile file={file} handleRemove={handleRemove} index={index} />
+        return <FilePreviewMobile file={file}
+            handleRemove={handleRemove}
+            index={index}
+            type={type} />
     }
 }
 

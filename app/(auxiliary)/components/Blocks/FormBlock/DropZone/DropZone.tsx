@@ -56,12 +56,11 @@ const DropZone: FC<PropsType> = ({
     const createVideoPreviews = useCallback((newFiles: File[]) => {
         newFiles.forEach((file, index) => {
             const videoFormat = file.name.split(".").pop()!
-            console.log(videoFormat)
-
+            
             if (!availableVideoFormats.includes(videoFormat)) {
                 dispatch(changePreview({
                     key: inputType,
-                    data: {} as File
+                    data: Object.assign({ name: file.name, id: index }) as File
                 }))
                 dispatch(changeVideoOrientation({
                     name: file.name,

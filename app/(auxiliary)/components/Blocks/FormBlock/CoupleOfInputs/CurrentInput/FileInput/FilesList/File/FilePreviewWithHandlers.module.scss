@@ -56,14 +56,14 @@
 
 .filePreviewMobileWrapper {
 	display: grid;
-	grid-template-columns: 25px 70px auto 40px;
+	grid-template-columns: 20px 70px auto 40px;
 	grid-template-rows: 50px;
 	align-items: center;
 	position: relative;
+	text-align: start;
 
 	.filePreviewMobileFilename {
-		text-wrap: nowrap;
-		overflow: hidden;
 		margin: 0 15px;
+		--file-color: #{$white};
 	}
 }

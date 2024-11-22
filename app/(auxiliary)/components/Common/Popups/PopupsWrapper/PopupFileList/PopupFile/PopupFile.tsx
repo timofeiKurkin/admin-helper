@@ -7,12 +7,16 @@ import { DivMouseEventHandler } from "@/app/(auxiliary)/types/AppTypes/AppTypes"
 import { useAppSelector } from "@/app/(auxiliary)/libs/redux-toolkit/store/hooks";
 import { selectUserDevice } from "@/app/(auxiliary)/libs/redux-toolkit/store/slices/AppSlice/AppSlice";
 import { CustomFile } from "@/app/(auxiliary)/types/FormTypes/PopupTypes/PopupTypes";
+import covers from "@/app/(auxiliary)/components/UI/Covers/HideLongTitleCover.module.scss";
+import PreviewAdaptive from '@/app/(auxiliary)/components/Blocks/FormBlock/CoupleOfInputs/CurrentInput/FileInput/FilesList/File/PreviewAdaptive';
+import { PhotoAndVideoKeysType } from '@/app/(auxiliary)/types/AppTypes/InputHooksTypes';
 
 
 interface PropsType {
     index: number;
     file: File;
     currentFileName: string;
+    type: PhotoAndVideoKeysType;
     func: {
         switchToAnotherFile: (fileName: string) => void;
         removeFile: (removedFileName: string) => void;
@@ -24,7 +28,9 @@ const PopupFile: FC<PropsType> = ({
     file,
     currentFileName,
     func,
+    type
 }) => {
+    // const popup
     const padAdaptive = useAppSelector(selectUserDevice).padAdaptive640_992
     const [selectedItem, setSelectedItem] = useState<boolean>(file.name === currentFileName)
 
@@ -52,11 +58,10 @@ const PopupFile: FC<PropsType> = ({
                 <div className={styles.fileIndex}><Text>{++index}.</Text></div>
 
                 <div className={styles.photoPreview}>
-                    <FilePreviewBlock url={URL.createObjectURL(file)}
-                        alt={file.name} />
+                    <PreviewAdaptive file={file} type={type} />
                 </div>
 
-                <div className={styles.fileName}>
+                <div className={`${styles.fileName} ${covers.hideLongTitleCover}`}>
                     <Text>{file.name}</Text>
                 </div>
 

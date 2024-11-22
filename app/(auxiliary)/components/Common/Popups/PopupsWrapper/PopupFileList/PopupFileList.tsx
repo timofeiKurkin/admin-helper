@@ -8,10 +8,12 @@ import { selectUserDevice } from "@/app/(auxiliary)/libs/redux-toolkit/store/sli
 import ArrowForList from "@/app/(auxiliary)/components/UI/SVG/ArrowForList/ArrowForList";
 import { findElement } from "@/app/(auxiliary)/func/editorHandlers";
 import { CustomFile } from "@/app/(auxiliary)/types/FormTypes/PopupTypes/PopupTypes";
+import { PhotoAndVideoKeysType } from '@/app/(auxiliary)/types/AppTypes/InputHooksTypes';
 
 interface PropsType {
     titleOfList: string;
     listOfPreviews: CustomFile[];
+    type: PhotoAndVideoKeysType;
     func: {
         switchToAnotherFile: (fileName: string) => void;
         removeFile: (fileName: string) => void;
@@ -21,6 +23,7 @@ interface PropsType {
 const PopupFileList: FC<PropsType> = ({
     titleOfList,
     listOfPreviews,
+    type,
     func
 }) => {
     const currentFileName = useAppSelector(selectOpenedFileName)
@@ -88,23 +91,10 @@ const PopupFileList: FC<PropsType> = ({
                     </div>
 
                     <div className={styles.sliderListWrapper}>
-                        {/*<div className={styles.sliderList} style={{left: -currentSlide}}>*/}
-                        {/*    {listOfPreviews.map((file, index) => (*/}
-                        {/*        <div className={styles.currentSlide}*/}
-                        {/*             ref={fileRef}*/}
-                        {/*             key={`key=${index}`}>*/}
-                        {/*            <PopupFile*/}
-                        {/*                index={index}*/}
-                        {/*                file={file}*/}
-                        {/*                currentFileName={currentFileName}*/}
-                        {/*                func={func}/>*/}
-                        {/*        </div>*/}
-                        {/*    ))}*/}
-                        {/*</div>*/}
-
                         <div className={styles.currentSlide}>
                             <PopupFile index={currentSlide.id}
                                 file={currentSlide}
+                                type={type}
                                 currentFileName={currentFileName}
                                 func={func} />
                         </div>
@@ -126,6 +116,7 @@ const PopupFileList: FC<PropsType> = ({
                                 file={file}
                                 currentFileName={currentFileName}
                                 index={index}
+                                type={type}
                                 func={func} />
                         ))}
                     </div>

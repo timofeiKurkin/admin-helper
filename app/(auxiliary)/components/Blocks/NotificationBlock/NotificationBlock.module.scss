@@ -16,14 +16,14 @@
         position: absolute;
         bottom: 80px;
         right: 40px;
-        z-index: 99;
+        z-index: 16;
     }
 
     @media screen and ($pad992_1279), 
     screen and ($phone375_639), 
     screen and ($pad640_991) {
         position: fixed;
-        z-index: 99;
+        z-index: 16;
     }
 
     @media screen and ($pad992_1279) {

@@ -1,20 +1,21 @@
-import React, { FC } from 'react'
-import styles from "./FilePreviewWithHandlers.module.scss"
-import Text from '@/app/(auxiliary)/components/UI/TextTemplates/Text';
 import DeleteFile from '@/app/(auxiliary)/components/UI/SVG/DeleteFile/DeleteFile';
-import { DivMouseEventHandler } from '@/app/(auxiliary)/types/AppTypes/AppTypes';
-import FilePreviewBlock from '@/app/(auxiliary)/components/Blocks/FilePreviewBlock/FilePreviewBlock';
 import TextMedium from '@/app/(auxiliary)/components/UI/TextTemplates/TextMedium';
+import { DivMouseEventHandler } from '@/app/(auxiliary)/types/AppTypes/AppTypes';
+import { PhotoAndVideoKeysType } from '@/app/(auxiliary)/types/AppTypes/InputHooksTypes';
+import { FC } from 'react';
+import styles from "./FilePreviewWithHandlers.module.scss";
+import covers from "@/app/(auxiliary)/components/UI/Covers/HideLongTitleCover.module.scss";
+import PreviewAdaptive from './PreviewAdaptive';
 
 
 interface PropsType {
     file: File;
     handleRemove: (e: DivMouseEventHandler) => void;
-    index: number
+    index: number;
+    type: PhotoAndVideoKeysType;
 }
 
-const FilePreviewMobile: FC<PropsType> = ({ file, handleRemove, index }) => {
-
+const FilePreviewMobile: FC<PropsType> = ({ file, handleRemove, index, type }) => {
 
     return (
         <div className={styles.filePreviewMobileWrapper}>
@@ -22,12 +23,11 @@ const FilePreviewMobile: FC<PropsType> = ({ file, handleRemove, index }) => {
             <TextMedium>{index + 1}</TextMedium>
 
             <div className={styles.filePreviewWrapper}>
-                <FilePreviewBlock url={URL.createObjectURL(file)}
-                    alt={file.name} />
+                <PreviewAdaptive type={type} file={file} />
             </div>
 
-            <div className={styles.filePreviewMobileFilename}>
-                <TextMedium>{file.name.split(".").slice(0, -1)}</TextMedium>
+            <div className={`${styles.filePreviewMobileFilename} ${covers.hideLongTitleCover}`}>
+                <TextMedium>{file.name}</TextMedium>
             </div>
 
 

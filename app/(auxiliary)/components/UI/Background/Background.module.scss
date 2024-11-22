@@ -8,10 +8,8 @@
     left: 0;
     position: fixed;
 
-    .backgroundWrapper {
+    .background {
         width: inherit;
         height: inherit;
-        // background: var(--background, $background_default);
-        // transition: background 1s ease-in-out;
     }
 }

@@ -10,6 +10,7 @@ import { FC } from 'react';
 import styles from "./Background.module.scss";
 
 const Background: FC = () => {
+
     const serverResponse = useAppSelector(selectServerResponse)
 
     const variants: Variants = {
@@ -28,27 +29,42 @@ const Background: FC = () => {
 
     switch (serverResponse.status) {
         case 'success':
-            backgroundClass = styles.background_success;
+            backgroundClass = backgroundStyles.background_success;
             break;
         case 'warning':
-            backgroundClass = styles.background_warning;
+            backgroundClass = backgroundStyles.background_warning;
             break;
         case 'error':
-            backgroundClass = styles.background_error;
+            backgroundClass = backgroundStyles.background_error;
             break;
         default:
             backgroundClass = backgroundStyles.background_default
     }
 
+    // const dispatch = useAppDispatch()
+    // useEffect(() => {
+    //     const timer = setTimeout(() => {
+    //         dispatch(setServerResponse({
+    //             message: "123",
+    //             "sentToServer": true,
+    //             "status": "warning"
+    //         }))
+    //     }, 2000)
+
+    //     return () => {
+    //         clearTimeout(timer)
+    //     }
+    // }, [])
+
     return (
         <div className={styles.backgroundWrapper}>
-            <AnimatePresence initial={false}>
+            <AnimatePresence mode="wait" initial={false}>
                 <motion.div variants={variants}
                     key={serverResponse.status}
-                    className={`${styles.backgroundWrapper} ${backgroundClass}`}
+                    className={`${styles.background} ${backgroundClass}`}
                     initial={"hidden"}
                     animate={"visible"}
-                    transition={{ duration: .9, delay: 1 }}
+                    transition={{ duration: .5, }}
                     exit={"exit"}></motion.div>
             </AnimatePresence>
         </div>

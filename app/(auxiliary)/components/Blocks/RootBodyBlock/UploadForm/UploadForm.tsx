@@ -103,7 +103,6 @@ const UploadForm: FC<PropsType> = ({ buttonText }) => {
 
                     const response =
                         await axiosRequestsHandler(HelpUserService.requestClassification(formData))
-                    console.log("response:", response)
 
                     if ((response as AxiosResponse<ResponseFromServerType>).status <= 299) {
                         const succeedResponse = (response as AxiosResponse<ResponseFromServerType>)
@@ -119,7 +118,7 @@ const UploadForm: FC<PropsType> = ({ buttonText }) => {
                             sentToServer: true,
                             message: succeedResponse.data.message
                         }))
-                    } else if ((response as AxiosErrorType).statusCode >= 499) {
+                    } else if ((response as AxiosErrorType).statusCode <= 499) {
                         const message = (response as AxiosErrorType).message
                         dispatch(setServerResponse({
                             status: "warning",

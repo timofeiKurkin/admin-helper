@@ -38,9 +38,9 @@ $background_error: radial-gradient(197.36% 111.8% at 100% 100%, #ffd0d0 0%, $whi
 	background: $background_error;
 }
 
-$background_warning: radial-gradient(197.36% 111.8% at 100% 100%, #ffe5b4 0%, $white_1 80%);
+$background_warning: radial-gradient(189.88% 110.61% at 84.19% 100%, #FFF4AC 0%, #F2F6FA 80.25%);
 .background_warning {
-	background: $background_error;
+	background: $background_warning;
 }
 
 $input_green_light_background: linear-gradient(0deg, rgba(120, 199, 36, 0.1) 0%, rgba(120, 199, 36, 0.1) 100%), #fff;

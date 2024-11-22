@@ -48,7 +48,7 @@ const FileList: FC<PropsType> = ({
         }
     }
 
-    console.log(formFileData)
+    // console.log(formFileData)
 
     if (formFileData.files.length) {
         return (
@@ -56,6 +56,7 @@ const FileList: FC<PropsType> = ({
                 {formFileData.filesFinally.map((file, i) => (
                     <div key={`key=${i}`} className={styles.fileWrapper}>
                         <FilePreviewWithHandlers file={file}
+                            type={type}
                             removeFile={removeFile}
                             openFile={openFile}
                             index={i} />
