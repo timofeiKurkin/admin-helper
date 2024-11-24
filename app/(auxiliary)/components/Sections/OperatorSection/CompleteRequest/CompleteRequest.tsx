@@ -7,9 +7,9 @@ import { HelpRequestForOperatorType } from '@/app/(auxiliary)/types/OperatorType
 import { axiosRequestsHandler } from '@/app/(auxiliary)/func/axiosRequestsHandler'
 import OperatorService from '@/app/(auxiliary)/libs/axios/services/OperatorService/OperatorService'
 import { AxiosResponse } from 'axios'
-import { useAppDispatch } from '@/app/(auxiliary)/libs/redux-toolkit/store/hooks'
+import { useAppDispatch, useAppSelector } from '@/app/(auxiliary)/libs/redux-toolkit/store/hooks'
 import LoadingCircle from '../../../UI/Loaders/LoadingCircle/LoadingCircle'
-import { setNewNotification } from '@/app/(auxiliary)/libs/redux-toolkit/store/slices/AppSlice/AppSlice'
+import { selectCsrfToken, setNewNotification } from '@/app/(auxiliary)/libs/redux-toolkit/store/slices/AppSlice/AppSlice'
 import { AnimatePresence, motion, Variants } from 'framer-motion'
 import CompleteRequestError from '../../../Blocks/OperatorBlocks/CompleteRequestError/CompleteRequestError'
 import styles from "./CompleteRequest.module.scss";
@@ -23,14 +23,18 @@ interface PropsType {
 const CompleteRequest: FC<PropsType> = ({ accept_url }) => {
     const dispatch = useAppDispatch()
     const [success, setSuccess] = useState<boolean>(false)
+    const csrfToken = useAppSelector(selectCsrfToken)
     const [requestPublic, setRequestPublic] = useState<HelpRequestForOperatorType>()
     const [errorData, setErrorData] = useState<{ message: string; statusCode: number }>({ message: "", statusCode: 500 })
 
     useEffect(() => {
         let active = true
 
-        const completeRequest = async (accept_url: string) => {
-            const response = await axiosRequestsHandler(OperatorService.complete_request(accept_url))
+        const completeRequest = async (accept_url: string, csrfToken: string) => {
+            if (!csrfToken)
+                return
+
+            const response = await axiosRequestsHandler(OperatorService.complete_request(accept_url, csrfToken))
 
             if (active) {
                 if ((response as AxiosResponse).status === 200) {
@@ -51,13 +55,13 @@ const CompleteRequest: FC<PropsType> = ({ accept_url }) => {
         }
 
         if (accept_url) {
-            completeRequest(accept_url).then()
+            completeRequest(accept_url, csrfToken).then()
         }
 
         return () => {
             active = false
         }
-    }, [dispatch, accept_url])
+    }, [dispatch, accept_url, csrfToken])
 
     const variants: Variants = {
         visible: { y: 0, opacity: 1, transition: { duration: .4 } },

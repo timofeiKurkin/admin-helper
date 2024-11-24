@@ -1,4 +1,5 @@
 import { createAppSlice } from "@/app/(auxiliary)/libs/redux-toolkit/store/createAppSlice";
+import { CsrfTokenType } from "@/app/(auxiliary)/types/AppTypes/AppTypes";
 import { BlocksMovingType, UserDeviceStateType } from "@/app/(auxiliary)/types/AppTypes/ContextTypes";
 import { DeleteNotificationType, NotificationListType, SetNotificationType } from "@/app/(auxiliary)/types/AppTypes/NotificationTypes";
 import { PayloadAction } from "@reduxjs/toolkit";
@@ -9,7 +10,8 @@ interface InitialStateType {
     userDevice: UserDeviceStateType;
     blocksMoving: BlocksMovingType;
     notificationList: NotificationListType;
-    disableFormInputs: boolean
+    disableFormInputs: boolean;
+    csrfToken: string;
 }
 
 const initialState: InitialStateType = {
@@ -25,7 +27,8 @@ const initialState: InitialStateType = {
         padAdaptive640_992: false,
     },
     notificationList: [],
-    disableFormInputs: false
+    disableFormInputs: false,
+    csrfToken: ""
 }
 
 export const appSlice = createAppSlice({
@@ -98,6 +101,10 @@ export const appSlice = createAppSlice({
             state.disableFormInputs = !state.disableFormInputs
         }),
 
+        setCsrfToken: create.reducer((state, action: PayloadAction<CsrfTokenType>) => {
+            state.csrfToken = action.payload.csrfToken
+        }),
+
         setNewNotification: create.reducer(
             (state, action: PayloadAction<SetNotificationType>) => {
                 const existingNotification = state.notificationList.findIndex((notice) => notice.message === action.payload.message)
@@ -127,7 +134,8 @@ export const appSlice = createAppSlice({
         selectUserDevice: (state) => state.userDevice,
         selectBlocksMoving: (state) => state.blocksMoving,
         selectNotificationList: (state) => state.notificationList,
-        selectDisableFormInputs: (state) => state.disableFormInputs
+        selectDisableFormInputs: (state) => state.disableFormInputs,
+        selectCsrfToken: (state) => state.csrfToken
     }
 })
 
@@ -138,12 +146,14 @@ export const {
     setSwitchedMessageBlock,
     setNewNotification,
     deleteNotification,
-    setDisableFormInputs
+    setDisableFormInputs,
+    setCsrfToken,
 } = appSlice.actions
 
 export const {
     selectUserDevice,
     selectBlocksMoving,
     selectNotificationList,
-    selectDisableFormInputs
+    selectDisableFormInputs,
+    selectCsrfToken
 } = appSlice.selectors

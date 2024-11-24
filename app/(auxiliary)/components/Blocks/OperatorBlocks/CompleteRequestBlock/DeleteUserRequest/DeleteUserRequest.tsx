@@ -4,8 +4,8 @@ import styles from "./DeleteUserRequest.module.scss"
 import { axiosRequestsHandler } from '@/app/(auxiliary)/func/axiosRequestsHandler';
 import OperatorService from '@/app/(auxiliary)/libs/axios/services/OperatorService/OperatorService';
 import { AxiosResponse } from 'axios';
-import { useAppDispatch } from '@/app/(auxiliary)/libs/redux-toolkit/store/hooks';
-import { setNewNotification } from '@/app/(auxiliary)/libs/redux-toolkit/store/slices/AppSlice/AppSlice';
+import { useAppDispatch, useAppSelector } from '@/app/(auxiliary)/libs/redux-toolkit/store/hooks';
+import { selectCsrfToken, setNewNotification } from '@/app/(auxiliary)/libs/redux-toolkit/store/slices/AppSlice/AppSlice';
 import { AxiosErrorType } from '@/app/(auxiliary)/types/AxiosTypes/AxiosTypes';
 import { DeleteRequestType } from '@/app/(auxiliary)/types/OperatorTypes/OperatorTypes';
 
@@ -16,12 +16,16 @@ interface PropsType {
 
 const DeleteUserRequest: FC<PropsType> = ({ request_url, changeDeleteStatus }) => {
     const dispatch = useAppDispatch()
+    const csrfToken = useAppSelector(selectCsrfToken)
     const [acceptDelete, setAcceptDelete] = useState<boolean>(false)
 
 
-    const deleteRequest = async (request_url: string) => {
+    const deleteRequest = async (request_url: string, csrfToken: string) => {
+        if (!csrfToken)
+            return
+
         const response =
-            await axiosRequestsHandler(OperatorService.delete_request(request_url))
+            await axiosRequestsHandler(OperatorService.delete_request(request_url, csrfToken))
 
         if ((response as AxiosResponse).status === 204) {
             changeDeleteStatus()
@@ -44,7 +48,7 @@ const DeleteUserRequest: FC<PropsType> = ({ request_url, changeDeleteStatus }) =
             {acceptDelete ? (
                 <div className={styles.acceptWrapper}>
                     <Button onClick={openAcceptsButton} className={styles.cancelButton}>Отмена</Button>
-                    <Button onClick={() => deleteRequest(request_url)} className={styles.acceptButton}>Подтвердить</Button>
+                    <Button onClick={() => deleteRequest(request_url, csrfToken)} className={styles.acceptButton}>Подтвердить</Button>
                 </div>
             ) : (
                 <Button onClick={openAcceptsButton} className={styles.deleteButton}>Удалить заявку</Button>

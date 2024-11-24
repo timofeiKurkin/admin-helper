@@ -6,7 +6,7 @@ import { boldSpanTag } from "@/app/(auxiliary)/func/tags/boldSpanTag";
 import { validateCompanyData, validateFormInputs } from "@/app/(auxiliary)/func/validateFormInputs";
 import HelpUserService from "@/app/(auxiliary)/libs/axios/services/HelpUserService/HelpUserService";
 import { useAppDispatch, useAppSelector } from "@/app/(auxiliary)/libs/redux-toolkit/store/hooks";
-import { setDisableFormInputs, setNewNotification } from '@/app/(auxiliary)/libs/redux-toolkit/store/slices/AppSlice/AppSlice';
+import { selectCsrfToken, setCsrfToken, setDisableFormInputs, setNewNotification } from '@/app/(auxiliary)/libs/redux-toolkit/store/slices/AppSlice/AppSlice';
 import {
     resetFormToDefault,
     selectCompanyInputDataType,
@@ -46,6 +46,7 @@ const UploadForm: FC<PropsType> = ({ buttonText }) => {
     const dispatch = useAppDispatch()
     const formTextData = useAppSelector(selectFormTextData)
     const formFileData = useAppSelector(selectFormFileData)
+    const csrfToken = useAppSelector(selectCsrfToken)
     const permissionsOfForm = useAppSelector(selectPermissionsOfForm)
 
     // const userMessageStatus = useAppSelector(selectUserMessageStatus)
@@ -54,7 +55,10 @@ const UploadForm: FC<PropsType> = ({ buttonText }) => {
 
     const [sendingRequest, setSendingRequest] = useState<boolean>(false)
 
-    const uploadUserData = async (userData: UserFormDataType) => {
+    const uploadUserData = async (userData: UserFormDataType, csrfToken: string) => {
+        if (!csrfToken)
+            return
+
         /**
          * Validate all form's inputs
          */
@@ -102,16 +106,17 @@ const UploadForm: FC<PropsType> = ({ buttonText }) => {
                     }
 
                     const response =
-                        await axiosRequestsHandler(HelpUserService.requestClassification(formData))
+                        await axiosRequestsHandler(HelpUserService.requestClassification(formData, csrfToken))
 
                     if ((response as AxiosResponse<ResponseFromServerType>).status <= 299) {
                         const succeedResponse = (response as AxiosResponse<ResponseFromServerType>)
+                        dispatch(setCsrfToken({ csrfToken: succeedResponse.data.csrfToken }))
                         dispatch(resetFormToDefault())
                         dispatch(setUserAuthorization(true))
                         dispatch(setNewNotification({
                             message: succeedResponse.data.message,
                             type: "success",
-                            timeout: 10000
+                            timeout: 12000
                         }))
                         dispatch(setServerResponse({
                             status: "success",
@@ -164,7 +169,7 @@ const UploadForm: FC<PropsType> = ({ buttonText }) => {
             onClick={() => uploadUserData({
                 text_data: formTextData,
                 file_data: formFileData
-            })}>
+            }, csrfToken)}>
             {sendingRequest ? "Создание заявки" : buttonText}
         </Button>
     );

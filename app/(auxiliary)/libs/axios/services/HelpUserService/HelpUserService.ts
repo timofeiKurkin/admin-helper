@@ -7,12 +7,11 @@ import { AxiosResponse } from "axios";
 export default class HelpUserService {
     static rootPage = "help_request/"
 
-    static async requestClassification(data: FormData): Promise<AxiosResponse<CreatedHelpRequestType>> {
+    static async requestClassification(data: FormData, csrfToken: string): Promise<AxiosResponse<CreatedHelpRequestType>> {
         return $api.post<CreatedHelpRequestType>(`${this.rootPage}create_request`, data, {
             maxBodyLength: Infinity,
             headers: {
-                // 'Content-Type': 'multipart/form-data',
-                // 'Content-Type': 'application/x-www-form-urlencoded',
+                'X-CSRF-Token': csrfToken,
             }
         })
     }

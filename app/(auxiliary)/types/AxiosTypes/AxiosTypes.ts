@@ -1,3 +1,4 @@
+import { CsrfTokenType } from "../AppTypes/AppTypes";
 import { HelpRequestItemType } from "../UserRequestsTypes/UserRequestsTypes";
 
 export interface CSRFTokenResponseType {
@@ -7,7 +8,7 @@ export interface CSRFTokenResponseType {
 export type AxiosErrorType = { message: string, statusCode: number };
 export type UnknownError = { error: Error; message: string };
 
-export type ResponseFromServerType = { id: number; message: string }
+export interface ResponseFromServerType extends CsrfTokenType { message: string }
 
 export interface CreatedHelpRequestType {
     message: string;

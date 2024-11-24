@@ -1,15 +1,13 @@
-import type { Metadata } from "next";
-import "./global.scss";
-import { TTNormsProFont } from "@/font/font";
-import styles from "@/styles/layout.module.scss";
-import { ChildrenProp } from "@/app/(auxiliary)/types/AppTypes/AppTypes";
+import AppWrapper from "@/app/(auxiliary)/components/Common/AppWrapper/AppWrapper";
 import Header from "@/app/(auxiliary)/components/Common/Header/Header";
 import Background from "@/app/(auxiliary)/components/UI/Background/Background";
-import AppWrapper from "@/app/(auxiliary)/components/Common/AppWrapper/AppWrapper";
 import AppProvider from "@/app/(auxiliary)/libs/redux-toolkit/AppProvider";
-import ResetForm from "@/app/(auxiliary)/components/Blocks/RootBodyBlock/ResetForm/ResetForm";
+import { ChildrenProp } from "@/app/(auxiliary)/types/AppTypes/AppTypes";
+import { TTNormsProFont } from "@/font/font";
+import styles from "@/styles/layout.module.scss";
+import type { Metadata } from "next";
 import NotificationBlock from "./(auxiliary)/components/Blocks/NotificationBlock/NotificationBlock";
-import AuthorizeUser from "./(auxiliary)/components/Common/AuthorizeUser/AuthorizeUser";
+import "./global.scss";
 
 
 export const metadata: Metadata = {
@@ -26,19 +24,15 @@ export default function RootLayout({ children }: Readonly<ChildrenProp>) {
                 <AppProvider>
                     <>
                         <AppWrapper>
-                            <AuthorizeUser>
-                                <ResetForm>
-                                    <div className={styles.layoutWrapper}>
-                                        <div className={styles.layoutContainer}>
-                                            <Header />
-                                            <main>
-                                                {children}
-                                            </main>
-                                        </div>
-                                        <NotificationBlock />
-                                    </div>
-                                </ResetForm>
-                            </AuthorizeUser>
+                            <div className={styles.layoutWrapper}>
+                                <div className={styles.layoutContainer}>
+                                    <Header />
+                                    <main>
+                                        {children}
+                                    </main>
+                                </div>
+                                <NotificationBlock />
+                            </div>
                         </AppWrapper>
                         <Background />
                     </>

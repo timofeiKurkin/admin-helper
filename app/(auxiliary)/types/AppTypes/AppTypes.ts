@@ -16,3 +16,7 @@ export interface ButtonImageProps {
     visibleOnlyImage: boolean;
     children: React.ReactNode;
 }
+
+export interface CsrfTokenType {
+    csrfToken: string;
+}
