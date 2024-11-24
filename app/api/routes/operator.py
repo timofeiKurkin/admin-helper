@@ -68,7 +68,7 @@ async def delete_request(accept_url: str, session: SessionDep, response: Respons
         else:
             response.status_code = 200
             return {
-                "message": "Заявка удалена из базы данных! Но вам нужно вручную удалить сообщения из Telegram"
+                "message": "Заявка удалена из нашей базы 🗑️! Но вам нужно вручную удалить сообщения из Telegram"
             }
 
     except Exception as e:
@@ -94,7 +94,7 @@ async def complete_request(accept_url: str, session: SessionDep):
     if not request_candidate:
         raise HTTPException(
             status_code=404,
-            detail="Не удалось найти запрашиваемую заявку пользователя!",
+            detail="Упс, не удалось найти заявку пользователя! 😕 Проверьте, пожалуйста, данные и попробуйте ещё раз.",
         )
 
     user_candidate = get_user(session=session, id=request_candidate.owner_id)

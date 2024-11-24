@@ -21,8 +21,9 @@ from app.models import (
 )
 from app.telegram_bot import utils as telegram_utils
 from app.telegram_bot.bot import bot_api
-from fastapi import APIRouter, File, Form, HTTPException, Request, UploadFile
+from fastapi import APIRouter, Depends, File, Form, HTTPException, Request, UploadFile
 from fastapi.responses import JSONResponse
+from fastapi_csrf_protect import CsrfProtect  # type: ignore[import-untyped]
 from telegram import (
     InlineKeyboardButton,
     InlineKeyboardMarkup,
@@ -48,7 +49,7 @@ async def root():
     response_model=List[RequestForHelpPublic],
 )
 async def get_user_requests(*, request: Request, session: SessionDep):
-    user_token = request.cookies.get("token")
+    user_token = request.cookies.get(settings.AUTH_TOKEN_KEY)
 
     if not user_token:
         raise HTTPException(status_code=403, detail="Authorization cookie not found")
@@ -119,6 +120,7 @@ def create_new_user(
 @router.post("/create_request")  # response_model=RequestForHelpPublic
 async def create_help_request(
     session: SessionDep,
+    request: Request,
     device: Annotated[str, Form()],
     name: Annotated[str, Form()],
     company: Annotated[str, Form()],
@@ -130,10 +132,29 @@ async def create_help_request(
     video: Annotated[Optional[List[UploadFile]], File()] = None,
     user_can_talk: Annotated[bool, Form()] = False,
     user_political: Annotated[bool, Form()] = False,
+    csrf_protect: CsrfProtect = Depends(),
 ):
+
+    await csrf_protect.validate_csrf(request)
+
+    csrf_token, signed_token = JWTToken.create_csrf_token(csrf_protect=csrf_protect)
+    response = JSONResponse(
+        content={
+            "message": f"<b>It has been a really secure request, that's what I like</b>",
+            settings.CSRF_TOKEN_KEY: csrf_token,
+        },
+        status_code=201,
+    )
+    # csrf_protect.unset_csrf_cookie(response)
+    csrf_protect.set_csrf_cookie(signed_token, response)
+
+    return response
+
     if not user_political:
         return JSONResponse(
-            content={"message": "Вы не дали согласие на обработку ваших данных"},
+            content={
+                "message": "Кажется, вы забыли дать согласие на обработку данных. Без этого мы не можем продолжить. 😅"
+            },
             status_code=403,
         )
 
@@ -172,7 +193,7 @@ async def create_help_request(
         if total_minutes < settings.REQUEST_CREATING_INTERVAL:
             next_in = settings.REQUEST_CREATING_INTERVAL - total_minutes
             minutes_text = f"минут{"у" if next_in == 1 else ""}{"ы" if next_in >= 2 and next_in <= 4 else ""}"
-            message = f"Вы сможете создать следующую заявку только через {next_in} {minutes_text}"
+            message = f"Ещё немного терпения ⏳ — вы сможете создать новую заявку через {next_in} {minutes_text}"
             response = JSONResponse(
                 content={"message": message},
                 status_code=429,
@@ -457,7 +478,7 @@ async def create_help_request(
 
     response = JSONResponse(
         content={
-            "message": f"Ваша заявка <b>#{new_request.id}</b> успешно создана и будет рассмотрена в ближайшее время.<br/>Вы можете посмотреть её в <b>ваших заявках</b>.",
+            "message": f"Отличные новости! 🎉 Ваша заявка <b>{new_request.id}</b> успешно создана и уже в работе. Вы всегда можете найти её в разделе <b>«Ваши заявки»</b>.",
         },
         status_code=201,
     )
@@ -465,7 +486,7 @@ async def create_help_request(
     # Set cookie for user authorize
     new_access_token = JWTToken.create_just_token(user=user_candidate)
     response.set_cookie(
-        key="token",
+        key=settings.AUTH_TOKEN_KEY,
         value=new_access_token,
         secure=True,
         httponly=True,

@@ -1,11 +1,12 @@
 from datetime import datetime
+from typing import Tuple
 
 import jwt
-from fastapi import HTTPException
-from jwt import PyJWTError
-
 from app.core.config import settings
 from app.models import User
+from fastapi import Depends, HTTPException
+from fastapi_csrf_protect import CsrfProtect  # type: ignore[import-untyped]
+from jwt import PyJWTError
 
 ALGORITHM = "HS256"
 ACCESS_TOKEN_LIFETIME_MINUTES = settings.ACCESS_TOKEN_LIFETIME_MINUTES
@@ -21,6 +22,11 @@ def create_just_token(*, user: User) -> str:
         "created_at": str(datetime.now()),
     }
     return jwt.encode(payload=payload, key=TOKEN_SECRET_KEY, algorithm=ALGORITHM)
+
+
+def create_csrf_token(*, csrf_protect: CsrfProtect = Depends()) -> Tuple[str, str]:
+    csrf_token, signed_token = csrf_protect.generate_csrf_tokens()
+    return (csrf_token, signed_token)
 
 
 # def create_refresh_token(*, user: UserToken) -> str:

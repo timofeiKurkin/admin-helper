@@ -1,4 +1,5 @@
 from contextlib import asynccontextmanager
+from typing import Literal
 
 from alembic import command
 from alembic.config import Config
@@ -9,6 +10,11 @@ from fastapi import FastAPI, HTTPException, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 from fastapi.routing import APIRoute
+from fastapi_csrf_protect import CsrfProtect  # type: ignore[import-untyped]
+from fastapi_csrf_protect.exceptions import (  # type: ignore[import-untyped]
+    CsrfProtectError,
+)
+from pydantic import BaseModel
 
 
 def custom_generate_unique_id(route: APIRoute) -> str:
@@ -17,6 +23,18 @@ def custom_generate_unique_id(route: APIRoute) -> str:
 
 # if settings.SENTRY_DSN and settings.ENVIRONMENT != "local":
 #     sentry_sdk.init(dsn=str(settings.SENTRY_DSN), enable_tracing=True)
+
+
+class CsrfSettings(BaseModel):
+    secret_key: str = settings.CSRF_SECRET_KEY
+    cookie_samesite: str = "none"  # ["lax", "strict", "none"]
+    cookie_secure: bool = True
+    cookie_key: str = settings.CSRF_TOKEN_KEY
+
+
+@CsrfProtect.load_config
+def get_csrf_config():
+    return CsrfSettings()
 
 
 @asynccontextmanager
@@ -36,28 +54,6 @@ app = FastAPI(
 )
 
 
-@app.exception_handler(HTTPException)
-async def global_exception_handler(_: Request, exc: HTTPException):
-    return JSONResponse(
-        status_code=exc.status_code,
-        content={"message": exc.detail},
-    )
-
-
-# @app.middleware("http")
-# async def add_cors_headers(request, call_next):
-#     response = await call_next(request)
-#     response.headers["Access-Control-Allow-Origin"] = "http://localhost:3030"
-#     response.headers["Access-Control-Allow-Credentials"] = "true"
-#     response.headers["Access-Control-Allow-Methods"] = (
-#         "GET, POST, PATCH, DELETE, OPTIONS"
-#     )
-#     response.headers["Access-Control-Allow-Headers"] = (
-#         "Content-Type, Authorization, X-Requested-With",
-#     )
-#     return response
-
-
 if settings.all_cors_origins:
     app.add_middleware(
         CORSMiddleware,
@@ -69,3 +65,21 @@ if settings.all_cors_origins:
 
 
 app.include_router(api_router, prefix=settings.API_V1_STR)
+
+
+@app.exception_handler(CsrfProtectError)
+def csrf_protect_exception_handler(_: Request, exc: CsrfProtectError):
+    return JSONResponse(
+        status_code=exc.status_code,
+        content={
+            "message": "Ой, что-то пошло не так 🙈. Ваш запрос не совсем безопасен. Попробуйте обновить страницу и отправить его снова! 🔄"
+        },
+    )
+
+
+@app.exception_handler(HTTPException)
+async def global_exception_handler(_: Request, exc: HTTPException):
+    return JSONResponse(
+        status_code=exc.status_code,
+        content={"message": exc.detail},
+    )
