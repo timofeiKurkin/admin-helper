@@ -1,3 +1,5 @@
+import { CsrfTokenType } from "../AppTypes/AppTypes";
+
 export interface RequestHeaderPropsType {
     isCompleted: boolean;
     id: number;
@@ -15,6 +17,10 @@ export interface RequestBodyPropsType {
 export interface HelpRequestForOperatorType extends RequestHeaderPropsType, RequestBodyPropsType {
 }
 
+export interface CompletedHelpRequestType extends CsrfTokenType {
+    helpRequest: HelpRequestForOperatorType;
+}
+
 export type RequestBodyKeysType = [
     "phone" |
     "company" |
@@ -26,6 +32,6 @@ export type RequestBodyKeysType = [
 
 export interface RequestBodyItemType { text: string; value: string }
 
-export interface DeleteRequestType {
+export interface DeleteRequestType extends CsrfTokenType {
     message: string;
 }

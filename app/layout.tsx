@@ -8,6 +8,7 @@ import styles from "@/styles/layout.module.scss";
 import type { Metadata } from "next";
 import NotificationBlock from "./(auxiliary)/components/Blocks/NotificationBlock/NotificationBlock";
 import "./global.scss";
+import CsrfToken from "./(auxiliary)/components/Common/AppWrapper/CsrfToken";
 
 
 export const metadata: Metadata = {
@@ -24,15 +25,17 @@ export default function RootLayout({ children }: Readonly<ChildrenProp>) {
                 <AppProvider>
                     <>
                         <AppWrapper>
-                            <div className={styles.layoutWrapper}>
-                                <div className={styles.layoutContainer}>
-                                    <Header />
-                                    <main>
-                                        {children}
-                                    </main>
+                            <CsrfToken>
+                                <div className={styles.layoutWrapper}>
+                                    <div className={styles.layoutContainer}>
+                                        <Header />
+                                        <main>
+                                            {children}
+                                        </main>
+                                    </div>
+                                    <NotificationBlock />
                                 </div>
-                                <NotificationBlock />
-                            </div>
+                            </CsrfToken>
                         </AppWrapper>
                         <Background />
                     </>

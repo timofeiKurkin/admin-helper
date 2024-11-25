@@ -5,7 +5,7 @@ import { axiosRequestsHandler } from '@/app/(auxiliary)/func/axiosRequestsHandle
 import OperatorService from '@/app/(auxiliary)/libs/axios/services/OperatorService/OperatorService';
 import { AxiosResponse } from 'axios';
 import { useAppDispatch, useAppSelector } from '@/app/(auxiliary)/libs/redux-toolkit/store/hooks';
-import { selectCsrfToken, setNewNotification } from '@/app/(auxiliary)/libs/redux-toolkit/store/slices/AppSlice/AppSlice';
+import { selectCsrfToken, setCsrfToken, setNewNotification } from '@/app/(auxiliary)/libs/redux-toolkit/store/slices/AppSlice/AppSlice';
 import { AxiosErrorType } from '@/app/(auxiliary)/types/AxiosTypes/AxiosTypes';
 import { DeleteRequestType } from '@/app/(auxiliary)/types/OperatorTypes/OperatorTypes';
 
@@ -27,12 +27,13 @@ const DeleteUserRequest: FC<PropsType> = ({ request_url, changeDeleteStatus }) =
         const response =
             await axiosRequestsHandler(OperatorService.delete_request(request_url, csrfToken))
 
-        if ((response as AxiosResponse).status === 204) {
-            changeDeleteStatus()
-        } else if ((response as AxiosResponse).status === 200) {
+        if ((response as AxiosResponse).status === 200) {
             const deletedResponse = response as AxiosResponse<DeleteRequestType>
             changeDeleteStatus()
-            dispatch(setNewNotification({ message: deletedResponse.data.message, type: "warning" }))
+            dispatch(setCsrfToken({ csrfToken: deletedResponse.data.csrfToken }))
+            if (deletedResponse.data?.message) {
+                dispatch(setNewNotification({ message: deletedResponse.data.message, type: "warning" }))
+            }
         } else {
             const errorResponse = response as AxiosErrorType
             dispatch(setNewNotification({ message: `Не удалось удалить заявку: ${errorResponse.message}`, type: "error" }))
