@@ -165,25 +165,31 @@ async def create_help_request(
         except Exception as e:
             help_request_error.visible_error(f"Error in creating user: {e}")
     else:
-        user_requests = crud.get_user_requests(
-            session=session, owner_id=str(user_candidate.id), order_by="created_at"
-        )
-
-        last_request = user_requests[0]
-        request_created_at = last_request.created_at
-        current_time = datetime.now()
-        difference = current_time - request_created_at
-        total_minutes = int(difference.total_seconds() // 60)
-
-        if total_minutes < settings.REQUEST_CREATING_INTERVAL:
-            next_in = settings.REQUEST_CREATING_INTERVAL - total_minutes
-            minutes_text = f"минут{"у" if next_in == 1 else ""}{"ы" if next_in >= 2 and next_in <= 4 else ""}"
-            message = f"Ещё немного терпения ⏳ — вы сможете создать новую заявку через <b>{next_in} {minutes_text}<b/>"
-            response = JSONResponse(
-                content={"message": message},
-                status_code=429,
+        try:
+            user_requests = crud.get_user_requests(
+                session=session, owner_id=str(user_candidate.id), order_by="created_at"
             )
-            return response
+
+            if len(user_requests):
+                last_request = user_requests[0]
+                request_created_at = last_request.created_at
+                current_time = datetime.now()
+                difference = current_time - request_created_at
+                total_minutes = int(difference.total_seconds() // 60)
+
+                if total_minutes < settings.REQUEST_CREATING_INTERVAL:
+                    next_in = settings.REQUEST_CREATING_INTERVAL - total_minutes
+                    minutes_text = f"минут{"у" if next_in == 1 else ""}{"ы" if next_in >= 2 and next_in <= 4 else ""}"
+                    message = f"Ещё немного терпения ⏳ — вы сможете создать новую заявку через <b>{next_in} {minutes_text}<b/>"
+                    response = JSONResponse(
+                        content={"message": message},
+                        status_code=429,
+                    )
+                    return response
+        except Exception as e:
+            help_request_error.visible_error(
+                f"Error in checking the last user's request: {e}"
+            )
 
     assert user_candidate is not None
     user_temporary_folder: str = os.path.join(TEMPORARY_FOLDER, str(user_candidate.id))

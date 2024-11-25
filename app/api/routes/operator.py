@@ -57,8 +57,9 @@ async def delete_request(
         time_difference = current_time - created_at
         total_hours = int(time_difference.total_seconds() // 3600)
 
-        csrf_token, signed_token = token.create_csrf_token(csrf_protect=csrf_protect)
-        csrf_protect.set_csrf_cookie(csrf_signed_token=signed_token, response=response)
+        # csrf_token, signed_token = token.create_csrf_token(csrf_protect=csrf_protect)
+        # csrf_protect.set_csrf_cookie(csrf_signed_token=signed_token, response=response)
+        csrf_protect.unset_csrf_cookie(response=response)
 
         if total_hours <= 48:
             telegram_idx = TelegramMessagesIDX.model_validate(
@@ -79,12 +80,10 @@ async def delete_request(
 
             return {
                 "message": "Заявка удалена из базы данных 🗑️!",
-                settings.CSRF_TOKEN_KEY: csrf_token,
             }
         else:
             return {
                 "message": "Заявка удалена из базы данных 🗑️! Но вам нужно вручную удалить сообщения из Telegram",
-                settings.CSRF_TOKEN_KEY: csrf_token,
             }
 
     except Exception as e:

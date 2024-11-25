@@ -57,7 +57,6 @@ async def get_csrf_token(
     response: Response,
     csrf_protect: CsrfProtect = Depends(),
 ):
-    print("get csrf token")
     csrf_token, signed_token = create_csrf_token(csrf_protect=csrf_protect)
     response.status_code = 200
     csrf_protect.set_csrf_cookie(signed_token, response)
