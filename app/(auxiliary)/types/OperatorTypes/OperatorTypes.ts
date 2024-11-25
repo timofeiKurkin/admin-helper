@@ -32,6 +32,6 @@ export type RequestBodyKeysType = [
 
 export interface RequestBodyItemType { text: string; value: string }
 
-export interface DeleteRequestType extends CsrfTokenType {
+export interface DeleteRequestType {
     message: string;
 }

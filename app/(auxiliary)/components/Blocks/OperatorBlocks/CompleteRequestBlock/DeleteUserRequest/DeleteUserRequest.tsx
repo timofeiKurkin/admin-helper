@@ -30,9 +30,9 @@ const DeleteUserRequest: FC<PropsType> = ({ request_url, changeDeleteStatus }) =
         if ((response as AxiosResponse).status === 200) {
             const deletedResponse = response as AxiosResponse<DeleteRequestType>
             changeDeleteStatus()
-            dispatch(setCsrfToken({ csrfToken: deletedResponse.data.csrfToken }))
+            // dispatch(setCsrfToken({ csrfToken: deletedResponse.data.csrfToken }))
             if (deletedResponse.data?.message) {
-                dispatch(setNewNotification({ message: deletedResponse.data.message, type: "warning" }))
+                dispatch(setNewNotification({ message: deletedResponse.data.message, type: "success" }))
             }
         } else {
             const errorResponse = response as AxiosErrorType
