@@ -4,6 +4,7 @@ from typing import List
 
 from app.api.deps import SessionDep
 from app.api.error_handlers.help_request import visible_error
+from app.auth import token
 from app.core.config import settings
 from app.crud import (
     delete_user_request,
@@ -17,15 +18,25 @@ from app.models import (
     TelegramMessagesIDX,
 )
 from app.telegram_bot.bot import bot_api
-from fastapi import APIRouter, HTTPException, Response
+from fastapi import APIRouter, Depends, HTTPException, Request, Response
+from fastapi.responses import JSONResponse
+from fastapi_csrf_protect import CsrfProtect  # type: ignore[import-untyped]
 from telegram import InlineKeyboardButton, InlineKeyboardMarkup
 from telegram.error import TelegramError
 
 router = APIRouter()
 
 
-@router.delete("/delete_request/{accept_url}")
-async def delete_request(accept_url: str, session: SessionDep, response: Response):
+@router.delete("/delete_request/{accept_url}", status_code=200)
+async def delete_request(
+    accept_url: str,
+    session: SessionDep,
+    response: Response,
+    request: Request,
+    csrf_protect: CsrfProtect = Depends(),
+):
+    await csrf_protect.validate_csrf(request=request)
+
     if len(accept_url) != 43:
         raise HTTPException(status_code=404, detail="Invalid url")
 
@@ -46,6 +57,9 @@ async def delete_request(accept_url: str, session: SessionDep, response: Respons
         time_difference = current_time - created_at
         total_hours = int(time_difference.total_seconds() // 3600)
 
+        csrf_token, signed_token = token.create_csrf_token(csrf_protect=csrf_protect)
+        csrf_protect.set_csrf_cookie(csrf_signed_token=signed_token, response=response)
+
         if total_hours <= 48:
             telegram_idx = TelegramMessagesIDX.model_validate(
                 request_candidate.telegram_messages_idx
@@ -63,12 +77,14 @@ async def delete_request(accept_url: str, session: SessionDep, response: Respons
                 chat_id=settings.GROUP_ID, message_ids=message_ids
             )
 
-            response.status_code = 204
-            return
-        else:
-            response.status_code = 200
             return {
-                "message": "Заявка удалена из нашей базы 🗑️! Но вам нужно вручную удалить сообщения из Telegram"
+                "message": "Заявка удалена из базы данных 🗑️!",
+                settings.CSRF_TOKEN_KEY: csrf_token,
+            }
+        else:
+            return {
+                "message": "Заявка удалена из базы данных 🗑️! Но вам нужно вручную удалить сообщения из Telegram",
+                settings.CSRF_TOKEN_KEY: csrf_token,
             }
 
     except Exception as e:
@@ -80,10 +96,16 @@ async def delete_request(accept_url: str, session: SessionDep, response: Respons
 
 @router.patch(
     "/complete_request/{accept_url}",
-    response_model=RequestForHelpOperatorPublic,
-    status_code=200,
 )
-async def complete_request(accept_url: str, session: SessionDep):
+async def complete_request(
+    accept_url: str,
+    session: SessionDep,
+    request: Request,
+    response: Response,
+    csrf_protect: CsrfProtect = Depends(),
+):
+    await csrf_protect.validate_csrf(request=request)
+
     if len(accept_url) != 43:
         raise HTTPException(status_code=404, detail="Invalid url")
 
@@ -103,6 +125,9 @@ async def complete_request(accept_url: str, session: SessionDep):
         raise HTTPException(status_code=404, detail="User not found")
 
     user_phone = f"+7 {user_candidate.phone[:3]} {user_candidate.phone[3:6]} - {user_candidate.phone[6:8]} - {user_candidate.phone[8:]}"
+
+    csrf_token, signed_token = token.create_csrf_token(csrf_protect=csrf_protect)
+    csrf_protect.set_csrf_cookie(csrf_signed_token=signed_token, response=response)
 
     if request_candidate.is_completed and request_candidate.completed_at:
         try:
@@ -134,7 +159,10 @@ async def complete_request(accept_url: str, session: SessionDep):
             logging.error(error)
             raise HTTPException(status_code=500, detail=error)
 
-        return request_for_help_operator_public
+        return {
+            settings.CSRF_TOKEN_KEY: csrf_token,
+            "helpRequest": request_for_help_operator_public,
+        }
     else:
         telegram_messages = TelegramMessagesIDX.model_validate(
             request_candidate.telegram_messages_idx
@@ -209,4 +237,7 @@ async def complete_request(accept_url: str, session: SessionDep):
             logging.error(error)
             raise HTTPException(status_code=500, detail=error)
 
-        return request_for_help_operator_public
+        return {
+            settings.CSRF_TOKEN_KEY: csrf_token,
+            "helpRequest": request_for_help_operator_public,
+        }

@@ -15,6 +15,10 @@ from fastapi_csrf_protect.exceptions import (  # type: ignore[import-untyped]
     CsrfProtectError,
 )
 from pydantic import BaseModel
+from slowapi import Limiter
+from slowapi.errors import RateLimitExceeded
+from slowapi.middleware import SlowAPIMiddleware
+from slowapi.util import get_remote_address
 
 
 def custom_generate_unique_id(route: APIRoute) -> str:
@@ -46,12 +50,16 @@ async def lifespan(_: FastAPI):
     yield
 
 
+limiter = Limiter(
+    key_func=get_remote_address, headers_enabled=True, enabled=True, retry_after="600"
+)
 app = FastAPI(
     title=settings.PROJECT_NAME,
     openapi_url=f"{settings.API_V1_STR}/openapi.json",
     generate_unique_id_function=custom_generate_unique_id,
     lifespan=lifespan,
 )
+app.state.limiter = limiter
 
 
 if settings.all_cors_origins:
@@ -64,9 +72,6 @@ if settings.all_cors_origins:
     )
 
 
-app.include_router(api_router, prefix=settings.API_V1_STR)
-
-
 @app.exception_handler(CsrfProtectError)
 def csrf_protect_exception_handler(_: Request, exc: CsrfProtectError):
     return JSONResponse(
@@ -77,9 +82,23 @@ def csrf_protect_exception_handler(_: Request, exc: CsrfProtectError):
     )
 
 
+@app.exception_handler(RateLimitExceeded)
+def slowapi_exception_handler(_: Request, exc: RateLimitExceeded):
+    return JSONResponse(
+        status_code=exc.status_code,
+        content={
+            "message": "Ой, похоже, мы получили слишком много запросов от вас за раз 😅. Дайте нам немного времени, чтобы все обработать. Благодарим за терпение! ⏳"
+        },
+    )
+
+
 @app.exception_handler(HTTPException)
 async def global_exception_handler(_: Request, exc: HTTPException):
     return JSONResponse(
         status_code=exc.status_code,
         content={"message": exc.detail},
     )
+
+
+app.add_middleware(SlowAPIMiddleware)
+app.include_router(api_router, prefix=settings.API_V1_STR)

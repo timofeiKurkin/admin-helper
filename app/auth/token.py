@@ -15,7 +15,7 @@ TOKEN_SECRET_KEY = settings.TOKEN_SECRET_KEY
 
 
 # Token for access to get users requests
-def create_just_token(*, user: User) -> str:
+def create_jwt_token(*, user: User) -> str:
     payload = {
         "owner_id": str(user.id),
         "phone": user.phone,
@@ -59,7 +59,7 @@ def create_csrf_token(*, csrf_protect: CsrfProtect = Depends()) -> Tuple[str, st
 #     )
 
 
-def decode_token(token: str) -> dict:
+def decode_jwt_token(token: str) -> dict:
     try:
         return jwt.decode(jwt=token, key=TOKEN_SECRET_KEY, algorithms=[ALGORITHM])
     except PyJWTError as e:

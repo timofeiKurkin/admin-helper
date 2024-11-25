@@ -8,7 +8,7 @@ from app import crud, utils
 from app.api.deps import SessionDep
 from app.api.error_handlers import help_request as help_request_error
 from app.api.func.help_request import file_compression
-from app.auth import token as JWTToken
+from app.auth import token as TokenHandlers
 from app.core.config import TEMPORARY_FOLDER, settings
 from app.models import (
     MediaFile,
@@ -24,6 +24,8 @@ from app.telegram_bot.bot import bot_api
 from fastapi import APIRouter, Depends, File, Form, HTTPException, Request, UploadFile
 from fastapi.responses import JSONResponse
 from fastapi_csrf_protect import CsrfProtect  # type: ignore[import-untyped]
+from slowapi import Limiter
+from slowapi.util import get_remote_address
 from telegram import (
     InlineKeyboardButton,
     InlineKeyboardMarkup,
@@ -34,27 +36,23 @@ from telegram import (
 )
 from telegram.error import TelegramError
 
+limiter = Limiter(key_func=get_remote_address)
 router = APIRouter()
 telegram_timeout_time = 120
 chat_id = settings.GROUP_ID
 
 
-@router.get("/")
-async def root():
-    return {"message": "Hello, this is a help request router"}
-
-
 @router.get(
-    "/get_user_requests",
-    response_model=List[RequestForHelpPublic],
+    "/get_user_requests", response_model=List[RequestForHelpPublic], status_code=200
 )
+@limiter.limit("100/minute")
 async def get_user_requests(*, request: Request, session: SessionDep):
     user_token = request.cookies.get(settings.AUTH_TOKEN_KEY)
 
     if not user_token:
         raise HTTPException(status_code=403, detail="Authorization cookie not found")
 
-    user_payload = JWTToken.decode_token(token=user_token)
+    user_payload = TokenHandlers.decode_jwt_token(token=user_token)
     user_phone: str = user_payload["phone"]
     user_id: str = user_payload["owner_id"]
 
@@ -117,7 +115,8 @@ def create_new_user(
     return user_candidate
 
 
-@router.post("/create_request")  # response_model=RequestForHelpPublic
+@router.post("/create_request", status_code=201)  # response_model=RequestForHelpPublic
+@limiter.limit("5/minute")
 async def create_help_request(
     session: SessionDep,
     request: Request,
@@ -134,21 +133,7 @@ async def create_help_request(
     user_political: Annotated[bool, Form()] = False,
     csrf_protect: CsrfProtect = Depends(),
 ):
-
-    await csrf_protect.validate_csrf(request)
-
-    csrf_token, signed_token = JWTToken.create_csrf_token(csrf_protect=csrf_protect)
-    response = JSONResponse(
-        content={
-            "message": f"<b>It has been a really secure request, that's what I like</b>",
-            settings.CSRF_TOKEN_KEY: csrf_token,
-        },
-        status_code=201,
-    )
-    # csrf_protect.unset_csrf_cookie(response)
-    csrf_protect.set_csrf_cookie(signed_token, response)
-
-    return response
+    await csrf_protect.validate_csrf(request=request)
 
     if not user_political:
         return JSONResponse(
@@ -193,7 +178,7 @@ async def create_help_request(
         if total_minutes < settings.REQUEST_CREATING_INTERVAL:
             next_in = settings.REQUEST_CREATING_INTERVAL - total_minutes
             minutes_text = f"минут{"у" if next_in == 1 else ""}{"ы" if next_in >= 2 and next_in <= 4 else ""}"
-            message = f"Ещё немного терпения ⏳ — вы сможете создать новую заявку через {next_in} {minutes_text}"
+            message = f"Ещё немного терпения ⏳ — вы сможете создать новую заявку через <b>{next_in} {minutes_text}<b/>"
             response = JSONResponse(
                 content={"message": message},
                 status_code=429,
@@ -476,15 +461,20 @@ async def create_help_request(
             message=f"Error in updating user's request: {e}",
         )
 
+    csrf_token, signed_token = TokenHandlers.create_csrf_token(
+        csrf_protect=csrf_protect
+    )
     response = JSONResponse(
         content={
-            "message": f"Отличные новости! 🎉 Ваша заявка <b>{new_request.id}</b> успешно создана и уже в работе. Вы всегда можете найти её в разделе <b>«Ваши заявки»</b>.",
+            "message": f"Отличные новости! 🎉<br/> Ваша заявка <b>#{new_request.id}</b> успешно создана и уже в работе. Вы всегда можете найти её в разделе <b>«Ваши заявки»</b>.",
+            settings.CSRF_TOKEN_KEY: csrf_token,
         },
         status_code=201,
     )
+    csrf_protect.set_csrf_cookie(signed_token, response)
 
     # Set cookie for user authorize
-    new_access_token = JWTToken.create_just_token(user=user_candidate)
+    new_access_token = TokenHandlers.create_jwt_token(user=user_candidate)
     response.set_cookie(
         key=settings.AUTH_TOKEN_KEY,
         value=new_access_token,
