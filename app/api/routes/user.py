@@ -1,5 +1,6 @@
 from app import crud
 from app.api.deps import SessionDep
+from app.auth import cookie_handler
 from app.auth import token as JWTToken
 from app.auth.token import create_csrf_token
 from app.core.config import settings
@@ -14,9 +15,11 @@ router = APIRouter()
 
 
 # Check user's token and return true if it's valid and false otherwise
-@router.get("/auth")
+@router.get("/auth", summary="Authorize user and set auth JWT-token cookie")
 @limiter.limit("100/minute")
 async def authorizeUser(request: Request, session: SessionDep):
+    cookie_handler.check_cookie_permission(request=request)
+
     user_token = request.cookies.get(settings.AUTH_TOKEN_KEY)
     if not user_token:
         raise HTTPException(status_code=403, detail="Authorization cookie not found")
@@ -38,26 +41,45 @@ async def authorizeUser(request: Request, session: SessionDep):
         return response
     else:
         response = JSONResponse(status_code=200, content={"authorized": True})
-        response.set_cookie(
+        cookie_handler.set_cookie(
+            response=response,
             key=settings.AUTH_TOKEN_KEY,
             value=user_token,
-            secure=True,
-            httponly=True,
-            path="/",
-            max_age=60 * 60 * 24 * 30,
-            samesite="none",
+            max_age=settings.MONTH_IN_SECONDS,
         )
         return response
 
 
-@router.get("/csrf_token")
+@router.get("/csrf_token", summary="Create CSRF-Token for user")
 @limiter.limit("100/minute")
 async def get_csrf_token(
     request: Request,
     response: Response,
     csrf_protect: CsrfProtect = Depends(),
 ):
+    cookie_handler.check_cookie_permission(request=request)
     csrf_token, signed_token = create_csrf_token(csrf_protect=csrf_protect)
     response.status_code = 200
     csrf_protect.set_csrf_cookie(signed_token, response)
     return {settings.CSRF_TOKEN_KEY: csrf_token}
+
+
+@router.get("/cookie_permission", summary="Set cookie permission", status_code=200)
+async def set_cookie_permission(response: Response, request: Request):
+    cookie_permission = request.cookies.get(settings.COOKIE_PERMISSION_KEY)
+
+    if not cookie_permission or cookie_permission != "True":
+        cookie_handler.set_cookie(
+            response=response,
+            key=settings.COOKIE_PERMISSION_KEY,
+            value=str(True),
+            max_age=settings.MONTH_IN_SECONDS,
+        )
+        return {
+            "cookiePermission": True,
+            "message": "Для удобства, авторизации и безопасности нашего приложения мы используем cookie 🍪<br/> Продолжая пользоваться приложением, вы подтверждаете их использование.<br/> Спасибо, что с нами! 😊",
+        }
+
+    return {
+        "cookiePermission": True,
+    }

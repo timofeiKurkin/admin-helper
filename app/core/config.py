@@ -61,6 +61,9 @@ class Settings(BaseSettings):
     CSRF_TOKEN_KEY: str = "csrfToken"
     CSRF_SECRET_KEY: str = secrets.token_urlsafe(32)
 
+    COOKIE_PERMISSION_KEY: str = "cookiePermission"
+    MONTH_IN_SECONDS: int = 60 * 60 * 24 * 30
+
     @computed_field  # type: ignore[prop-decorator]
     @property
     def SQLALCHEMY_DATABASE_URI(self) -> PostgresDsn:

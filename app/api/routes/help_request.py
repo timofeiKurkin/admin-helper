@@ -8,6 +8,7 @@ from app import crud, utils
 from app.api.deps import SessionDep
 from app.api.error_handlers import help_request as help_request_error
 from app.api.func.help_request import file_compression
+from app.auth import cookie_handler
 from app.auth import token as TokenHandlers
 from app.core.config import TEMPORARY_FOLDER, settings
 from app.models import (
@@ -47,6 +48,8 @@ chat_id = settings.GROUP_ID
 )
 @limiter.limit("100/minute")
 async def get_user_requests(*, request: Request, session: SessionDep):
+    cookie_handler.check_cookie_permission(request=request)
+
     user_token = request.cookies.get(settings.AUTH_TOKEN_KEY)
 
     if not user_token:
@@ -134,6 +137,7 @@ async def create_help_request(
     csrf_protect: CsrfProtect = Depends(),
 ):
     await csrf_protect.validate_csrf(request=request)
+    cookie_handler.check_cookie_permission(request=request)
 
     if not user_political:
         return JSONResponse(
