@@ -1,6 +1,8 @@
 @import "@/styles/variables.module.scss";
 
 .mobileHeaderWrapper {
+    position: static;
+
     @media screen and ($phone375_639) {
         position: fixed;
         top: 0;

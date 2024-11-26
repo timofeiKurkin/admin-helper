@@ -122,7 +122,7 @@ const HorizontalScroll: FC<PropsType> = ({
     ]);
 
     return (
-        <div className={styles.filesListWrapper}>
+        <div className={`${styles.filesListWrapper} ${(filesListLength > 3 && !userDevice.phoneAdaptive) && styles.filesListWrapperWithScroll}`}>
             {/* <div className={styles.listArrowItem}>
                 <ArrowForList
                    activeStatus={!!scrollPosition}

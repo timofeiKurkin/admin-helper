@@ -1,12 +1,11 @@
-import { ChildrenProp } from '@/app/(auxiliary)/types/AppTypes/AppTypes'
-import { FC, useEffect } from 'react'
 import { axiosRequestsHandler } from '@/app/(auxiliary)/func/axiosRequestsHandler'
 import HelpUserService from '@/app/(auxiliary)/libs/axios/services/HelpUserService/HelpUserService'
-import { AxiosResponse } from 'axios'
-import { UserRequestListType } from '@/app/(auxiliary)/types/UserRequestsTypes/UserRequestsTypes'
 import { useAppDispatch } from '@/app/(auxiliary)/libs/redux-toolkit/store/hooks'
 import { setUserRequests } from '@/app/(auxiliary)/libs/redux-toolkit/store/slices/UserRequestsSlice/UserRequestsSlice'
-import { setNewNotification } from '@/app/(auxiliary)/libs/redux-toolkit/store/slices/AppSlice/AppSlice'
+import { ChildrenProp } from '@/app/(auxiliary)/types/AppTypes/AppTypes'
+import { UserRequestListType } from '@/app/(auxiliary)/types/UserRequestsTypes/UserRequestsTypes'
+import { AxiosResponse } from 'axios'
+import { FC, useEffect } from 'react'
 
 
 const GetUserRequests: FC<ChildrenProp> = ({ children }) => {
@@ -21,9 +20,10 @@ const GetUserRequests: FC<ChildrenProp> = ({ children }) => {
                 if ((response as AxiosResponse).status === 200) {
                     const successResponse = response as AxiosResponse<UserRequestListType>
                     dispatch(setUserRequests(successResponse.data))
-                } else {
-                    dispatch(setNewNotification({ message: "Не удалось получить все заявки", "type": "error" }))
                 }
+                // else {
+                //     dispatch(setNewNotification({ message: "Не удалось получить все заявки", type: "error" }))
+                // }
             }
         }
 

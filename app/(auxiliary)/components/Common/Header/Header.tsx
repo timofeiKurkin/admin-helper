@@ -12,6 +12,7 @@ import UserRequestsBlock from '../../Blocks/UserRequestsBlock/UserRequestsBlock'
 import TextMedium from "../../UI/TextTemplates/TextMedium";
 import styles from "./Header.module.scss";
 import MobileHeader from './MobileHeader/MobileHeader';
+import NotificationBlock from "../../Blocks/NotificationBlock/NotificationBlock";
 
 const Header = () => {
     const userDevice = useAppSelector(selectUserDevice)
@@ -56,6 +57,8 @@ const Header = () => {
                 <div className={styles.headerRequestBlock}>
                     {userDevice.phoneAdaptive ? <UserRequestsBlock /> : null}
                 </div>
+
+                <NotificationBlock />
             </div>
         </MobileHeader>
     )

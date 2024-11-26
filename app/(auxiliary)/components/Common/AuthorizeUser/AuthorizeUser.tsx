@@ -21,8 +21,6 @@ const AuthorizeUser: FC<ChildrenProp> = ({ children }) => {
             if (active) {
                 if ((response as AxiosResponse<AuthorizeUserResponseType>).status === 200) {
                     dispatch(setUserAuthorization((response as AxiosResponse<AuthorizeUserResponseType>).data.authorized))
-                } else {
-                    dispatch(setUserAuthorization(false))
                 }
             }
         }

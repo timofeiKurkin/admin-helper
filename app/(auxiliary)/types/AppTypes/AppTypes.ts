@@ -20,3 +20,8 @@ export interface ButtonImageProps {
 export interface CsrfTokenType {
     csrfToken: string;
 }
+
+export interface CookiePermissionResponseType {
+    cookiePermission: boolean;
+    message: string;
+}

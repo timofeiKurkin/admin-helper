@@ -12,6 +12,7 @@ interface InitialStateType {
     notificationList: NotificationListType;
     disableFormInputs: boolean;
     csrfToken: string;
+    cookiePermission: boolean
 }
 
 const initialState: InitialStateType = {
@@ -28,7 +29,9 @@ const initialState: InitialStateType = {
     },
     notificationList: [],
     disableFormInputs: false,
-    csrfToken: ""
+    csrfToken: "",
+    cookiePermission: false,
+
 }
 
 export const appSlice = createAppSlice({
@@ -128,6 +131,12 @@ export const appSlice = createAppSlice({
             (state, action: PayloadAction<DeleteNotificationType>) => {
                 state.notificationList = state.notificationList.filter((notice) => notice.id !== action.payload.id)
             }
+        ),
+
+        setCookiePermission: create.reducer(
+            (state, action: PayloadAction<boolean>) => {
+                state.cookiePermission = action.payload
+            }
         )
     }),
     selectors: {
@@ -135,7 +144,8 @@ export const appSlice = createAppSlice({
         selectBlocksMoving: (state) => state.blocksMoving,
         selectNotificationList: (state) => state.notificationList,
         selectDisableFormInputs: (state) => state.disableFormInputs,
-        selectCsrfToken: (state) => state.csrfToken
+        selectCsrfToken: (state) => state.csrfToken,
+        selectCookiePermission: (state) => state.cookiePermission
     }
 })
 
@@ -148,6 +158,7 @@ export const {
     deleteNotification,
     setDisableFormInputs,
     setCsrfToken,
+    setCookiePermission,
 } = appSlice.actions
 
 export const {
@@ -155,5 +166,6 @@ export const {
     selectBlocksMoving,
     selectNotificationList,
     selectDisableFormInputs,
-    selectCsrfToken
+    selectCsrfToken,
+    selectCookiePermission,
 } = appSlice.selectors

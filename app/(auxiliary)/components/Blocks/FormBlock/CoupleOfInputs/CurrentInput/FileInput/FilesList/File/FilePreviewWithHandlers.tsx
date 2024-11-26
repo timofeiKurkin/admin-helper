@@ -39,6 +39,8 @@ const FilePreviewWithHandlers: FC<PropsType> = ({
         removeFile(file.name)
     }
 
+    console.log("hover in file Preview")
+
     if (!userDevice.phoneAdaptive) {
         return (
             <div className={styles.filePreviewWrapper}

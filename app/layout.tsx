@@ -9,6 +9,7 @@ import type { Metadata } from "next";
 import NotificationBlock from "./(auxiliary)/components/Blocks/NotificationBlock/NotificationBlock";
 import "./global.scss";
 import CsrfToken from "./(auxiliary)/components/Common/AppWrapper/CsrfToken";
+import CookiePermission from "./(auxiliary)/components/Common/AppWrapper/CookiePermission";
 
 
 export const metadata: Metadata = {
@@ -25,17 +26,19 @@ export default function RootLayout({ children }: Readonly<ChildrenProp>) {
                 <AppProvider>
                     <>
                         <AppWrapper>
-                            <CsrfToken>
-                                <div className={styles.layoutWrapper}>
-                                    <div className={styles.layoutContainer}>
-                                        <Header />
-                                        <main>
-                                            {children}
-                                        </main>
+                            <CookiePermission>
+                                <CsrfToken>
+                                    <div className={styles.layoutWrapper}>
+                                        <div className={styles.layoutContainer}>
+                                            <Header />
+                                            <main>
+                                                {children}
+                                            </main>
+                                        </div>
+                                        {/* <NotificationBlock /> */}
                                     </div>
-                                    <NotificationBlock />
-                                </div>
-                            </CsrfToken>
+                                </CsrfToken>
+                            </CookiePermission>
                         </AppWrapper>
                         <Background />
                     </>

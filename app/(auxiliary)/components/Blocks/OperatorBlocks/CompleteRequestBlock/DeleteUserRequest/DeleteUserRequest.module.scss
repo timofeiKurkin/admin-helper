@@ -4,6 +4,14 @@
     display: grid;
     grid-template-columns: 0.8fr;
     justify-content: center;
+
+    @media screen and ($phone375_639) {
+        grid-template-columns: 1fr;
+    }
+
+    @media screen and ($phone550_639) {
+        grid-template-columns: 0.8fr;
+    }
 }
 
 .acceptWrapper {

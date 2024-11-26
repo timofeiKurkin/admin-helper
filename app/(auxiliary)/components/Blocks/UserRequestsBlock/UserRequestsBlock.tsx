@@ -54,7 +54,10 @@ const UserRequestsBlock = () => {
             <ModalWrapper>
                 <AnimatePresence mode={"wait"}>
                     {requestsModalIsOpen ? (
-                        <motion.div variants={variants} initial={"hidden"} exit={"hidden"} animate={"visible"}>
+                        <motion.div variants={variants}
+                            initial={"hidden"}
+                            exit={"hidden"}
+                            animate={"visible"}>
                             <RequestsModal modalData={userRequestData.modalData} />
                         </motion.div>
                     ) : null}

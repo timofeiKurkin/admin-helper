@@ -27,14 +27,16 @@ const MobileHeader: FC<ChildrenProp> = ({ children }) => {
             return () => {
                 window.removeEventListener("scroll", scrollHandler)
             }
+        } else {
+            setHeaderVisible(true)
         }
     }, [lastScrollY, phoneAdaptive, scrollHandler])
 
     return (
-        <header className={styles.mobileHeaderWrapper} style={{
+        <header className={styles.mobileHeaderWrapper} style={phoneAdaptive ? {
             transition: "transform 0.3s ease",
             transform: headerVisible ? "translateY(0)" : "translateY(-100%)"
-        }}>
+        } : undefined}>
             {children}
         </header>
     )

@@ -1,7 +1,7 @@
 import { AxiosResponse } from "axios";
 import { $api } from "../..";
 import { AuthorizeUserResponseType } from "@/app/(auxiliary)/types/AxiosTypes/AxiosTypes";
-import { CsrfTokenType } from "@/app/(auxiliary)/types/AppTypes/AppTypes";
+import { CookiePermissionResponseType, CsrfTokenType } from "@/app/(auxiliary)/types/AppTypes/AppTypes";
 
 export default class UserService {
     static rootPage = "user/"
@@ -12,5 +12,9 @@ export default class UserService {
 
     static async getCsrfToken(): Promise<AxiosResponse<CsrfTokenType>> {
         return $api.get<CsrfTokenType>(`${this.rootPage}csrf_token`)
+    }
+
+    static async setCookiePermission(): Promise<AxiosResponse<CookiePermissionResponseType>> {
+        return $api.get<CookiePermissionResponseType>(`${this.rootPage}cookie_permission`)
     }
 }

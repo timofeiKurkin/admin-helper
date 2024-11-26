@@ -9,27 +9,25 @@
     display: flex;
     flex-direction: column;
     row-gap: 15px;
+    z-index: 9;
 
     @media screen and ($desktop1920), 
     screen and ($desktop1440_1919), 
     screen and ($desktop1280_1439) {
-        position: absolute;
+        position: fixed;
         bottom: 80px;
         right: 40px;
-        z-index: 16;
     }
 
     @media screen and ($pad992_1279), 
     screen and ($phone375_639), 
     screen and ($pad640_991) {
         position: fixed;
-        z-index: 16;
     }
 
     @media screen and ($pad992_1279) {
         bottom: 40px;
         right: 40px;
-        // padding: 10px;
     }
 
     @media screen and ($pad640_991) {
@@ -38,9 +36,8 @@
     }
 
     @media screen and ($phone375_639) {
-        top: 110px;
+        top: 120px;
         left: 0;
-        // bottom: 50px;
         align-items: center;
         padding: 0 15px; // Position center for elements with large width
         width: 100%;
@@ -78,13 +75,6 @@
             padding: 12px 16px;
             grid-template-columns: 1fr 15px;
         }
-        
-        // position: absolute;
-        // top: 0;
-        // left: 0;
-        // @keyframes first {
-        //     transform: translateX(20px);
-        // }
 
         .notificationContent {
             max-width: 95%;

@@ -1,13 +1,13 @@
 import FilePreviewBlock from '@/app/(auxiliary)/components/Blocks/FilePreviewBlock/FilePreviewBlock';
 import { PhotoAndVideoKeysType } from '@/app/(auxiliary)/types/AppTypes/InputHooksTypes';
-import React, { FC } from 'react'
+import React, { FC, memo } from 'react'
 
 interface PropsType {
     type: PhotoAndVideoKeysType;
     file: File;
 }
 
-const PreviewAdaptive: FC<PropsType> = ({ type, file }) => {
+const PreviewAdaptive: FC<PropsType> = memo(({ type, file }) => {
     return type === "video" ?
         (
             <>
@@ -23,6 +23,6 @@ const PreviewAdaptive: FC<PropsType> = ({ type, file }) => {
             <FilePreviewBlock url={URL.createObjectURL(file)}
                 alt={file.name} />
         )
-}
+})
 
 export default PreviewAdaptive
