@@ -54,7 +54,7 @@ const FileList: FC<PropsType> = ({
         return (
             <HorizontalScroll filesListLength={formFileData.files.length}>
                 {formFileData.filesFinally.map((file, i) => (
-                    <div key={`key=${i}`} className={styles.fileWrapper}>
+                    <div key={`key=${file.name}`} className={styles.fileWrapper}>
                         <FilePreviewWithHandlers file={file}
                             type={type}
                             removeFile={removeFile}

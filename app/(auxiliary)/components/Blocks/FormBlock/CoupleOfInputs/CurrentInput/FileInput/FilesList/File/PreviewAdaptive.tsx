@@ -7,7 +7,7 @@ interface PropsType {
     file: File;
 }
 
-const PreviewAdaptive: FC<PropsType> = memo(({ type, file }) => {
+const PreviewAdaptive: FC<PropsType> = memo(function Memo({ type, file }) {
     return type === "video" ?
         (
             <>

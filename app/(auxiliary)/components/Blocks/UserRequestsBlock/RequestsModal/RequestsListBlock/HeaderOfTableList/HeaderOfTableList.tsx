@@ -25,7 +25,7 @@ const HeaderOfTableList: FC = () => {
 
             </div>
 
-            <SeparatingLine style={{ width: "100%", backgroundColor: black }} className={styles.headTableLine}/>
+            <SeparatingLine style={{ width: "100%", backgroundColor: black }} className={styles.headTableLine} />
         </div>
     )
 }

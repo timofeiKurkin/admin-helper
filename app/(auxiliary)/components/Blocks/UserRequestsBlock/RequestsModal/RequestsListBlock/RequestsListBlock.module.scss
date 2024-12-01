@@ -36,7 +36,7 @@
 }
 
 .headTableLine {
-    height: 2px;
+    height: 2px !important;
 
     @media screen and ($phone375_639) {
         height: 1px;
