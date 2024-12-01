@@ -1,5 +1,5 @@
 import uuid
-from typing import Any, Dict, Sequence
+from typing import Any, Sequence
 
 from app.models import (
     RequestForHelp,
@@ -8,6 +8,7 @@ from app.models import (
     User,
     UserCreate,
 )
+
 from sqlmodel import Session, select
 
 

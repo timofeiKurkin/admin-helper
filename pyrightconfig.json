@@ -1,0 +1,11 @@
+{
+    "typeCheckingMode": "standard",
+    "include": ["app"],
+    "exclude": ["node_modules", "__pycache__"],
+    "venvPath": "./",
+    "venv": "venv",
+    "reportMissingImports": true,
+    "extraPaths": ["./app"],
+    "reportDynamicOperations": false,
+    "ignore": ["pydantic", "fastapi",]
+  }

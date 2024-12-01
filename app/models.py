@@ -39,7 +39,7 @@ class UserCreate(UserBase):
 
 
 class User(UserBase, table=True):
-    __tablename__ = "users"
+    __tablename__ = "users"  #  type: ignore
 
     id: uuid.UUID = Field(default_factory=uuid.uuid4, primary_key=True)
     # is_superuser: bool = False
@@ -116,7 +116,7 @@ class RequestForHelpBase(SQLModel):
 
 # Request for help type in data base
 class RequestForHelp(RequestForHelpBase, table=True):
-    __tablename__ = "requests"
+    __tablename__ = "requests"  #  type: ignore
 
     id: Optional[int] = Field(default=None, primary_key=True)
 
@@ -159,10 +159,6 @@ class RequestForHelpPublic(SQLModel):
             "completedAt": self.completed_at,
             "isCompleted": self.is_completed,
         }
-
-    class Config:
-        alias_generator = utils.to_camel
-        populate_by_name = True
 
 
 class RequestForHelpOperatorPublic(RequestForHelpPublic):

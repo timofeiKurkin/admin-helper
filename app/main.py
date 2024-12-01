@@ -1,5 +1,4 @@
 from contextlib import asynccontextmanager
-from typing import Literal
 
 from alembic import command
 from alembic.config import Config
@@ -10,7 +9,7 @@ from fastapi import FastAPI, HTTPException, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 from fastapi.routing import APIRoute
-from fastapi_csrf_protect import CsrfProtect  # type: ignore[import-untyped]
+from fastapi_csrf_protect import CsrfProtect
 from fastapi_csrf_protect.exceptions import (  # type: ignore[import-untyped]
     CsrfProtectError,
 )
@@ -36,7 +35,7 @@ class CsrfSettings(BaseModel):
     cookie_key: str = settings.CSRF_TOKEN_KEY
 
 
-@CsrfProtect.load_config
+@CsrfProtect.load_config  #  type: ignore
 def get_csrf_config():
     return CsrfSettings()
 

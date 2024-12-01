@@ -1,27 +1,27 @@
-from telegram import Bot, Update
-from telegram.ext import ApplicationBuilder, CommandHandler, ContextTypes
-from telegram.request import HTTPXRequest
-
 from app.core.config import settings
+from telegram import Bot
+
+# from telegram.ext import ApplicationBuilder, CommandHandler, ContextTypes
+from telegram.request import HTTPXRequest
 
 TOKEN = settings.BOT_TOKEN
 
 
-async def hello(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
-    await update.message.reply_text(f"Hello {update.effective_user.first_name}")
+# async def hello(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+#     await update.message.reply_text(f"Hello {update.effective_user.first_name}")
 
 
-async def main() -> None:
-    # print("work")
-    app = ApplicationBuilder().token(TOKEN).build()
-    bot = app.bot()
+# async def main() -> None:
+#     # print("work")
+#     app = ApplicationBuilder().token(TOKEN).build()
+#     bot = app.bot()
 
-    app.add_handler(CommandHandler("hello", hello))
+#     app.add_handler(CommandHandler("hello", hello))
 
-    await app.start()  # Асинхронный запуск бота
-    print("Bot successfully started")
-    await app.updater.start_polling()  # Запускаем бота в режиме polling асинхронно
-    await app.updater.idle()
+#     await app.start()  # Асинхронный запуск бота
+#     print("Bot successfully started")
+#     await app.updater.start_polling()  # Запускаем бота в режиме polling асинхронно
+#     await app.updater.idle()
 
 
 bot_api = Bot(

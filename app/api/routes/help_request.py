@@ -13,6 +13,7 @@ from app.auth import token as TokenHandlers
 from app.core.config import TEMPORARY_FOLDER, settings
 from app.models import (
     MediaFile,
+    RequestForHelp,
     RequestForHelpCreate,
     RequestForHelpPublic,
     RequestForHelpUpdate,
@@ -33,6 +34,7 @@ from telegram import (
     InputFile,
     InputMediaPhoto,
     InputMediaVideo,
+    Message,
     ReplyParameters,
 )
 from telegram.error import TelegramError
@@ -44,7 +46,9 @@ chat_id = settings.GROUP_ID
 
 
 @router.get(
-    "/get_user_requests", response_model=List[RequestForHelpPublic], status_code=200
+    "/get_user_requests",
+    # response_model=List[RequestForHelpPublic],
+    status_code=200,
 )
 @limiter.limit("100/minute")
 async def get_user_requests(*, request: Request, session: SessionDep):
@@ -99,7 +103,7 @@ async def get_user_requests(*, request: Request, session: SessionDep):
 
     preview_count = 7
 
-    return user_public_requests[:preview_count]
+    return [item.to_dict() for item in user_public_requests[:preview_count]]
 
 
 def create_new_user(
@@ -204,6 +208,7 @@ async def create_help_request(
     #     )
 
     # Create empty request in data base
+    new_request: RequestForHelp | None = None
     try:
         new_request = crud.create_request_for_help(
             session=session,
@@ -213,10 +218,12 @@ async def create_help_request(
     except Exception as e:
         help_request_error.visible_error(f"Error in creating user's request: {e}")
 
+    assert new_request is not None
     # request_index = crud.get_last_request_index(session=session)
     last_index = new_request.id or 1
 
     # Trying to send the main message to which the others message will be linked (replied)
+    main_message: Message | None = None
     try:
         telegram_text_message = telegram_utils.get_finally_message(
             last_index=last_index,
@@ -238,7 +245,7 @@ async def create_help_request(
         help_request_error.visible_error(
             f"Failed to send main message to Telegram: {e}"
         )
-
+    assert main_message is not None
     main_message_id = main_message.message_id
 
     voice_media_file = MediaFile(id=0, file_id="")
@@ -249,6 +256,8 @@ async def create_help_request(
     voice_message_id: List[int] = []
     photo_messages_idx: List[int] = []
     video_messages_idx: List[int] = []
+
+    request_folder: str = ""
 
     if message_file is not None or photo is not None or video is not None:
         voice_file: InputFile = InputFile(obj=b"")
@@ -406,6 +415,7 @@ async def create_help_request(
     ]
     reply_markup = InlineKeyboardMarkup(inline_keyboard=keyboard)
 
+    reply_markup_message: Message | None = None
     try:
         reply_markup_message = await bot_api.send_message(
             chat_id=chat_id,
@@ -429,6 +439,7 @@ async def create_help_request(
             message=f"Failed to send markup message to Telegram: {e}",
         )
 
+    assert reply_markup_message is not None
     # Saving message id to change it, when operator complete the help request
     reply_markup_message_id: int = reply_markup_message.message_id
 
