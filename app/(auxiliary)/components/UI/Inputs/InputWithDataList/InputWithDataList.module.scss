@@ -5,7 +5,8 @@
 	overflow: visible;
 }
 
-.helpfulList, .companyList {
+.helpfulList,
+.companyList {
 	border: $black_input_border;
 	border-radius: $border_radius;
 	box-sizing: border-box;
@@ -41,28 +42,25 @@
 
 		border-bottom: 2px solid $black;
 		background-color: $white;
-		
 
 		&:last-child {
 			border: none;
 		}
 
 		&:hover {
-			background-color: rgba($color: $white_1, $alpha: .5);
+			background-color: rgba($color: $white_1, $alpha: 0.5);
 		}
 	}
-
 }
 
 .companyList {
-
 	.differentOrganization {
 		display: flex;
 		justify-content: space-between;
-		background-color: rgba($color: $blue_light, $alpha: .1);
-		
+		background-color: rgba($color: $blue_light, $alpha: 0.1);
+
 		&:hover {
-			background-color: rgba($color: $blue_light, $alpha: .15);
+			background-color: rgba($color: $blue_light, $alpha: 0.15);
 		}
 	}
 }

@@ -1,8 +1,30 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+## Introduce
+
+**Solving users' technical issues** is the primary task of a system administrator. The problem in this way is that, in most cases, there is no standardization or recording of the elements involved on this process.
+Therefore, the application a modern approach to technical support for organizations of various sizes. Standardization of requests, with proper logging of ech technical assistance case, helps reduce service time for clients and provides an overview of the organization's infrastructure by tracking the number of requests.
+The application is implemented as a website, so users can access ot from any device.
+A created technical assistance request is sent to a Telegram group via a locally running [API for Telegram's bot](https://core.telegram.org/bots/api)
+
+### Links
+- [Backend part]()
+
+## Technologies
+- [Next.JS v14](https://nextjs.org/) + [TypeScript](https://www.typescriptlang.org/)
+- [Axios](https://axios-http.com/docs/intro)
+- [Redux-Toolkit](https://redux-toolkit.js.org/)
+- [React-Dropzone](https://react-dropzone.js.org/)
+- [Motion](https://motion.dev/docs)
 
 ## Getting Started
 
-First, run the development server:
+Clone project from GitHub and install packages:
+
+```bash
+npm i
+npm audit fix # maybe after installing you must to run this
+```
+
+Then, run to build the project:
 
 ```bash
 npm run dev
@@ -13,24 +35,43 @@ pnpm dev
 # or
 bun dev
 ```
+After building start the project:
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+```bash
+npm run start
+# or
+yarn start
+# or
+pnpm start
+# or
+bun start
+```
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+Open [http://localhost:3030](http://localhost:3030) with your browser to see the application. **Make sure that the backend part of the app has already been started**. You can't use app without the backend part.
 
-This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
+## Application pages
 
-## Learn More
+There are only two pages:
+- Page for user to create a assistance request
+- Page for operator to complete request
 
-To learn more about Next.js, take a look at the following resources:
+### Root page
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+On this page user creates  
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
+![Root page](./app-photos/app-preview.png)
 
-## Deploy on Vercel
+#### Photo editor
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+
+![Photo editor](./app-photos/photo-editor.png)
+
+
+### Operator's page
+
+![Operator's page](./app-photos/complete-request.png)
+
+### Not found page
+
+![Not found page](./app-photos/not-found.png)

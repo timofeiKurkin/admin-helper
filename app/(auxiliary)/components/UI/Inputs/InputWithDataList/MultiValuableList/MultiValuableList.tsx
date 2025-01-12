@@ -1,14 +1,14 @@
 import { useAppDispatch, useAppSelector } from '@/app/(auxiliary)/libs/redux-toolkit/store/hooks'
-import { ChildrenProp } from '@/app/(auxiliary)/types/AppTypes/AppTypes'
-import React, { FC, RefObject, useEffect, useRef, useState } from 'react'
-import styles from "../InputWithDataList.module.scss"
-import Text from '../../../TextTemplates/Text'
 import { changeCompanyInputDataType, selectCompanyInputDataType } from '@/app/(auxiliary)/libs/redux-toolkit/store/slices/UserFormDataSlice/UserFormDataSlice'
+import { ChildrenProp } from '@/app/(auxiliary)/types/AppTypes/AppTypes'
 import { CompanyInputDataType, companyLocalData, companyLocalDataVariable } from '@/app/(auxiliary)/types/AppTypes/InputHooksTypes'
 import { InputHelpfulItemType } from '@/app/(auxiliary)/types/Data/Interface/RootPage/RootPageContentType'
+import { AnimatePresence, motion, Variants } from "framer-motion"
+import { FC, useEffect, useRef, useState } from 'react'
 import Arrow from '../../../SVG/Arrow/Arrow'
 import Close from '../../../SVG/Close/Close'
-import { AnimatePresence, motion, Variants } from "framer-motion"
+import Text from '../../../TextTemplates/Text'
+import styles from "../InputWithDataList.module.scss"
 
 
 interface PropsType extends ChildrenProp {
