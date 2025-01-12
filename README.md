@@ -1,9 +1,9 @@
 ## Introduce
 
-*Решение технических проблем пользователей* - главная задача системного администратора. Проблема состоит в том, что в большинстве случаев отсутствует стандартизация и фиксация элементов этого процесса.  
-Поэтому, приложение предлагает современных подход для технической поддержки пользователей в организациях различного масштаба. Стандартизация заявок, с фиксацией каждого обращения о технической помощи, помогают сократить время на оказание услуги клиенту и показывают общее состояние инфраструктуры организации, основываясь на количестве заявок.  
-Приложение реализовано в виде сайта, поэтому пользователь может открыть его на любом устройстве.  
-Готовая заявка о технической помощи отправляется в Telegram группу через локально работающий [telegram-bot-API](https://core.telegram.org/bots/api).
+**Solving users' technical issues** is the primary task of a system administrator. The problem in this way is that, in most cases, there is no standardization or recording of the elements involved on this process.
+Therefore, the application a modern approach to technical support for organizations of various sizes. Standardization of requests, with proper logging of ech technical assistance case, helps reduce service time for clients and provides an overview of the organization's infrastructure by tracking the number of requests.
+The application is implemented as a website, so users can access ot from any device.
+A created technical assistance request is sent to a Telegram group via a locally running [API for Telegram's bot](https://core.telegram.org/bots/api)
 
 ### Links
 - [Frontend part]()
