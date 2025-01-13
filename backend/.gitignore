@@ -1,0 +1,6 @@
+__pycache__
+venv
+app/api/routes/temporary_files
+app/user_requests_for_help
+.vscode
+.mypy_cache
