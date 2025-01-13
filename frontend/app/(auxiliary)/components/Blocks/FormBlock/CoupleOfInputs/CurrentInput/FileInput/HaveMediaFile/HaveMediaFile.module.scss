@@ -1,0 +1,57 @@
+@import "@/styles/variables.module.scss";
+
+.filesBlock {
+	display: grid;
+	//row-gap: 1.25rem;
+	row-gap: 0.94rem;
+	margin-top: 0.94rem;
+
+	@media screen and ($desktop1920) {
+		grid-template-columns: 8.4375rem 16.88rem;
+		//grid-template-rows: 5.9375rem min-content;
+		grid-template-rows: 6.25rem min-content;
+	}
+
+	@media screen and ($desktop1440_1919) {
+		grid-template-columns: 8.4375rem 8.88rem;
+		grid-template-rows: 5.625rem min-content;
+	}
+
+	@media screen and ($desktop1280_1439),
+		//screen and ($pad992_1279),
+		screen and ($pad640_991) {
+		grid-template-rows: 5.9375rem min-content;
+	}
+
+	@media screen and ($desktop1280_1439) {
+		grid-template-columns: 8.4375rem 10rem;
+	}
+
+	@media screen and ($pad992_1279) {
+		grid-template-rows: 6.5625rem min-content;
+		grid-template-columns: 8.4375rem 14.63rem;
+	}
+
+	@media screen and ($pad640_991) {
+		grid-template-columns: 8.4375rem 0.9fr;
+	}
+
+	@media screen and ($phone375_639) {
+		grid-template-columns: 1fr 1fr; // 8.4375rem
+		grid-template-rows: 1fr min-content;
+	}
+
+	.fileList {
+		height: 100%;
+		grid-column: 1 / 3;
+		grid-row: 1 / 2;
+	}
+
+	.addFiles {
+		grid-column: 1 / 2;
+
+		@media screen and ($phone375_639) {
+			grid-column: 2/ 3;
+		}
+	}
+}

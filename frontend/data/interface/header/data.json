@@ -1,0 +1,11 @@
+{
+    "logo": {
+        "imageSrc": "/logo.png",
+        "logoTitleDesktop": "Быстрая помощь в решении сложных проблем!",
+        "logoTitleMobile": "Техническая помощь в пару кликов!"
+    },
+    "repairService": {
+        "linkToRepairService": "https://it-nk.ru/",
+        "textToRepairService": "Лучший сервис по ремонту электроники в г. Новокузнецке"
+    }
+}

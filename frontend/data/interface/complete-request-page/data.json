@@ -1,0 +1,23 @@
+{
+    "header": {
+        "title": "Просмотр выполненной заявки",
+        "request": "Заявка",
+        "status": {
+            "statusTitle": "Статус:",
+            "completed": "Выполнена",
+            "uncompleted": "Выполняется"
+        }
+    },
+    "body": {
+        "commonInfo": "Основная информация:",
+        "itemsInfo": {
+            "createdAt": "Дата создания:",
+            "completedAt": "Дата выполнения:",
+            "device": "Устройство:",
+            "name": "Имя пользователя:",
+            "phone": "Номер телефона:",
+            "company": "Организация:"
+        }
+    },
+    "helpfulText": "<span style='font-weight: 500'>Заявка выполнена</span>, можете смело закрывать эту страницу."
+}

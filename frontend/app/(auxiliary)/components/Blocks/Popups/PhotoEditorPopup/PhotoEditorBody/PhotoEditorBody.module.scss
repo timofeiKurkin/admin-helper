@@ -1,0 +1,83 @@
+@import "@/styles/variables.module.scss";
+
+.photoEditorBody {
+	@media screen and ($desktop1920),
+	screen and ($desktop1440_1919),
+	screen and ($desktop1280_1439) {
+		grid-template-rows: 152px 2px 1fr 3.3125rem; // 20.75rem
+	}
+
+	@media screen and ($pad992_1279) {
+		//align-items: center;
+		grid-template-rows: 11.9375rem 2px 16.625rem 7.1875rem;
+	}
+
+	@media screen and ($pad640_991) {
+		grid-template-rows: 8.6875rem 2px 5.5rem 6.4375rem;
+	}
+
+	grid-template-areas: "editor editor-controls"
+						 "editor separated-line"
+						 "editor popup-file-list"
+						 "editor buttons";
+}
+
+.editorGrid {
+	grid-area: editor;
+
+	@media screen and ($pad992_1279),
+	screen and ($pad640_991) {
+		display: flex;
+		align-items: center;
+	}
+}
+
+.editorControlsWrapper {
+	grid-area: editor-controls;
+	display: flex;
+	flex-direction: column;
+
+	@media screen and ($desktop1920),
+	screen and ($desktop1440_1919),
+	screen and ($desktop1280_1439),
+	screen and ($pad640_991){
+		row-gap: 1.25rem;
+	}
+
+	@media screen and ($pad640_991) {
+		flex-direction: column-reverse;
+	}
+
+	.resetSettings {
+		cursor: pointer;
+		width: fit-content;
+		user-select: none;
+	}
+}
+
+.separatedLine {
+	grid-area: separated-line;
+}
+
+.photoEditorButtons {
+	display: grid;
+	justify-content: center;
+
+	@media screen and ($desktop1920),
+	screen and ($desktop1440_1919),
+	screen and ($desktop1280_1439) {
+		grid-template-columns: repeat(2, 10.3125rem);
+		column-gap: 1.81rem;
+	}
+
+	@media screen and ($pad992_1279) {
+		grid-template-columns: 1fr;
+		row-gap: 0.94rem;
+	}
+
+	@media screen and ($pad640_991) {
+		grid-template-columns: 1fr;
+		grid-template-rows: 2.75rem 2.75rem;
+		row-gap: 0.94rem;
+	}
+}

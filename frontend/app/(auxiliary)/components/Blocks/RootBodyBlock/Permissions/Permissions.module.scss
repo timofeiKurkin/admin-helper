@@ -1,0 +1,27 @@
+@import "@/styles/variables.module.scss";
+
+.permissionsWrapper {
+    display: flex;
+    flex-direction: column;
+    justify-items: center;
+    row-gap: 0.94rem;
+    margin-left: 0.62rem;
+    
+    .permissionBlock {
+        display: flex;
+        column-gap: 0.62rem;
+        cursor: pointer;
+        user-select: none;
+        align-items: center;
+
+        .permissionCheckbox {
+            width: 18px !important;
+            height: 18px !important;
+        }
+    }
+
+    @media screen and ($phone375_639) {
+        margin: 0;
+        row-gap: 1.25rem;
+    }
+}

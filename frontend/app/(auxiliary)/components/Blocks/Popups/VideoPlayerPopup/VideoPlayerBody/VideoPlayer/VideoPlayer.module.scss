@@ -1,0 +1,28 @@
+@import "@/styles/variables.module.scss";
+
+.videoPlayerWrapper {
+	grid-area: video-player;
+
+	display: flex;
+	flex-direction: column;
+	border-radius: $border_radius;
+	overflow: hidden;
+	user-select: none;
+
+	.videoPlayerBackground {
+
+		@media screen and ($desktop1920) {
+			width: 640px;
+			height: 640px;
+		}
+		background-color: #0f0f0f;
+
+		.videoPlayerBody {
+			width: inherit;
+			height: inherit;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+		}
+	}
+}

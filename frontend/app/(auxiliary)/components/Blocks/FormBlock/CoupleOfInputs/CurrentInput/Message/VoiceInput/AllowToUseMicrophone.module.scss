@@ -1,0 +1,25 @@
+@import "@/styles/variables.module.scss";
+
+.allowWrapper {
+	width: 100dvw;
+	height: 100dvh;
+	background: rgba($black, .85);
+	position: fixed;
+	top: 0;
+	left: 0;
+	z-index: 14;
+
+	.allowBody {
+		position: absolute;
+		width: inherit;
+		height: inherit;
+		display: flex;
+		justify-content: center;
+		align-items: center;
+		text-align: center;
+
+		h2 {
+			color: $white;
+		}
+	}
+}

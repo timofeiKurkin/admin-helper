@@ -1,0 +1,124 @@
+@import "@/styles/variables.module.scss";
+
+.headerDesktop {
+    @media screen and ($phone375_639) {
+        display: none;
+    }
+}
+
+.header {
+    display: grid;
+    justify-content: space-between;
+    align-items: center;
+    grid-template-rows: 1fr;
+    
+    @media screen and ($desktop1920) {
+        grid-template-columns: 21.5625rem 16.875rem;
+    }
+    
+    @media screen and ($desktop1440_1919) {
+        grid-template-columns: 20.25rem 17.25rem;
+    }
+    
+    @media screen and ($desktop1280_1439) {
+        grid-template-columns: 20.25rem 15.9375rem;
+    }
+    
+    @media screen and ($pad992_1279) {
+        grid-template-columns: 19.5rem 14.4375rem;
+    }
+    
+    @media screen and ($pad640_991) {
+        grid-template-columns: 16.875rem 12.8125rem;
+    }
+    
+    @media screen and ($phone375_639) {
+        grid-template-columns: minmax(10rem, 20.3125rem) minmax(9rem, 11.3125rem);
+        grid-template-areas: "logo-container user-requests-block";
+    }
+    
+    .logoContainer {
+        display: grid;
+        grid-template-rows: 1fr;
+        align-items: center;
+
+        .logoTitleMobile {
+            display: none;
+        }
+        
+        @media screen and ($phone375_639) {
+            grid-area: logo-container;
+        }
+        
+        .logoWrapper {
+            position: relative;
+            width: 100%;
+            height: 100%;
+        }
+        
+        @media screen and ($desktop1920) {
+            grid-template-columns: 4.6875rem 15.3125rem;;
+            grid-template-rows: 7.5rem;
+            column-gap: 1.56rem;
+        }
+        
+        @media screen and ($desktop1440_1919) {
+            grid-template-columns: 4.125rem 15rem;
+            grid-template-rows: 6.5625rem;
+            column-gap: 1.13rem;
+        }
+        
+        @media screen and ($desktop1280_1439) {
+            grid-template-columns: 3.5rem 15rem;
+            grid-template-rows: 5.625rem;
+            column-gap: 1.75rem;
+        }
+        
+        @media screen and ($pad992_1279) {
+            grid-template-columns: 2.875rem 15rem;
+            grid-template-rows: 4.6875rem;
+            column-gap: 1.62rem;
+        }
+        
+        @media screen and ($pad640_991) {
+            grid-template-columns: 2.625rem 12.6875rem;
+            grid-template-rows: 4.375rem;
+            column-gap: 1.56rem;
+        }
+        
+        @media screen and ($phone375_639) {
+            grid-template-columns: 2.875rem .8fr;
+            grid-template-rows: 4.375rem;
+            column-gap: 0.94rem;
+
+            .logoTitleDesktop {
+                display: none;
+            }
+
+            .logoTitleMobile {
+                display: block;
+            }
+        }
+
+    }
+    
+    .repairServiceContainer {
+        @media screen and ($phone375_639) {
+            display: none;
+            height: 0;
+            width: 0;
+        }
+    }
+
+    .headerRequestBlock {
+        display: none;
+
+        @media screen and ($phone375_639) {
+            position: relative;
+            display: flex;
+            align-items: center;
+            width: 100%;
+            height: 52px;
+        }
+    }
+}

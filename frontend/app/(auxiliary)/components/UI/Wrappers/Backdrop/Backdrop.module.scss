@@ -1,0 +1,20 @@
+@import "@/styles/variables.module.scss";
+
+.backdropWrapper {
+	width: 100dvw;
+	height: 100dvh;
+	background: rgba($black, .85);
+	position: fixed;
+	top: 0;
+	left: 0;
+
+	.backdropBody {
+		position: absolute;
+		width: inherit;
+		height: inherit;
+
+		// display: flex;
+		// justify-content: center;
+		// align-items: center;
+	}
+}

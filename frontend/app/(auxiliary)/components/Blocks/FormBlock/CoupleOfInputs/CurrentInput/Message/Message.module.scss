@@ -1,0 +1,10 @@
+@import "@/styles/variables.module.scss";
+
+.messageWrapper {
+	display: flex;
+	flex-direction: column;
+	row-gap: 0.74rem;
+	
+	// display: grid;
+	// grid-template-rows: auto 40px;
+}

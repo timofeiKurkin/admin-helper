@@ -1,0 +1,65 @@
+@import "@/styles/variables.module.scss";
+
+.completeRequestHeaderWrapper {
+    display: flex;
+    column-gap: 8.31rem;
+
+    @media screen and ($pad640_991) {
+        column-gap: 7.31rem;
+    }
+
+    @media screen and ($phone375_639) {
+        column-gap: 0;
+        flex-direction: column;
+        row-gap: 0.75rem;
+    }
+
+    .requestNumber,
+    .requestStatus {
+        display: grid;
+        grid-template-rows: repeat(2, min-content);
+    }
+
+    .requestNumber {
+        row-gap: 0.94rem;
+
+        @media screen and ($pad992_1279) {
+            row-gap: 0.75rem;
+        }
+
+        @media screen and ($phone375_639) {
+            row-gap: 0.63rem;
+        }
+    }
+
+    .requestStatus {
+        row-gap: 0.62rem;
+        align-content: center;
+
+        @media screen and ($phone375_639) {
+            grid-template-columns: min-content min-content;
+            row-gap: 0;
+            column-gap: 10px;
+        }
+
+        .requestStatusValue {
+            display: flex;
+            align-items: center;
+            column-gap: 0.5rem;
+
+            .requestStatusEllipse {
+                width: 9px;
+                height: 9px;
+                border-radius: 50%;
+            }
+
+            .requestStatusEllipseDone {
+                background-color: $green_light;
+            }
+
+            .requestStatusEllipsePending {
+                background-color: $yellow;
+            }
+        }
+    }
+}

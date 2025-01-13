@@ -1,0 +1,64 @@
+@import "@/styles/variables.module";
+
+.dropZoneWrapper {
+	width: 100dvw;
+	height: 100dvh;
+
+	background: rgba($black, 0.85);
+
+	position: fixed;
+	top: 0;
+	left: 0;
+	z-index: 10;
+
+	@media screen and ($phone375_639) {
+		width: 0;
+		height: 0;
+		display: none;
+		z-index: -99;
+	}
+
+	//.createVideoPreview {
+	//	position: absolute;
+	//	z-index: -99;
+	//	display: none;
+	//}
+}
+
+.dropZoneContentWrapper {
+	position: absolute;
+	width: inherit;
+	height: inherit;
+
+	display: flex;
+	justify-content: center;
+	align-items: center;
+
+	.dropZoneContent {
+		width: 52.375rem;
+		height: 100%;
+
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		justify-content: center;
+
+		.dropZoneText {
+			margin-top: 4.38rem;
+			margin-bottom: 5rem;
+
+			& > h2 {
+				color: $white;
+				white-space: pre-line;
+			}
+		}
+
+		.closeDropZone {
+			width: 13.125rem;
+
+			& > button > p {
+				color: $blue_dark !important;
+			}
+		}
+	}
+}

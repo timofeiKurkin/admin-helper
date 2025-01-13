@@ -1,0 +1,78 @@
+@import "@/styles/variables.module";
+
+.rangeTicksList {
+	display: flex;
+	position: relative;
+	justify-content: space-between;
+
+	@media screen and ($pad640_991) {
+		position: absolute;
+		width: 100%;
+	}
+}
+
+.padAdaptive {
+	@media screen and ($pad640_991) {
+		p {
+			display: none;
+		}
+	}
+}
+
+.scaleSliderTicks, .rotateSliderTicks {
+	display: flex;
+	//margin: 0 5px;
+}
+
+.scaleSliderTicks {
+	position: absolute;
+	top: 8px;
+	display: flex;
+	justify-content: center;
+	cursor: pointer;
+	transform: translateX(-50%);
+
+	&:before {
+		position: absolute;
+		content: "";
+		top: -8px;
+		width: 1px;
+		height: 5px;
+		background: $grey;
+	}
+}
+
+.rotateSliderTicks {
+	display: flex;
+	justify-content: center;
+	width: 1px;
+	height: 5px;
+	background: $grey;
+	line-height: 30px;
+	cursor: pointer;
+
+	@media screen and ($pad640_991) {
+		width: 2px;
+		height: 10px;
+		border-radius: 1px;
+		background-color: $black;
+	}
+
+	p {
+		line-height: inherit;
+	}
+}
+
+.sliderTick {
+	display: flex;
+	justify-content: center;
+	width: 1px;
+	height: 5px;
+	background: #d3d3d3;
+	line-height: 30px;
+	cursor: pointer;
+
+	p {
+		line-height: inherit;
+	}
+}

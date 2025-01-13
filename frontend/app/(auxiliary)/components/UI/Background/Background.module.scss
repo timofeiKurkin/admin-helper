@@ -1,0 +1,15 @@
+@import "@/styles/variables.module.scss";
+
+.backgroundWrapper {
+    width: 100dvw;
+    height: 100dvh;
+    z-index: -2;
+    top: 0;
+    left: 0;
+    position: fixed;
+
+    .background {
+        width: inherit;
+        height: inherit;
+    }
+}

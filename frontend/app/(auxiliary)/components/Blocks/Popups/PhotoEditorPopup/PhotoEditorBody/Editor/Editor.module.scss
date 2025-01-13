@@ -1,0 +1,47 @@
+@import "@/styles/variables.module";
+
+.editorBody {
+	display: flex;
+	flex-direction: column;
+	//border-radius: $border_radius;
+	overflow: hidden;
+	user-select: none;
+	//row-gap: 1.87rem;
+
+	.editorBackground {
+		//@media screen and ($desktop1920) {
+		//	width: 640px;
+		//	height: 640px;
+		//}
+
+		width: 100%;
+		height: 100%;
+		background-color: $black;
+
+		.editorWrapper {
+			height: inherit;
+
+			display: flex;
+			align-items: center;
+
+			.reactCrop {
+				//@media screen and ($desktop1920),
+				//screen and ($desktop1440_1919),
+				//screen and ($desktop1280_1439) {
+				//	width: 640px;
+				//	height: 640px;
+				//}
+				//
+				//@media screen and ($pad992_1279) {
+				//	width: 600px;
+				//	height: 600px;
+				//}
+				//
+				//@media screen and ($pad640_991) {
+				//	width: 375px;
+				//	height: 375px;
+				//}
+			}
+		}
+	}
+}

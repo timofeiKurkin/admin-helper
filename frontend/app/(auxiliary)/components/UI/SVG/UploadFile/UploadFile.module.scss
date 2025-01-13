@@ -1,0 +1,32 @@
+
+.svgStyles {
+    overflow: visible;
+    scale: 1;
+    transition: scale 0.5s ease;
+    
+    //position: relative;
+    
+    //g {
+    //    transform: translateX(15px) translateY(23px);
+    //    overflow: visible;
+    //}
+    
+    &:not(root) {
+        overflow: visible;
+        overflow-clip-margin: initial;
+    }
+    
+    .arrowDefault {
+        transform: translateY(0);
+        transition: transform 0.4s ease;
+    }
+}
+
+.animateSVG {
+    scale: 1.5;
+    
+    .arrowPullUp {
+        transform: translateY(-30px);
+        transition: transform 0.4s ease;
+    }
+}
