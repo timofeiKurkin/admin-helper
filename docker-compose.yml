@@ -1,0 +1,140 @@
+services:
+  postgres:
+    image: postgres:16.2
+    container_name: it-nk-service-db
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-postgres}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-postgrespass}
+      POSTGRES_DB: ${POSTGRES_DB:-postgres}
+      PGDATA: /data/postgres
+    ports:
+      - "6666:5432"
+    volumes:
+      - postgres_data:/data/postgres
+    networks:
+      - nginx
+      - default
+    restart: always
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
+      interval: 10s
+      timeout: 10s
+      retries: 5
+      start_period: 30s
+    env_file:
+      - .env
+
+  telegram-bot-api:
+    image: aiogram/telegram-bot-api:latest
+    container_name: it-nk-service-telegram-bot-api
+    environment:
+      TELEGRAM_API_ID: ${TELEGRAM_API_ID}
+      TELEGRAM_API_HASH: ${TELEGRAM_API_HASH}
+      TELEGRAM_MAX_CONNECTIONS: ${TELEGRAM_MAX_CONNECTIONS}
+    volumes:
+      - telegram-bot-api-data:/var/lib/telegram-bot-api
+    ports:
+      - "8081:8081"
+    restart: unless-stopped
+    networks:
+      - nginx
+      - default
+    env_file:
+      - .env
+
+networks:
+  nginx:
+    driver: bridge
+
+volumes:
+  postgres_data:
+  telegram-bot-api-data:
+
+# prestart:
+#   image: "${DOCKER_IMAGE_BACKEND}:${TAG-latest}"
+#   container_name: it-nk-service-backend-prestart
+#   build:
+#     context: ./it-nk-service-fastapi
+#   networks:
+#     - nginx
+#     - default
+#   depends_on:
+#     postgres:
+#       condition: service_healthy
+#       restart: true
+#   command: bash scripts/prestart.sh
+#   env_file:
+#     - .env
+#   environment:
+#     - BOT_TOKEN=${BOT_TOKEN}
+#     - GROUP_ID=${GROUP_ID}
+#     - TELEGRAM_API_ID=${TELEGRAM_API_ID}
+#     - TELEGRAM_API_HASH=${TELEGRAM_API_HASH}
+#     - TELEGRAM_MAX_CONNECTIONS=${TELEGRAM_MAX_CONNECTIONS}
+#     - FRONTEND_HOST=${FRONTEND_HOST}
+#     - TOKEN_SECRET_KEY=${TOKEN_SECRET_KEY}
+#     - BACKEND_CORS_ORIGINS=${BACKEND_CORS_ORIGINS}
+#     - ENVIRONMENT=${ENVIRONMENT}
+#     - PROJECT_NAME=${PROJECT_NAME}
+#     - POSTGRES_SERVER=${POSTGRES_SERVER}
+#     - POSTGRES_PORT=${POSTGRES_PORT}
+#     - POSTGRES_USER=${POSTGRES_USER}
+#     - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+#     - POSTGRES_DB=${POSTGRES_DB}
+
+#   backend:
+#     image: "${DOCKER_IMAGE_BACKEND}:${TAG-latest}"
+#     container_name: it-nk-service-backend
+#     restart: unless-stopped
+#     networks:
+#       - nginx
+#       - default
+#     depends_on:
+#       postgres:
+#         condition: service_healthy
+#         restart: true
+#       # prestart:
+#       #   condition: service_completed_successfully
+#     command: bash scripts/prestart.sh
+#     env_file:
+#       - .env
+#     ports:
+#       - "8000:8000"
+#     environment:
+#       - BOT_TOKEN=${BOT_TOKEN}
+#       - GROUP_ID=${GROUP_ID}
+#       - TELEGRAM_API_ID=${TELEGRAM_API_ID}
+#       - TELEGRAM_API_HASH=${TELEGRAM_API_HASH}
+#       - TELEGRAM_MAX_CONNECTIONS=${TELEGRAM_MAX_CONNECTIONS}
+#       - FRONTEND_HOST=${FRONTEND_HOST}
+#       - TOKEN_SECRET_KEY=${TOKEN_SECRET_KEY}
+#       - BACKEND_CORS_ORIGINS=${BACKEND_CORS_ORIGINS}
+#       - ENVIRONMENT=${ENVIRONMENT}
+#       - PROJECT_NAME=${PROJECT_NAME}
+#       - POSTGRES_SERVER=${POSTGRES_SERVER}
+#       - POSTGRES_PORT=${POSTGRES_PORT}
+#       - POSTGRES_USER=${POSTGRES_USER}
+#       - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+#       - POSTGRES_DB=${POSTGRES_DB}
+#     volumes:
+#       - users_help_requests:/app/users_help_requests
+#     healthcheck:
+#       test: ["CMD", "curl", "-f", "http://localhost:8000/api/v1/utils/health-check/"]
+#       interval: 10s
+#       timeout: 5s
+#       retries: 5
+#       start_period: 30s
+#     build:
+#       context: ./it-nk-service-fastapi
+
+#   frontend:
+#     image: "${DOCKER_IMAGE_FRONTEND}:${TAG-latest}"
+#     container_name: it-nk-service-frontend
+#     restart: unless-stopped
+#     networks:
+#       - nginx
+#       - default
+#     ports:
+#       - "3030:3030"
+#     build:
+#       context: ./it-nk-service-frontend
