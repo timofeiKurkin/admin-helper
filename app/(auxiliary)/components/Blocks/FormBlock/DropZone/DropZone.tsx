@@ -1,38 +1,44 @@
-import React, {FC, useCallback, useEffect} from "react";
-import {FileListType} from "@/app/(auxiliary)/types/DropZoneTypes/DropZoneTypes";
-import {FileError, useDropzone} from "react-dropzone";
-import {PHOTO_KEY, PhotoAndVideoKeysTypes, VIDEO_KEY} from "@/app/(auxiliary)/types/AppTypes/InputHooksTypes";
-import {useAppDispatch, useAppSelector} from "@/app/(auxiliary)/libs/redux-toolkit/store/hooks";
-import {
-    addFileData,
-    changePreview,
-    selectFormFileData
-} from "@/app/(auxiliary)/libs/redux-toolkit/store/slices/UserFormDataSlice/UserFormDataSlice";
+import DesktopDropZone from "@/app/(auxiliary)/components/Blocks/FormBlock/DropZone/DesktopDropZone/DesktopDropZone";
+import MobileDropZone from "@/app/(auxiliary)/components/Blocks/FormBlock/DropZone/MobileDropZone/MobileDropZone";
+import { acceptSettings, maxFiles, maxSize } from "@/app/(auxiliary)/components/Blocks/FormBlock/DropZone/possibleFileExtensions";
+import { determineOrientation } from "@/app/(auxiliary)/func/editorHandlers";
+import { useAppDispatch, useAppSelector } from "@/app/(auxiliary)/libs/redux-toolkit/store/hooks";
+import { selectUserDevice, setNewNotification } from "@/app/(auxiliary)/libs/redux-toolkit/store/slices/AppSlice/AppSlice";
 import {
     changePhotoSettings,
     changePopupVisibility,
     changeVideoOrientation,
     setCurrentOpenedFileName
 } from "@/app/(auxiliary)/libs/redux-toolkit/store/slices/PopupSlice/PopupSlice";
-import {defaultPhotoSettings} from "@/app/(auxiliary)/types/PopupTypes/PopupTypes";
-import {acceptSettings} from "@/app/(auxiliary)/components/Blocks/FormBlock/DropZone/possibleFileExtensions";
-import {determineOrientation} from "@/app/(auxiliary)/func/editorHandlers";
-import {selectUserDevice} from "@/app/(auxiliary)/libs/redux-toolkit/store/slices/AppSlice/AppSlice";
-import MobileDropZone from "@/app/(auxiliary)/components/Blocks/FormBlock/DropZone/MobileDropZone/MobileDropZone";
-import DesktopDropZone from "@/app/(auxiliary)/components/Blocks/FormBlock/DropZone/DesktopDropZone/DesktopDropZone";
+import {
+    addFileData,
+    changePreview,
+    selectFormFileData
+} from "@/app/(auxiliary)/libs/redux-toolkit/store/slices/UserFormDataSlice/UserFormDataSlice";
+import { PHOTO_KEY, PhotoAndVideoKeysType, VIDEO_KEY } from "@/app/(auxiliary)/types/AppTypes/InputHooksTypes";
+import { FileListType } from "@/app/(auxiliary)/types/FormTypes/DropZoneTypes/DropZoneTypes";
+import { defaultPhotoSettings } from "@/app/(auxiliary)/types/FormTypes/PopupTypes/PopupTypes";
+import { FC, useCallback, useEffect } from "react";
+import { ErrorCode, FileError, useDropzone } from "react-dropzone";
+import PopupDisableScroll from "../../../Common/Popups/PopupsWrapper/PopupDisableScroll/PopupDisableScroll";
+import OpacityAnimation from "../../../UI/Animations/OpacityAnimation/OpacityAnimation";
+import styles from "./DropZone.module.scss";
+
+
+const availableVideoFormats = ["mp4", "webm"]
 
 
 interface PropsType {
-    inputType: PhotoAndVideoKeysTypes;
-    visibleDragDropZone: () => void;
+    inputType: PhotoAndVideoKeysType;
+    openDragDropZone: () => void;
     dragDropZoneIsOpen: boolean;
 }
 
 const DropZone: FC<PropsType> = ({
-                                     inputType,
-                                     visibleDragDropZone,
-                                     dragDropZoneIsOpen
-                                 }) => {
+    inputType,
+    openDragDropZone,
+    dragDropZoneIsOpen
+}) => {
     const dispatch = useAppDispatch()
     const formFileData = useAppSelector(selectFormFileData)[inputType]
     const userDevice = useAppSelector(selectUserDevice)
@@ -48,7 +54,21 @@ const DropZone: FC<PropsType> = ({
     ])
 
     const createVideoPreviews = useCallback((newFiles: File[]) => {
-        newFiles.forEach((file) => {
+        newFiles.forEach((file, index) => {
+            const videoFormat = file.name.split(".").pop()!
+            
+            if (!availableVideoFormats.includes(videoFormat)) {
+                dispatch(changePreview({
+                    key: inputType,
+                    data: Object.assign({ name: file.name, id: index }) as File
+                }))
+                dispatch(changeVideoOrientation({
+                    name: file.name,
+                    orientation: "horizontal"
+                }))
+                return
+            }
+
             const videoElement = document.createElement("video")
             const canvas = document.createElement("canvas")
 
@@ -68,7 +88,7 @@ const DropZone: FC<PropsType> = ({
 
                 ctx.clearRect(0, 0, canvas.width, canvas.height)
 
-                const {videoWidth, videoHeight} = videoElement
+                const { videoWidth, videoHeight } = videoElement
                 canvas.width = videoWidth
                 canvas.height = videoHeight
 
@@ -77,11 +97,12 @@ const DropZone: FC<PropsType> = ({
 
                 canvas.toBlob((blob) => {
                     if (blob) {
-                        const newFile = new File([blob], file.name, {
+                        const newFile = Object.assign(new File([blob], file.name, {
                             type: "image/png",
                             lastModified: Date.now()
-                        })
+                        }), { id: index })
 
+                        // Previews save in filedata.filesFinally array
                         dispatch(changePreview({
                             key: inputType,
                             data: newFile
@@ -145,10 +166,11 @@ const DropZone: FC<PropsType> = ({
                     createPhotoPreviews(newFiles)
                 }
 
-                visibleDragDropZone()
+                dispatch(setNewNotification({ message: "Файлы успешно добавлены!", type: "success" }))
+                openDragDropZone()
 
                 if (!userDevice.phoneAdaptive) {
-                    dispatch(changePopupVisibility({type: inputType}))
+                    dispatch(changePopupVisibility({ type: inputType }))
                     dispatch(setCurrentOpenedFileName({
                         fileName: userFiles[0].name
                     }))
@@ -161,7 +183,7 @@ const DropZone: FC<PropsType> = ({
         formFileData.files,
         formFileData.filesFinally,
 
-        visibleDragDropZone,
+        openDragDropZone,
         userDevice.phoneAdaptive,
 
         createPhotoPreviews,
@@ -171,8 +193,13 @@ const DropZone: FC<PropsType> = ({
     const fileValidator = (
         file: File
     ): FileError | FileError[] | null | any => {
-        if (formFileData.files.filter((prevFile) => prevFile.name === file.name).length) {
-            return {}
+        const repeatedElement = formFileData.files.findIndex((prevFile) => prevFile.name === file.name)
+
+        if (repeatedElement !== -1) {
+            return {
+                code: "file-exists",
+                message: `Файл ${file.name} уже добавлен!`
+            }
         }
 
         return null
@@ -182,24 +209,62 @@ const DropZone: FC<PropsType> = ({
         getRootProps,
         getInputProps,
         isDragActive,
-        inputRef
+        inputRef,
+        fileRejections
     } = useDropzone({
         validator: fileValidator,
         onDrop,
         accept: acceptSettings[inputType],
-        maxFiles: 8
+        maxFiles: maxFiles[inputType],
+        maxSize: maxSize[inputType]
     })
 
+    useEffect(() => {
+        fileRejections.forEach((item) => {
+            item.errors.forEach((error) => {
+                if (Object.values(ErrorCode).includes(error.code as ErrorCode)) {
+                    if (error.code === "too-many-files") {
+                        const type = `${inputType === PHOTO_KEY ? "фотографий" : "видео"}`
+                        dispatch(setNewNotification({ message: `Вы не можете загрузить больше <b>${maxFiles[inputType]}</b> ${type}`, type: "error" }))
+                    } else if (error.code === "file-too-large") {
+                        const type = `${inputType === PHOTO_KEY ? "фотографии" : "видео"}`
+                        dispatch(setNewNotification({ message: `Размер ${type} не должен превышать <b>${maxSize[inputType]}МБ</b>`, type: "error" }))
+                    }
+                } else {
+                    dispatch(setNewNotification({ message: error.message, type: "error" }))
+                }
+            })
+        })
+    }, [
+        fileRejections,
+        dispatch,
+        inputType
+    ])
+
+
     if (userDevice.phoneAdaptive) {
-        return <MobileDropZone getInputProps={getInputProps}
-                               dragDropZoneIsOpen={dragDropZoneIsOpen}
-                               inputRef={inputRef}/>
+        return (
+            <OpacityAnimation trigger={userDevice.phoneAdaptive}>
+                <MobileDropZone getInputProps={getInputProps}
+                    dragDropZoneIsOpen={dragDropZoneIsOpen}
+                    inputRef={inputRef} />
+            </OpacityAnimation>
+        )
     } else {
-        return <DesktopDropZone inputProps={{getInputProps, getRootProps}}
-                                type={inputType}
-                                isDragActive={isDragActive}
-                                visibleDragDropZone={visibleDragDropZone}
-                                createPhotoPreviews={createPhotoPreviews}/>
+        return (
+            <PopupDisableScroll>
+                <div className={styles.dropZoneWrapper}>
+                    <OpacityAnimation trigger={!userDevice.phoneAdaptive}>
+                        <DesktopDropZone inputProps={{ getInputProps, getRootProps }}
+                            type={inputType}
+                            isDragActive={isDragActive}
+                            openDragDropZone={openDragDropZone}
+                            createPhotoPreviews={createPhotoPreviews} />
+                    </OpacityAnimation>
+
+                </div>
+            </PopupDisableScroll>
+        )
     }
 };
 

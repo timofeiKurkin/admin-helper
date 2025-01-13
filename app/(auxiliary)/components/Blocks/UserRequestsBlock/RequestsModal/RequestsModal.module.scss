@@ -1,0 +1,85 @@
+@import "@/styles/variables.module.scss";
+
+.requestsModalListWrapper {
+    position: absolute;
+    height: 100%;
+    background-color: $white_1;
+    top: 0;
+    right: 0;
+
+    @media screen and ($desktop1920), screen and ($desktop1440_1919) {
+        width: 41.25rem;
+    }
+
+    @media screen and ($pad992_1279), screen and ($desktop1280_1439) {
+        width: 50%;
+    }
+
+    @media screen and ($phone375_639), screen and ($pad640_991) {
+        width: 100%;
+    }
+
+    .requestsModalListBody {
+        height: 100%;
+        display: grid;
+        grid-template-columns: 1fr;
+        grid-template-rows: min-content minmax(300px, auto) 2px 60px;
+        flex-direction: column;
+
+        @media screen and ($desktop1920), screen and ($desktop1440_1919) {
+            row-gap: 30px;
+            padding: 40px;
+        }
+
+        @media screen and ($pad992_1279), screen and ($desktop1280_1439) {
+            row-gap: 30px;
+            padding: 30px;
+        }
+
+        @media screen and ($phone375_639), screen and ($pad640_991) {
+            row-gap: 25px;
+            padding: 25px;
+        }
+
+        .requestsModalTitle {
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .requestModalClose {
+            display: none;
+
+            cursor: pointer;
+            padding: 2px;
+
+            @media screen and ($phone375_639), screen and ($pad640_991) {
+                display: none;
+
+                .closeButton {
+                    width: 19px;
+                    height: 19px;
+                }
+            }
+        }
+
+
+        .getMoreRequests {
+            display: grid;
+            grid-template-rows: 50px 2px;
+            text-align: center;
+
+            @media screen and ($phone375_639), screen and ($pad640_991) {
+                grid-template-rows: 50px 1px;
+            }
+
+            .getMoreRequestsButton {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+
+                height: 100%;
+                cursor: pointer;
+            }
+        }
+    }
+}

@@ -1,7 +1,6 @@
-import React, {FC, useEffect} from 'react';
+import React, { FC, useEffect } from 'react';
 import styles from "@/app/(auxiliary)/components/Blocks/FormBlock/DropZone/DropZone.module.scss";
-import {GetInputPropsType} from "@/app/(auxiliary)/types/DropZoneTypes/DropZoneTypes";
-import {InputChangeEventHandler} from "@/app/(auxiliary)/types/AppTypes/AppTypes";
+import { GetInputPropsType } from "@/app/(auxiliary)/types/FormTypes/DropZoneTypes/DropZoneTypes";
 
 interface PropsType {
     getInputProps: GetInputPropsType;
@@ -10,10 +9,10 @@ interface PropsType {
 }
 
 const MobileDropZone: FC<PropsType> = ({
-                                           getInputProps,
-                                           dragDropZoneIsOpen,
-                                           inputRef
-                                       }) => {
+    getInputProps,
+    dragDropZoneIsOpen,
+    inputRef
+}) => {
 
     useEffect(() => {
         if (inputRef.current) {
@@ -26,7 +25,7 @@ const MobileDropZone: FC<PropsType> = ({
 
     return (
         <input {...getInputProps({})}
-               className={styles.dropInput}/>
+            className={styles.dropInput} />
     );
 };
 

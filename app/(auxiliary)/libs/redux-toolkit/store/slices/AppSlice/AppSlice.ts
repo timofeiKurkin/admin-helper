@@ -1,14 +1,18 @@
-import {createAppSlice} from "@/app/(auxiliary)/libs/redux-toolkit/store/createAppSlice";
-import {RootPageContentType} from "@/app/(auxiliary)/types/Data/Interface/RootPage/RootPageContentType";
-import {PayloadAction} from "@reduxjs/toolkit";
-import {BlocksMovingType, UserDeviceStateType} from "@/app/(auxiliary)/types/AppTypes/Context";
+import { createAppSlice } from "@/app/(auxiliary)/libs/redux-toolkit/store/createAppSlice";
+import { CsrfTokenType } from "@/app/(auxiliary)/types/AppTypes/AppTypes";
+import { BlocksMovingType, UserDeviceStateType } from "@/app/(auxiliary)/types/AppTypes/ContextTypes";
+import { DeleteNotificationType, NotificationListType, SetNotificationType } from "@/app/(auxiliary)/types/AppTypes/NotificationTypes";
+import { PayloadAction } from "@reduxjs/toolkit";
+import { v4 as uuidv4 } from "uuid";
+
 
 interface InitialStateType {
     userDevice: UserDeviceStateType;
     blocksMoving: BlocksMovingType;
-    // editorState: EditorStateType;
-    rootPageContent: RootPageContentType;
-    // microphoneStatus: P
+    notificationList: NotificationListType;
+    disableFormInputs: boolean;
+    csrfToken: string;
+    cookiePermission: boolean
 }
 
 const initialState: InitialStateType = {
@@ -23,26 +27,17 @@ const initialState: InitialStateType = {
         desktopAdaptive: false,
         padAdaptive640_992: false,
     },
-    // editorState: {
-    //     currentFileIndex: 0,
-    //     currentFileName: ""
-    // },
-    rootPageContent: {} as RootPageContentType,
-    // microphoneStatus:
+    notificationList: [],
+    disableFormInputs: false,
+    csrfToken: "",
+    cookiePermission: false,
+
 }
 
 export const appSlice = createAppSlice({
     name: "app",
     initialState,
     reducers: (create) => ({
-        setRootPageContent: create.reducer(
-            (
-                state,
-                action: PayloadAction<RootPageContentType>
-            ) => {
-                state.rootPageContent = action.payload
-            }
-        ),
         setUserDevice: create.reducer(
             (
                 state,
@@ -104,25 +99,73 @@ export const appSlice = createAppSlice({
             ) => {
                 state.blocksMoving.switchedMessageBlock = action.payload
             }
+        ),
+        setDisableFormInputs: create.reducer((state) => {
+            state.disableFormInputs = !state.disableFormInputs
+        }),
+
+        setCsrfToken: create.reducer((state, action: PayloadAction<CsrfTokenType>) => {
+            state.csrfToken = action.payload.csrfToken
+        }),
+
+        setNewNotification: create.reducer(
+            (state, action: PayloadAction<SetNotificationType>) => {
+                const existingNotification = state.notificationList.findIndex((notice) => notice.message === action.payload.message)
+
+                if (existingNotification !== -1) {
+                    state.notificationList[existingNotification] = {
+                        ...state.notificationList[existingNotification],
+                        timeout: state.notificationList[existingNotification].timeout + 10000
+                    }
+                } else {
+                    state.notificationList.push({
+                        id: uuidv4(),
+                        message: action.payload.message,
+                        timeout: action.payload.timeout || 7000,
+                        type: action.payload.type
+                    })
+                }
+            }
+        ),
+        deleteNotification: create.reducer(
+            (state, action: PayloadAction<DeleteNotificationType>) => {
+                state.notificationList = state.notificationList.filter((notice) => notice.id !== action.payload.id)
+            }
+        ),
+
+        setCookiePermission: create.reducer(
+            (state, action: PayloadAction<boolean>) => {
+                state.cookiePermission = action.payload
+            }
         )
     }),
     selectors: {
-        selectRootPageContent: (sel) => sel.rootPageContent,
-        selectUserDevice: (sel) => sel.userDevice,
-        selectBlocksMoving: (sel) => sel.blocksMoving,
+        selectUserDevice: (state) => state.userDevice,
+        selectBlocksMoving: (state) => state.blocksMoving,
+        selectNotificationList: (state) => state.notificationList,
+        selectDisableFormInputs: (state) => state.disableFormInputs,
+        selectCsrfToken: (state) => state.csrfToken,
+        selectCookiePermission: (state) => state.cookiePermission
     }
 })
 
 export const {
-    setRootPageContent,
     setUserDevice,
     setOpenedPhotoBlock,
     setOpenedVideoBlock,
-    setSwitchedMessageBlock
+    setSwitchedMessageBlock,
+    setNewNotification,
+    deleteNotification,
+    setDisableFormInputs,
+    setCsrfToken,
+    setCookiePermission,
 } = appSlice.actions
 
 export const {
-    selectRootPageContent,
     selectUserDevice,
     selectBlocksMoving,
+    selectNotificationList,
+    selectDisableFormInputs,
+    selectCsrfToken,
+    selectCookiePermission,
 } = appSlice.selectors

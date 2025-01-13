@@ -1,10 +1,8 @@
-import React, {HTMLInputTypeAttribute} from "react";
 import {
-    InputChangeEventHandler,
-    KeyBoardEventHandler,
-    TextareaChangeEventHandler
+    KeyBoardEventHandler
 } from "@/app/(auxiliary)/types/AppTypes/AppTypes";
-import {InputHelpfulItemType} from "@/app/(auxiliary)/types/Data/Interface/RootPage/RootPageContentType";
+import { InputHelpfulItemType } from "@/app/(auxiliary)/types/Data/Interface/RootPage/RootPageContentType";
+import React, { HTMLInputTypeAttribute } from "react";
 
 export interface InputPropsType<OnChangeType> {
     value: string;
@@ -20,6 +18,8 @@ export interface InputPropsType<OnChangeType> {
     onKeyDown?: (e: KeyBoardEventHandler<HTMLInputElement>) => void
 
     inputIsDirty?: boolean;
+    // inputType: TextInputsKeysType;
+    isError?: boolean;
 }
 
 export interface InputWithDataListType<T> extends InputPropsType<T> {

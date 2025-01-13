@@ -14,6 +14,7 @@
     font-style: normal;
     letter-spacing: $letter_spacing;
     font-weight: 700;
+    grid-area: main-title;
 
     @media screen and ($desktop1920) {
         font-size: 2.75rem;
@@ -55,7 +56,7 @@
     }
 }
 
-.text {
+.text, .textMedium {
     font-style: normal;
     line-height: normal;
     font-weight: 400;
@@ -74,6 +75,16 @@
 
     @media screen and ($pad640_991), screen and ($phone375_639) {
         font-size: .875rem;
+    }
+}
+
+.textMedium {
+    font-weight: 500;
+    letter-spacing: 0.01875rem;
+    line-height: 1.4375rem;
+
+    @media screen and ($phone375_639) {
+        line-height: 1.2rem;
     }
 }
 

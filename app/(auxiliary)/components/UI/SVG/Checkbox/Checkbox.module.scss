@@ -1,12 +1,29 @@
+@import "@/styles/variables.module.scss";
+
+.checkboxError {
+    background-color: $white;
+    border-radius: 5px;
+    overflow: hidden;
+
+    .checkboxBackground {
+        fill: rgba($color: $red_dark, $alpha: 0.25);
+        stroke: $red_dark;
+    }
+}
+
+.checkboxBackground {
+    fill: $white_1;
+    stroke: $blue_dark;
+}
+
+.checkboxRect {
+    fill: $blue_dark;
+}
 
 .checkboxON, .checkboxOFF {
     transition: opacity .1s ease;
 }
 
-.checkboxON {
-    opacity: 1;
-}
-
 .checkboxOFF {
-    opacity: 0;
+    display: none;
 }

@@ -1,5 +1,5 @@
-import React, {FC, useCallback, useEffect, useRef, useState} from 'react';
-import {Crop, PixelCrop, ReactCrop} from "react-image-crop";
+import React, { FC, useCallback, useEffect, useRef, useState } from 'react';
+import { Crop, PixelCrop, ReactCrop } from "react-image-crop";
 import Image from "next/image";
 import styles from "./Editor.module.scss";
 import 'react-image-crop/src/ReactCrop.scss';
@@ -9,7 +9,7 @@ import {
     findElement,
     getScaledSizesOfImage
 } from "@/app/(auxiliary)/func/editorHandlers";
-import {useDebounceEffect} from "@/app/(auxiliary)/hooks/useDebounceEffect";
+import { useDebounceEffect } from "@/app/(auxiliary)/hooks/useDebounceEffect";
 import {
     canvasPreview,
     getRotateDimensions
@@ -19,9 +19,9 @@ import {
     ImageOrientationType,
     PossibleCroppingBoundaryType,
     VERTICAL
-} from "@/app/(auxiliary)/types/PopupTypes/PopupTypes";
-import {useAppSelector} from "@/app/(auxiliary)/libs/redux-toolkit/store/hooks";
-import {selectUserDevice} from "@/app/(auxiliary)/libs/redux-toolkit/store/slices/AppSlice/AppSlice";
+} from "@/app/(auxiliary)/types/FormTypes/PopupTypes/PopupTypes";
+import { useAppSelector } from "@/app/(auxiliary)/libs/redux-toolkit/store/hooks";
+import { selectUserDevice } from "@/app/(auxiliary)/libs/redux-toolkit/store/slices/AppSlice/AppSlice";
 
 type keys = ["desktopAdaptive", "padAdaptive", "padAdaptive640_992"]
 const editorAdaptiveSizes = {
@@ -41,13 +41,13 @@ interface PropsType {
 }
 
 const Editor: FC<PropsType> = ({
-                                   photo,
-                                   setCrop,
-                                   updatePhoto,
-                                   crop,
-                                   scale,
-                                   rotate
-                               }) => {
+    photo,
+    setCrop,
+    updatePhoto,
+    crop,
+    scale,
+    rotate
+}) => {
     const userDevice = useAppSelector(selectUserDevice)
     const editorSize = editorAdaptiveSizes[(Object.keys(userDevice) as keys).filter((key) => userDevice[key])[0]]
 
@@ -99,7 +99,7 @@ const Editor: FC<PropsType> = ({
         widthScaled: number,
         heightScaled: number
     ) => {
-        const {x, y} = centerPositionOfAxes(width, height, widthScaled, heightScaled)
+        const { x, y } = centerPositionOfAxes(width, height, widthScaled, heightScaled)
 
         const cropSettings = {
             x: x,
@@ -117,7 +117,7 @@ const Editor: FC<PropsType> = ({
             ...cropSettings
         })
 
-        return {x, y}
+        return { x, y }
     }, [
         setCrop,
         photo.name
@@ -143,7 +143,7 @@ const Editor: FC<PropsType> = ({
         /**
          * Измененный размеры в соответствии с масштабом соотношения оригинала и окна редактора
          */
-        const {naturalWidthScaled, naturalHeightScaled} = getScaledSizesOfImage(
+        const { naturalWidthScaled, naturalHeightScaled } = getScaledSizesOfImage(
             naturalWidth,
             naturalHeight,
             width,
@@ -156,7 +156,7 @@ const Editor: FC<PropsType> = ({
          * Условие, если изображение открывается впервые и не имеет своего crop. Нужно сохранить оригинальный crop и из него создать новый.
          */
         if (!currentCrop.x && !currentCrop.y && currentCrop.unit === "%") {
-            const {x, y} = updateCropHandler(
+            const { x, y } = updateCropHandler(
                 width,
                 height,
                 naturalWidthScaled,
@@ -171,7 +171,7 @@ const Editor: FC<PropsType> = ({
                 name: photoName
             }])
         } else {
-            const {x, y} = centerPositionOfAxes(width, height, naturalWidthScaled, naturalHeightScaled)
+            const { x, y } = centerPositionOfAxes(width, height, naturalWidthScaled, naturalHeightScaled)
 
             const boundary = thereIsBoundary(photoName)
             setCroppingBoundary((prevState) => {
@@ -415,7 +415,7 @@ const Editor: FC<PropsType> = ({
                 imgRef.current &&
                 boundary
             ) {
-                const {orientation} = boundary
+                const { orientation } = boundary
                 await canvasPreview({
                     image: imgRef.current,
                     canvas: canvas,
@@ -473,25 +473,25 @@ const Editor: FC<PropsType> = ({
                 <div className={styles.editorWrapper}>
                     {imgSrc && (
                         <ReactCrop crop={crop}
-                                   onChange={(e) => changeCropHandler(e, photo.name)}
-                                   onComplete={(c) => setCompletedCrop(c)}
-                                   aspect={aspect}
-                                   className={styles.reactCrop}
-                                   maxWidth={editorSize}
-                                   minWidth={100}
-                                   maxHeight={editorSize}
-                                   minHeight={100}
+                            onChange={(e) => changeCropHandler(e, photo.name)}
+                            onComplete={(c) => setCompletedCrop(c)}
+                            aspect={aspect}
+                            className={styles.reactCrop}
+                            maxWidth={editorSize}
+                            minWidth={100}
+                            maxHeight={editorSize}
+                            minHeight={100}
                         >
                             <Image ref={imgRef}
-                                   width={editorSize}
-                                   height={editorSize}
-                                   src={imgSrc}
-                                   style={{
-                                       transform: `scale(${scale}) rotate(${rotate}deg)`,
-                                       objectFit: "contain"
-                                   }}
-                                   onLoad={(e) => onImageLoad(e, crop, photo.name)}
-                                   alt={photo.name}
+                                width={editorSize}
+                                height={editorSize}
+                                src={imgSrc}
+                                style={{
+                                    transform: `scale(${scale}) rotate(${rotate}deg)`,
+                                    objectFit: "contain"
+                                }}
+                                onLoad={(e) => onImageLoad(e, crop, photo.name)}
+                                alt={photo.name}
                             />
                         </ReactCrop>
                     )}

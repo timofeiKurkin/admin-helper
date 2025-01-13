@@ -2,6 +2,11 @@
 
 .fileWrapper {
 	height: 4.375rem;
+
+	@media screen and ($phone375_639) {
+		height: auto;
+		width: 100%;
+	}
 }
 
 

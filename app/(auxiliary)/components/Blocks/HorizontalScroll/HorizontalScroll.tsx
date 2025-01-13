@@ -1,18 +1,19 @@
-import React, {FC, useCallback, useEffect, useRef, useState} from 'react';
+import React, { FC, useCallback, useEffect, useRef, useState } from 'react';
 import styles from "./HorizontalScroll.module.scss";
-import ButtonText from "@/app/(auxiliary)/components/UI/TextTemplates/ButtonText";
+import { useAppSelector } from '@/app/(auxiliary)/libs/redux-toolkit/store/hooks';
+import { selectUserDevice } from '@/app/(auxiliary)/libs/redux-toolkit/store/slices/AppSlice/AppSlice';
 
 interface PropsType {
     filesListLength: number;
-    placeholder: string;
     children: React.ReactNode
 }
 
 const HorizontalScroll: FC<PropsType> = ({
-                                             filesListLength,
-                                             placeholder,
-                                             children
-                                         }) => {
+    filesListLength,
+    children
+}) => {
+    const userDevice = useAppSelector(selectUserDevice)
+
     /**
      * Custom scroll
      */
@@ -121,41 +122,41 @@ const HorizontalScroll: FC<PropsType> = ({
     ]);
 
     return (
-        <div className={styles.filesListWrapper}>
-            <div className={styles.listArrowItem}>
-                {/*<ArrowForList*/}
-                {/*    activeStatus={!!scrollPosition}*/}
-                {/*    className={styles.arrowForListLeft}/>*/}
-            </div>
+        <div className={`${styles.filesListWrapper} ${(filesListLength > 3 && !userDevice.phoneAdaptive) && styles.filesListWrapperWithScroll}`}>
+            {/* <div className={styles.listArrowItem}>
+                <ArrowForList
+                   activeStatus={!!scrollPosition}
+                 className={styles.arrowForListLeft}/>
+            </div> */}
 
-            <div className={`${styles.filesListWithoutScroll} ${filesListLength > 3 && styles.filesListAndScroll}`}>
+            <div className={`${styles.filesListWithoutScroll} ${(filesListLength > 3 && !userDevice.phoneAdaptive) && styles.filesListAndScroll}`}>
                 <div ref={scrollContainerRef}
-                     onScroll={handleScroll}
-                     className={styles.filesList}
-                     style={{
-                         gridTemplateColumns: filesListLength ? `repeat(${filesListLength}, 5rem)` : "1fr",
-                         // overflowX: filesListLength ? "auto" : "hidden"
-                     }}>
+                    onScroll={handleScroll}
+                    className={styles.filesList}
+                    style={{
+                        gridTemplateColumns: filesListLength ? `repeat(${filesListLength}, 5rem)` : "1fr",
+                        // overflowX: filesListLength ? "auto" : "hidden"
+                    }}>
                     {children}
                 </div>
 
-                {filesListLength > 3 && (
+                {(filesListLength > 3 && !userDevice.phoneAdaptive) && (
                     <div className={styles.horizontalScrollWrapper}>
                         <div ref={scrollThumbRef}
-                             className={styles.horizontalScroll}
-                             onMouseDown={startDragging}
-                             style={{
-                                 width: `${scrollThumbWidth}px`,
-                                 left: `${scrollPosition}px`
-                             }}></div>
+                            className={styles.horizontalScroll}
+                            onMouseDown={startDragging}
+                            style={{
+                                width: `${scrollThumbWidth}px`,
+                                left: `${scrollPosition}px`
+                            }}></div>
                     </div>
                 )}
             </div>
 
-            <div className={styles.listArrowItem}>
-                {/*<ArrowForList activeStatus={endOfList}*/}
-                {/*              className={styles.arrowForListRight}/>*/}
-            </div>
+            {/* <div className={styles.listArrowItem}>
+                <ArrowForList activeStatus={endOfList}
+                             className={styles.arrowForListRight}/>
+            </div> */}
         </div>
     )
 };

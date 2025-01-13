@@ -1,0 +1,43 @@
+@import "@/styles/variables.module.scss";
+
+.deleteRequestWrapper {
+    display: grid;
+    grid-template-columns: 0.8fr;
+    justify-content: center;
+
+    @media screen and ($phone375_639) {
+        grid-template-columns: 1fr;
+    }
+
+    @media screen and ($phone550_639) {
+        grid-template-columns: 0.8fr;
+    }
+}
+
+.acceptWrapper {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    column-gap: 15px;
+
+    .cancelButton {
+        background-color: $white !important;
+        border: $black_input_border !important;
+
+        & > p {
+            color: $black !important;
+        }
+    }
+
+    .acceptButton {
+        background-color: $blue_light !important;
+    }
+}
+
+.deleteButton {
+    background-color: $white !important;
+    border: $black_input_border !important;
+
+    & > p {
+        color: $black !important;
+    }
+}

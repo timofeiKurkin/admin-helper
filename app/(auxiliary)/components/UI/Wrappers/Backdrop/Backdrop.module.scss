@@ -7,14 +7,14 @@
 	position: fixed;
 	top: 0;
 	left: 0;
-	z-index: 4;
 
 	.backdropBody {
 		position: absolute;
 		width: inherit;
 		height: inherit;
-		display: flex;
-		justify-content: center;
-		align-items: center;
+
+		// display: flex;
+		// justify-content: center;
+		// align-items: center;
 	}
 }

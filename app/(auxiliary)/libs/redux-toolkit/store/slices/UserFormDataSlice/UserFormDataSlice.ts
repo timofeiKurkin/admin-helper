@@ -1,37 +1,38 @@
-import {createAppSlice} from "@/app/(auxiliary)/libs/redux-toolkit/store/createAppSlice";
+import { indexOfObject } from "@/app/(auxiliary)/func/handlers";
+import { createAppSlice } from "@/app/(auxiliary)/libs/redux-toolkit/store/createAppSlice";
 import {
-    AllKeysTypesOfInputs,
+    FormDataItemType,
+    PermissionsOfFormType,
+    ServerResponseType,
+    UserFormDataType
+} from "@/app/(auxiliary)/types/AppTypes/ContextTypes";
+import {
     COMPANY_KEY,
     DEVICE_KEY,
     MESSAGE_KEY,
+    MessageInputDataType,
     NAME_KEY,
     NUMBER_PC_KEY,
     PHONE_KEY,
     PHOTO_KEY,
-    PhotoAndVideoKeysTypes,
-    TextInputsKeysTypes,
-    VIDEO_KEY
+    PhotoAndVideoKeysType,
+    TextInputsKeysType,
+    ValidateKeysType,
+    VIDEO_KEY,
+    CompanyInputDataType
 } from "@/app/(auxiliary)/types/AppTypes/InputHooksTypes";
-import {
-    FormDataItemType,
-    PermissionsOfFormStatesType,
-    ServerResponseType,
-    UserFormDataType
-} from "@/app/(auxiliary)/types/AppTypes/Context";
-import {PayloadAction} from "@reduxjs/toolkit";
-import {indexOfObject} from "@/app/(auxiliary)/func/handlers";
+import { PayloadAction } from "@reduxjs/toolkit";
 
 interface InitialStateType extends UserFormDataType {
-    permissions: PermissionsOfFormStatesType;
-    validationFormStatus: boolean;
-    userMessageStatus: boolean;
+    permissions: PermissionsOfFormType;
+    messageInputDataType: MessageInputDataType;
+    companyInputDataType: CompanyInputDataType;
     serverResponse: ServerResponseType;
-    // resetForm:
+    rejectionInputs: ValidateKeysType[];
 }
 
 const initialState: InitialStateType = {
     file_data: {
-        // [MESSAGE_KEY]: {} as File,
         [PHOTO_KEY]: {
             type: PHOTO_KEY,
             filesNames: [],
@@ -46,7 +47,6 @@ const initialState: InitialStateType = {
         },
         [MESSAGE_KEY]: {
             validationStatus: false,
-            // type: MESSAGE_KEY,
             value: {} as File
         }
     },
@@ -65,7 +65,7 @@ const initialState: InitialStateType = {
         },
         [COMPANY_KEY]: {
             validationStatus: false,
-            value: ""
+            value: "",
         },
         [NUMBER_PC_KEY]: {
             validationStatus: false,
@@ -78,16 +78,16 @@ const initialState: InitialStateType = {
     },
     permissions: {
         userCanTalk: false,
-        userAgreed: false,
+        userAgreedPolitical: false,
     },
-    validationFormStatus: false,
-    userMessageStatus: false,
+    messageInputDataType: "file",
+    companyInputDataType: "choose",
     serverResponse: {
         status: "",
         sentToServer: false,
         message: ""
     },
-    // resetForm: false
+    rejectionInputs: []
 }
 
 interface DataActionType<K, T> {
@@ -95,24 +95,24 @@ interface DataActionType<K, T> {
     data: T
 }
 
-type ChangePreviewActionType = DataActionType<PhotoAndVideoKeysTypes, File | File[]>
+type ChangePreviewActionType = DataActionType<PhotoAndVideoKeysType, File | File[]>
 
 interface DeleteFileAction {
     name: string;
 }
 
 /**
- * Работа с данными формы:
+ * Working with form data:
  * - changeTextData
  * - addFileData
  * - deleteFileData
  * - changePhotosPreview
  *
- * Разрешения формы:
+ * Form Permissions:
  * - setPermissionPolitic
  * - setUserCanTalk
  *
- * Валидация формы
+ * Form validation
  * - setValidationFormStatus
  */
 export const userFormDataSlice = createAppSlice({
@@ -125,7 +125,7 @@ export const userFormDataSlice = createAppSlice({
         changeTextData: create.reducer(
             (
                 state,
-                action: PayloadAction<DataActionType<TextInputsKeysTypes, FormDataItemType<string>>>
+                action: PayloadAction<DataActionType<TextInputsKeysType, FormDataItemType<string>>>
             ) => {
                 state.text_data[action.payload.key] = action.payload.data
             }
@@ -165,7 +165,7 @@ export const userFormDataSlice = createAppSlice({
         addFileData: create.reducer(
             (
                 state,
-                action: PayloadAction<DataActionType<PhotoAndVideoKeysTypes, FormDataItemType<File[]>>> // CustomFileType[]
+                action: PayloadAction<DataActionType<PhotoAndVideoKeysType, FormDataItemType<File[]>>> // CustomFileType[]
             ) => {
                 const key = action.payload.key
                 const newFile = action.payload.data.value
@@ -182,7 +182,7 @@ export const userFormDataSlice = createAppSlice({
         deleteFile: create.reducer(
             (
                 state,
-                action: PayloadAction<DataActionType<PhotoAndVideoKeysTypes, DeleteFileAction>>
+                action: PayloadAction<DataActionType<PhotoAndVideoKeysType, DeleteFileAction>>
             ) => {
                 const key = action.payload.key
 
@@ -225,7 +225,7 @@ export const userFormDataSlice = createAppSlice({
         ) => {
             const key = action.payload.key
 
-            const changePreview = (newFile: File, key: PhotoAndVideoKeysTypes) => {
+            const changePreview = (newFile: File, key: PhotoAndVideoKeysType) => {
                 const previewIndex = indexOfObject(state.file_data[key].filesFinally, newFile)
 
                 if (previewIndex !== -1) {
@@ -239,22 +239,27 @@ export const userFormDataSlice = createAppSlice({
                 action.payload.data.forEach((file) => {
                     changePreview(file, key)
                 })
-            } else if (action.payload.data instanceof File) {
-                changePreview(action.payload.data, key)
+            } else {
+                changePreview(action.payload.data as File, key)
             }
         }),
-        switchUserMessageStatus: create.reducer(
-            (state) => {
-                state.userMessageStatus = !state.userMessageStatus
+
+        changeMessageInputDataType: create.reducer(
+            (state, action: PayloadAction<MessageInputDataType>) => {
+                state.messageInputDataType = action.payload
             }
         ),
 
+        changeCompanyInputDataType: create.reducer((state, action: PayloadAction<CompanyInputDataType>) => {
+            state.companyInputDataType = action.payload
+        }),
+
         /**
-         *
+         * User agreed with data political processing
          */
         setAgreePolitics: create.reducer(
             (state) => {
-                state.permissions.userAgreed = !state.permissions.userAgreed
+                state.permissions.userAgreedPolitical = !state.permissions.userAgreedPolitical
             }
         ),
 
@@ -264,19 +269,15 @@ export const userFormDataSlice = createAppSlice({
             }
         ),
 
-        /**
-         * Slice для изменения состояния всей валидации формы. Этот статус показывает, что все поля формы корректно заполнены, поэтому файлы могут быть отправлены на сервер
-         */
-        setValidationFormStatus: create.reducer(
-            (state) => {
-                const textDataKeys = Object.keys(state.text_data)
-                state.validationFormStatus = (textDataKeys as (TextInputsKeysTypes)[]).every((key) => {
-                    if (key === "message") {
-                        return state.text_data[key].validationStatus || state.file_data[key].validationStatus
-                    } else {
-                        return state.text_data[key]?.validationStatus
-                    }
-                })
+        setRejectionInputs: create.reducer(
+            (state, action: PayloadAction<ValidateKeysType[]>) => {
+                state.rejectionInputs = action.payload
+            }
+        ),
+
+        deleteRejectionInput: create.reducer(
+            (state, action: PayloadAction<ValidateKeysType>) => {
+                state.rejectionInputs = state.rejectionInputs.filter((rejection) => rejection !== action.payload)
             }
         ),
 
@@ -287,7 +288,7 @@ export const userFormDataSlice = createAppSlice({
         ),
 
 
-        setFormToDefault: create.reducer(
+        resetFormToDefault: create.reducer(
             (state) => {
                 state.file_data = initialState.file_data
                 state.permissions = initialState.permissions
@@ -296,7 +297,7 @@ export const userFormDataSlice = createAppSlice({
                     validationStatus: false
                 }
 
-                if (!state.userMessageStatus) {
+                if (state.messageInputDataType === "file") {
                     state.text_data[MESSAGE_KEY] = initialState.text_data[MESSAGE_KEY]
                 }
             }
@@ -306,9 +307,10 @@ export const userFormDataSlice = createAppSlice({
         selectFormTextData: (state) => state.text_data,
         selectFormFileData: (state) => state.file_data,
         selectPermissionsOfForm: (state) => state.permissions,
-        selectValidationFormStatus: (state) => state.validationFormStatus,
-        selectUserMessageStatus: (state) => state.userMessageStatus,
-        selectServerResponse: (state) => state.serverResponse
+        selectMessageInputDataType: (state) => state.messageInputDataType,
+        selectCompanyInputDataType: (state) => state.companyInputDataType,
+        selectServerResponse: (state) => state.serverResponse,
+        selectRejectionInputs: (state) => state.rejectionInputs
     }
 })
 
@@ -318,21 +320,29 @@ export const {
     deleteFile,
     setAgreePolitics,
     setUserCanTalk,
-    setValidationFormStatus,
     addMessageData,
     deleteMessageRecorder,
-    switchUserMessageStatus,
-
     changePreview,
+
+    setRejectionInputs,
+    deleteRejectionInput,
+
+    changeMessageInputDataType,
+    changeCompanyInputDataType,
+
+    resetFormToDefault,
+
     setServerResponse,
-    setFormToDefault
 } = userFormDataSlice.actions
 
 export const {
     selectFormTextData,
     selectFormFileData,
     selectPermissionsOfForm,
-    selectValidationFormStatus,
-    selectUserMessageStatus,
-    selectServerResponse
+    selectRejectionInputs,
+
+    selectMessageInputDataType,
+    selectCompanyInputDataType,
+
+    selectServerResponse,
 } = userFormDataSlice.selectors

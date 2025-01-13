@@ -2,12 +2,14 @@ import {combineSlices, configureStore} from "@reduxjs/toolkit";
 import {userFormDataSlice} from "@/app/(auxiliary)/libs/redux-toolkit/store/slices/UserFormDataSlice/UserFormDataSlice";
 import {appSlice} from "@/app/(auxiliary)/libs/redux-toolkit/store/slices/AppSlice/AppSlice";
 import {popupSlice} from "@/app/(auxiliary)/libs/redux-toolkit/store/slices/PopupSlice/PopupSlice";
+import { userRequestsSlice } from "./slices/UserRequestsSlice/UserRequestsSlice";
 
 
 const rootReducer = combineSlices(
     userFormDataSlice,
     appSlice,
-    popupSlice
+    popupSlice,
+    userRequestsSlice
 )
 export type RootState = ReturnType<typeof rootReducer>
 

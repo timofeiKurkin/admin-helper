@@ -1,5 +1,10 @@
 @import "@/styles/variables.module.scss";
 
+.headerDesktop {
+    @media screen and ($phone375_639) {
+        display: none;
+    }
+}
 
 .header {
     display: grid;
@@ -24,17 +29,26 @@
     }
     
     @media screen and ($pad640_991) {
-        grid-template-columns: 16.875rem 10.25rem;
+        grid-template-columns: 16.875rem 12.8125rem;
     }
     
     @media screen and ($phone375_639) {
-        grid-template-columns: 15.6875rem;
+        grid-template-columns: minmax(10rem, 20.3125rem) minmax(9rem, 11.3125rem);
+        grid-template-areas: "logo-container user-requests-block";
     }
     
     .logoContainer {
         display: grid;
         grid-template-rows: 1fr;
         align-items: center;
+
+        .logoTitleMobile {
+            display: none;
+        }
+        
+        @media screen and ($phone375_639) {
+            grid-area: logo-container;
+        }
         
         .logoWrapper {
             position: relative;
@@ -73,15 +87,38 @@
         }
         
         @media screen and ($phone375_639) {
-            grid-template-columns: 2.875rem 11.875rem;
+            grid-template-columns: 2.875rem .8fr;
             grid-template-rows: 4.375rem;
             column-gap: 0.94rem;
+
+            .logoTitleDesktop {
+                display: none;
+            }
+
+            .logoTitleMobile {
+                display: block;
+            }
         }
+
     }
     
     .repairServiceContainer {
         @media screen and ($phone375_639) {
             display: none;
+            height: 0;
+            width: 0;
+        }
+    }
+
+    .headerRequestBlock {
+        display: none;
+
+        @media screen and ($phone375_639) {
+            position: relative;
+            display: flex;
+            align-items: center;
+            width: 100%;
+            height: 52px;
         }
     }
 }

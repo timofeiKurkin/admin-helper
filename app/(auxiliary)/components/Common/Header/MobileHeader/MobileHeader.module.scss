@@ -1,0 +1,17 @@
+@import "@/styles/variables.module.scss";
+
+.mobileHeaderWrapper {
+    position: static;
+
+    @media screen and ($phone375_639) {
+        position: fixed;
+        top: 0;
+        left: 0;
+        z-index: 10;
+        background-color: $white;
+        padding: 15px 25px 15px 25px;
+        width: 100%;
+
+        border-bottom: 2px solid $cold_white;
+    }
+}

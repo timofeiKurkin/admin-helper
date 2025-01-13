@@ -1,19 +1,18 @@
-import {useState} from "react";
-import useValidation from "./useValidation";
-import useLocalStorage from "./useLocalStorage";
-import {
-    MESSAGE_KEY,
-    savedInputsData, SavedInputsKeysTypes,
-    UseInputType,
-    ValidationReturnDataType,
-    ValidationsKeyType,
-    ValidationsType
-} from "@/app/(auxiliary)/types/AppTypes/InputHooksTypes";
 import {
     ChangeEventHandlerType,
     InputChangeEventHandler,
     TextareaChangeEventHandler
 } from "@/app/(auxiliary)/types/AppTypes/AppTypes";
+import {
+    savedInputsData, SavedInputsKeysType,
+    UseInputType,
+    ValidationReturnDataType,
+    ValidationsKeyType,
+    ValidationsType
+} from "@/app/(auxiliary)/types/AppTypes/InputHooksTypes";
+import { useState } from "react";
+import useLocalStorage from "./useLocalStorage";
+import useValidation from "./useValidation";
 
 const UseInput = <E>(
     initialValue: string,
@@ -23,7 +22,7 @@ const UseInput = <E>(
     const [value, setValue] = useLocalStorage(key, initialValue)
 
     const [isDirty, setDirty] = useState<boolean>(false)
-    const formValid: ValidationReturnDataType = useValidation(value, validations)
+    const formValid: ValidationReturnDataType = useValidation(value, validations, key)
 
     const onChange = (e: ChangeEventHandlerType<E>) => {
         setValue((e as InputChangeEventHandler | TextareaChangeEventHandler).target.value)
@@ -34,7 +33,7 @@ const UseInput = <E>(
     }
 
     const resetValue = () => {
-        if(!(key === MESSAGE_KEY) && savedInputsData.includes(key as SavedInputsKeysTypes)) return
+        if (savedInputsData.includes(key as SavedInputsKeysType)) return
         setValue("")
     }
 

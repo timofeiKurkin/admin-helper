@@ -1,13 +1,12 @@
 // Form body
 import {
+    AllKeysOfInputsType,
     COMPANY_KEY,
     DEVICE_KEY,
     MESSAGE_KEY,
     NAME_KEY,
     NUMBER_PC_KEY,
-    PHONE_KEY,
-    PhotoAndVideoKeysTypes,
-    AllKeysTypesOfInputs
+    PHONE_KEY
 } from "@/app/(auxiliary)/types/AppTypes/InputHooksTypes";
 
 export interface RootPageContentType extends Button {
@@ -15,6 +14,7 @@ export interface RootPageContentType extends Button {
     formContent: FormContentType;
     contentOfUploadBlock: ContentOfUploadBlockType;
     permissionsContent: PermissionsContentType;
+    userRequests: UserRequestsType;
 }
 
 export interface FormContentType {
@@ -31,7 +31,7 @@ export interface FormPartType {
 // Inputs
 export interface InputType {
     id: number;
-    type: AllKeysTypesOfInputs | string; // TODO: REMOVE STRING TYPE
+    type: AllKeysOfInputsType; // TODO: REMOVE STRING TYPE
     inputTitle: string;
     inputPlaceholder?: string;
     toggleText?: string;
@@ -39,12 +39,12 @@ export interface InputType {
 }
 
 export interface DeviceInputType extends InputType {
-    // type: typeof DEVICE_KEY;
+    type: typeof DEVICE_KEY;
     helpfulList: InputHelpfulItemType[];
 }
 
 export interface MessageInputType extends InputType {
-    // type: typeof MESSAGE_KEY;
+    type: typeof MESSAGE_KEY;
     voiceMessage?: MessageType;
     textMessage?: MessageType;
 }
@@ -54,20 +54,20 @@ export interface PhotoAndVideoInputType extends InputType, Button {
 }
 
 export interface NameInputType extends InputType {
-    // type: typeof NAME_KEY;
+    type: typeof NAME_KEY;
 }
 
 export interface CompanyInputType extends InputType {
-    // type: typeof COMPANY_KEY;
+    type: typeof COMPANY_KEY;
     helpfulList: InputHelpfulItemType[];
 }
 
 export interface PhoneNumberInputType extends InputType {
-    // type: typeof PHONE_KEY;
+    type: typeof PHONE_KEY;
 }
 
 export interface NumberPcInputType extends InputType {
-    // type: typeof NUMBER_PC_KEY;
+    type: typeof NUMBER_PC_KEY;
 }
 
 export type AllTypesOfInputsArray = AllTypesOfInputs[]
@@ -102,9 +102,30 @@ export interface ContentOfUploadBlockType extends Button {
     }
 }
 
-// Permissions
+
+// Permission Data
 export interface PermissionsContentType {
     ICanAnswer: string;
     personalDataPreparation: string;
     preparationLinkToPolicy: string;
+}
+
+
+// User Requests Data
+export interface UserRequestsType {
+    button: string;
+    modalData: ModalDataType;
+}
+
+export interface ModalDataType {
+    title: string;
+    tableDataDesktop: TableDataType;
+    tableDataMobile: TableDataType;
+    getMoreRequests: string;
+}
+
+export interface TableDataType {
+    number: string;
+    creationTime: string;
+    status: string;
 }

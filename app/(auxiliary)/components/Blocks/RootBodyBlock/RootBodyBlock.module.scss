@@ -1,142 +1,147 @@
 @import "@/styles/variables.module.scss";
 
-.openedFileBlock, .bodyBlockGrid {
-    transition: grid-template-columns .5s ease;
+.openedFileBlock,
+.bodyBlockGrid {
+    transition: grid-template-columns 0.5s ease;
 }
 
 .bodyBlockGrid {
     display: grid;
-    
+    grid-area: root-body-block;
+
     //@media screen and ($desktop1920),
     //screen and ($desktop1440_1919),
     //screen and ($desktop1280_1439) {
     //    grid-template-columns: max-content min-content max-content;
     //}
-    
+
     @media screen and ($desktop1920) {
         grid-template-columns: calc(44.1875rem + 6.44rem) min-content min-content; // Now, it's the best solution // Заранее установить ширину блока
     }
-    
+
     @media screen and ($desktop1440_1919) {
-        grid-template-columns: calc(38.3125rem + 2.63rem) min-content max-content;
+        grid-template-columns: 38.3125rem min-content max-content;
     }
-    
+
     @media screen and ($desktop1280_1439) {
         //grid-template-columns: calc(36.25rem + 4.25rem) min-content max-content;
         grid-template-columns: 36.25rem min-content max-content;
         //grid-template-columns: 1fr min-content max-content;
     }
-    
+
     @media screen and ($pad992_1279) {
-        grid-template-columns: 42.375rem;
+        grid-template-columns: minmax(42.375rem, 1fr);
     }
-    
-    @media screen and ($pad640_991),
-    screen and ($phone375_639) {
+
+    @media screen and ($pad640_991), screen and ($phone375_639) {
         grid-template-columns: 1fr;
     }
-    
-    .separatingLine, .separatingLineLess {
+
+    .separatingLine {
         position: relative;
-        
+
         @media screen and ($desktop1920) {
             margin-right: 3.75rem;
             //margin-left: 6.44rem;
         }
-        
+
         @media screen and ($desktop1440_1919) {
             margin-right: 3.69rem;
             margin-left: 2.62rem;
         }
-        
+
         @media screen and ($desktop1280_1439) {
             margin-right: 2.5rem;
             margin-left: 4.25rem;
         }
-        
+
         @media screen and ($pad992_1279) {
             margin: 2.19rem 0;
         }
-        
-        @media screen and ($pad640_991),
-        screen and ($phone375_639) {
+
+        @media screen and ($pad640_991), screen and ($phone375_639) {
             margin: 1.88rem 0;
         }
-        
-        &:before {
-            position: absolute;
-            content: "";
-            
-            @media screen and ($desktop1920),
-            screen and ($desktop1440_1919),
-            screen and ($desktop1280_1439) {
-                width: 2px;
-            }
-            
-            @media screen and ($pad992_1279),
-            screen and ($pad640_991),
-            screen and ($phone375_639) {
-                height: 2px;
-            }
-            
-            @media screen and ($desktop1920) {
-                height: 25.625rem;
-            }
-            
-            @media screen and ($desktop1440_1919) {
-                height: 24.375rem;
-            }
-            
-            @media screen and ($desktop1280_1439) {
-                height: 33.75rem;
-            }
-            
-            @media screen and ($pad992_1279) {
-                width: 38.4375rem;
-            }
-            
-            @media screen and ($pad640_991),
-            screen and ($phone375_639) {
-                width: 100%;
-            }
-            
-            background-color: $blue_dark;
-            top: 0;
-            left: -1px;
+
+        @media screen and ($pad640_991), screen and ($phone375_639), screen and ($pad992_1279) {
+            height: 2px;
         }
+
+        @media screen and ($desktop1920), screen and ($desktop1440_1919), screen and ($desktop1280_1439) {
+            width: 2px;
+        }
+
+        // &:before {
+        //     position: absolute;
+        //     content: "";
+
+        //     @media screen and ($desktop1920),
+        //     screen and ($desktop1440_1919),
+        //     screen and ($desktop1280_1439) {
+        //         width: 2px;
+        //     }
+
+        //     @media screen and ($pad992_1279),
+        //     screen and ($pad640_991),
+        //     screen and ($phone375_639) {
+        //         height: 2px;
+        //     }
+
+        //     @media screen and ($desktop1920) {
+        //         height: 25.625rem;
+        //     }
+
+        //     @media screen and ($desktop1440_1919) {
+        //         height: 24.375rem;
+        //     }
+
+        //     @media screen and ($desktop1280_1439) {
+        //         height: 33.75rem;
+        //     }
+
+        //     @media screen and ($pad992_1279),
+        //     screen and ($pad640_991),
+        //     screen and ($phone375_639) {
+        //         width: 100%;
+        //     }
+
+        //     background-color: $blue_dark;
+        //     top: 0;
+        //     left: -1px;
+        // }
     }
-    
+
     //justify-content: space-between; // Between form's blocks and the separate line
-    
-    .separatingLineLess {
-        @media screen and ($desktop1920) {
-            margin-left: 4.69rem;
-        }
-        
-        @media screen and ($desktop1440_1919) {
-            margin-left: 2.62rem;
-        }
-        
-        @media screen and ($desktop1280_1439) {
-            margin-left: 3.62rem;
-        }
-    }
+
+    // .separatingLineLess {
+    //     @media screen and ($desktop1920) {
+    //         margin-left: 4.69rem;
+    //     }
+
+    //     @media screen and ($desktop1440_1919) {
+    //         margin-left: 2.62rem;
+    //     }
+
+    //     @media screen and ($desktop1280_1439) {
+    //         margin-left: 3.62rem;
+    //     }
+    // }
 }
 
 .openedFileBlock {
     @media screen and ($desktop1920) {
         grid-template-columns: calc(50.625rem + 4.69rem) min-content max-content; // Now, it's the best solution // Заранее установить ширину блока
     }
-    
-    //@media screen and ($desktop1440_1919) {
-    //    grid-template-columns: calc(38.3125rem + 2.62rem) min-content max-content;
-    //}
-    
+
+    @media screen and ($desktop1440_1919) {
+        grid-template-columns: calc(38.3125rem + 2.62rem) min-content max-content;
+    }
+
     @media screen and ($desktop1280_1439) {
         //grid-template-columns: calc(36.875rem + 3.62rem) min-content max-content;
         grid-template-columns: 36.875rem min-content max-content;
     }
-    
+
     @media screen and ($pad992_1279) {
         grid-template-columns: 51.875rem;
     }

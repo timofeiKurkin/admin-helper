@@ -16,3 +16,13 @@ export const acceptSettings: { [type: string]: { [permissions: string]: string[]
         "image/*": possiblePhotoExtensions
     }
 }
+
+export const maxFiles: {[type: string]: number} = {
+    "video": 3,
+    "photo": 10
+}
+
+export const maxSize: {[type: string]: number} = {
+    "video": 200 * 1024 * 1024,
+    "photo": 5 * 1024 * 1024
+}

@@ -1,0 +1,74 @@
+@import "@/styles/variables.module.scss";
+
+.requestsListWrapper {
+    height: 100%;
+    display: grid;
+    grid-template-rows: min-content minmax(300px, 1fr);
+    // flex-direction: column;
+    
+    @media screen and ($desktop1920) {
+        grid-template-rows: min-content minmax(300px, 570px);
+    }
+
+    @media screen and ($desktop1440_1919) {
+        // min-height: 300px;
+        // max-height: 803px;
+        // height: auto;
+
+        grid-template-rows: min-content 1fr;
+    }
+
+    @media screen and ($pad992_1279), screen and ($desktop1280_1439) {
+        grid-template-rows: min-content minmax(300px, 534px);
+    }
+
+    @media screen and ($desktop1920), screen and ($desktop1440_1919), screen and ($desktop1280_1439) {
+        row-gap: 25px;
+    }
+
+    @media screen and ($phone375_639), screen and ($pad640_991), screen and ($pad992_1279) {
+        row-gap: 20px;
+    }
+}
+
+.headTable {
+    margin-bottom: 10px;
+}
+
+.headTableLine {
+    height: 2px !important;
+
+    @media screen and ($phone375_639) {
+        height: 1px;
+    }
+}
+
+.headTableGrid,
+.headTable {
+    display: grid;
+
+    @media screen and ($desktop1920), screen and ($desktop1440_1919) {
+        grid-template-columns: 6rem 1fr 8.1875rem;
+        padding: 0 25px;
+    }
+
+    @media screen and ($desktop1280_1439) {
+        grid-template-columns: 0.7fr 1.3fr 1.2fr;
+        padding: 0 20px;
+    }
+
+    @media screen and ($pad992_1279) {
+        grid-template-columns: 0.7fr 1.3fr 1.2fr;
+        padding: 0 15px;
+    }
+
+    @media screen and ($phone375_639) {
+        grid-template-columns: 0.8fr 1.8fr 1.1fr;
+        padding: 0 20px;
+    }
+
+    @media screen and ($pad640_991) {
+        grid-template-columns: 0.7fr 1.3fr 1.2fr;
+        padding: 0 20px;
+    }
+}

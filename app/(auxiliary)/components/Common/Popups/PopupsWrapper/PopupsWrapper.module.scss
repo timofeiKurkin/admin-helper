@@ -1,6 +1,14 @@
 @import "@/styles/variables.module";
 
 .popupWrapper {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	height: 100%;
+}
+
+.popupBody {
+
 	background-color: $white_1;
 	overflow: hidden;
 

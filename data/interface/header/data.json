@@ -1,7 +1,8 @@
 {
     "logo": {
         "imageSrc": "/logo.png",
-        "title": "Быстрая помощь в решении сложных проблем!"
+        "logoTitleDesktop": "Быстрая помощь в решении сложных проблем!",
+        "logoTitleMobile": "Техническая помощь в пару кликов!"
     },
     "repairService": {
         "linkToRepairService": "https://it-nk.ru/",

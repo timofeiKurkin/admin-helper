@@ -1,15 +1,17 @@
 import axios from "axios"
+import { v4 as uuidv4 } from "uuid";
 
-export const API_URL_SERVER = "http://localhost:8000/"
-export const API_URL_CLIENT = process.env.CLIENT_HOST
+export const API_URL_SERVER = process.env.NEXT_PUBLIC_SERVER_HOST
 
 
 const $api = axios.create({
-    baseURL: API_URL_CLIENT,
-    withCredentials: true
+    baseURL: API_URL_SERVER,
+    withCredentials: true,
 })
 
+
 $api.interceptors.request.use((config) => config)
+
 
 export {
     $api

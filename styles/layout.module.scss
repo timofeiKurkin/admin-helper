@@ -4,16 +4,15 @@
 	width: 100dvw;
 	height: 100dvh;
 
-	@media screen and ($pad992_1279),
-	screen and ($pad640_991),
-	screen and ($phone375_639) {
+	@media screen and ($pad992_1279), screen and ($pad640_991), screen and ($phone375_639) {
 		width: 100%;
-		height: 100%;
+		// height: 100%;
 		overflow-y: auto;
 		overflow-x: hidden;
 	}
 
 	.layoutWrapper {
+		position: relative;
 		display: grid;
 		grid-template-rows: 1fr;
 		justify-content: center;
@@ -30,6 +29,7 @@
 		}
 
 		@media screen and ($desktop1440_1919) {
+			// height: 100%;
 			padding: 2.5rem 0;
 			grid-template-columns: 78.75rem;
 		}
@@ -40,24 +40,29 @@
 		}
 
 		@media screen and ($pad992_1279) {
+			// height: 100%;
 			padding: 2.5rem 0;
 			grid-template-columns: 55.75rem;
 		}
 
 		@media screen and ($pad640_991) {
+			// height: 100%;
 			padding: 1.87rem 10%; // 1.56rem
 			grid-template-columns: minmax(36.875rem, 1fr);
 		}
 
 		@media screen and ($phone375_639) {
-			padding: 1.56rem;
+			// height: 100dvh;
+			height: inherit;
+			padding: 0 1.56rem;
+			align-items: center;
 			grid-template-columns: 1fr;
 		}
 
 		.layoutContainer {
 			display: grid;
 			grid-template-columns: 1fr;
-			grid-template-rows: min-content min-content;
+			grid-template-rows: min-content 1fr;
 
 			@media screen and ($desktop1920) {
 				row-gap: 3.75rem;
@@ -80,16 +85,16 @@
 			}
 
 			@media screen and ($phone375_639) {
+				grid-template-rows: 1fr;
 				row-gap: 1.88rem;
+				padding: 1.56rem 0;
 			}
 		}
 	}
 }
 
 .openedPopup {
-	@media screen and ($pad992_1279),
-	screen and ($pad640_991),
-	screen and ($phone375_639) {
+	@media screen and ($pad992_1279), screen and ($pad640_991), screen and ($phone375_639) {
 		overflow-y: hidden;
 	}
 }

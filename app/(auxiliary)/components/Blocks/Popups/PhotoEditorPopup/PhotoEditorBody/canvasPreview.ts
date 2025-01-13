@@ -1,5 +1,5 @@
-import {PixelCrop} from 'react-image-crop'
-import {HORIZONTAL, ImageOrientationType, VERTICAL} from "@/app/(auxiliary)/types/PopupTypes/PopupTypes";
+import { PixelCrop } from 'react-image-crop'
+import { HORIZONTAL, ImageOrientationType, VERTICAL } from "@/app/(auxiliary)/types/FormTypes/PopupTypes/PopupTypes";
 
 const TO_RADIANS = Math.PI / 180
 
@@ -41,13 +41,13 @@ interface CanvasPreviewProps {
 }
 
 export const canvasPreview = async ({
-                                        image,
-                                        canvas,
-                                        crop,
-                                        scale = 1,
-                                        rotate = 0,
-                                        imageOrientation
-                                    }: CanvasPreviewProps): Promise<File> => {
+    image,
+    canvas,
+    crop,
+    scale = 1,
+    rotate = 0,
+    imageOrientation
+}: CanvasPreviewProps): Promise<File> => {
     const ctx = canvas.getContext('2d') // Получаем 2Д контекст для рисования на холсте
 
     if (!ctx) {

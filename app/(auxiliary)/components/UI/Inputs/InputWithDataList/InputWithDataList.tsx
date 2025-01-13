@@ -1,56 +1,42 @@
-import React, {FC, ReactNode, useEffect, useState} from 'react';
-import styles from "./InputWithDataList.module.scss"
-import {InputHelpfulItemType} from "@/app/(auxiliary)/types/Data/Interface/RootPage/RootPageContentType";
-import Fuse from "fuse.js";
+import { searchHandler } from '@/app/(auxiliary)/func/searchHandler';
+import { ChildrenProp } from '@/app/(auxiliary)/types/AppTypes/AppTypes';
+import { InputHelpfulItemType } from "@/app/(auxiliary)/types/Data/Interface/RootPage/RootPageContentType";
+import { FC, useEffect, useState } from 'react';
+import HelpfulList from './HelpfulList/HelpfulList';
+import MultiValuableList from './MultiValuableList/MultiValuableList';
 
 
-const searchHandler = (
-    helpfulList: InputHelpfulItemType[],
-    userValue: string
-) => {
-    const fuseOptions = {
-        keys: [
-            "keys"
-        ],
-        minMatchCharLength: 3,
-        findAllMatches: false,
-        threshold: 0.2,
-        useExtendedSearch: false,
-        includeMatches: true,
 
-        ignoreLocation: true
-    }
-
-    return new Fuse(helpfulList, fuseOptions).search(userValue)
-}
-
-
-interface PropsType {
+interface PropsType extends ChildrenProp {
     value: string;
-    dataList?: {
-        listType: string;
-        list: InputHelpfulItemType[];
-    };
+    dataList: InputHelpfulItemType[];
     inputIsDirty: boolean;
-    children: ReactNode;
+    changeValueHandler: (newValue: string) => void;
+    type?: "helpful" | "chooseOrWrite"
 }
 
 const InputWithDataList: FC<PropsType> = ({
-                                              value,
-                                              dataList,
-                                              inputIsDirty,
-                                              children,
-                                          }) => {
+    value,
+    dataList,
+    inputIsDirty,
+    changeValueHandler,
+    children,
+    type = "helpful"
+}) => {
 
     const [currentHelpfulList, setCurrentHelpfulList] = useState<string[]>([])
 
+
+    // The effect which works when the user changes the input
     useEffect(() => {
         if (value.length >= 3 && dataList) {
-            const searchResult = searchHandler(dataList.list, value)
+            const searchResult = searchHandler(dataList, value)
             const foundedItems = searchResult.map((res) => res.item.title)
 
-            if(!foundedItems.includes(value)) {
+            if (!foundedItems.includes(value)) {
                 setCurrentHelpfulList(foundedItems)
+            } else {
+                setCurrentHelpfulList([])
             }
         }
 
@@ -58,41 +44,35 @@ const InputWithDataList: FC<PropsType> = ({
             setCurrentHelpfulList([])
         }
     }, [
-        inputIsDirty,
         value,
         dataList
     ]);
 
     const chooseHelpfulItem = (item: string) => {
-        setCurrentHelpfulList([])
-
-        React.Children.map(children, element => {
-            if (!React.isValidElement(element)) return
-
-            element.props.children.props.onChange({target: {value: item}})
-            return element
-        })
+        changeValueHandler(item)
     }
 
-    return (
-        <div className={styles.inputWrapper}>
-            {children}
 
-            {
-                (currentHelpfulList.length) ? (
-                    <div className={styles.helpfulList}>
-                        {currentHelpfulList.map((item, index) => (
-                            <span key={`key=${index}`}
-                                  className={styles.helpfulItem}
-                                  onClick={() => chooseHelpfulItem(item)}>
-                                {item}
-                            </span>
-                        ))}
-                    </div>
-                ) : null
-            }
-        </div>
-    );
+    if (type === "helpful") {
+        return (
+            <HelpfulList chooseHelpfulItem={chooseHelpfulItem}
+                inputIsDirty={inputIsDirty}
+                currentHelpfulList={currentHelpfulList}>
+                {children}
+            </HelpfulList>
+        )
+    } else {
+        return (
+            <MultiValuableList changeValueHandler={changeValueHandler}
+                chooseHelpfulItem={chooseHelpfulItem}
+                currentHelpfulList={currentHelpfulList}
+                dataList={dataList}
+                inputIsDirty={inputIsDirty}
+                value={value}>
+                {children}
+            </MultiValuableList>
+        )
+    }
 };
 
 export default InputWithDataList;

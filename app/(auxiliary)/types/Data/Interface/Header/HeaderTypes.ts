@@ -1,14 +1,15 @@
 export interface HeaderTypes {
-    logo: Logo
-    repairService: RepairService
+    logo: HeaderLogoType;
+    repairService: HeaderRepairServiceType;
 }
 
-export interface Logo {
-    imageSrc: string
-    title: string
+interface HeaderLogoType {
+    imageSrc: string;
+    logoTitleDesktop: string;
+    logoTitleMobile: string;
 }
 
-export interface RepairService {
-    linkToRepairService: string
-    textToRepairService: string
+interface HeaderRepairServiceType {
+    linkToRepairService: string;
+    textToRepairService: string;
 }

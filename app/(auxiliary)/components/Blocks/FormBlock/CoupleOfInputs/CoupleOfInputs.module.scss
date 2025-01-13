@@ -4,29 +4,75 @@
     display: grid;
     grid-template-columns: max-content;
     grid-template-rows: min-content min-content;
-    
-    @media screen and ($desktop1920),
-    screen and ($desktop1440_1919) {
+
+    @media screen and ($desktop1920), screen and ($desktop1440_1919) {
         row-gap: 1.88rem;
     }
 
     @media screen and ($desktop1280_1439) {
         //grid-template-columns: 1.1fr;
     }
-    
-    @media screen and ($desktop1280_1439),
-    screen and ($pad992_1279){
+
+    @media screen and ($desktop1280_1439), screen and ($pad992_1279) {
         row-gap: 2.19rem;
     }
-    
+
     @media screen and ($pad640_991) {
         grid-template-columns: 1fr; //
         row-gap: 2.25rem;
     }
-    
+
     @media screen and ($phone375_639) {
         row-gap: 1.87rem;
         grid-template-columns: 1fr;
+
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: space-between;
+        column-gap: 25px;
     }
 }
 
+.device, .message, .photo, .video, .name, .company {
+    @media screen and ($phone375_639) {
+        flex: 1 0 100%;
+    }
+}
+
+// .device {
+//     @media screen and ($phone550_639) {
+//         flex: 1 0 14.5rem;
+//         max-width: 18.5rem;
+//     }
+// }
+
+
+// .photo, .video {
+//     @media screen and ($phone550_639) {
+//         flex: 1 0 17rem;
+//         max-width: 23.1rem;
+//     }
+// }
+
+// .company {
+//     @media screen and ($phone550_639) {
+//         flex: 1 0 14.5rem;
+//         max-width: 18rem;
+//     }
+// }
+
+// .name {
+//     @media screen and ($phone550_639) {
+//         flex: 1 0 11.5rem;
+//         max-width: 12.5rem;
+//         // min-width: 11.5rem;
+//     }
+// }
+
+.phoneAndPcNumber {
+    @media screen and ($phone375_639) {
+        flex: 1 0 13rem;
+        // min-width: 11.5rem;
+        max-width: 16rem;
+    }
+}

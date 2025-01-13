@@ -4,44 +4,77 @@
     display: flex;
     align-items: center;
     justify-content: center;
-	box-sizing: border-box;
-    
+    box-sizing: border-box;
+
     border-radius: 0.9375rem;
     transition: opacity $transition;
     border: none;
-    
+
     width: 100%;
-    
+
     background-color: $blue_light;
     //border: 2px solid $blue_light;
+    text-decoration: none;
     user-select: none;
-    
+
     @media screen and ($desktop1920) {
         padding: 0.94rem 0;
     }
-    
-    @media screen and ($desktop1440_1919),
-    screen and ($desktop1280_1439) {
+
+    @media screen and ($desktop1440_1919), screen and ($desktop1280_1439) {
         padding: 0.91rem 0;
     }
-    
-    @media screen and ($pad992_1279),
-    screen and ($pad640_991),
-    screen and ($phone375_639) {
+
+    @media screen and ($pad992_1279), screen and ($pad640_991), screen and ($phone375_639) {
         padding: 0.88rem 0;
     }
-    
+
     &:hover {
-        opacity: .9;
+        opacity: 0.9;
         cursor: pointer;
     }
-    
+
     &:disabled {
-        background-color: rgba($black, 0.6);
-        cursor: not-allowed;
+        background-color: rgba($blue_dark, 0.75);
+        cursor: default;
+
+        &:disabled:hover {
+            opacity: 1;
+        }
     }
-    
-    &, & > p {
+
+    &,
+    & > p {
         color: $white;
     }
 }
+
+.loadingAnimation {
+    margin: auto;
+    overflow: hidden;
+    background: linear-gradient(315deg, rgba($blue_light, 0.8) 13%, rgba(#78c724, 0.8) 45%, rgba($blue_light, 0.6) 95%);
+    animation: gradient 6s ease infinite;
+    background-size: 400% 400%;
+    background-attachment: fixed;
+}
+
+@keyframes gradient {
+    0% {
+        background-position: 0% 0%;
+    }
+    50% {
+        background-position: 100% 100%;
+    }
+    100% {
+        background-position: 0% 0%;
+    }
+}
+
+// .loadingAnimation {
+//     display: block;
+//     width: 100%;
+//     height: 100%;
+//     background: linear-gradient(270deg, $blue_light, $white_1);
+//     background-size: 200% 200%;
+//     animation: wave 2s ease infinite;
+// }

@@ -1,6 +1,6 @@
-import React, {FC} from 'react';
-import {PhotoAndVideoKeysTypes} from "@/app/(auxiliary)/types/AppTypes/InputHooksTypes";
-import {useAppDispatch, useAppSelector} from "@/app/(auxiliary)/libs/redux-toolkit/store/hooks";
+import React, { FC } from 'react';
+import { PhotoAndVideoKeysType } from "@/app/(auxiliary)/types/AppTypes/InputHooksTypes";
+import { useAppDispatch, useAppSelector } from "@/app/(auxiliary)/libs/redux-toolkit/store/hooks";
 import {
     deleteFile,
     selectFormFileData
@@ -15,17 +15,17 @@ import commonStyles from "@/app/(auxiliary)/components/Blocks/HorizontalScroll/H
 import FilePreviewWithHandlers
     from "@/app/(auxiliary)/components/Blocks/FormBlock/CoupleOfInputs/CurrentInput/FileInput/FilesList/File/FilePreviewWithHandlers";
 import ButtonText from "@/app/(auxiliary)/components/UI/TextTemplates/ButtonText";
-import {selectUserDevice} from "@/app/(auxiliary)/libs/redux-toolkit/store/slices/AppSlice/AppSlice";
+import { selectUserDevice } from "@/app/(auxiliary)/libs/redux-toolkit/store/slices/AppSlice/AppSlice";
 
 interface PropsType {
     placeholder: string;
-    type: PhotoAndVideoKeysTypes;
+    type: PhotoAndVideoKeysType;
 }
 
 const FileList: FC<PropsType> = ({
-                                     placeholder,
-                                     type
-                                 }) => {
+    placeholder,
+    type
+}) => {
     const dispatch = useAppDispatch()
     const formFileData = useAppSelector(selectFormFileData)[type]
     const userDevice = useAppSelector(selectUserDevice)
@@ -43,23 +43,26 @@ const FileList: FC<PropsType> = ({
 
     const openFile = (fileName: string) => {
         if (!userDevice.phoneAdaptive) {
-            dispatch(setCurrentOpenedFileName({fileName}))
-            dispatch(changePopupVisibility({type}))
+            dispatch(setCurrentOpenedFileName({ fileName }))
+            dispatch(changePopupVisibility({ type }))
         }
     }
 
+    // console.log(formFileData)
+
     if (formFileData.files.length) {
         return (
-            <HorizontalScroll filesListLength={formFileData.files.length}
-                              placeholder={placeholder}>
-                {formFileData.filesFinally.length ? formFileData.filesFinally.map((file, i) => (
-                    <div key={`key=${i}`} className={styles.fileWrapper}>
+            <HorizontalScroll filesListLength={formFileData.files.length}>
+                {formFileData.filesFinally.map((file, i) => (
+                    <div key={`key=${file.name}`} className={styles.fileWrapper}>
                         <FilePreviewWithHandlers file={file}
-                                                 removeFile={removeFile}
-                                                 openFile={openFile}/>
+                            type={type}
+                            removeFile={removeFile}
+                            openFile={openFile}
+                            index={i} />
 
                     </div>
-                )) : null}
+                ))}
             </HorizontalScroll>
         )
     } else {

@@ -1,21 +1,23 @@
-import React, {FC, useEffect} from 'react';
-import PopupScroll from "@/app/(auxiliary)/components/Common/Popups/PopupsWrapper/PopupScroll/PopupScroll";
 import styles from "@/app/(auxiliary)/components/Blocks/FormBlock/DropZone/DropZone.module.scss";
+import PopupDisableScroll from "@/app/(auxiliary)/components/Common/Popups/PopupsWrapper/PopupDisableScroll/PopupDisableScroll";
+import Button from "@/app/(auxiliary)/components/UI/Button/Button";
 import UploadFile from "@/app/(auxiliary)/components/UI/SVG/UploadFile/UploadFile";
 import Title from "@/app/(auxiliary)/components/UI/TextTemplates/Title";
-import Button from "@/app/(auxiliary)/components/UI/Button/Button";
-import {white_1} from "@/styles/colors";
-import {useAppDispatch, useAppSelector} from "@/app/(auxiliary)/libs/redux-toolkit/store/hooks";
-import {selectRootPageContent} from "@/app/(auxiliary)/libs/redux-toolkit/store/slices/AppSlice/AppSlice";
-import {PHOTO_KEY, PhotoAndVideoKeysTypes} from "@/app/(auxiliary)/types/AppTypes/InputHooksTypes";
-import {GetInputPropsType, GetRootPropsType} from "@/app/(auxiliary)/types/DropZoneTypes/DropZoneTypes";
-import {formattedTime} from "@/app/(auxiliary)/func/formattedTime";
-import {addFileData} from "@/app/(auxiliary)/libs/redux-toolkit/store/slices/UserFormDataSlice/UserFormDataSlice";
+import { formattedTime } from "@/app/(auxiliary)/func/formattedTime";
+import { useAppDispatch } from "@/app/(auxiliary)/libs/redux-toolkit/store/hooks";
+import { setNewNotification } from "@/app/(auxiliary)/libs/redux-toolkit/store/slices/AppSlice/AppSlice";
 import {
     changePhotoSettings, changePopupVisibility,
     setCurrentOpenedFileName
 } from "@/app/(auxiliary)/libs/redux-toolkit/store/slices/PopupSlice/PopupSlice";
-import {defaultPhotoSettings} from "@/app/(auxiliary)/types/PopupTypes/PopupTypes";
+import { addFileData } from "@/app/(auxiliary)/libs/redux-toolkit/store/slices/UserFormDataSlice/UserFormDataSlice";
+import { PHOTO_KEY, PhotoAndVideoKeysType } from "@/app/(auxiliary)/types/AppTypes/InputHooksTypes";
+import { ContentOfUploadBlockType } from '@/app/(auxiliary)/types/Data/Interface/RootPage/RootPageContentType';
+import { GetInputPropsType, GetRootPropsType } from "@/app/(auxiliary)/types/FormTypes/DropZoneTypes/DropZoneTypes";
+import { defaultPhotoSettings } from "@/app/(auxiliary)/types/FormTypes/PopupTypes/PopupTypes";
+import rootPageData from "@/data/interface/root-page/data.json";
+import { white_1 } from "@/styles/colors";
+import { FC, useEffect } from 'react';
 
 interface PropsType {
     inputProps: {
@@ -23,20 +25,21 @@ interface PropsType {
         getInputProps: GetInputPropsType;
     }
     isDragActive: boolean;
-    type: PhotoAndVideoKeysTypes;
-    visibleDragDropZone: () => void;
+    type: PhotoAndVideoKeysType;
+    openDragDropZone: () => void;
     createPhotoPreviews: (newFiles: File[]) => void
 }
 
 const DesktopDropZone: FC<PropsType> = ({
-                                            inputProps,
-                                            isDragActive,
-                                            type,
-                                            visibleDragDropZone,
-                                            createPhotoPreviews
-                                        }) => {
+    inputProps,
+    isDragActive,
+    type,
+    openDragDropZone,
+    createPhotoPreviews
+}) => {
     const dispatch = useAppDispatch()
-    const content = useAppSelector(selectRootPageContent).contentOfUploadBlock
+
+    const content: ContentOfUploadBlockType = rootPageData.contentOfUploadBlock
 
     /**
      * Эффект для получения изображения из буфера обмена при нажатии клавиш CTRL+V в открытой зоне
@@ -66,11 +69,12 @@ const DesktopDropZone: FC<PropsType> = ({
 
                         createPhotoPreviews([newFile])
 
-                        visibleDragDropZone()
+                        openDragDropZone()
                         dispatch(setCurrentOpenedFileName({
                             fileName: newFile.name
                         }))
-                        dispatch(changePopupVisibility({type: PHOTO_KEY}))
+                        dispatch(changePopupVisibility({ type: PHOTO_KEY }))
+                        dispatch(setNewNotification({ type: "success", message: "Файлы были успешно загружены!" }))
                     }
                 } catch (e) {
                     console.error("Error with paste a clipboard: ", e)
@@ -87,53 +91,49 @@ const DesktopDropZone: FC<PropsType> = ({
         createPhotoPreviews,
         dispatch,
         type,
-        visibleDragDropZone
+        openDragDropZone
     ])
 
     return (
-        <PopupScroll>
-            <div className={styles.dropZoneWrapper}>
-                <div {...inputProps.getRootProps({
-                    style: {
-                        width: "inherit",
-                        height: "inherit",
-                        userSelect: "none",
-                        // cursor: uploadingFilesStatus ? "default" : "pointer"
+        <div {...inputProps.getRootProps({
+            style: {
+                width: "inherit",
+                height: "inherit",
+                userSelect: "none",
+                // cursor: uploadingFilesStatus ? "default" : "pointer"
+            }
+        })}>
+            <input {...inputProps.getInputProps({})}
+                className={styles.dropInput} />
+
+            <div className={styles.dropZoneContentWrapper}>
+                <div className={styles.dropZoneContent}>
+                    <UploadFile animationStatus={isDragActive} />
+
+                    {
+                        isDragActive ? (
+                            <div className={styles.dropZoneText}>
+                                <Title>{content.isDragContent}</Title>
+                            </div>
+                        ) : (
+                            <>
+                                <div className={styles.dropZoneText}>
+                                    <Title>{content[type]}</Title>
+                                </div>
+
+                                <div className={styles.closeDropZone}
+                                    onClick={(e) => e.stopPropagation()}>
+                                    <Button onClick={openDragDropZone}
+                                        style={{
+                                            backgroundColor: white_1
+                                        }}>{content.button}</Button>
+                                </div>
+                            </>
+                        )
                     }
-                })}>
-                    <input {...inputProps.getInputProps({})}
-                           className={styles.dropInput}/>
-
-                    <div className={styles.dropZoneContentWrapper}>
-                        <div className={styles.dropZoneContent}>
-                            <UploadFile animationStatus={isDragActive}/>
-
-                            {
-                                isDragActive ? (
-                                    <div className={styles.dropZoneText}>
-                                        <Title>{content.isDragContent}</Title>
-                                    </div>
-                                ) : (
-                                    <>
-                                        <div className={styles.dropZoneText}>
-                                            <Title>{content[type]}</Title>
-                                        </div>
-
-                                        <div className={styles.closeDropZone}
-                                             onClick={(e) => e.stopPropagation()}>
-                                            <Button onClick={visibleDragDropZone}
-                                                    style={{
-                                                        backgroundColor: white_1
-                                                    }}>{content.button}</Button>
-                                        </div>
-                                    </>
-                                )
-                            }
-                        </div>
-                    </div>
                 </div>
             </div>
-        </PopupScroll>
+        </div>
     );
 };
 
