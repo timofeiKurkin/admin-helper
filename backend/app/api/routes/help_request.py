@@ -2,14 +2,14 @@ import os
 import secrets
 import shutil
 from datetime import datetime
-from typing import Annotated, List, Optional
+from typing import Annotated, List, Optional, Sequence, Tuple
 
 from app import crud, utils
 from app.api.deps import SessionDep
 from app.api.error_handlers import help_request as help_request_error
 from app.api.func.help_request import file_compression
 from app.auth import cookie_handler
-from app.auth import token as TokenHandlers
+from app.auth import token as token_handlers
 from app.core.config import TEMPORARY_FOLDER, settings
 from app.models import (
     MediaFile,
@@ -35,7 +35,7 @@ from telegram import (
     InputMediaPhoto,
     InputMediaVideo,
     Message,
-    ReplyParameters,
+    ReplyParameters, PhotoSize,
 )
 from telegram.error import TelegramError
 
@@ -59,17 +59,17 @@ async def get_user_requests(*, request: Request, session: SessionDep):
     if not user_token:
         raise HTTPException(status_code=403, detail="Authorization cookie not found")
 
-    user_payload = TokenHandlers.decode_jwt_token(token=user_token)
+    user_payload = token_handlers.decode_jwt_token(token=user_token)
     user_phone: str = user_payload["phone"]
     user_id: str = user_payload["owner_id"]
 
-    candidate = crud.get_user_by_phone(session=session, phone=user_phone)
+    candidate = await crud.get_user_by_phone(session=session, phone=user_phone)
     if not candidate:
         raise HTTPException(status_code=404, detail="User not found")
     if str(candidate.id) != user_id:
         raise HTTPException(status_code=403, detail="Data of the token doesn't match")
 
-    user_requests = crud.get_user_requests(
+    user_requests = await crud.get_user_requests(
         session=session, owner_id=user_id, order_by="created_at"
     )
     user_public_requests: List[RequestForHelpPublic] = []
@@ -106,13 +106,13 @@ async def get_user_requests(*, request: Request, session: SessionDep):
     return [item.to_dict() for item in user_public_requests[:preview_count]]
 
 
-def create_new_user(
+async def create_new_user(
     *, session: SessionDep, formatted_db_phone: str, company: str, name: str
 ) -> User:
     user_create = UserCreate(
         phone=formatted_db_phone, company=company, is_superuser=False, name=name
     )
-    user_candidate = crud.create_user(session=session, user_create=user_create)
+    user_candidate: User = await crud.create_user(session=session, user_create=user_create)
 
     # user_folder = os.path.join(USER_REQUESTS_FOLDER, str(user_candidate.id), "requests")
     # if not os.path.exists(user_folder):
@@ -151,8 +151,8 @@ async def create_help_request(
             status_code=403,
         )
 
-    formatted_db_phone = "".join(filter(str.isdigit, phone))[1:]
-    user_candidate: Optional[User] = crud.get_user_by_phone(
+    formatted_db_phone = "".join(filter(lambda x: str.isdigit(x), list(phone)))[1:]
+    user_candidate: Optional[User] = await crud.get_user_by_phone(
         session=session, phone=formatted_db_phone
     )
     # user_folder: str = ""  # Folder where are saving each request and its files
@@ -160,7 +160,7 @@ async def create_help_request(
     # Create new user, if doesn't exist
     if user_candidate is None:
         try:
-            user_candidate = create_new_user(
+            user_candidate = await create_new_user(
                 session=session,
                 formatted_db_phone=formatted_db_phone,
                 company=company,
@@ -174,7 +174,7 @@ async def create_help_request(
             help_request_error.visible_error(f"Error in creating user: {e}")
     else:
         try:
-            user_requests = crud.get_user_requests(
+            user_requests: Sequence[RequestForHelp] = await crud.get_user_requests(
                 session=session, owner_id=str(user_candidate.id), order_by="created_at"
             )
 
@@ -187,7 +187,7 @@ async def create_help_request(
 
                 if total_minutes < settings.REQUEST_CREATING_INTERVAL:
                     next_in = settings.REQUEST_CREATING_INTERVAL - total_minutes
-                    minutes_text = f"минут{"у" if next_in == 1 else ""}{"ы" if next_in >= 2 and next_in <= 4 else ""}"
+                    minutes_text = f"минут{"у" if next_in == 1 else ""}{"ы" if 2 <= next_in <= 4 else ""}"
                     message = f"Ещё немного терпения ⏳ — вы сможете создать новую заявку через <b>{next_in} {minutes_text}<b/>"
                     response = JSONResponse(
                         content={"message": message},
@@ -208,9 +208,9 @@ async def create_help_request(
     #     )
 
     # Create empty request in data base
-    new_request: RequestForHelp | None = None
+    new_request: Optional[RequestForHelp] = None
     try:
-        new_request = crud.create_request_for_help(
+        new_request = await crud.create_request_for_help(
             session=session,
             request_in=RequestForHelpCreate(),
             owner_id=user_candidate.id,
@@ -230,7 +230,7 @@ async def create_help_request(
             name=name,
             phone=phone,
             company=company,
-            number_pc=int("".join(filter(str.isdigit, number_pc))),
+            number_pc=int("".join(filter(lambda x: str.isdigit(x), list(number_pc)))),
             device=device,
             message_text=message_text or "",
             user_can_talk=user_can_talk,
@@ -241,7 +241,7 @@ async def create_help_request(
             parse_mode="HTML",
         )
     except TelegramError as e:
-        crud.delete_user_request(session=session, db_request=new_request)
+        await crud.delete_user_request(session=session, db_request=new_request)
         help_request_error.visible_error(
             f"Failed to send main message to Telegram: {e}"
         )
@@ -341,20 +341,17 @@ async def create_help_request(
 
         try:
             if len(photo_files):
-                photo_response = await main_message.reply_media_group(
+                photo_response: Tuple[Message, ...] = await main_message.reply_media_group(
                     media=photo_files, connect_timeout=telegram_timeout_time
                 )
-                for index, response_item in enumerate(photo_response):
-                    photo_messages_idx.append(response_item.message_id)
+                for i in  range(len(photo_response)):
+                    photo_messages_idx.append(photo_response[i].message_id)
+
                     # response_item.photo - List[Telegram.PhotoSize], where the last element(photo[-1]) is full size of the image
                     # response_item.photo[-1].file_id - Identifier for this file, which can be used to download or reuse the file
-                    if response_item.photo:
-                        photos_media_file.append(
-                            MediaFile(
-                                id=index,
-                                file_id=response_item.photo[-1].file_id,
-                            )
-                        )
+                    if photo_response[i].photo:
+                        last_photo: PhotoSize = photo_response[i].photo[-1]
+                        photos_media_file.append(MediaFile(id=i, file_id=last_photo.file_id))
         except Exception as e:
             await help_request_error.error_exception(
                 session=session,
@@ -370,23 +367,21 @@ async def create_help_request(
 
         try:
             if len(video_files):
-                video_response = await main_message.reply_media_group(
+                video_response: Tuple[Message, ...] = await main_message.reply_media_group(
                     media=video_files,
                     read_timeout=telegram_timeout_time,
                     connect_timeout=telegram_timeout_time,
                     pool_timeout=300,
                 )
-                for index, response_item in enumerate(video_response):
-                    video_messages_idx.append(response_item.message_id)
+
+                for i in range(len(video_response)):
+                    video_messages_idx.append(video_response[i].message_id)
+
                     # response_item.photo - List[Telegram.PhotoSize], where the last element(photo[-1]) is full size of the image
                     # response_item.photo[-1].file_id - Identifier for this file, which can be used to download or reuse the file
-                    if response_item.video:
-                        videos_media_file.append(
-                            MediaFile(
-                                id=index,
-                                file_id=response_item.video.file_id,
-                            )
-                        )
+                    if video_response[i].video:
+                        last_video: PhotoSize = video_response[i].photo[-1]
+                        videos_media_file.append(MediaFile(id=i, file_id=last_video.file_id))
         except Exception as e:
             await help_request_error.error_exception(
                 session=session,
@@ -462,7 +457,7 @@ async def create_help_request(
     )
 
     try:
-        crud.update_request_for_help(
+        await crud.update_request_for_help(
             session=session,
             db_request=new_request,
             request_in=updated_request,
@@ -482,7 +477,7 @@ async def create_help_request(
             message=f"Error in updating user's request: {e}",
         )
 
-    csrf_token, signed_token = TokenHandlers.create_csrf_token(
+    csrf_token, signed_token = token_handlers.create_csrf_token(
         csrf_protect=csrf_protect
     )
     response = JSONResponse(
@@ -495,7 +490,7 @@ async def create_help_request(
     csrf_protect.set_csrf_cookie(signed_token, response)
 
     # Set cookie for user authorize
-    new_access_token = TokenHandlers.create_jwt_token(user=user_candidate)
+    new_access_token = token_handlers.create_jwt_token(user=user_candidate)
     response.set_cookie(
         key=settings.AUTH_TOKEN_KEY,
         value=new_access_token,

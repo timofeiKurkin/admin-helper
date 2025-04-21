@@ -1,11 +1,11 @@
 from logging.config import fileConfig
 
 from alembic import context
-from app.core.config import settings
+from sqlalchemy import engine_from_config, pool
 
+from app.core.config import settings
 # from sqlmodel import SQLModel
 from app.models import SQLModel
-from sqlalchemy import engine_from_config, pool
 
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.
@@ -28,7 +28,7 @@ target_metadata = SQLModel.metadata
 # ... etc.
 
 
-config.set_main_option("sqlalchemy.url", str(settings.SQLALCHEMY_DATABASE_URI))
+config.set_main_option("sqlalchemy.url", settings.SQLALCHEMY_DATABASE_URI or "")
 
 
 def run_migrations_offline() -> None:

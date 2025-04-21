@@ -1,18 +1,15 @@
-# import warnings
 import os
 import secrets
-import urllib.parse
 from pathlib import Path
-from typing import Annotated, Any, Literal
+from typing import Annotated, Any, Literal, Optional
 
 from pydantic import (
     AnyUrl,
     BeforeValidator,
     PostgresDsn,
     computed_field,
-    field_validator,
+    field_validator, ValidationInfo
 )
-from pydantic_core import MultiHostUrl
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
@@ -26,9 +23,7 @@ def parse_cors(v: Any) -> list[str] | str:
 
 class Settings(BaseSettings):
     model_config = SettingsConfigDict(
-        env_file="../.env",
-        env_ignore_empty=True,
-        extra="ignore",
+        env_file="../.env", env_ignore_empty=True, extra="ignore",
     )
     API_V1_STR: str = "/api/v1"
     FRONTEND_HOST: str = "http://localhost:3030"
@@ -69,18 +64,33 @@ class Settings(BaseSettings):
     COOKIE_PERMISSION_KEY: str = "cookiePermission"
     MONTH_IN_SECONDS: int = 60 * 60 * 24 * 30
 
-    @computed_field  # type: ignore[prop-decorator]
-    @property
-    def SQLALCHEMY_DATABASE_URI(self) -> PostgresDsn:
-        return PostgresDsn(
-            url=MultiHostUrl.build(
-                scheme="postgresql",
-                username=self.POSTGRES_USER,
-                password=self.POSTGRES_PASSWORD,
-                host=self.POSTGRES_SERVER,
-                port=self.POSTGRES_PORT,
-                path=self.POSTGRES_DB,
-            )
+    # @computed_field
+    # @property
+    # def SQLALCHEMY_DATABASE_URL(self) -> str:
+    #     return PostgresDsn.build(
+    #         scheme="postgresql+asyncpg",
+    #         username=self.POSTGRES_USER,
+    #         password=self.POSTGRES_PASSWORD,
+    #         host=self.POSTGRES_SERVER,
+    #         port=self.POSTGRES_PORT,
+    #         path=f"/{self.POSTGRES_DB}",
+    #     ).unicode_string()
+
+    SQLALCHEMY_DATABASE_URI: Optional[str] = None
+
+    @field_validator("SQLALCHEMY_DATABASE_URI", mode="before")
+    @classmethod
+    def SQLALCHEMY_DATABASE_URL(cls, v: Optional[str], values: ValidationInfo) -> Any:
+        if isinstance(v, str):
+            print("Loading SQLALCHEMY_DATABASE_URI from .docker.env file ...")
+            return v
+
+        return PostgresDsn.build(
+            scheme="postgresql",
+            username=values.data.get("POSTGRES_USER"),
+            password=values.data.get("POSTGRES_PASSWORD"),
+            host=values.data.get("POSTGRES_SERVER"),
+            path=f"{values.data.get('POSTGRES_DB') or ''}",
         )
 
     TOKEN_SECRET_KEY: str = secrets.token_urlsafe(32)

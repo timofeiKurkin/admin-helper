@@ -19,7 +19,6 @@ from app.models import (
 )
 from app.telegram_bot.bot import bot_api
 from fastapi import APIRouter, Depends, HTTPException, Request, Response
-from fastapi.responses import JSONResponse
 from fastapi_csrf_protect import CsrfProtect  # type: ignore[import-untyped]
 from telegram import InlineKeyboardButton, InlineKeyboardMarkup
 from telegram.error import TelegramError
@@ -40,7 +39,7 @@ async def delete_request(
     if len(accept_url) != 43:
         raise HTTPException(status_code=404, detail="Invalid url")
 
-    request_candidate = get_user_request_by_accept_url(
+    request_candidate = await get_user_request_by_accept_url(
         session=session, accept_url=accept_url
     )
 
@@ -50,7 +49,7 @@ async def delete_request(
         )
 
     try:
-        delete_user_request(session=session, db_request=request_candidate)
+        await delete_user_request(session=session, db_request=request_candidate)
 
         created_at = request_candidate.created_at
         current_time = datetime.now()
@@ -108,7 +107,7 @@ async def complete_request(
     if len(accept_url) != 43:
         raise HTTPException(status_code=404, detail="Invalid url")
 
-    request_candidate = get_user_request_by_accept_url(
+    request_candidate = await get_user_request_by_accept_url(
         session=session, accept_url=accept_url
     )
 
@@ -118,7 +117,7 @@ async def complete_request(
             detail="Упс, не удалось найти заявку пользователя! 😕 Проверьте, пожалуйста, данные и попробуйте ещё раз.",
         )
 
-    user_candidate = get_user(session=session, id=request_candidate.owner_id)
+    user_candidate = await get_user(session=session, id=request_candidate.owner_id)
 
     if not user_candidate:
         raise HTTPException(status_code=404, detail="User not found")
@@ -194,7 +193,7 @@ async def complete_request(
         compiled_time = datetime.now()
 
         try:
-            updated_request = update_request_for_help(
+            updated_request = await update_request_for_help(
                 session=session,
                 db_request=request_candidate,
                 request_in=RequestForHelpUpdate.model_validate(
