@@ -26,7 +26,7 @@ TOKEN = settings.BOT_TOKEN
 
 bot_api = Bot(
     token=settings.BOT_TOKEN,
-    base_url="http://localhost:8081/bot",
+    base_url=f"{settings.TELEGRAM_API_HOST}/bot",
     request=HTTPXRequest(
         connection_pool_size=100,
         read_timeout=180,

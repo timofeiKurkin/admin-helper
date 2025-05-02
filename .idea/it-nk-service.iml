@@ -7,7 +7,7 @@
       <excludeFolder url="file://$MODULE_DIR$/backend/venv" />
       <excludeFolder url="file://$MODULE_DIR$/materials" />
     </content>
-    <orderEntry type="jdk" jdkName="Python 3.12" jdkType="Python SDK" />
+    <orderEntry type="jdk" jdkName="Python 3.12 virtualenv at D:\work\it-nk-service\it-nk-service\backend\venv" jdkType="Python SDK" />
     <orderEntry type="sourceFolder" forTests="false" />
   </component>
   <component name="PyDocumentationSettings">

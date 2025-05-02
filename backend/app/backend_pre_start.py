@@ -31,9 +31,9 @@ async def init(db_engine: AsyncEngine) -> None:
 
 
 def main() -> None:
-    logger.info("Initializing service")
+    logger.info("Trying to check database healthy")
     asyncio.run(init(engine))
-    logger.info("Service finished initializing")
+    logger.info("Database is alive")
 
 
 if __name__ == "__main__":

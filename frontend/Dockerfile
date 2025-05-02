@@ -8,12 +8,10 @@ RUN npm install
 
 COPY . .
 
-COPY ./ /app/
-
 RUN npm run build
 
 ENV NODE_ENV production
 
-EXPOSE 3030
+EXPOSE 3000
 
-CMD ["npm", "run", ]
+CMD ["npm", "run", "start"]

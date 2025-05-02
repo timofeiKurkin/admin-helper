@@ -45,6 +45,7 @@ class Settings(BaseSettings):
     GROUP_ID: str = ""
     TELEGRAM_API_ID: str = ""
     TELEGRAM_API_HASH: str = ""
+    TELEGRAM_API_HOST: str = ""
 
     POSTGRES_SERVER: str = ""
     POSTGRES_PORT: int = 0
