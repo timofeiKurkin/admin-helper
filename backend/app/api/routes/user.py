@@ -1,14 +1,15 @@
+from fastapi import APIRouter, Depends, HTTPException, Request, Response
+from fastapi.responses import JSONResponse
+from fastapi_csrf_protect import CsrfProtect  # type: ignore[import-untyped]
+from slowapi import Limiter
+from slowapi.util import get_remote_address
+
 from app import crud
 from app.api.deps import SessionDep
 from app.auth import cookie_handler
 from app.auth import token as jwt_token
 from app.auth.token import create_csrf_token
 from app.core.config import settings
-from fastapi import APIRouter, Depends, HTTPException, Request, Response
-from fastapi.responses import JSONResponse
-from fastapi_csrf_protect import CsrfProtect  # type: ignore[import-untyped]
-from slowapi import Limiter
-from slowapi.util import get_remote_address
 
 limiter = Limiter(key_func=get_remote_address)
 router = APIRouter()
@@ -29,9 +30,7 @@ async def authorize_user(request: Request, session: SessionDep):
     user_id: str = user_payload["owner_id"]
 
     if not user_phone or not user_id:
-        raise HTTPException(
-            status_code=403, detail="Authorization cookie's data not found"
-        )
+        raise HTTPException(status_code=403, detail="Authorization cookie's data not found")
 
     candidate = await crud.get_user_by_phone(session=session, phone=user_phone)
 
@@ -42,21 +41,14 @@ async def authorize_user(request: Request, session: SessionDep):
     else:
         response = JSONResponse(status_code=200, content={"authorized": True})
         cookie_handler.set_cookie(
-            response=response,
-            key=settings.AUTH_TOKEN_KEY,
-            value=user_token,
-            max_age=settings.MONTH_IN_SECONDS,
+            response=response, key=settings.AUTH_TOKEN_KEY, value=user_token, max_age=settings.MONTH_IN_SECONDS
         )
         return response
 
 
 @router.get("/csrf_token", summary="Create CSRF-Token for user")
 @limiter.limit("100/minute")
-async def get_csrf_token(
-    request: Request,
-    response: Response,
-    csrf_protect: CsrfProtect = Depends(),
-):
+async def get_csrf_token(request: Request, response: Response, csrf_protect: CsrfProtect = Depends()):
     cookie_handler.check_cookie_permission(request=request)
     csrf_token, signed_token = create_csrf_token(csrf_protect=csrf_protect)
     response.status_code = 200

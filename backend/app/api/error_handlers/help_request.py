@@ -2,22 +2,18 @@ import logging
 import shutil
 from typing import List
 
-from fastapi import HTTPException
+from fastapi import HTTPException, status
 
 from app import crud
 from app.api.deps import SessionDep
 from app.core.config import settings
 from app.models import RequestForHelp
-# from app.core.db import
 from app.telegram_bot.bot import bot_api
 
 
 def visible_error(error: object):
     logging.error(error)
-    raise HTTPException(
-        status_code=504,
-        detail=error,
-    )
+    raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=error)
 
 
 async def error_exception(

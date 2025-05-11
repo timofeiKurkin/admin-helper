@@ -1,29 +1,11 @@
+# Libs
 import os
 import secrets
 import shutil
 from datetime import datetime
 from typing import Annotated, List, Optional, Sequence, Tuple
 
-from app import crud, utils
-from app.api.deps import SessionDep
-from app.api.error_handlers import help_request as help_request_error
-from app.api.func.help_request import file_compression
-from app.auth import cookie_handler
-from app.auth import token as token_handlers
-from app.core.config import TEMPORARY_FOLDER, settings
-from app.models import (
-    MediaFile,
-    RequestForHelp,
-    RequestForHelpCreate,
-    RequestForHelpPublic,
-    RequestForHelpUpdate,
-    TelegramMessagesIDX,
-    User,
-    UserCreate,
-)
-from app.telegram_bot import utils as telegram_utils
-from app.telegram_bot.bot import bot_api
-from fastapi import APIRouter, Depends, File, Form, HTTPException, Request, UploadFile
+from fastapi import APIRouter, Depends, File, Form, HTTPException, Request, UploadFile, status
 from fastapi.responses import JSONResponse
 from fastapi_csrf_protect import CsrfProtect  # type: ignore[import-untyped]
 from slowapi import Limiter
@@ -39,39 +21,64 @@ from telegram import (
 )
 from telegram.error import TelegramError
 
+from app import crud, utils
+# Api
+from app.api.deps import SessionDep
+from app.api.error_handlers import help_request as help_request_error
+from app.api.func.help_request import file_compression
+# Auth
+from app.auth import cookie_handler
+from app.auth import token as token_handler
+# Core
+from app.core.config import TEMPORARY_FOLDER, settings
+# Models
+from app.models import (
+    MediaFile,
+    RequestForHelp,
+    RequestForHelpCreate,
+    RequestForHelpPublic,
+    RequestForHelpUpdate,
+    TelegramMessagesIDX,
+    User,
+)
+# Telegram
+from app.telegram_bot import utils as telegram_utils
+from app.telegram_bot.bot import bot_api
+
 limiter = Limiter(key_func=get_remote_address)
 router = APIRouter()
 telegram_timeout_time = 120
 chat_id = settings.GROUP_ID
 
 
-@router.get(
-    "/get_user_requests",
-    # response_model=List[RequestForHelpPublic],
-    status_code=200,
-)
+@router.get("/get_user_requests", status_code=status.HTTP_200_OK)
 @limiter.limit("100/minute")
 async def get_user_requests(*, request: Request, session: SessionDep):
+    """
+    The router to get user's requests
+    :param request:
+    :param session: SQLAlchemy async session for database interaction
+    :return: List of user's requests
+    """
+
     cookie_handler.check_cookie_permission(request=request)
 
     user_token = request.cookies.get(settings.AUTH_TOKEN_KEY)
 
     if not user_token:
-        raise HTTPException(status_code=403, detail="Authorization cookie not found")
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Authorization cookie not found")
 
-    user_payload = token_handlers.decode_jwt_token(token=user_token)
+    user_payload = token_handler.decode_jwt_token(token=user_token)
     user_phone: str = user_payload["phone"]
     user_id: str = user_payload["owner_id"]
 
     candidate = await crud.get_user_by_phone(session=session, phone=user_phone)
     if not candidate:
-        raise HTTPException(status_code=404, detail="User not found")
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="User not found")
     if str(candidate.id) != user_id:
-        raise HTTPException(status_code=403, detail="Data of the token doesn't match")
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Data of the token doesn't match")
 
-    user_requests = await crud.get_user_requests(
-        session=session, owner_id=user_id, order_by="created_at"
-    )
+    user_requests = await crud.get_user_requests(session=session, owner_id=user_id, order_by="created_at")
     user_public_requests: List[RequestForHelpPublic] = []
 
     try:
@@ -88,7 +95,7 @@ async def get_user_requests(*, request: Request, session: SessionDep):
                 completed_format = (
                     settings.PUBLIC_SHORT_TIME_FORMAT
                     if completed_at.day == created_at.day
-                    and completed_at.month == created_at.month
+                       and completed_at.month == created_at.month
                     else settings.PUBLIC_TIME_FORMAT
                 )
                 update_data["completed_at"] = completed_at.strftime(completed_format)
@@ -106,40 +113,43 @@ async def get_user_requests(*, request: Request, session: SessionDep):
     return [item.to_dict() for item in user_public_requests[:preview_count]]
 
 
-async def create_new_user(
-    *, session: SessionDep, formatted_db_phone: str, company: str, name: str
-) -> User:
-    user_create = UserCreate(
-        phone=formatted_db_phone, company=company, is_superuser=False, name=name
-    )
-    user_candidate: User = await crud.create_user(session=session, user_create=user_create)
-
-    # user_folder = os.path.join(USER_REQUESTS_FOLDER, str(user_candidate.id), "requests")
-    # if not os.path.exists(user_folder):
-    #     os.makedirs(user_folder)
-    # return (user_candidate, user_folder)
-
-    return user_candidate
-
-
-@router.post("/create_request", status_code=201)  # response_model=RequestForHelpPublic
+@router.post("/create_request", status_code=status.HTTP_201_CREATED)  # response_model=RequestForHelpPublic
 @limiter.limit("5/minute")
 async def create_help_request(
-    session: SessionDep,
-    request: Request,
-    device: Annotated[str, Form()],
-    name: Annotated[str, Form()],
-    company: Annotated[str, Form()],
-    phone: Annotated[str, Form()],
-    number_pc: Annotated[str, Form()],
-    message_text: Annotated[Optional[str], Form()] = None,
-    message_file: Annotated[Optional[UploadFile], File()] = None,
-    photo: Annotated[Optional[List[UploadFile]], File()] = None,
-    video: Annotated[Optional[List[UploadFile]], File()] = None,
-    user_can_talk: Annotated[bool, Form()] = False,
-    user_political: Annotated[bool, Form()] = False,
-    csrf_protect: CsrfProtect = Depends(),
+        session: SessionDep,
+        request: Request,
+        device: Annotated[str, Form()],
+        name: Annotated[str, Form()],
+        company: Annotated[str, Form()],
+        phone: Annotated[str, Form()],
+        number_pc: Annotated[str, Form()],
+        message_text: Annotated[Optional[str], Form()] = None,
+        message_file: Annotated[Optional[UploadFile], File()] = None,
+        photo: Annotated[Optional[List[UploadFile]], File()] = None,
+        video: Annotated[Optional[List[UploadFile]], File()] = None,
+        user_can_talk: Annotated[bool, Form()] = False,
+        user_political: Annotated[bool, Form()] = False,
+        csrf_protect: CsrfProtect = Depends(),
 ):
+    """
+    Create new request for help
+    :param session: SQLAlchemy async session for database interaction
+    :param request:
+    :param device:
+    :param name: 
+    :param company:
+    :param phone:
+    :param number_pc:
+    :param message_text:
+    :param message_file:
+    :param photo:
+    :param video:
+    :param user_can_talk:
+    :param user_political:
+    :param csrf_protect:
+    :return: Successful message
+    """
+
     await csrf_protect.validate_csrf(request=request)
     cookie_handler.check_cookie_permission(request=request)
 
@@ -152,24 +162,18 @@ async def create_help_request(
         )
 
     formatted_db_phone = "".join(filter(lambda x: str.isdigit(x), list(phone)))[1:]
-    user_candidate: Optional[User] = await crud.get_user_by_phone(
-        session=session, phone=formatted_db_phone
-    )
+    user_candidate: Optional[User] = await crud.get_user_by_phone(session=session, phone=formatted_db_phone)
     # user_folder: str = ""  # Folder where are saving each request and its files
 
     # Create new user, if doesn't exist
     if user_candidate is None:
         try:
-            user_candidate = await create_new_user(
+            user_candidate = await utils.create_new_user(
                 session=session,
                 formatted_db_phone=formatted_db_phone,
                 company=company,
                 name=name,
             )
-            # created_user: User = result
-            # user_candidate = created_user
-            # created_folder: str = result[1]
-            # user_folder = created_folder
         except Exception as e:
             help_request_error.visible_error(f"Error in creating user: {e}")
     else:
@@ -344,7 +348,7 @@ async def create_help_request(
                 photo_response: Tuple[Message, ...] = await main_message.reply_media_group(
                     media=photo_files, connect_timeout=telegram_timeout_time
                 )
-                for i in  range(len(photo_response)):
+                for i in range(len(photo_response)):
                     photo_messages_idx.append(photo_response[i].message_id)
 
                     # response_item.photo - List[Telegram.PhotoSize], where the last element(photo[-1]) is full size of the image
@@ -415,9 +419,7 @@ async def create_help_request(
         reply_markup_message = await bot_api.send_message(
             chat_id=chat_id,
             text="Чтобы завершить заявку, перейдите по ссылке 🎯",
-            reply_parameters=ReplyParameters(
-                message_id=main_message_id, chat_id=chat_id
-            ),
+            reply_parameters=ReplyParameters(message_id=main_message_id, chat_id=chat_id),
             reply_markup=reply_markup,
         )
     except Exception as e:
@@ -477,7 +479,7 @@ async def create_help_request(
             message=f"Error in updating user's request: {e}",
         )
 
-    csrf_token, signed_token = token_handlers.create_csrf_token(
+    csrf_token, signed_token = token_handler.create_csrf_token(
         csrf_protect=csrf_protect
     )
     response = JSONResponse(
@@ -485,12 +487,12 @@ async def create_help_request(
             "message": f"Отличные новости! 🎉<br/> Ваша заявка <b>#{new_request.id}</b> успешно создана и уже в работе. Вы всегда можете найти её в разделе <b>«Ваши заявки»</b>.",
             settings.CSRF_TOKEN_KEY: csrf_token,
         },
-        status_code=201,
+        status_code=status.HTTP_201_CREATED,
     )
     csrf_protect.set_csrf_cookie(signed_token, response)
 
     # Set cookie for user authorize
-    new_access_token = token_handlers.create_jwt_token(user=user_candidate)
+    new_access_token = token_handler.create_jwt_token(user=user_candidate)
     response.set_cookie(
         key=settings.AUTH_TOKEN_KEY,
         value=new_access_token,

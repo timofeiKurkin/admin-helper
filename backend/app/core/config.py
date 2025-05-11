@@ -27,6 +27,7 @@ class Settings(BaseSettings):
     )
     API_V1_STR: str = "/api/v1"
     FRONTEND_HOST: str = "http://localhost:3030"
+    BACKEND_HOST: str = ""
     CLIENT_HOST: str = ""
     ENVIRONMENT: Literal["local", "staging", "production"] = "local"
 
@@ -87,12 +88,12 @@ class Settings(BaseSettings):
             return v
 
         return PostgresDsn.build(
-            scheme="postgresql",
+            scheme="postgresql+asyncpg",
             username=values.data.get("POSTGRES_USER"),
             password=values.data.get("POSTGRES_PASSWORD"),
             host=values.data.get("POSTGRES_SERVER"),
             path=f"{values.data.get('POSTGRES_DB') or ''}",
-        )
+        ).unicode_string()
 
     TOKEN_SECRET_KEY: str = secrets.token_urlsafe(32)
     ACCESS_TOKEN_LIFETIME_MINUTES: int = 30

@@ -3,17 +3,21 @@ import os
 from typing import BinaryIO
 
 import ffmpeg  # type: ignore[import-untyped]
-from app.core.config import TEMPORARY_FOLDER
-from fastapi import HTTPException
 from PIL import Image
+from fastapi import HTTPException
+from sqlalchemy.ext.asyncio import AsyncSession
 from telegram import InputFile
+
+from app import crud
+from app.core.config import TEMPORARY_FOLDER
+from app.models import User, UserCreate
 
 
 def compress_image(
-    *,
-    file: BinaryIO,
-    filename: str,
-    quality: int = 85,
+        *,
+        file: BinaryIO,
+        filename: str,
+        quality: int = 85,
 ) -> bytes:
     image: Image.Image = Image.open(file)
 
@@ -122,3 +126,17 @@ def create_temporary_folder():
 def to_camel(field: str) -> str:
     parts = field.split("_")
     return parts[0] + "".join(word.capitalize() for word in parts[1:])
+
+
+async def create_new_user(
+        *, session: AsyncSession, formatted_db_phone: str, company: str, name: str
+) -> User:
+    user_create = UserCreate(phone=formatted_db_phone, company=company, is_superuser=False, name=name)
+    user_candidate: User = await crud.create_user(session=session, user_create=user_create)
+
+    # user_folder = os.path.join(USER_REQUESTS_FOLDER, str(user_candidate.id), "requests")
+    # if not os.path.exists(user_folder):
+    #     os.makedirs(user_folder)
+    # return (user_candidate, user_folder)
+
+    return user_candidate
