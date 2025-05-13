@@ -17,7 +17,7 @@ from telegram import (
     InputMediaPhoto,
     InputMediaVideo,
     Message,
-    ReplyParameters, PhotoSize,
+    ReplyParameters, PhotoSize, Bot,
 )
 from telegram.error import TelegramError
 
@@ -43,7 +43,7 @@ from app.models import (
 )
 # Telegram
 from app.telegram_bot import utils as telegram_utils
-from app.telegram_bot.bot import bot_api
+from app.telegram_bot.bot import get_telegram_bot
 
 limiter = Limiter(key_func=get_remote_address)
 router = APIRouter()
@@ -52,7 +52,7 @@ chat_id = settings.GROUP_ID
 
 
 @router.get("/get_user_requests", status_code=status.HTTP_200_OK)
-@limiter.limit("100/minute")
+# @limiter.limit("100/minute")
 async def get_user_requests(*, request: Request, session: SessionDep):
     """
     The router to get user's requests
@@ -129,12 +129,14 @@ async def create_help_request(
         video: Annotated[Optional[List[UploadFile]], File()] = None,
         user_can_talk: Annotated[bool, Form()] = False,
         user_political: Annotated[bool, Form()] = False,
+        bot_api: Bot = Depends(get_telegram_bot),
         csrf_protect: CsrfProtect = Depends(),
 ):
     """
     Create new request for help
     :param session: SQLAlchemy async session for database interaction
     :param request:
+    :param bot_api:
     :param device:
     :param name: 
     :param company:
@@ -160,6 +162,10 @@ async def create_help_request(
             },
             status_code=403,
         )
+
+    if message_text is not None and message_file is not None:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST,
+                            detail="Вы можете создать заявку либо с текстовым, либо с голосовым сообщением")
 
     formatted_db_phone = "".join(filter(lambda x: str.isdigit(x), list(phone)))[1:]
     user_candidate: Optional[User] = await crud.get_user_by_phone(session=session, phone=formatted_db_phone)
@@ -250,7 +256,7 @@ async def create_help_request(
             f"Failed to send main message to Telegram: {e}"
         )
     assert main_message is not None
-    main_message_id = main_message.message_id
+    main_message_id: int = main_message.message_id
 
     voice_media_file = MediaFile(id=0, file_id="")
     photos_media_file: List[MediaFile] = []
@@ -288,6 +294,7 @@ async def create_help_request(
                     delete_messages=[main_message_id],
                     request_folder=request_folder,
                     message=f"Failed to convert audio: {e}",
+                    bot_api=bot_api
                 )
 
         # Uploading photo to telegram
@@ -302,6 +309,7 @@ async def create_help_request(
                     delete_messages=[main_message_id],
                     request_folder=request_folder,
                     message=f"Failed to compress photos: {e}",
+                    bot_api=bot_api
                 )
 
         # Uploading video to telegram
@@ -318,11 +326,12 @@ async def create_help_request(
                     delete_messages=[main_message_id],
                     request_folder=request_folder,
                     message=f"Failed to compress video: {e}",
+                    bot_api=bot_api
                 )
 
         try:
             if voice_file.input_file_content and voice_file.filename:
-                voice_response = await main_message.reply_voice(
+                voice_response: Message = await main_message.reply_voice(
                     voice=voice_file,
                     connect_timeout=telegram_timeout_time,
                     caption="Сообщение пользователя:",
@@ -341,6 +350,7 @@ async def create_help_request(
                 delete_messages=[main_message_id, *voice_message_id],
                 request_folder=request_folder,
                 message=f"Failed to send voice message to Telegram: {e}",
+                bot_api=bot_api
             )
 
         try:
@@ -367,6 +377,7 @@ async def create_help_request(
                 ],
                 request_folder=request_folder,
                 message=f"Failed to send photo message to Telegram: {e}",
+                bot_api=bot_api
             )
 
         try:
@@ -398,6 +409,7 @@ async def create_help_request(
                 ],
                 request_folder=request_folder,
                 message=f"Failed to send video message to Telegram: {e}",
+                bot_api=bot_api
             )
 
         shutil.rmtree(request_folder)
@@ -434,6 +446,7 @@ async def create_help_request(
             ],
             request_folder=request_folder,
             message=f"Failed to send markup message to Telegram: {e}",
+            bot_api=bot_api
         )
 
     assert reply_markup_message is not None
@@ -477,6 +490,7 @@ async def create_help_request(
             ],
             request_folder=request_folder,
             message=f"Error in updating user's request: {e}",
+            bot_api=bot_api
         )
 
     csrf_token, signed_token = token_handler.create_csrf_token(

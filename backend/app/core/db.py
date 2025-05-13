@@ -10,6 +10,3 @@ AsyncSessionLocal = async_sessionmaker(bind=engine, class_=AsyncSession, expire_
 async def create_db_and_tables():
     async with engine.begin() as conn:
         await conn.run_sync(SQLModel.metadata.create_all)
-
-# def init_db(session: Session) -> None:
-#     super_user = session.exec(select(UserBase).where())

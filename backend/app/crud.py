@@ -61,7 +61,7 @@ async def user_exists(*, session: AsyncSession, phone: str) -> User | None:
 async def create_request_for_help(
         *, session: AsyncSession, request_in: RequestForHelpCreate, owner_id: uuid.UUID
 ) -> RequestForHelp:
-    new_request_for_help = RequestForHelp(**request_in.to_dict(), owner_id=owner_id)
+    new_request_for_help = RequestForHelp.model_validate(request_in, update={"owner_id": owner_id})
 
     session.add(new_request_for_help)
     await session.commit()
@@ -111,8 +111,8 @@ async def get_user_request_by_accept_url(
 
 @handle_db_errors()
 async def delete_user_request(*, session: AsyncSession, db_request: RequestForHelp):
-    deleted_candidate = session.get(RequestForHelp, db_request.id)
-    if deleted_candidate:
+    deleted_candidate = await session.get(RequestForHelp, db_request.id)
+    if deleted_candidate is not None:
         await session.delete(db_request)
         await session.commit()
     else:

@@ -3,12 +3,15 @@ import shutil
 from typing import List
 
 from fastapi import HTTPException, status
+from sqlalchemy.ext.asyncio import AsyncSession
+from telegram import Bot
 
 from app import crud
-from app.api.deps import SessionDep
 from app.core.config import settings
 from app.models import RequestForHelp
-from app.telegram_bot.bot import bot_api
+
+
+# from app.telegram_bot.bot import bot_api
 
 
 def visible_error(error: object):
@@ -18,11 +21,12 @@ def visible_error(error: object):
 
 async def error_exception(
         *,
-        session: SessionDep,
+        session: AsyncSession,
         request: RequestForHelp,
         delete_messages: List[int],
         request_folder: str,
-        message: str
+        message: str,
+        bot_api: Bot
 ) -> None:
     await crud.delete_user_request(session=session, db_request=request)
     shutil.rmtree(request_folder)

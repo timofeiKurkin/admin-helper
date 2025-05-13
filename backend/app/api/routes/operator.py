@@ -2,6 +2,11 @@ import logging
 from datetime import datetime
 from typing import List
 
+from fastapi import APIRouter, Depends, HTTPException, Request, Response, status
+from fastapi_csrf_protect import CsrfProtect  # type: ignore[import-untyped]
+from telegram import InlineKeyboardButton, InlineKeyboardMarkup, Bot
+from telegram.error import TelegramError
+
 from app.api.deps import SessionDep
 from app.api.error_handlers.help_request import visible_error
 from app.auth import token
@@ -17,27 +22,24 @@ from app.models import (
     RequestForHelpUpdate,
     TelegramMessagesIDX,
 )
-from app.telegram_bot.bot import bot_api
-from fastapi import APIRouter, Depends, HTTPException, Request, Response
-from fastapi_csrf_protect import CsrfProtect  # type: ignore[import-untyped]
-from telegram import InlineKeyboardButton, InlineKeyboardMarkup
-from telegram.error import TelegramError
+from app.telegram_bot.bot import get_telegram_bot
 
 router = APIRouter()
 
 
-@router.delete("/delete_request/{accept_url}", status_code=200)
+@router.delete("/delete_request/{accept_url}", status_code=status.HTTP_200_OK)
 async def delete_request(
-    accept_url: str,
-    session: SessionDep,
-    response: Response,
-    request: Request,
-    csrf_protect: CsrfProtect = Depends(),
+        accept_url: str,
+        session: SessionDep,
+        response: Response,
+        request: Request,
+        csrf_protect: CsrfProtect = Depends(),
+        bot_api: Bot = Depends(get_telegram_bot)
 ):
     await csrf_protect.validate_csrf(request=request)
 
     if len(accept_url) != 43:
-        raise HTTPException(status_code=404, detail="Invalid url")
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Invalid url")
 
     request_candidate = await get_user_request_by_accept_url(
         session=session, accept_url=accept_url
@@ -45,7 +47,7 @@ async def delete_request(
 
     if not request_candidate:
         raise HTTPException(
-            status_code=404, detail="Requested user's request couldn't found"
+            status_code=status.HTTP_404_NOT_FOUND, detail="Requested user's request couldn't found"
         )
 
     try:
@@ -93,19 +95,20 @@ async def delete_request(
 
 
 @router.patch(
-    "/complete_request/{accept_url}",
+    "/complete_request/{accept_url}", status_code=status.HTTP_200_OK
 )
 async def complete_request(
-    accept_url: str,
-    session: SessionDep,
-    request: Request,
-    response: Response,
-    csrf_protect: CsrfProtect = Depends(),
+        accept_url: str,
+        session: SessionDep,
+        request: Request,
+        response: Response,
+        csrf_protect: CsrfProtect = Depends(),
+        bot_api: Bot = Depends(get_telegram_bot)
 ):
     await csrf_protect.validate_csrf(request=request)
 
     if len(accept_url) != 43:
-        raise HTTPException(status_code=404, detail="Invalid url")
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Invalid url")
 
     request_candidate = await get_user_request_by_accept_url(
         session=session, accept_url=accept_url
@@ -113,14 +116,14 @@ async def complete_request(
 
     if not request_candidate:
         raise HTTPException(
-            status_code=404,
+            status_code=status.HTTP_404_NOT_FOUND,
             detail="Упс, не удалось найти заявку пользователя! 😕 Проверьте, пожалуйста, данные и попробуйте ещё раз.",
         )
 
     user_candidate = await get_user(session=session, id=request_candidate.owner_id)
 
     if not user_candidate:
-        raise HTTPException(status_code=404, detail="User not found")
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="User not found")
 
     user_phone = f"+7 {user_candidate.phone[:3]} {user_candidate.phone[3:6]} - {user_candidate.phone[6:8]} - {user_candidate.phone[8:]}"
 
@@ -155,7 +158,7 @@ async def complete_request(
         except Exception as e:
             error = f"Error in serializing data: {e}"
             logging.error(error)
-            raise HTTPException(status_code=500, detail=error)
+            raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=error)
 
         return {
             settings.CSRF_TOKEN_KEY: csrf_token,
@@ -188,7 +191,7 @@ async def complete_request(
             except TelegramError as e:
                 error = f"Error in editing reply markup of a message: {e}"
                 logging.error(error)
-                raise HTTPException(status_code=500, detail=error)
+                raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=error)
 
         compiled_time = datetime.now()
 
@@ -204,7 +207,7 @@ async def complete_request(
         except Exception as e:
             error = f"Error in updating a request: {e}"
             logging.error(error)
-            raise HTTPException(status_code=500, detail=error)
+            raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=error)
 
         public_request = RequestForHelpOperatorPublic(
             id=updated_request.id,
@@ -216,7 +219,7 @@ async def complete_request(
         )
 
         try:
-            request_for_help_operator_public = (
+            request_for_help_operator_public: RequestForHelpOperatorPublic = (
                 RequestForHelpOperatorPublic.model_validate(
                     public_request,
                     update={
@@ -233,7 +236,7 @@ async def complete_request(
         except Exception as e:
             error = f"Error in serializing data: {e}"
             logging.error(error)
-            raise HTTPException(status_code=500, detail=error)
+            raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=error)
 
         return {
             settings.CSRF_TOKEN_KEY: csrf_token,

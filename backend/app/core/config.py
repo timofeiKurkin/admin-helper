@@ -93,6 +93,7 @@ class Settings(BaseSettings):
             password=values.data.get("POSTGRES_PASSWORD"),
             host=values.data.get("POSTGRES_SERVER"),
             path=f"{values.data.get('POSTGRES_DB') or ''}",
+            port=values.data.get('POSTGRES_PORT')
         ).unicode_string()
 
     TOKEN_SECRET_KEY: str = secrets.token_urlsafe(32)

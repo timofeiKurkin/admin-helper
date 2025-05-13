@@ -8,7 +8,7 @@ services:
       POSTGRES_DB: ${POSTGRES_DB:-postgres}
       PGDATA: /data/postgres
     ports:
-      - "6666:5432"
+      - "${POSTGRES_PORT}:5432"
     volumes:
       - admin-helper-postgres:/data/postgres
       - "./postgresql.conf:/etc/postgresql/postgresql.conf:ro"
@@ -17,7 +17,7 @@ services:
       - admin-helper-network
     restart: unless-stopped
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
+      test: [ "CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}" ]
       interval: 10s
       timeout: 10s
       retries: 5
@@ -25,108 +25,110 @@ services:
     env_file:
       - .env
 
-#  telegram-bot-api:
-#    image: aiogram/telegram-bot-api:latest
-#    container_name: "${PROJECT_NAME}-tg-api"
-#    environment:
-#      TELEGRAM_API_ID: ${TELEGRAM_API_ID}
-#      TELEGRAM_API_HASH: ${TELEGRAM_API_HASH}
-#      TELEGRAM_MAX_CONNECTIONS: ${TELEGRAM_MAX_CONNECTIONS}
-#    volumes:
-#      - admin-helper-tg-api:/var/lib/telegram-bot-api
-#    ports:
-#      - "8081:8081"
-#    restart: unless-stopped
-#    networks:
-#      - admin-helper-network
-#    env_file:
-#      - .env
-#
-#  backend-prestart:
-#    container_name: "${PROJECT_NAME}-backend-prestart"
-#    image: "${PROJECT_NAME}-backend"
-#    build:
-#      context: ./backend
-#    depends_on:
-#      postgres:
-#        condition: service_healthy
-#      telegram-bot-api:
-#        condition: service_healthy
-#    networks:
-#      - admin-helper-network
-#    command:
-#      - bash
-#      - scripts/prestart.sh
-#    environment:
-#      - BOT_TOKEN=${BOT_TOKEN}
-#      - GROUP_ID=${GROUP_ID}
-#      - TELEGRAM_API_ID=${TELEGRAM_API_ID}
-#      - TELEGRAM_API_HASH=${TELEGRAM_API_HASH}
-#      - TELEGRAM_API_HOST=telegram-bot-api
-#      - TELEGRAM_MAX_CONNECTIONS=${TELEGRAM_MAX_CONNECTIONS}
-#      - FRONTEND_HOST=${FRONTEND_HOST}
-#      - TOKEN_SECRET_KEY=${TOKEN_SECRET_KEY}
-#      - BACKEND_CORS_ORIGINS=${BACKEND_CORS_ORIGINS}
-#      - ENVIRONMENT=${ENVIRONMENT}
-#      - PROJECT_NAME=${PROJECT_NAME}
-#      - POSTGRES_SERVER=postgres
-#      - POSTGRES_PORT=5432
-#      - POSTGRES_USER=${POSTGRES_USER}
-#      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
-#      - POSTGRES_DB=${POSTGRES_DB}
-#    env_file:
-#      - .env
-#
-#  backend:
-#    container_name: "${PROJECT_NAME}-backend"
-#    image: "${PROJECT_NAME}-backend"
-#    networks:
-#      - admin-helper-network
-#    depends_on:
-#      backend-prestart:
-#        condition: service_completed_successfully
-#    command: ["fastapi", "run", "app/main.py", "--port", "8000", "--workers", "2"]
-#    ports:
-#      - "8000:8000"
-#    healthcheck:
-#      test: ["CMD", "curl", "-f", "${BACKEND_HOST}/api/v1/utils/health-check"]
-#      interval: 30s
-#      timeout: 10s
-#      retries: 3
-#      start_period: 60s
-#    environment:
-#      - BOT_TOKEN=${BOT_TOKEN}
-#      - GROUP_ID=${GROUP_ID}
-#      - TELEGRAM_API_ID=${TELEGRAM_API_ID}
-#      - TELEGRAM_API_HASH=${TELEGRAM_API_HASH}
-#      - TELEGRAM_API_HOST=telegram-bot-api
-#      - TELEGRAM_MAX_CONNECTIONS=${TELEGRAM_MAX_CONNECTIONS}
-#      - FRONTEND_HOST=${FRONTEND_HOST}
-#      - TOKEN_SECRET_KEY=${TOKEN_SECRET_KEY}
-#      - BACKEND_CORS_ORIGINS=${BACKEND_CORS_ORIGINS}
-#      - ENVIRONMENT=${ENVIRONMENT}
-#      - PROJECT_NAME=${PROJECT_NAME}
-#      - POSTGRES_SERVER=postgres
-#      - POSTGRES_PORT=5432
-#      - POSTGRES_USER=${POSTGRES_USER}
-#      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
-#      - POSTGRES_DB=${POSTGRES_DB}
-#    env_file:
-#      - .env
-#
-#  frontend:
-#    container_name: "${PROJECT_NAME}-frontend"
-#    image: "${PROJECT_NAME}-frontend"
-#    restart: unless-stopped
-#    networks:
-#      - admin-helper-network
-#    build:
-#      context: ./frontend
-#    depends_on:
-#      backend:
-#        condition: service_healthy
-#    ports:
-#      - "3000:3000"
+  telegram-bot-api:
+    image: aiogram/telegram-bot-api:latest
+    container_name: "${PROJECT_NAME}-tg-api"
+    environment:
+      TELEGRAM_API_ID: ${TELEGRAM_API_ID}
+      TELEGRAM_API_HASH: ${TELEGRAM_API_HASH}
+      TELEGRAM_MAX_CONNECTIONS: ${TELEGRAM_MAX_CONNECTIONS}
+    volumes:
+      - admin-helper-tg-api:/var/lib/telegram-bot-api
+    ports:
+      - "8081:8081"
+    restart: unless-stopped
+    networks:
+      - admin-helper-network
+    env_file:
+      - .env
+
+  backend-prestart:
+    container_name: "${PROJECT_NAME}-backend-prestart"
+    image: "${PROJECT_NAME}-backend"
+    build:
+      context: ./backend
+    depends_on:
+      postgres:
+        condition: service_healthy
+      telegram-bot-api:
+        condition: service_healthy
+    networks:
+      - admin-helper-network
+    command:
+      - bash
+      - scripts/prestart.sh
+    environment:
+      - BOT_TOKEN=${BOT_TOKEN}
+      - GROUP_ID=${GROUP_ID}
+      - TELEGRAM_API_ID=${TELEGRAM_API_ID}
+      - TELEGRAM_API_HASH=${TELEGRAM_API_HASH}
+      - TELEGRAM_API_HOST=telegram-bot-api
+      - TELEGRAM_MAX_CONNECTIONS=${TELEGRAM_MAX_CONNECTIONS}
+      - FRONTEND_HOST=${FRONTEND_HOST}
+      - TOKEN_SECRET_KEY=${TOKEN_SECRET_KEY}
+      - BACKEND_CORS_ORIGINS=${BACKEND_CORS_ORIGINS}
+      - ENVIRONMENT=${ENVIRONMENT}
+      - PROJECT_NAME=${PROJECT_NAME}
+      - POSTGRES_SERVER=postgres
+      - POSTGRES_PORT=5432
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - POSTGRES_DB=${POSTGRES_DB}
+    env_file:
+      - .env
+
+  backend:
+    container_name: "${PROJECT_NAME}-backend"
+    image: "${PROJECT_NAME}-backend"
+    networks:
+      - admin-helper-network
+    depends_on:
+      backend-prestart:
+        condition: service_completed_successfully
+    command: [ "fastapi", "run", "app/main.py", "--port", "8000", "--workers", "2" ]
+    ports:
+      - "8000:8000"
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "${BACKEND_HOST}/api/v1/utils/health-check" ]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
+    environment:
+      - BOT_TOKEN=${BOT_TOKEN}
+      - GROUP_ID=${GROUP_ID}
+      - TELEGRAM_API_ID=${TELEGRAM_API_ID}
+      - TELEGRAM_API_HASH=${TELEGRAM_API_HASH}
+      - TELEGRAM_API_HOST=telegram-bot-api
+      - TELEGRAM_MAX_CONNECTIONS=${TELEGRAM_MAX_CONNECTIONS}
+      - FRONTEND_HOST=${FRONTEND_HOST}
+      - TOKEN_SECRET_KEY=${TOKEN_SECRET_KEY}
+      - BACKEND_CORS_ORIGINS=${BACKEND_CORS_ORIGINS}
+      - ENVIRONMENT=${ENVIRONMENT}
+      - PROJECT_NAME=${PROJECT_NAME}
+      - POSTGRES_SERVER=postgres
+      - POSTGRES_PORT=5432
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - POSTGRES_DB=${POSTGRES_DB}
+    env_file:
+      - .env
+
+  frontend:
+    container_name: "${PROJECT_NAME}-frontend"
+    image: "${PROJECT_NAME}-frontend"
+    restart: unless-stopped
+    networks:
+      - admin-helper-network
+    build:
+      context: ./frontend
+    depends_on:
+      backend:
+        condition: service_healthy
+    ports:
+      - "3000:3000"
+    env_file:
+      - .env
 
 networks:
   admin-helper-network:

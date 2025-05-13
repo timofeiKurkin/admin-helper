@@ -1,13 +1,41 @@
 import secrets
 import uuid
 from datetime import datetime
-from typing import List, Optional
+from typing import List, Optional, Type, Any
 
-from app import utils
-from app.core.config import settings
 from pydantic import BaseModel
-from sqlalchemy.types import JSON
+from sqlalchemy import Dialect
+from sqlalchemy.sql.type_api import _T
+from sqlalchemy.types import JSON, TypeDecorator
 from sqlmodel import Column, Field, Relationship, SQLModel
+
+from app.core.config import settings
+
+
+class JSONObjectType(TypeDecorator):
+    impl = JSON
+    cache_ok = True
+
+    def __init__(self, model_class: Type[SQLModel], *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.model_class = model_class
+
+    def process_bind_param(self, value: Optional[_T], dialect: Dialect) -> Any:
+        if value is None:
+            return None
+
+        if isinstance(value, dict):
+            return value
+
+        if isinstance(value, self.model_class):
+            return value.model_dump()
+
+        raise TypeError(f"Expected {self.model_class}")
+
+    def process_result_value(self, value: Optional[Any], dialect: Dialect) -> Optional[SQLModel]:
+        if value is None:
+            return None
+        return self.model_class(**value)
 
 
 class MediaFile(SQLModel):
@@ -39,7 +67,7 @@ class UserCreate(UserBase):
 
 
 class User(UserBase, table=True):
-    __tablename__ = "users"  #  type: ignore
+    __tablename__ = "users"  # type: ignore
 
     id: uuid.UUID = Field(default_factory=uuid.uuid4, primary_key=True)
     # is_superuser: bool = False
@@ -83,31 +111,25 @@ class TelegramMessagesIDX(SQLModel):
 class RequestForHelpBase(SQLModel):
     device: str = Field(default="", max_length=18)
     message_text: str = Field(default="", max_length=100)
-    message_file: MediaFile = Field(
-        default_factory=lambda: MediaFile(id=0, file_id=""),
-        sa_column=Column(JSON),
-    )
+    message_file: MediaFile = Field(default_factory=lambda: MediaFile(id=0, file_id=""),
+                                    sa_column=Column(JSONObjectType(MediaFile)))
     photos: List[MediaFile] = Field(default_factory=list, sa_column=Column(JSON))
     videos: List[MediaFile] = Field(default_factory=list, sa_column=Column(JSON))
     is_completed: bool = Field(default=False)
     completed_at: Optional[datetime] = Field(default=None)
-    accept_url: str = Field(
-        default=secrets.token_urlsafe(32), max_length=43, nullable=False
-    )
+    accept_url: str = Field(default=secrets.token_urlsafe(32), max_length=43, nullable=False)
 
-    telegram_messages_idx: TelegramMessagesIDX = Field(
-        default_factory=lambda: TelegramMessagesIDX(),
-        sa_column=Column(JSON),
-    )
+    telegram_messages_idx: TelegramMessagesIDX = Field(default_factory=lambda: TelegramMessagesIDX(),
+                                                       sa_column=Column(JSONObjectType(TelegramMessagesIDX)))
 
-    def to_dict(self):
-        return {
-            **self.model_dump(mode="json", by_alias=True),
-            "telegram_messages_idx": self.telegram_messages_idx.to_dict(),
-            "message_file": self.message_file.to_dict(),
-            "photos": [photo.to_dict() for photo in self.photos],
-            "videos": [video.to_dict() for video in self.videos],
-        }
+    # def to_dict(self):
+    #     return {
+    #         **self.model_dump(mode="json", by_alias=True),
+    #         "telegram_messages_idx": self.telegram_messages_idx.to_dict(),
+    #         "message_file": self.message_file.to_dict(),
+    #         "photos": [photo.to_dict() for photo in self.photos],
+    #         "videos": [video.to_dict() for video in self.videos],
+    #     }
 
     @staticmethod
     def from_dict(data: dict) -> "RequestForHelpBase":
@@ -116,7 +138,7 @@ class RequestForHelpBase(SQLModel):
 
 # Request for help type in data base
 class RequestForHelp(RequestForHelpBase, table=True):
-    __tablename__ = "requests"  #  type: ignore
+    __tablename__ = "requests"  # type: ignore
 
     id: Optional[int] = Field(default=None, primary_key=True)
 
@@ -177,7 +199,6 @@ class AccessToken(SQLModel):
         foreign_key="users.id", nullable=False, ondelete="CASCADE", index=True
     )
     created_at: datetime = Field(default_factory=datetime.now)
-
 
 # Token models
 # class TokenBase(SQLModel):

@@ -59,6 +59,7 @@ app = FastAPI(
     # lifespan=lifespan,
 )
 # app.state.limiter = limiter
+print(f"{settings.SQLALCHEMY_DATABASE_URI}")
 
 if settings.all_cors_origins:
     app.add_middleware(
