@@ -28,6 +28,9 @@ services:
   telegram-bot-api:
     image: aiogram/telegram-bot-api:latest
     container_name: "${PROJECT_NAME}-tg-api"
+    depends_on:
+      postgres:
+        condition: service_healthy
     environment:
       TELEGRAM_API_ID: ${TELEGRAM_API_ID}
       TELEGRAM_API_HASH: ${TELEGRAM_API_HASH}
@@ -49,8 +52,6 @@ services:
       context: ./backend
     depends_on:
       postgres:
-        condition: service_healthy
-      telegram-bot-api:
         condition: service_healthy
     networks:
       - admin-helper-network
