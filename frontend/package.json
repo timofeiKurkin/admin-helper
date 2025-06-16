@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "@reduxjs/toolkit": "^2.2.7",
+    "@testing-library/react": "^16.3.0",
     "axios": "^1.7.3",
     "fuse.js": "^7.0.0",
     "html-react-parser": "^5.1.18",
@@ -26,12 +27,16 @@
     "uuid": "^10.0.0"
   },
   "devDependencies": {
+    "@testing-library/jest-dom": "^6.6.3",
+    "@types/jest": "^29.5.14",
     "@types/node": "^20",
     "@types/react": "^18",
     "@types/react-dom": "^18",
     "@types/uuid": "^10.0.0",
     "eslint": "^8",
     "eslint-config-next": "14.2.4",
+    "jest": "^30.0.0",
+    "ts-jest": "^29.4.0",
     "typescript": "^5"
   }
 }

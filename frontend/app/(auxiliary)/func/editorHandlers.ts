@@ -1,14 +1,6 @@
-import React, { MutableRefObject, RefObject } from "react";
-import { centerCrop, convertToPixelCrop, makeAspectCrop, PixelCrop } from "react-image-crop";
-import {
-    defaultPhotoSettings,
-    HORIZONTAL,
-    PhotoEditorSettingsType,
-    VERTICAL
-} from "@/app/(auxiliary)/types/FormTypes/PopupTypes/PopupTypes";
-import {
-    getRotateDimensions
-} from "@/app/(auxiliary)/components/Blocks/Popups/PhotoEditorPopup/PhotoEditorBody/canvasPreview";
+import {MutableRefObject, RefObject} from "react";
+import {centerCrop, convertToPixelCrop, makeAspectCrop, PercentCrop, PixelCrop} from "react-image-crop";
+import {HORIZONTAL, VERTICAL} from "@/app/(auxiliary)/types/FormTypes/PopupTypes/PopupTypes";
 
 
 export const scalePoints = [0.5, 1, 2, 2.5]
@@ -21,10 +13,10 @@ export const determineOrientation = (width: number, height: number) => {
     return width >= height ? HORIZONTAL : VERTICAL
 }
 
-export const arrayDifference = <T extends { name: string }>(oldArr: T[], newArr: T[]) => {
-    const setNewArr = new Set(newArr.map(item => item.name))
-    return oldArr.filter(item => !setNewArr.has(item.name))
-}
+// export const arrayDifference = <T extends { name: string }>(oldArr: T[], newArr: T[]) => {
+//     const setNewArr = new Set(newArr.map(item => item.name))
+//     return oldArr.filter(item => !setNewArr.has(item.name))
+// }
 
 export const findElement = <T extends { name: string }>(file: T, name: string) => file.name === name
 
@@ -114,13 +106,12 @@ interface OnDownloadCropClickArgs {
  * @param rotate
  */
 export const onDownloadCropClick = async ({
-    imgRef,
-    previewCanvasRef,
-    completedCrop,
-    blobUrlRef,
-    hiddenAnchorRef,
-    rotate
-}: OnDownloadCropClickArgs) => {
+                                              imgRef,
+                                              previewCanvasRef,
+                                              completedCrop,
+                                              blobUrlRef,
+                                              hiddenAnchorRef
+                                          }: OnDownloadCropClickArgs) => {
     const image = imgRef.current
     const previewCanvas = previewCanvasRef.current
 
@@ -132,11 +123,12 @@ export const onDownloadCropClick = async ({
     // size. If you want to size according to what they
     // are looking at on screen, remove scaleX + scaleY
 
-    const { naturalRotatedWidth, naturalRotatedHeight } =
-        getRotateDimensions(image.naturalWidth, image.naturalHeight, rotate)
-
-    const scaleX = image.naturalWidth / image.width
-    const scaleY = image.naturalHeight / image.height
+    // const {
+    //     naturalRotatedWidth,
+    //     naturalRotatedHeight
+    // } = getRotateDimensions(image.naturalWidth, image.naturalHeight, rotate)
+    // const scaleX = image.naturalWidth / image.width
+    // const scaleY = image.naturalHeight / image.height
 
     const offscreen = new OffscreenCanvas(
         completedCrop.width,
@@ -178,24 +170,24 @@ export const onDownloadCropClick = async ({
     }
 }
 
-const onSelectFile = ({
-    e,
-    setCrop,
-    setImgSrc
-}: {
-    e: React.ChangeEvent<HTMLInputElement>;
-    setCrop: (value: number | undefined) => void
-    setImgSrc: (value: string) => void
-}) => {
-    if (e.target.files && e.target.files.length > 0) {
-        setCrop(undefined) // Makes crop preview update between images.
-        const reader = new FileReader()
-        reader.addEventListener('load', () =>
-            setImgSrc(reader.result?.toString() || ''),
-        )
-        reader.readAsDataURL(e.target.files[0])
-    }
-}
+// const onSelectFile = ({
+//     e,
+//     setCrop,
+//     setImgSrc
+// }: {
+//     e: React.ChangeEvent<HTMLInputElement>;
+//     setCrop: (value: number | undefined) => void
+//     setImgSrc: (value: string) => void
+// }) => {
+//     if (e.target.files && e.target.files.length > 0) {
+//         setCrop(undefined) // Makes crop preview update between images.
+//         const reader = new FileReader()
+//         reader.addEventListener('load', () =>
+//             setImgSrc(reader.result?.toString() || ''),
+//         )
+//         reader.readAsDataURL(e.target.files[0])
+//     }
+// }
 
 
 /**
@@ -208,12 +200,12 @@ const onSelectFile = ({
  * @param setCompletedCrop
  */
 function handleToggleAspectClick({
-    aspect,
-    setAspect,
-    imgRef,
-    setCrop,
-    setCompletedCrop
-}: {
+                                     aspect,
+                                     setAspect,
+                                     imgRef,
+                                     setCrop,
+                                     setCompletedCrop
+                                 }: {
     aspect: any;
     setAspect: any;
     imgRef: any;
@@ -226,7 +218,7 @@ function handleToggleAspectClick({
         setAspect(16 / 9)
 
         if (imgRef.current) {
-            const { width, height } = imgRef.current
+            const {width, height} = imgRef.current
             const newCrop = centerAspectCrop(width, height, 16 / 9)
             setCrop(newCrop)
             // Updates the preview
@@ -246,7 +238,7 @@ export const centerAspectCrop = (
     mediaWidth: number,
     mediaHeight: number,
     aspect: number
-) => {
+): PercentCrop => {
     return centerCrop(
         makeAspectCrop(
             {
@@ -282,6 +274,6 @@ export const stickToClosestValue = (value: number, stickPoints: number[], stickS
 }
 
 
-export const getDefaultPhotoSettings = (fileName: string): PhotoEditorSettingsType => {
-    return { ...defaultPhotoSettings, name: fileName }
-}
+// export const getDefaultPhotoSettings = (fileName: string): PhotoEditorSettingsType => {
+//     return {...defaultPhotoSettings, name: fileName}
+// }

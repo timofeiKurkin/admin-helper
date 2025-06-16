@@ -1,22 +1,24 @@
 "use client"
 
-import { axiosRequestsHandler } from '@/app/(auxiliary)/func/axiosRequestsHandler';
+import {axiosRequestHandler} from '@/app/(auxiliary)/func/axiosRequestHandler';
 import UserService from '@/app/(auxiliary)/libs/axios/services/UserService/UserService';
-import { useAppDispatch } from '@/app/(auxiliary)/libs/redux-toolkit/store/hooks';
-import { setUserAuthorization } from '@/app/(auxiliary)/libs/redux-toolkit/store/slices/UserRequestsSlice/UserRequestsSlice';
-import { ChildrenProp } from '@/app/(auxiliary)/types/AppTypes/AppTypes';
-import { AuthorizeUserResponseType } from '@/app/(auxiliary)/types/AxiosTypes/AxiosTypes';
-import { AxiosResponse } from 'axios';
-import { FC, useEffect } from 'react';
+import {useAppDispatch} from '@/app/(auxiliary)/libs/redux-toolkit/store/hooks';
+import {
+    setUserAuthorization
+} from '@/app/(auxiliary)/libs/redux-toolkit/store/slices/UserRequestsSlice/UserRequestsSlice';
+import {ChildrenProp} from '@/app/(auxiliary)/types/AppTypes/AppTypes';
+import {AuthorizeUserResponseType} from '@/app/(auxiliary)/types/AxiosTypes/AxiosTypes';
+import {AxiosResponse} from 'axios';
+import {FC, useEffect} from 'react';
 
-const AuthorizeUser: FC<ChildrenProp> = ({ children }) => {
+const AuthorizeUser: FC<ChildrenProp> = ({children}) => {
     const dispatch = useAppDispatch()
 
     useEffect(() => {
         let active = true
 
         const authorizeUser = async () => {
-            const response = await axiosRequestsHandler(UserService.authorizeUser())
+            const response = await axiosRequestHandler(() => UserService.authorizeUser())
 
             if (active) {
                 if ((response as AxiosResponse<AuthorizeUserResponseType>).status === 200) {

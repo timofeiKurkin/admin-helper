@@ -1,6 +1,11 @@
-import { PermissionsOfFormType, UserTextDataType, VoiceMessageFileType } from "../types/AppTypes/ContextTypes";
-import { CompanyInputDataType, MessageInputDataType, requiredFields, ValidateKeysType } from "../types/AppTypes/InputHooksTypes";
-import { CompanyInputType, InputHelpfulItemType } from "../types/Data/Interface/RootPage/RootPageContentType";
+import {PermissionsOfFormType, UserTextDataType, VoiceMessageFileType} from "../types/AppTypes/ContextTypes";
+import {
+    CompanyInputDataType,
+    MessageInputDataType,
+    requiredFields,
+    ValidateKeysType
+} from "../types/AppTypes/InputHooksTypes";
+import {InputHelpfulItemType} from "../types/Data/Interface/RootPage/RootPageContentType";
 import rootData from "@/data/interface/root-page/companies.json"
 
 interface ValidateFormInputsResponse {
@@ -11,7 +16,9 @@ interface ValidateFormInputsResponse {
 /**
  * Function for checking all inputs for validate status. Return "true" if all of inputs good and "false" otherwise
  * @param textData - text data for validation
+ * @param messageFile - file data for validation
  * @param permissionsOfForm - permissions for processing personal data
+ * @param messageType - type of message
  * @returns ValidateFormInputsResponse
  */
 export const validateFormInputs = (
@@ -49,7 +56,7 @@ export const validateFormInputs = (
 
 
 export const validateCompanyData = (company: string, type: CompanyInputDataType): boolean => {
-    const companies = rootData as InputHelpfulItemType[]
+    const companies = rootData satisfies InputHelpfulItemType[]
     if (type === "choose") {
         return !!companies.find((comp) => comp.title === company)
     }

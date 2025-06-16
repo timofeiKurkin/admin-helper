@@ -1,12 +1,17 @@
 "use client"
 
 import Button from "@/app/(auxiliary)/components/UI/Button/Button";
-import { axiosRequestsHandler } from "@/app/(auxiliary)/func/axiosRequestsHandler";
-import { boldSpanTag } from "@/app/(auxiliary)/func/tags/boldSpanTag";
-import { validateCompanyData, validateFormInputs } from "@/app/(auxiliary)/func/validateFormInputs";
+import {axiosRequestHandler} from "@/app/(auxiliary)/func/axiosRequestHandler";
+import {boldSpanTag} from "@/app/(auxiliary)/func/tags/boldSpanTag";
+import {validateCompanyData, validateFormInputs} from "@/app/(auxiliary)/func/validateFormInputs";
 import HelpUserService from "@/app/(auxiliary)/libs/axios/services/HelpUserService/HelpUserService";
-import { useAppDispatch, useAppSelector } from "@/app/(auxiliary)/libs/redux-toolkit/store/hooks";
-import { selectCsrfToken, setCsrfToken, setDisableFormInputs, setNewNotification } from '@/app/(auxiliary)/libs/redux-toolkit/store/slices/AppSlice/AppSlice';
+import {useAppDispatch, useAppSelector} from "@/app/(auxiliary)/libs/redux-toolkit/store/hooks";
+import {
+    selectCsrfToken,
+    setCsrfToken,
+    setDisableFormInputs,
+    setNewNotification
+} from '@/app/(auxiliary)/libs/redux-toolkit/store/slices/AppSlice/AppSlice';
 import {
     resetFormToDefault,
     selectCompanyInputDataType,
@@ -17,8 +22,10 @@ import {
     setRejectionInputs,
     setServerResponse,
 } from "@/app/(auxiliary)/libs/redux-toolkit/store/slices/UserFormDataSlice/UserFormDataSlice";
-import { setUserAuthorization } from '@/app/(auxiliary)/libs/redux-toolkit/store/slices/UserRequestsSlice/UserRequestsSlice';
-import { UserFormDataType } from "@/app/(auxiliary)/types/AppTypes/ContextTypes";
+import {
+    setUserAuthorization
+} from '@/app/(auxiliary)/libs/redux-toolkit/store/slices/UserRequestsSlice/UserRequestsSlice';
+import {UserFormDataType} from "@/app/(auxiliary)/types/AppTypes/ContextTypes";
 import {
     COMPANY_KEY,
     DEVICE_KEY,
@@ -27,22 +34,20 @@ import {
     NUMBER_PC_KEY,
     PHONE_KEY,
     PHOTO_KEY,
-    PhotoAndVideoKeysType,
-    TextInputsKeysType,
     USER_CAN_TALK,
     USER_POLITICAL,
     VIDEO_KEY
 } from "@/app/(auxiliary)/types/AppTypes/InputHooksTypes";
-import { AxiosErrorType, ResponseFromServerType } from "@/app/(auxiliary)/types/AxiosTypes/AxiosTypes";
-import { AxiosError, AxiosResponse } from "axios";
-import { FC, useState } from 'react';
+import {AxiosErrorType, CreatedHelpRequestType} from "@/app/(auxiliary)/types/AxiosTypes/AxiosTypes";
+import {AxiosResponse} from "axios";
+import {FC, useState} from 'react';
 
 
 interface PropsType {
     buttonText: string;
 }
 
-const UploadForm: FC<PropsType> = ({ buttonText }) => {
+const UploadForm: FC<PropsType> = ({buttonText}) => {
     const dispatch = useAppDispatch()
     const formTextData = useAppSelector(selectFormTextData)
     const formFileData = useAppSelector(selectFormFileData)
@@ -105,47 +110,34 @@ const UploadForm: FC<PropsType> = ({ buttonText }) => {
                         })
                     }
 
-                    const response =
-                        await axiosRequestsHandler(HelpUserService.requestClassification(formData, csrfToken))
+                    const response = await axiosRequestHandler(() => HelpUserService.requestClassification(formData, csrfToken))
 
-                    if ((response as AxiosResponse<ResponseFromServerType>).status <= 299) {
-                        const succeedResponse = (response as AxiosResponse<ResponseFromServerType>)
-                        dispatch(setCsrfToken({ csrfToken: succeedResponse.data.csrfToken }))
+                    if (response.status <= 299) {
+                        const succeedResponse = response as AxiosResponse<CreatedHelpRequestType>
+                        dispatch(setCsrfToken({csrfToken: succeedResponse.data.csrfToken}))
                         dispatch(resetFormToDefault())
                         dispatch(setUserAuthorization(true))
                         dispatch(setNewNotification({
-                            message: succeedResponse.data.message,
-                            type: "success",
-                            timeout: 12000
+                            message: succeedResponse.data.message, type: "success", timeout: 12000
                         }))
                         dispatch(setServerResponse({
-                            status: "success",
-                            sentToServer: true,
-                            message: succeedResponse.data.message
+                            status: "success", sentToServer: true, message: succeedResponse.data.message
                         }))
-                    } else if ((response as AxiosErrorType).statusCode <= 499) {
+                    } else if ((response as AxiosErrorType).status <= 499) {
                         const message = (response as AxiosErrorType).message
                         dispatch(setServerResponse({
-                            status: "warning",
-                            sentToServer: true,
-                            message
+                            status: "warning", sentToServer: true, message
                         }))
                         dispatch(setNewNotification({
-                            message,
-                            type: "warning",
-                            timeout: 10000
+                            message, type: "warning", timeout: 10000
                         }))
                     } else {
                         const message = "Произошла ошибка при отправке формы! Обновите страницу и попробуйте еще раз!"
                         dispatch(setServerResponse({
-                            status: "error",
-                            sentToServer: true,
-                            message
+                            status: "error", sentToServer: true, message
                         }))
                         dispatch(setNewNotification({
-                            message,
-                            type: "error",
-                            timeout: 10000
+                            message, type: "error", timeout: 10000
                         }))
                     }
                 } finally {
@@ -154,7 +146,7 @@ const UploadForm: FC<PropsType> = ({ buttonText }) => {
                 }
             } else {
                 const message = `Выберите свою организацию из ${boldSpanTag("выпадающего списка")} или ${boldSpanTag("введите другую")}`
-                dispatch(setNewNotification({ message, type: "warning" }))
+                dispatch(setNewNotification({message, type: "warning"}))
                 dispatch(setRejectionInputs([COMPANY_KEY]))
             }
         } else {
@@ -162,14 +154,12 @@ const UploadForm: FC<PropsType> = ({ buttonText }) => {
         }
     }
 
-    // TODO: Form blocking during sending request
-
     return (
-        <Button loadingAnimation={sendingRequest}
-            onClick={() => uploadUserData({
-                text_data: formTextData,
-                file_data: formFileData
-            }, csrfToken)}>
+        <Button loadingAnimation={sendingRequest} disabled={sendingRequest}
+                onClick={() => uploadUserData(
+                    {text_data: formTextData, file_data: formFileData},
+                    csrfToken
+                )}>
             {sendingRequest ? "Создание заявки" : buttonText}
         </Button>
     );
